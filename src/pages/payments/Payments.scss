@@ -1,0 +1,68 @@
+.upload-wrapper label {
+  font-size: 12px;
+  color: #212529;
+  font-weight: 600;
+  padding: 0px 0px 10px 0px;
+}
+.upload-file-section {
+  margin: 0px 0px;
+  border: 2px dashed #b5c2ff;
+  position: relative;
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 10px;
+}
+.upload-file {
+  -webkit-appearance: none;
+  height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0.75rem 0 1.5rem;
+  border-radius: 10px;
+}
+
+.upload-file input[type='file'] {
+  outline: none;
+  width: 100%;
+  margin: auto;
+  height: 103px;
+  position: absolute;
+  cursor: pointer;
+  color: transparent;
+  top: 10px;
+  opacity: 0;
+}
+.upload-file p {
+  color: #646464;
+  font-size: 13px;
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: center;
+  margin-top: 6px;
+}
+.upload-file p span {
+  color: #374baa;
+}
+.upload-file u {
+  font-size: 10px;
+  color: #cbcbcb;
+}
+.chip-tm {
+  position: absolute;
+  bottom: 10px;
+}
+
+.chip-tm .p-chip {
+  padding: 0 1rem 0 0.75rem;
+  margin-top: 0.25rem;
+  border-radius: 35px;
+}
+.chip-tm .p-chip-text {
+  font-size: 0.75rem;
+  font-family: Roboto;
+  font-weight: 500;
+  padding: 0.2rem 0.2rem 0.2rem 0.5rem;
+}

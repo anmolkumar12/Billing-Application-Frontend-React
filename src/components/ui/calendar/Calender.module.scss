@@ -1,0 +1,65 @@
+.custom-cnder-cls input {
+  font-family: Roboto;
+}
+.custom-cnder-cls span.p-float-label label {
+  top: 16%;
+}
+
+.custom-cnder-cls span.p-float-label label {
+  margin-top: 0.3rem;
+}
+
+.log-input {
+  position: relative;
+}
+
+.custom-cnder-cls label {
+  font-size: 12px !important;
+  font-weight: 600;
+  top: 16%;
+}
+
+.custom-cnder-cls input:focus {
+  box-shadow: none !important;
+}
+
+//    .custom-error {
+//      position: absolute !important;
+//      left: 0px !important;
+//      bottom: -27px !important;
+//    }
+
+.custom-cnder-cls .p-button.p-button-icon-only {
+  padding: 0.2rem 0 !important;
+  height: 35px;
+  width: 2.1rem;
+  background-color: #536dfc;
+}
+.custom-cnder-cls .p-button-label.p-c {
+  display: none;
+}
+.custom-cnder-cls .p-float-label input:focus ~ label,
+.custom-cnder-cls .custom-cnder-cls .p-float-label input.p-filled ~ label,
+.custom-cnder-cls .p-float-label textarea:focus ~ label,
+.custom-cnder-cls .p-float-label textarea.p-filled ~ label,
+.custom-cnder-cls .p-float-label .p-inputwrapper-focus ~ label,
+.custom-cnder-cls .p-float-label .p-inputwrapper-filled ~ label {
+  top: -0.75rem;
+  font-size: 12px;
+}
+
+.custom-cnder-cls .pi {
+  font-size: 12px;
+}
+.custom-cnder-cls .span.p-float-label.required-label {
+  width: 100%;
+}
+.custom-cnder-cls .log-input span {
+  width: 100%;
+}
+.p-datepicker {
+  font-family: Roboto, sans-serif;
+}
+.p-datepicker-month {
+  font-family: Roboto, sans-serif;
+}

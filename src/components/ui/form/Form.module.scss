@@ -1,0 +1,63 @@
+.dynamic-common-form input {
+  border: none;
+  border: 1px solid #b3b3b3;
+  outline: none;
+  width: 100%;
+  font-size: 0.75rem;
+  padding-left: 0px;
+  letter-spacing: 0.5px;
+  padding-bottom: 0.375rem;
+  color: #414243;
+  height: 2.1875rem;
+  padding: 0 0.5rem;
+  border-radius: 0.2rem;
+}
+
+.dynamic-common-form input:focus {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+.dynamic-common-form {
+  margin: 0rem 0rem 1.25rem;
+}
+
+.dynamic-common-form input[type='radio'] {
+  width: auto;
+}
+
+// ------edit-css========
+
+.dynamic-common-form .log-input span {
+  width: 100%;
+}
+.p-password {
+  width: 100%;
+}
+
+.dynamic-common-form .log-input span i {
+  z-index: 1;
+}
+
+.dynamic-common-form label {
+  font-size: 12px !important;
+  padding-bottom: 5px;
+}
+
+.p-float-label label {
+  top: 16%;
+}
+
+.p-float-label label {
+  margin-top: 1.5rem;
+}
+
+.dynamic-common-form i {
+  cursor: pointer;
+}
+.log-input {
+  position: relative;
+}
+.cstm-number-cls .p-inputnumber {
+  width: 100% !important;
+}

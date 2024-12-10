@@ -1,0 +1,129 @@
+.submitBtnDiv {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  // position: absolute;
+  bottom: 30px;
+  right: 30px;
+  & .btn-main {
+    margin: 0;
+  }
+}
+.manage-user-body {
+  box-sizing: border-box;
+}
+
+.upload-wrapper label {
+  font-size: 13px;
+  color: #212529;
+  font-weight: 600;
+  padding: 0px 0px 10px 0px;
+  margin: 0;
+}
+
+.upload-file-section {
+  position: relative;
+  border: 2px dashed #b5c2ff;
+  border-radius: 8px;
+}
+.upload-file {
+  text-align: center;
+  position: relative;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  border-right: 1px solid #b5c2ff;
+}
+
+.upload-file input[type='file'] {
+  outline: none;
+  margin: 0 auto;
+  cursor: pointer;
+  opacity: 0;
+  position: absolute;
+  height: 110px;
+  width: 90%;
+}
+
+.upload-file p {
+  color: #646464;
+  font-size: 13px;
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: center;
+  margin-top: 2px;
+  margin-left: 10px;
+  width: 90%;
+}
+
+.upload-file p span {
+  color: #374baa;
+}
+
+.upload-file u {
+  font-size: 10px;
+  position: relative;
+  color: #cbcbcb;
+  top: 0px;
+}
+
+.chip-tm {
+  text-align: center;
+  width: 50%;
+  position: relative;
+}
+
+.chip-tm .p-chip {
+  padding: 0 1rem 0 0.75rem;
+  margin-top: 0.25rem;
+  border-radius: 35px;
+}
+.chip-tm .p-chip-text {
+  font-size: 0.75rem;
+  font-family: Roboto;
+  font-weight: 500;
+  padding: 0.2rem 0.2rem 0.2rem 0.5rem;
+}
+.settings-table {
+  margin: 0rem 0;
+}
+.img-preview {
+  height: 140px;
+  width: 140px;
+  background-color: white;
+  // overflow: hidden;
+  position: relative;
+  margin: auto;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  box-shadow: 0px 3px 6px #00000029;
+  & img {
+    object-fit: contain;
+    height: 140px;
+    width: 140px;
+    border-radius: 50%;
+  }
+}
+.close-img-preview {
+  height: 25px;
+  width: 25px;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  background: white;
+  text-align: center;
+  margin: auto;
+  bottom: 8px;
+  right: 3px;
+  position: absolute;
+  cursor: pointer;
+}

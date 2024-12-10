@@ -1,0 +1,575 @@
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  font-family: Roboto, sans-serif;
+}
+
+.export-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.export-buttons button {
+  box-shadow: 0 3px 6px rgb(56 56 56 / 26%);
+  padding: 5px 20px;
+  margin: 0px 10px 0px 0px;
+  border-radius: 20px;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  font-family: Roboto, sans-serif;
+}
+
+.table-header .table-search {
+  font-family: Roboto, sans-serif;
+}
+.table-header .table-search input {
+  padding: 6px 10px 6px 30px;
+  font-size: 13px;
+  border-radius: 5px;
+  font-family: Roboto, sans-serif;
+}
+
+.table-header .table-search .pi-search {
+  font-size: 12px !important;
+  top: 19px;
+}
+
+.table-header .table-search .pi-search {
+  font-size: 12px !important;
+}
+
+.table-header .table-search button {
+  // box-shadow: 0 3px 6px rgb(56 56 56 / 26%);
+  padding: 5px 10px !important;
+  margin: 0px 0px 0px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  border: 1px solid #374baa;
+  font-weight: normal;
+  position: relative;
+  top: -1px;
+  outline: none;
+  font-family: Roboto, sans-serif;
+}
+
+.table-header .table-search button span {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.table-header .table-search button span.pi-filter-slash {
+  font-size: 11px;
+}
+
+.global-tablestyle {
+  margin: 0px;
+  padding: 0px;
+}
+
+.global-tablestyle table thead tr th {
+  font-size: 12px;
+  background: #5a6edd !important;
+  max-height: 35px;
+  border: 1px solid #e8e8e885 !important;
+  font-family: Roboto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 100px !important;
+  padding: 10px !important;
+}
+
+.global-tablestyle table tbody tr td {
+  font-size: 11px;
+  max-height: 31px;
+  min-height: 31px;
+  border: 1px solid #e8e8e8 !important;
+  padding: 6.5px 10px !important;
+  font-family: 'Roboto', sans-serif;
+  text-overflow: ellipsis;
+  display: table-cell !important;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 90px !important;
+  // max-width: 215px;
+}
+
+th.p-filter-column {
+  padding: 5px 10px;
+}
+// .global-tablestyle table tbody tr td span{
+//     white-space: nowrap !important;
+//     overflow: hidden !important;
+//     text-overflow: ellipsis;
+//     display: inline-block !important;
+// }
+
+.global-tablestyle table tbody tr td:first-child {
+  border-left: 1px solid #e8e8e8 !important;
+}
+
+.global-tablestyle table thead tr th .pi-sort-alt {
+  font-size: 10px;
+  color: #fff !important;
+}
+
+.p-datatable .p-sortable-column:focus {
+  box-shadow: none !important;
+}
+
+.p-datatable-header.p-datatable-header {
+  padding: 0px 0px 5px 0px;
+  background: transparent;
+  border: none;
+}
+
+.p-datatable-scrollable .p-datatable-wrapper {
+  border-radius: 5px;
+}
+
+.table-header .table-search button:focus {
+  box-shadow: none;
+}
+
+// .global-tablestyle .p-datatable-tbody{
+//     height: calc(100vh - 250px)!important;
+//     overflow: auto!important;
+//     max-height: calc(100vh - 250px)!important;
+//   }
+
+.paginatorClass {
+  color: var(--text-color);
+  -webkit-user-select: none;
+  user-select: none;
+  width: 570px;
+  text-align: left;
+  padding-left: 0.25rem;
+  position: absolute;
+  left: 0px;
+  font-size: 11px;
+  font-weight: 600;
+  height: 38px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+}
+
+/* prime table footer */
+.p-paginator .p-dropdown {
+  width: auto !important;
+  border: 1px solid #ddd !important;
+  position: relative !important;
+  top: 1px !important;
+  height: 2.2rem;
+}
+
+.p-paginator .p-dropdown .p-dropdown-label {
+  padding: 5px 8px;
+  font-size: 14px;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  color: #fff !important;
+  font-size: 12px !important;
+  background: #374baa !important;
+  border-radius: 50% !important;
+  height: 25px !important;
+  width: 25px !important;
+}
+
+.p-paginator {
+  border: solid #e9ecef !important;
+  border-width: 0 !important;
+  padding: 1px !important;
+  border-radius: 3px !important;
+  background: #f6f7fb !important;
+  z-index: 9 !important;
+  position: relative !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+  border-radius: 3px !important;
+  font-size: 11px !important;
+  padding: 3px 10px !important;
+  min-width: auto !important;
+  height: auto !important;
+  background: transparent !important;
+  color: #000 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  position: relative !important;
+  top: 1px !important;
+}
+
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last {
+  border: 0 none !important;
+  color: #000000 !important;
+  width: 20px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  margin: 0px 5px !important;
+  transition: box-shadow 0.2s !important;
+  border-radius: 3px !important;
+  position: relative !important;
+  top: 1px !important;
+}
+
+span.p-paginator-current {
+  font-size: 14px !important;
+  vertical-align: middle !important;
+}
+
+.p-paginator {
+  padding: 1px 5px 1px 1px !important;
+}
+
+span.p-paginator-current {
+  position: absolute !important;
+  left: 0px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  height: 28px !important;
+  top: 5px !important;
+}
+
+.global-tablestyle .pi-chevron-down {
+  font-size: 12px;
+  padding-right: 4px;
+}
+
+.global-tablestyle table th span.p-column-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  min-width: 90px;
+  // max-width: 110px;
+}
+.global-tablestyle table .p-resizable-column span.p-column-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  min-width: 90px;
+  // max-width: 110px;
+}
+
+.global-tablestyle table tbody tr td img {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  border: 1px solid #c0c7eb;
+  border-radius: 50%;
+  text-align: center;
+  padding: 2px;
+}
+
+.tabel-setting-btn {
+  background: rgb(0, 176, 228);
+  background: linear-gradient(
+    to bottom,
+    rgb(96 116 228) 1%,
+    rgb(55 75 170) 86%
+  );
+  border: none;
+  font-size: 10px !important;
+  padding: 5px 10px !important;
+}
+
+.tabel-setting-btn:hover {
+  background: rgb(0, 176, 228);
+  background: linear-gradient(
+    to bottom,
+    rgb(96 116 228) 1%,
+    rgb(55 75 170) 86%
+  ) !important;
+  border: none;
+  font-size: 10px !important;
+}
+
+.table-excel-button {
+  border: none !important;
+  background: linear-gradient(
+    to bottom,
+    rgba(24, 206, 15, 1) 0%,
+    rgba(11, 140, 45, 1) 83%
+  ) !important;
+  font-size: 10px !important;
+}
+
+.table-excel-button:hover {
+  border: none !important;
+  background: linear-gradient(
+    to top,
+    rgba(24, 206, 15, 1) 0%,
+    rgba(11, 140, 45, 1) 83%
+  ) !important;
+  font-size: 10px !important;
+}
+
+.tabel-csv-btn {
+  background: rgb(0, 176, 228);
+  background: linear-gradient(to bottom, rgb(70 97 255) 1%, rgb(46 68 173) 86%);
+  border: none;
+  font-size: 10px !important;
+}
+
+.tabel-csv-btn:hover {
+  background: rgb(0, 176, 228);
+  background: linear-gradient(
+    to bottom,
+    rgb(70 97 255) 1%,
+    rgb(46 68 173) 86%
+  ) !important;
+  border: none;
+  font-size: 10px !important;
+}
+
+.tabel-pdf-btn {
+  background: rgb(233, 30, 99) !important;
+  background: linear-gradient(
+    to bottom,
+    rgb(255, 4, 90) 1%,
+    rgb(160, 42, 54) 99%
+  ) !important;
+  border: none !important;
+  font-size: 10px !important;
+}
+
+.tabel-pdf-btn:hover {
+  background: rgb(233, 30, 99) !important;
+  background: linear-gradient(
+    to bottom,
+    rgb(255, 4, 90) 1%,
+    rgb(160, 42, 54) 99%
+  ) !important;
+  border: none !important;
+  font-size: 10px !important;
+}
+
+.table-upload-btn {
+  background: #00bcd4 !important;
+  background: linear-gradient(
+    180deg,
+    #5b72df 0,
+    #1179cb 81%,
+    #157bcc 0
+  ) !important;
+  border: none;
+  font-size: 10px !important;
+  text-transform: uppercase;
+  padding: 5px 15px !important;
+}
+
+.table-upload-btn span .pi .pi-upload {
+  font-size: 12px;
+}
+
+.table-upload-btn span.pi.pi-plus {
+  font-size: 10px;
+  margin-right: 0.35rem;
+}
+
+.tabel-setting-btn .pi {
+  font-size: 12px;
+}
+
+.global-tablestyle table thead tr th .p-dropdown {
+  background: transparent;
+  color: #fff;
+  height: 26px !important;
+  width: calc(100% - 1.1rem) !important;
+  font-size: 12px;
+  border: none;
+  border-bottom: 1px solid #a1a1a5;
+  border-radius: 1px !important;
+}
+
+.global-tablestyle table thead tr:nth-child(2) th {
+  background: #fff !important;
+  position: relative;
+  border-right: 1px solid #e8e8e8 !important;
+}
+
+.global-tablestyle table thead tr:nth-child(2) th:first-child {
+  border-left: 1px solid #e8e8e8 !important;
+  position: sticky;
+}
+
+.global-tablestyle table thead tr:nth-child(2) th button .pi {
+  color: #374baa !important;
+  font-size: 10px;
+}
+
+// .global-tablestyle table thead tr:nth-child(2) th button span.pi-filter{
+//     color: #374baa !important;
+//     font-size: 10px;
+// }
+
+.coupon-histroy {
+  height: calc(100vh - 108px);
+}
+
+.global-tablestyle
+  table
+  thead
+  tr:nth-child(2)
+  th
+  button.p-column-filter-menu-button {
+  position: absolute;
+  right: 5px;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.global-tablestyle
+  table
+  thead
+  tr:nth-child(2)
+  th
+  button.p-column-filter-clear-button {
+  position: absolute;
+  right: 5px;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.global-tablestyle
+  table
+  thead
+  tr:nth-child(2)
+  th
+  button.p-column-filter-menu-button.p-link:hover {
+  background: transparent;
+}
+
+.global-tablestyle table thead tr th .p-dropdown span {
+  font-size: 11px;
+}
+
+.global-tablestyle table thead tr th .p-dropdown span.pi-chevron-down {
+  color: #828287;
+  font-size: 10px;
+}
+
+.global-tablestyle
+  table
+  thead
+  tr
+  th
+  .p-dropdown
+  span.p-dropdown-label.p-inputtext.p-placeholder {
+  padding: 5px;
+  font-size: 11.5px !important;
+  font-family: 'Roboto';
+}
+
+.p-frozen-column {
+  max-width: 4rem;
+}
+
+tr.p-datatable-emptymessage td {
+  color: red;
+}
+
+.global-tablestyle
+  table
+  thead
+  tr:nth-child(2)
+  th
+  .p-inputtext.p-component.p-column-filter {
+  background: transparent;
+  height: 26px !important;
+  width: calc(100% - 1.1rem) !important;
+  font-size: 11.5px !important;
+  padding: 0px 2px;
+  border: none;
+  border-bottom: 1px solid #a1a1a5;
+  border-radius: 1px !important;
+  font-family: 'Roboto';
+}
+
+.global-tablestyle table thead tr th .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 0rem #c7d2fe;
+  border-color: #6366f1 !important;
+}
+
+.p-datatable .p-sortable-column-icon {
+  color: white !important;
+  width: 16px !important;
+}
+
+.p-datatable .p-sortable-column-icon:hover {
+  color: white;
+}
+
+.ctmtbltd {
+  cursor: pointer;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pi-upload {
+  font-size: 10px;
+}
+.p-frozen-column {
+  width: 90px;
+}
+.p-frozen-column .p-column-header-content .p-column-title {
+  min-width: 37px;
+  max-width: 37px;
+}
+.p-datatable .p-column-header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  line-height: 1;
+}
+.p-dropdown-clear-icon {
+  right: 16px !important;
+  font-size: 10px;
+  top: 16px;
+}
+.p-dropdown.p-dropdown-clearable .p-dropdown-label {
+  padding-right: 0.75rem;
+}
+
+@media (max-width: 769px) {
+  .table-header {
+    flex-direction: column;
+  }
+  .export-buttons {
+    margin: 0.25rem 0;
+    padding-bottom: 0.25rem;
+    display: block;
+    white-space: nowrap;
+    overflow: auto;
+    & button {
+      margin: 0px 5px 0px 0px;
+      padding: 5px 12px;
+      font-size: 11px;
+    }
+  }
+  .export-buttons div {
+    display: inline;
+  }
+  .table-search input {
+    width: 200px;
+    max-width: calc(100% - 95px);
+  }
+}
+.p-inputtext:focus {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+.search-input .p-button-outlined .p-button-sm .ctm-clr-btn .deepak {
+}

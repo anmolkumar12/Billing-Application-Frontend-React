@@ -1,0 +1,54 @@
+.configuration-card {
+  margin: 0.5rem 1rem 0.5rem 0rem;
+  box-shadow: 3px 3px 10px #96969660;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+.configuration-card h3 {
+  font-size: 14px;
+  margin: 0;
+  padding: 0px 0px 6px 0px;
+  color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 99%;
+}
+.configuration-card p {
+  color: #303d57;
+  font-size: 11px;
+  font-weight: 300;
+  margin-bottom: 0;
+}
+.configuration-card h4 {
+  color: #097100;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1;
+  text-align: right;
+}
+
+.brdr {
+  border: none;
+}
+.card-lower-part .row .col-3:last-child {
+  border-right: none;
+}
+.card-brand-logo {
+  height: 50px;
+  width: 50px;
+  border-radius: 5px;
+  margin: auto;
+  box-shadow: 0px 3px 6px #00000029;
+  display: flex;
+  justify-content: center;
+  object-fit: contain;
+  overflow: hidden;
+}
+
+@media (max-width: 426px) {
+  .configuration-card {
+    margin: 0.5rem 0.25rem;
+  }
+}

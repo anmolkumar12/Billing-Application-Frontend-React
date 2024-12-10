@@ -1,0 +1,7 @@
+.popup-cnt iframe {
+  height: 100%;
+  height: calc(100vh - 95px);
+}
+.popup-cnt iframe::-webkit-scrollbar {
+  width: 5px;
+}

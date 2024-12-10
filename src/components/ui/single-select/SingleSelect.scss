@@ -1,0 +1,104 @@
+.custom-drwn-sr .p-float-label label {
+  top: 16%;
+}
+
+.dropdown-demo .p-dropdown {
+  width: 14rem;
+}
+
+.dropdown-demo .country-item-value img.flag {
+  width: 17px;
+}
+
+.custom-drwn-sr .p-dropdown {
+  box-shadow: none !important;
+  border: 1px solid #b3b3b3 !important;
+  width: 100%;
+  height: 2.1875rem;
+  padding: 0 0.5rem;
+}
+
+.p-dropdown-filter-container input {
+  height: 2.1875rem;
+}
+
+.custom-drwn-sr .p-dropdown .pi {
+  font-size: 12px;
+}
+
+.p-dropdown .p-dropdown-trigger {
+  width: auto;
+}
+
+.custom-drwn-sr .p-dropdown:hover {
+  border-color: #2196f3 !important;
+}
+
+.custom-drwn-sr .p-dropdown:focus {
+  box-shadow: none !important;
+}
+
+.custom-drwn-sr .p-float-label label {
+  margin-top: 0.3rem;
+}
+
+.custom-drwn-sr label {
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+.custom-drwn-sr .p-dropdown-label {
+  font-size: 0.75px;
+  //  padding: 0.5rem;
+}
+
+.custom-drwn-sr .p-float-label {
+  line-height: 1;
+}
+
+.custom-drwn-sr .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 0.4rem 1rem;
+  font-size: 13px;
+}
+
+.custom-drwn-sr .p-float-label input:focus ~ label,
+.custom-drwn-sr .custom-drwn-sr .p-float-label input.p-filled ~ label,
+.custom-drwn-sr .p-float-label textarea:focus ~ label,
+.custom-drwn-sr .p-float-label textarea.p-filled ~ label,
+.custom-drwn-sr .p-float-label .p-inputwrapper-focus ~ label,
+.custom-drwn-sr .p-float-label .p-inputwrapper-filled ~ label {
+  top: -0.75rem;
+  font-size: 12px;
+}
+
+.container {
+  width: 100%;
+  border-radius: 5px;
+  box-shadow: none !important;
+  // height: 33px;
+}
+
+.pi-times:before {
+  content: '\e90b';
+}
+
+.p-dropdown-panel .p-dropdown-items {
+  padding: 0.5rem 0;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-family: Roboto;
+}
+
+.custom-drwn-sr span.p-dropdown-label.p-inputtext {
+  margin: 0;
+  padding: 0.5rem 0.25rem;
+  font-family: Roboto;
+  line-height: 1.5;
+}
+.p-inputtext:focus {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}

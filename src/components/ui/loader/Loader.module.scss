@@ -1,0 +1,109 @@
+.visit-schedule-popup-pd {
+  padding: 15px;
+  max-height: 550px;
+}
+.visit-schedule-popup {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.visit-schedule-popup-inner {
+  width: 890px;
+  background: 0 0/100% no-repeat #fff;
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 18px 0 #607d8b8a;
+  overflow: hidden;
+  position: relative;
+}
+.visit-schedule-popup-inner h2 {
+  background: #5c7db1;
+  padding: 14px 20px;
+  color: #fff;
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0px;
+  font-size: 20px;
+}
+.visit-schedule-popup-inner h2 span {
+  position: absolute;
+  right: 20px;
+  top: 8px;
+  background: #fff;
+  color: #2f2e2e;
+  padding: 6px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  font-size: 16px;
+}
+.visit-schedule-popup-pd {
+  padding: 15px;
+  max-height: 450px;
+}
+.visit-schedule-popup-inner {
+  width: 90% !important;
+}
+
+.visit-schedule-popup-pd {
+  max-height: 500px;
+  overflow: auto;
+}
+button.cndt-card-btn-apply {
+  box-shadow: 0px 3px 6px #a0a0a029;
+  border-radius: 5px;
+  background: #5c7db1;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 4px 12px;
+  color: #fff;
+  outline: none;
+  border: 1px solid #5c7db1;
+}
+.cndt-card-btn-apply1 {
+  float: right;
+  margin-top: 10px;
+}
+.cndt-card-btn-apply1 {
+  padding: 5px 17px;
+  font-size: 12px;
+  box-shadow: 0px 3px 6px #a0a0a029;
+  border-radius: 5px;
+  background: #5c7db1;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 4px 12px;
+  color: #fff;
+  outline: none;
+  border: 1px solid #5c7db1;
+}
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+.main-loader {
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+}
+.loader-container p {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  padding: 5px 0px 10px;
+}

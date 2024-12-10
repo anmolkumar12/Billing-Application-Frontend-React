@@ -1,0 +1,17 @@
+.no-recordDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+  & img {
+    max-width: 100%;
+    object-fit: contain;
+    height: calc(100% - 20px);
+  }
+  & p {
+    font-size: 12px;
+    font-weight: 500;
+    margin: 5px 0px;
+  }
+}

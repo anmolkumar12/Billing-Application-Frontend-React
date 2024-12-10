@@ -1,0 +1,45 @@
+.card-lower-part {
+  position: relative;
+  padding: 5px 10px;
+}
+.card-lower-part .pi-angle-left {
+  cursor: pointer;
+  position: absolute;
+  top: 25px;
+  left: 0px;
+  height: 20px;
+  width: 20px;
+}
+.card-lower-part .pi-angle-right {
+  cursor: pointer;
+  position: absolute;
+  top: 25px;
+  right: -8px;
+  height: 20px;
+  width: 20px;
+}
+
+.card-lower-part h5 {
+  color: #cb0000;
+  font-size: 14px;
+  margin: 0;
+  padding-bottom: 3px;
+  font-weight: 600;
+}
+.card-lower-part h6 {
+  color: #333333;
+  font-size: 10px;
+  padding-top: 4px;
+  margin: 0px;
+  line-height: 1;
+  font-weight: 400;
+}
+.card-lower-part .col-3 {
+  border-right: 1px solid #e6e9f6;
+}
+.card-lower-part .row .col-3:last-child {
+  border-right: none;
+}
+.card-lower-part .row .col-3:only-child {
+  border-right: none;
+}

@@ -1,0 +1,37 @@
+.btn-main {
+  position: relative;
+  color: #fff;
+  border: none;
+  outline: none;
+  padding: 6px 20px !important;
+  text-transform: uppercase;
+  font-size: 13px;
+  transition: 0.5s;
+  border-radius: 5px;
+  margin: 5px 0px;
+  cursor: pointer;
+  transition: 0.5s;
+  z-index: 1;
+  text-transform: capitalize;
+}
+
+.btn-main:hover {
+  opacity: 0.8;
+}
+
+.btn-main:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.button-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+  height: 31.5px;
+}
+
+.btn-main button:focus {
+  outline: none;
+}

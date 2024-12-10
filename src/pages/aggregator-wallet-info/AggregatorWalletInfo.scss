@@ -1,0 +1,75 @@
+.walletInfo-dropdown {
+  height: 33px;
+  font-family: Roboto, sans-serif;
+  max-width: 13rem;
+  min-width: 10rem;
+  padding: 0 0.5rem 0 0;
+  margin: 0;
+  .p-dropdown-label {
+    font-family: Roboto, sans-serif;
+    padding: 0.5rem 0.5rem;
+  }
+  .p-dropdown-trigger {
+    width: 2rem;
+    .p-dropdown-trigger-icon {
+      font-size: 12px;
+    }
+  }
+}
+.p-dropdown-item {
+  font-size: 12px;
+}
+
+.p-dropdown:not(.p-disabled).p-focus {
+  box-shadow: none;
+}
+
+.slick-prev {
+  position: absolute;
+  left: -3px;
+  background-color: #42c78c;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  i {
+    color: white;
+    line-height: 12px;
+  }
+}
+.slick-prev:before {
+  content: none;
+}
+.slick-disabled {
+  background-color: #42c78c50 !important;
+  cursor: not-allowed;
+}
+
+.slick-prev:hover {
+  background-color: #42c78c;
+}
+
+.slick-next {
+  position: absolute;
+  right: -3px;
+  background-color: #42c78c;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  i {
+    color: white;
+    line-height: 12px;
+  }
+}
+.slick-next:hover {
+  background-color: #42c78c;
+}
+
+.slick-next:before {
+  content: none;
+}

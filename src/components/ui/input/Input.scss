@@ -1,0 +1,40 @@
+.input-custom-cls .p-float-label label {
+  top: 16%;
+}
+
+.input-custom-cls .p-float-label label {
+  margin-top: 0.3rem;
+}
+
+.log-input {
+  position: relative;
+}
+
+.input-custom-cls label {
+  font-size: 0.75rem !important;
+  font-weight: 600;
+}
+
+.input-custom-cls input:focus {
+  box-shadow: none !important;
+}
+
+.input-custom-cls input {
+  border: none;
+  border: 1px solid #b3b3b3;
+  outline: none;
+  width: 100%;
+  font-size: 0.75rem;
+  padding-left: 0px;
+  letter-spacing: 0.5px;
+  padding-bottom: 0.375rem;
+  color: #414243;
+  height: 2.1875rem;
+  padding: 0 0.5rem;
+  border-radius: 0.2rem;
+  font-family: Roboto, sans-serif;
+}
+.input-custom-cls input:focus {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}

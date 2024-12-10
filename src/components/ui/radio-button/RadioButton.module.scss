@@ -1,0 +1,16 @@
+.cstm-radiobutton span {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 0px 0px 0.35rem;
+}
+.cstm-radiobutton .p-field-radiobutton {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+.cstm-radiobutton .p-field-radiobutton label {
+  margin: 0;
+  padding: 0 0 0 0.5rem;
+}

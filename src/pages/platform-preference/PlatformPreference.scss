@@ -1,0 +1,28 @@
+.rewardApi-dropdown {
+  height: 2.2rem;
+  margin: 0.25rem 0;
+  width: 100%;
+  font-family: Roboto, sans-serif;
+
+  .p-dropdown-label {
+    padding: 10px 16px;
+    line-height: 1;
+    font-family: Roboto, sans-serif;
+  }
+
+  .p-dropdown-trigger {
+    width: 2rem;
+
+    .p-dropdown-trigger-icon {
+      font-size: 12px;
+    }
+  }
+}
+.p-dropdown-item {
+  font-size: 12px;
+  padding: 0.5rem 1rem !important;
+}
+
+.p-button-label {
+  font-weight: 400 !important;
+}

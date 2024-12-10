@@ -1,0 +1,53 @@
+// add rechage form
+.add-recharge-content {
+  padding: 1.25rem 2rem 1rem;
+}
+.add-recharge-form {
+  input {
+    border: 1px solid #cecece !important;
+    color: #707070 !important;
+    letter-spacing: 0;
+  }
+  .formLabel {
+    font-size: 14px;
+    font-weight: 400;
+    color: #3e3e3e;
+  }
+  .p-inputtextarea {
+    height: 65px;
+    width: 100%;
+  }
+}
+#popup_ActionMenu {
+  max-width: 150px;
+}
+#popup_ActionMenu .p-menu-list .p-menuitem {
+  border-bottom: 1px solid #ddd;
+}
+#popup_ActionMenu .p-menu-list .p-menuitem:last-child {
+  border-bottom: none;
+
+  .pi {
+    color: red;
+  }
+  .p-menuitem-link .p-menuitem-text {
+    color: red;
+  }
+}
+#popup_ActionMenu .p-menu-list .p-menuitem:first-child {
+  border-bottom: none;
+
+  .pi {
+    color: #374baa;
+  }
+  .p-menuitem-link .p-menuitem-text {
+    color: #374baa;
+  }
+}
+#popup_ActionMenu .p-menu-list .p-menuitem .p-menuitem-link {
+  font-size: 12px;
+}
+
+.actionMenuDiv {
+  cursor: pointer;
+}

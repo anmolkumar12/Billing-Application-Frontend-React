@@ -1,0 +1,98 @@
+.custom-multiselect .p-float-label label {
+  top: 16%;
+  width: 100% !important;
+}
+
+.custom-multiselect .p-float-label label {
+  margin-top: 0.3rem;
+}
+
+.custom-multiselect label {
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+.custom-multiselect .p-float-label input:focus ~ label,
+.custom-multiselect .custom-multiselect .p-float-label input.p-filled ~ label,
+.custom-multiselect .p-float-label textarea:focus ~ label,
+.custom-multiselect .p-float-label textarea.p-filled ~ label,
+.custom-multiselect .p-float-label .p-inputwrapper-focus ~ label,
+.custom-multiselect .p-float-label .p-inputwrapper-filled ~ label {
+  top: -0.75rem;
+  font-size: 12px;
+}
+
+.p-multiselect {
+  width: 100% !important;
+}
+#multiSelectValue {
+  width: 100% !important;
+}
+
+.container {
+  box-shadow: none !important;
+  border: 1px solid #b3b3b3 !important;
+  width: 100%;
+  height: 2.1875rem;
+  padding: 0 0.5rem;
+}
+.custom-multiselect .p-multiselect-trigger {
+  width: auto;
+}
+.custom-multiselect
+  .p-multiselect-trigger
+  .p-multiselect-trigger-icon
+  .pi-chevron-down {
+  font-size: 12px;
+}
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-family: Roboto;
+}
+
+.custom-multiselect span.p-dropdown-label.p-inputtext {
+  margin: 0;
+  padding: 0.5rem;
+  font-family: Roboto;
+  line-height: 1.2;
+}
+.p-inputtext:focus {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+.custom-multiselect .p-multiselect {
+  box-shadow: none !important;
+  border: 1px solid #b3b3b3 !important;
+  width: 100%;
+  height: 2.1875rem;
+  padding: 0 0.5rem;
+}
+.p-multiselect-trigger-icon {
+  font-size: 12px;
+}
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-family: Roboto;
+}
+.p-multiselect-panel .p-multiselect-header {
+  padding: 0.5rem 1rem;
+}
+.p-inputtext .p-component .p-multiselect-filter {
+  height: 2.1875rem;
+}
+.p-checkbox .p-checkbox-box {
+  height: 18px;
+  width: 18px;
+}
+.p-multiselect-filter-container input {
+  height: 35px;
+}
+.p-multiselect .p-multiselect-label {
+  height: 35px;
+  padding: 0.45rem;
+  font-size: 12px;
+  font-family: Roboto;
+  line-height: 1.5;
+}

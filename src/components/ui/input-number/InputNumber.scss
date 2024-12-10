@@ -1,0 +1,33 @@
+.log-input {
+  position: relative;
+}
+
+.cstm-number-cls label {
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+.cstm-number-cls input:focus {
+  box-shadow: none !important;
+}
+
+.cstm-number-cls .p-inputnumber {
+  display: block !important;
+}
+
+.custom-error {
+  position: absolute !important;
+  left: 0px !important;
+  bottom: -27px !important;
+}
+.cstm-number-cls .p-inputnumber {
+  width: 100%;
+}
+.cstm-number-cls .p-float-label {
+  width: 100%;
+}
+
+.p-inputtext input:focus {
+  box-shadow: none;
+  border-color: #6366f1;
+}
