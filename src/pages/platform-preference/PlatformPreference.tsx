@@ -587,7 +587,7 @@ const PlatformPreference: React.FC = () => {
               className={toggleState === 3 ? 'active-tab' : 'tab'}
               onClick={() => {
                 toggleTab(3)
-                fetchClientDetails
+                // fetchClientDetails
               }}
             >
               Reward API

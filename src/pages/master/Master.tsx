@@ -31,7 +31,7 @@ import { Chip } from 'primereact/chip'
 import { HTTP_RESPONSE } from '../../enums/http-responses.enum'
 
 const Master: React.FC = () => {
-  const [companyMaster, setCompanyMaster] = useState([])
+  const [companyMaster, setCompanyMaster] = useState<any>([])
   const [currencyMaster, setCurrencyMaster] = useState([])
   const [industryMaster, setIndustryMaster] = useState([])
   const [accountsMaster, setAccountsMaster] = useState([])
@@ -72,6 +72,8 @@ const Master: React.FC = () => {
         break
       case 2:
         getAccountsMaster()
+        getCompanyMaster()
+        formatCompanyDetails()
         break
       case 3:
         getIndustryMaster()
@@ -98,6 +100,14 @@ const Master: React.FC = () => {
 
   const onTabChange = (e: any) => {
     setActiveIndex(e.index)
+  }
+
+  const formatCompanyDetails = () => {
+    const companyList = companyMaster.map((company: any) => company?.companyName)
+
+    accountFieldsStructure.companyName.options = companyList  
+    setAccountFieldsStructure(accountFieldsStructure)
+    accountsFormHandler(accountFieldsStructure)
   }
 
   const getCompanyMaster = () => {
@@ -892,6 +902,7 @@ const Master: React.FC = () => {
             className="pi pi-pencil"
             style={{ cursor: 'pointer' }}
             title="Update"
+            onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.is_active ? (
             <span
@@ -901,6 +912,30 @@ const Master: React.FC = () => {
               onClick={() => onDelete(rowData)}
             ></span>
           ) : null}
+        </div>
+      ),
+    },
+    {
+      label: 'Company Name',
+      fieldName: 'company_name',
+      textAlign: 'left',
+      sort: true,
+      filter: true,
+      fieldValue: 'company_name',
+      changeFilter: true,
+      placeholder: 'Company Name',
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.company_name}
+          >
+            {rowData.company_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
         </div>
       ),
     },
@@ -1644,7 +1679,7 @@ const Master: React.FC = () => {
         updateCurrencyMaster(data)
         break
       case 2:
-        // deactivateAccountsMaster()
+        updateAccountsMaster(data)
         break
       case 3:
         updateIndustryMaster(data)
@@ -1802,7 +1837,7 @@ const Master: React.FC = () => {
     companyName: {
       inputType: 'singleSelect',
       label: 'Company Name',
-      options: companyMaster,
+      options: [],
       value: null,
       validation: {
         required: true,
@@ -1886,6 +1921,27 @@ const Master: React.FC = () => {
       rows: 3,
     },
   }
+
+  const updateAccountsMaster = (data: any) => {
+    try {
+      accountFieldsStructure.companyName.value = data?.company_name
+      accountFieldsStructure.account_type.value = data?.account_type
+      accountFieldsStructure.bank_name.value = data?.bank_name
+      accountFieldsStructure.bank_address.value = data?.bank_address
+      accountFieldsStructure.account_no.value = data?.account_no
+      accountFieldsStructure.account_no.value = data?.account_no
+      accountFieldsStructure.ifsc_code.value = data?.ifsc_code
+      accountFieldsStructure.micr_code.value = data?.micr_code
+      accountFieldsStructure.routing_no_swift_code.value = data?.routing_no_swift_code
+      accountFieldsStructure.bank_code.value = data?.bank_code
+      accountFieldsStructure.bank_code.value = data?.bank_code
+      setAccountForm(_.cloneDeep(accountFieldsStructure))
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  const [accountFieldsStructure, setAccountFieldsStructure]: any = useState(AccountsFormFields)
 
   const IndustryFormFields = {
     industryName: {
@@ -2092,7 +2148,7 @@ const Master: React.FC = () => {
   )
 
   const [AccountForm, setAccountForm] = useState<any>(
-    _.cloneDeep(AccountsFormFields)
+    _.cloneDeep(accountFieldsStructure)
   )
 
   const [IndustryForm, setIndustryForm] = useState<any>(
@@ -2117,7 +2173,7 @@ const Master: React.FC = () => {
     setFormPopup(false)
     setCompanyForm(_.cloneDeep(CompanyFormFields))
     setCurrencyForm(_.cloneDeep(CurrencyFormFields))
-    setAccountForm(_.cloneDeep(AccountsFormFields))
+    setAccountForm(_.cloneDeep(accountFieldsStructure))
     setIndustryForm(_.cloneDeep(IndustryFormFields))
     setProductForm(_.cloneDeep(ProductFormFields))
     setProjectForm(_.cloneDeep(ProjectFormFields))
@@ -2308,50 +2364,66 @@ const Master: React.FC = () => {
     let companyValidityFlag = true
     const companyFormValid: boolean[] = []
 
-    _.each(CompanyForm, (item: any) => {
+    _.each(AccountForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid)
         companyValidityFlag = companyValidityFlag && item.valid
       }
     })
 
+    const companyId = companyMaster.find((company: any) => company.companyName === AccountForm.companyName.value)?.id ?? null;
+
     setIsFormValid(companyValidityFlag)
 
     if (companyValidityFlag) {
-      const formData: any = new FormData()
-
       const obj = {
-        companyName: CompanyForm?.companyName?.value,
-        Website: CompanyForm?.Website?.value,
-        CINNO: CompanyForm?.CINNO?.value,
-        IECode: CompanyForm?.IECode?.value,
-        PAN: CompanyForm?.PAN?.value,
-        Email: CompanyForm?.Email?.value,
-        description: CompanyForm?.description?.value,
-        isactive: 1,
+        companyId: companyId,
+        accountType: AccountForm?.account_type?.value,
+        bankName: AccountForm?.bank_name?.value,
+        bankAddress: AccountForm?.bank_address?.value,
+        accountNo: AccountForm?.account_no?.value,
+        ifscCode: AccountForm?.ifsc_code?.value,
+        micrCode: AccountForm?.micr_code?.value,
+        routingNoSwiftCode: AccountForm?.routing_no_swift_code?.value,
+        bankCode: AccountForm?.bank_code?.value,
+        isActive: 1,
         updatedBy: loggedInUserId,
       }
 
-      Object.entries(obj).forEach(([key, value]: any) => {
-        formData.set(key, value)
-      })
-
-      if (attachments?.length) {
-        formData.set('file', attachments[0])
-      }
-
-      companyService
-        .createCompanyMaster(formData)
+      if(!stateData?.id) {
+        accountsService
+        .createAccountsMaster(obj)
         .then((response: any) => {
           if (response?.statusCode == HTTP_RESPONSE.CREATED) {
+            setStateData({})
             closeFormPopup()
-            getCompanyMaster()
+            getAccountsMaster()
             ToasterService.show(response?.message, CONSTANTS.SUCCESS)
           }
         })
         .catch((error: any) => {
+          setStateData({})
           ToasterService.show(error, CONSTANTS.ERROR)
         })
+      }
+      else {
+        const updatePayload = { ...obj, accountId: stateData?.id }
+
+        accountsService
+        .updateAccountsMaster(updatePayload)
+        .then((response: any) => {
+          if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
+            setStateData({})
+            closeFormPopup()
+            getAccountsMaster()
+            ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+          }
+        })
+        .catch((error: any) => {
+          setStateData({})
+          ToasterService.show(error, CONSTANTS.ERROR)
+        })
+      }
     } else {
       ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
     }
@@ -2649,9 +2721,9 @@ const Master: React.FC = () => {
         <TabPanel header="Company">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -2671,8 +2743,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -2689,7 +2761,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -2698,38 +2770,38 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
                     form={_.cloneDeep(CompanyForm)}
                     formUpdateEvent={companyFormHandler}
                     isFormValidFlag={isFormValid}
                   ></FormComponent>
                   {/* attachment */}
-                  <div className={classes['upload-wrapper']}>
+                  <div className={classes["upload-wrapper"]}>
                     <div className="row">
                       <div className="col-md-12">
-                        <div className={classes['upload-file-section']}>
-                          <div className={classes['upload-file']}>
+                        <div className={classes["upload-file-section"]}>
+                          <div className={classes["upload-file"]}>
                             <input
                               type="file"
                               onClick={(event: any) => {
-                                event.target.value = null
+                                event.target.value = null;
                               }}
                               onChange={(e) => selectAttachment(e.target.files)}
-                              className={classes['upload']}
+                              className={classes["upload"]}
                             />
                             <img src={ImageUrl.FolderIconImage} />
                             <p>
                               Drag files here <span> or browse</span> <br />
                               <u>Support PDF</u>
                             </p>
-                            <div className={classes['chip-tm']}>
+                            <div className={classes["chip-tm"]}>
                               {attachments?.length
                                 ? attachments.map((item: any, index: any) => {
                                     return (
@@ -2739,7 +2811,7 @@ const Master: React.FC = () => {
                                         onRemove={() => removeFileHandler()}
                                         key={index}
                                       />
-                                    )
+                                    );
                                   })
                                 : null}
                             </div>
@@ -2766,9 +2838,9 @@ const Master: React.FC = () => {
         <TabPanel header="Currency">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -2788,8 +2860,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -2805,7 +2877,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -2814,13 +2886,13 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
                     form={_.cloneDeep(CurrencyForm)}
                     formUpdateEvent={currencyFormHandler}
@@ -2843,9 +2915,9 @@ const Master: React.FC = () => {
         <TabPanel header="Accounts">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -2865,8 +2937,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -2882,7 +2954,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -2891,18 +2963,18 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
-                  <FormComponent
-                    form={_.cloneDeep(AccountForm)}
-                    formUpdateEvent={accountsFormHandler}
-                    isFormValidFlag={isFormValid}
-                  ></FormComponent>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                    <FormComponent
+                      form={_.cloneDeep(AccountForm)}
+                      formUpdateEvent={accountsFormHandler}
+                      isFormValidFlag={isFormValid}
+                    />
                 </div>
 
                 <div className="popup-lower-btn">
@@ -2920,9 +2992,9 @@ const Master: React.FC = () => {
         <TabPanel header="Industry">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -2942,8 +3014,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -2959,7 +3031,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -2968,13 +3040,13 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
                     form={_.cloneDeep(IndustryForm)}
                     formUpdateEvent={industryFormHandler}
@@ -2997,9 +3069,9 @@ const Master: React.FC = () => {
         <TabPanel header="Product">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -3019,8 +3091,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -3036,7 +3108,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -3045,13 +3117,13 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
                     form={_.cloneDeep(ProductForm)}
                     formUpdateEvent={productFormHandler}
@@ -3074,9 +3146,9 @@ const Master: React.FC = () => {
         <TabPanel header="Project">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -3096,8 +3168,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -3113,7 +3185,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -3122,13 +3194,13 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
                     form={_.cloneDeep(ProjectForm)}
                     formUpdateEvent={projectFormHandler}
@@ -3151,9 +3223,9 @@ const Master: React.FC = () => {
         <TabPanel header="Tax">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -3173,8 +3245,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -3190,7 +3262,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -3199,13 +3271,13 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
                     form={_.cloneDeep(TaxForm)}
                     formUpdateEvent={taxFormHandler}
@@ -3236,8 +3308,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -3250,9 +3322,9 @@ const Master: React.FC = () => {
         <TabPanel header="States">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'end',
-              marginBottom: '0.5em',
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
             }}
           >
             <ButtonComponent
@@ -3272,8 +3344,8 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={'calc(100vh - 80px)'}
-              downloadedfileName={'Brandwise_Denomination_table'}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
               <ConfirmDialogue
@@ -3289,7 +3361,7 @@ const Master: React.FC = () => {
                   <div
                     className="popup-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
@@ -3298,13 +3370,13 @@ const Master: React.FC = () => {
                   <div
                     className="popup-right-close"
                     onClick={() => {
-                      closeFormPopup()
+                      closeFormPopup();
                     }}
                   >
                     &times;
                   </div>
                 </div>
-                <div className="popup-content" style={{ padding: '1rem 2rem' }}>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
                     form={_.cloneDeep(CompanyForm)}
                     formUpdateEvent={companyFormHandler}
@@ -3326,7 +3398,7 @@ const Master: React.FC = () => {
         </TabPanel>
       </TabView>
     </>
-  )
+  );
 }
 
 export default Master

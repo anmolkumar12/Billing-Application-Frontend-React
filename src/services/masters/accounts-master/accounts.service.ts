@@ -11,6 +11,33 @@ export class AccountsMasterService {
       return {}
     }
   }
+
+  createAccountsMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.CREATE_ACCOUNTS_MASTER,
+        formData
+      )
+
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  updateAccountsMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.UPDATE_ACCOUNTS_MASTER,
+        formData
+      )
+
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
   deactivateAccountsMaster = async (data: any) => {
     try {
       const body = {
