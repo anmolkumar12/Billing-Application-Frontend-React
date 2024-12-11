@@ -1,459 +1,486 @@
 /* eslint-disable no-unexpected-multiline */
-import React, { FormEvent, useEffect, useState } from 'react'
-import 'primeicons/primeicons.css'
-import { CompanyMasterService } from '../../services/masters/company-master/company.service'
-import { CurrencyMasterService } from '../../services/masters/currency-master/currency.service'
-import { IndustryMasterService } from '../../services/masters/industry-master/industry.service'
-import { AccountsMasterService } from '../../services/masters/accounts-master/accounts.service'
-import { ProductMasterService } from '../../services/masters/product-master/product.service'
-import { ProjectMasterService } from '../../services/masters/projects-master/project.service'
-import { TaxMasterService } from '../../services/masters/tax-master/tax.service'
-import { CountryMasterService } from '../../services/masters/country-master/country.service'
-import { StateMasterService } from '../../services/masters/state-master/state.service'
+import React, { FormEvent, useEffect, useState } from "react";
+import "primeicons/primeicons.css";
+import { CompanyMasterService } from "../../services/masters/company-master/company.service";
+import { CurrencyMasterService } from "../../services/masters/currency-master/currency.service";
+import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
+import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
+import { ProductMasterService } from "../../services/masters/product-master/product.service";
+import { ProjectMasterService } from "../../services/masters/projects-master/project.service";
+import { TaxMasterService } from "../../services/masters/tax-master/tax.service";
+import { CountryMasterService } from "../../services/masters/country-master/country.service";
+import { StateMasterService } from "../../services/masters/state-master/state.service";
+import { ClientMasterService } from "../../services/masters/client-master/client.service";
 
-import { TabView, TabPanel } from 'primereact/tabview'
-import ConfirmDialogue from '../../components/ui/confirm-dialogue/ConfirmDialogue'
+import { TabView, TabPanel } from "primereact/tabview";
+import ConfirmDialogue from "../../components/ui/confirm-dialogue/ConfirmDialogue";
 
-import DataTableBasicDemo from '../../components/ui/table/Table'
-import { Loader } from '../../components/ui/loader/Loader'
-import { Tooltip } from 'primereact/tooltip'
-import { ToasterService } from '../../services/toaster-service/toaster-service'
-import { CONSTANTS } from '../../constants/Constants'
-import { ButtonComponent } from '../../components/ui/button/Button'
-import { FormComponent } from '../../components/ui/form/form'
-import classes from '../aggregator-analytics/AggregatorAnalytics.module.scss'
-import _ from 'lodash'
-import { FormType } from '../../schemas/FormField'
-import { AuthService } from '../../services/auth-service/auth.service'
-import { FILE_TYPES } from '../../enums/file-types.enum'
-import { ImageUrl } from '../../utils/ImageUrl'
-import { Chip } from 'primereact/chip'
-import { HTTP_RESPONSE } from '../../enums/http-responses.enum'
+import DataTableBasicDemo from "../../components/ui/table/Table";
+import { Loader } from "../../components/ui/loader/Loader";
+import { Tooltip } from "primereact/tooltip";
+import { ToasterService } from "../../services/toaster-service/toaster-service";
+import { CONSTANTS } from "../../constants/Constants";
+import { ButtonComponent } from "../../components/ui/button/Button";
+import { FormComponent } from "../../components/ui/form/form";
+import classes from "../aggregator-analytics/AggregatorAnalytics.module.scss";
+import _ from "lodash";
+import { FormType } from "../../schemas/FormField";
+import { AuthService } from "../../services/auth-service/auth.service";
+import { FILE_TYPES } from "../../enums/file-types.enum";
+import { ImageUrl } from "../../utils/ImageUrl";
+import { Chip } from "primereact/chip";
+import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 
 const Master: React.FC = () => {
-  const [companyMaster, setCompanyMaster] = useState<any>([])
-  const [currencyMaster, setCurrencyMaster] = useState([])
-  const [industryMaster, setIndustryMaster] = useState([])
-  const [accountsMaster, setAccountsMaster] = useState([])
-  const [productsMaster, setProductsMaster] = useState([])
-  const [projectsMaster, setProjectsMaster] = useState([])
-  const [taxMaster, setTaxMaster] = useState([])
-  const [countryMaster, setCountryMaster] = useState([])
-  const [stateMaster, setStateMaster] = useState([])
-  const [isFormValid, setIsFormValid] = useState(true)
-  const [showConfirmDialogue, setShowConfirmDialogue] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [actionPopupToggle, setActionPopupToggle] = useState<any>([])
-  const [loader, setLoader] = useState(false)
-  const [storeFormPopup, setFormPopup] = useState(false)
-  const [attachments, setAttachments]: any = useState([])
+  const [companyMaster, setCompanyMaster] = useState<any>([]);
+  const [currencyMaster, setCurrencyMaster] = useState([]);
+  const [industryMaster, setIndustryMaster] = useState([]);
+  const [accountsMaster, setAccountsMaster] = useState([]);
+  const [productsMaster, setProductsMaster] = useState([]);
+  const [projectsMaster, setProjectsMaster] = useState([]);
+  const [taxMaster, setTaxMaster] = useState([]);
+  const [countryMaster, setCountryMaster] = useState([]);
+  const [stateMaster, setStateMaster] = useState([]);
+  const [clientMaster, setClientMaster] = useState([]);
+  const [isFormValid, setIsFormValid] = useState(true);
+  const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
+  const [loader, setLoader] = useState(false);
+  const [storeFormPopup, setFormPopup] = useState(false);
+  const [openClientForm, setClientForm] = useState(false);
+  const [attachments, setAttachments]: any = useState([]);
 
-  const loggedInUserId = AuthService?.userInfo?.value?.userId
+  const loggedInUserId = AuthService?.userInfo?.value?.userId;
 
-  let patchData: any
+  let patchData: any;
 
-  const companyService = new CompanyMasterService()
-  const currencyService = new CurrencyMasterService()
-  const industryService = new IndustryMasterService()
-  const accountsService = new AccountsMasterService()
-  const productService = new ProductMasterService()
-  const projectService = new ProjectMasterService()
-  const taxService = new TaxMasterService()
-  const countryService = new CountryMasterService()
-  const stateService = new StateMasterService()
+  const companyService = new CompanyMasterService();
+  const currencyService = new CurrencyMasterService();
+  const industryService = new IndustryMasterService();
+  const accountsService = new AccountsMasterService();
+  const productService = new ProductMasterService();
+  const projectService = new ProjectMasterService();
+  const taxService = new TaxMasterService();
+  const countryService = new CountryMasterService();
+  const stateService = new StateMasterService();
+  const clientService = new ClientMasterService();
 
   useEffect(() => {
     switch (activeIndex) {
       case 0:
-        getCompanyMaster()
-        break
+        getCompanyMaster();
+        break;
       case 1:
-        getCurrencyMaster()
-        break
+        getCurrencyMaster();
+        break;
       case 2:
-        getAccountsMaster()
-        getCompanyMaster()
-        formatCompanyDetails()
-        break
+        getAccountsMaster();
+        getCompanyMaster();
+        formatCompanyDetails();
+        break;
       case 3:
-        getIndustryMaster()
-        break
+        getIndustryMaster();
+        break;
       case 4:
-        getProductMaster()
-        break
+        getProductMaster();
+        break;
       case 5:
-        getProjectMaster()
-        break
+        getProjectMaster();
+        break;
       case 6:
-        getTaxMaster()
-        break
+        getTaxMaster();
+        break;
       case 7:
-        getCountryMaster()
-        break
+        getCountryMaster();
+        break;
       case 8:
-        getStateMaster()
-        break
+        getStateMaster();
+        break;
+      case 9:
+        getClientMaster();
+        break;
       default:
-        break
+        break;
     }
-  }, [activeIndex])
+  }, [activeIndex]);
 
   const onTabChange = (e: any) => {
-    setActiveIndex(e.index)
-  }
+    setActiveIndex(e.index);
+  };
 
   const formatCompanyDetails = () => {
-    const companyList = companyMaster.map((company: any) => company?.companyName)
+    const companyList = companyMaster.map(
+      (company: any) => company?.companyName
+    );
 
-    accountFieldsStructure.companyName.options = companyList  
-    setAccountFieldsStructure(accountFieldsStructure)
-    accountsFormHandler(accountFieldsStructure)
-  }
+    accountFieldsStructure.companyName.options = companyList;
+    setAccountFieldsStructure(accountFieldsStructure);
+    accountsFormHandler(accountFieldsStructure);
+  };
 
   const getCompanyMaster = () => {
-    setLoader(true)
+    setLoader(true);
     companyService
       .getCompanyMaster()
       .then((response: any) => {
-        setLoader(false)
-        setCompanyMaster(response?.companies)
+        setLoader(false);
+        setCompanyMaster(response?.companies);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getCurrencyMaster = () => {
-    setLoader(true)
+    setLoader(true);
     currencyService
       .getCurrencyMaster()
       .then((response: any) => {
-        setLoader(false)
-        setCurrencyMaster(response?.currencies)
+        setLoader(false);
+        setCurrencyMaster(response?.currencies);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getIndustryMaster = () => {
-    setLoader(true)
+    setLoader(true);
     industryService
       .getIndustryMaster()
       .then((response: any) => {
-        setLoader(false)
-        setIndustryMaster(response?.industries)
+        setLoader(false);
+        setIndustryMaster(response?.industries);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getAccountsMaster = () => {
-    setLoader(true)
+    setLoader(true);
     accountsService
       .getAccountsMaster()
       .then((response: any) => {
-        setLoader(false)
-        setAccountsMaster(response?.accounts)
+        setLoader(false);
+        setAccountsMaster(response?.accounts);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getProductMaster = () => {
-    setLoader(true)
+    setLoader(true);
     productService
       .getProductMaster()
       .then((response: any) => {
-        setLoader(false)
-        setProductsMaster(response?.products)
+        setLoader(false);
+        setProductsMaster(response?.products);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getProjectMaster = () => {
-    setLoader(true)
+    setLoader(true);
     projectService
       .getProjectMaster()
       .then((response: any) => {
-        setLoader(false)
-        setProjectsMaster(response?.projects)
+        setLoader(false);
+        setProjectsMaster(response?.projects);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getTaxMaster = () => {
-    setLoader(true)
+    setLoader(true);
     taxService
       .getTaxMaster()
       .then((response: any) => {
-        setLoader(false)
-        setTaxMaster(response?.taxes)
+        setLoader(false);
+        setTaxMaster(response?.taxes);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getCountryMaster = () => {
-    setLoader(true)
+    setLoader(true);
     countryService
       .getCountryMaster()
       .then((response: any) => {
-        setLoader(false)
-        setCountryMaster(response?.countries)
+        setLoader(false);
+        setCountryMaster(response?.countries);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const getStateMaster = () => {
-    setLoader(true)
+    setLoader(true);
     stateService
       .getStateMaster()
       .then((response: any) => {
-        setLoader(false)
-        setStateMaster(response?.states)
+        setLoader(false);
+        setStateMaster(response?.states);
       })
       .catch((error) => {
-        setLoader(false)
-        return false
+        setLoader(false);
+        return false;
+      });
+  };
+
+  const getClientMaster = () => {
+    setLoader(true);
+    clientService
+      .getClientMaster()
+      .then((response: any) => {
+        setLoader(false);
+        setClientMaster(response?.clients);
       })
-  }
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
 
   const deactivateCompanyMaster = () => {
-    setLoader(true)
+    setLoader(true);
     companyService
       .deactivateCompanyMaster(patchData)
       .then(() => {
-        setLoader(false)
-        setShowConfirmDialogue(false)
+        setLoader(false);
+        setShowConfirmDialogue(false);
         ToasterService.show(
-          'Company record deactivated successfully',
+          "Company record deactivated successfully",
           CONSTANTS.SUCCESS
-        )
-        getCompanyMaster()
+        );
+        getCompanyMaster();
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const deactivateCurrencyMaster = () => {
-    setLoader(true)
+    setLoader(true);
     currencyService
       .deactivateCurrencyMaster(patchData)
       .then(() => {
-        setLoader(false)
-        setShowConfirmDialogue(false)
+        setLoader(false);
+        setShowConfirmDialogue(false);
         ToasterService.show(
-          'Currency record deactivated successfully',
+          "Currency record deactivated successfully",
           CONSTANTS.SUCCESS
-        )
-        getCurrencyMaster()
+        );
+        getCurrencyMaster();
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const deactivateIndustryMaster = () => {
-    setLoader(true)
+    setLoader(true);
     industryService
       .deactivateIndustryMaster(patchData)
       .then(() => {
-        setLoader(false)
-        setShowConfirmDialogue(false)
+        setLoader(false);
+        setShowConfirmDialogue(false);
         ToasterService.show(
-          'Industry record deactivated successfully',
+          "Industry record deactivated successfully",
           CONSTANTS.SUCCESS
-        )
-        getIndustryMaster()
+        );
+        getIndustryMaster();
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const deactivateAccountsMaster = () => {
-    setLoader(true)
+    setLoader(true);
     accountsService
       .deactivateAccountsMaster(patchData)
       .then(() => {
-        setLoader(false)
-        setShowConfirmDialogue(false)
+        setLoader(false);
+        setShowConfirmDialogue(false);
         ToasterService.show(
-          'Accounts record deactivated successfully',
+          "Accounts record deactivated successfully",
           CONSTANTS.SUCCESS
-        )
-        getAccountsMaster()
+        );
+        getAccountsMaster();
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const deactivateProductMaster = () => {
-    setLoader(true)
+    setLoader(true);
     productService
       .deactivateProductMaster(patchData)
       .then(() => {
-        setLoader(false)
-        setShowConfirmDialogue(false)
+        setLoader(false);
+        setShowConfirmDialogue(false);
         ToasterService.show(
-          'Product record deactivated successfully',
+          "Product record deactivated successfully",
           CONSTANTS.SUCCESS
-        )
-        getProductMaster()
+        );
+        getProductMaster();
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const deactivateProjectMaster = () => {
-    setLoader(true)
+    setLoader(true);
     projectService
       .deactivateProjectMaster(patchData)
       .then(() => {
-        setLoader(false)
-        setShowConfirmDialogue(false)
+        setLoader(false);
+        setShowConfirmDialogue(false);
         ToasterService.show(
-          'Project record deactivated successfully',
+          "Project record deactivated successfully",
           CONSTANTS.SUCCESS
-        )
-        getProjectMaster()
+        );
+        getProjectMaster();
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const deactivateTaxMaster = () => {
-    setLoader(true)
+    setLoader(true);
     taxService
       .deactivateTaxMaster(patchData)
       .then(() => {
-        setLoader(false)
-        setShowConfirmDialogue(false)
+        setLoader(false);
+        setShowConfirmDialogue(false);
         ToasterService.show(
-          'Tax record deactivated successfully',
+          "Tax record deactivated successfully",
           CONSTANTS.SUCCESS
-        )
-        getTaxMaster()
+        );
+        getTaxMaster();
       })
       .catch((error) => {
-        setLoader(false)
-        return false
-      })
-  }
+        setLoader(false);
+        return false;
+      });
+  };
 
   const openSaveForm = () => {
-    setFormPopup(true)
-  }
+    setFormPopup(true);
+  };
+
+  const openClientFormButton = () => {
+    setClientForm(true);
+  };
 
   const selectAttachment = (files: any) => {
-    setAttachments([])
+    setAttachments([]);
     if (files && files[0]) {
       _.each(files, (eventList) => {
         if (
           eventList.name
-            .split('.')
-            [eventList.name.split('.').length - 1].toLowerCase() ==
+            .split(".")
+            [eventList.name.split(".").length - 1].toLowerCase() ==
           FILE_TYPES.PDF
         ) {
           if (eventList.size > 10485760) {
             return ToasterService.show(
-              'file size is too large, allowed maximum size is 10 MB.',
-              'error'
-            )
+              "file size is too large, allowed maximum size is 10 MB.",
+              "error"
+            );
           } else {
-            setAttachments((prevVals: any) => [...prevVals, eventList])
+            setAttachments((prevVals: any) => [...prevVals, eventList]);
           }
         } else {
           ToasterService.show(
             `Invalid file format you can only attach the pdf here!`,
-            'error'
-          )
-          eventList = null
+            "error"
+          );
+          eventList = null;
         }
-      })
+      });
     }
-  }
+  };
 
   const removeFileHandler = () => {
-    setAttachments([])
-  }
+    setAttachments([]);
+  };
 
   const confirmDelete = () => {
     switch (activeIndex) {
       case 0:
-        deactivateCompanyMaster()
-        break
+        deactivateCompanyMaster();
+        break;
       case 1:
-        deactivateCurrencyMaster()
-        break
+        deactivateCurrencyMaster();
+        break;
       case 2:
-        deactivateAccountsMaster()
-        break
+        deactivateAccountsMaster();
+        break;
       case 3:
-        deactivateIndustryMaster()
-        break
+        deactivateIndustryMaster();
+        break;
       case 4:
-        deactivateProductMaster()
-        break
+        deactivateProductMaster();
+        break;
       case 5:
-        deactivateProjectMaster()
-        break
+        deactivateProjectMaster();
+        break;
       case 6:
-        deactivateTaxMaster()
-        break
+        deactivateTaxMaster();
+        break;
       default:
-        break
+        break;
     }
-  }
+  };
 
   const CompanyTableColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.isactive ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
               onClick={() => onDelete(rowData)}
             ></span>
@@ -462,14 +489,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Company Name',
-      fieldName: 'companyName',
-      textAlign: 'left',
+      label: "Company Name",
+      fieldName: "companyName",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'companyName',
+      fieldValue: "companyName",
       changeFilter: true,
-      placeholder: 'Company Name',
+      placeholder: "Company Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -486,9 +513,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Website',
-      fieldName: 'Website',
-      textAlign: 'left',
+      label: "Website",
+      fieldName: "Website",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -508,9 +535,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'CINNO',
-      fieldName: 'CINNO',
-      textAlign: 'left',
+      label: "CINNO",
+      fieldName: "CINNO",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -530,9 +557,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'IECode',
-      fieldName: 'IECode',
-      textAlign: 'left',
+      label: "IECode",
+      fieldName: "IECode",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -552,9 +579,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'PAN',
-      fieldName: 'PAN',
-      textAlign: 'left',
+      label: "PAN",
+      fieldName: "PAN",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -574,9 +601,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Email',
-      fieldName: 'Email',
-      textAlign: 'left',
+      label: "Email",
+      fieldName: "Email",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -596,9 +623,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Logo Path',
-      fieldName: 'logopath',
-      textAlign: 'left',
+      label: "Logo Path",
+      fieldName: "logopath",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -618,9 +645,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Description',
-      fieldName: 'description',
-      textAlign: 'left',
+      label: "Description",
+      fieldName: "description",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -640,42 +667,42 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Status',
-      fieldName: 'isactive',
-      textAlign: 'left',
+      label: "Status",
+      fieldName: "isactive",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
       body: (rowData: any) => (
         <div>
-          <span style={{ color: rowData?.isactive == 1 ? 'green' : 'red' }}>
-            {rowData?.isactive == 1 ? 'Active' : 'Inactive'}
+          <span style={{ color: rowData?.isactive == 1 ? "green" : "red" }}>
+            {rowData?.isactive == 1 ? "Active" : "Inactive"}
           </span>
         </div>
       ),
     },
-  ]
+  ];
 
   const CurrencyMasterColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.isActive ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
               onClick={() => onDelete(rowData)}
             ></span>
@@ -684,14 +711,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Currency Name',
-      fieldName: 'currencyName',
-      textAlign: 'left',
+      label: "Currency Name",
+      fieldName: "currencyName",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'currencyName',
+      fieldValue: "currencyName",
       changeFilter: true,
-      placeholder: 'Currency Name',
+      placeholder: "Currency Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -708,14 +735,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Currency Description',
-      fieldName: 'currencyDescription',
-      textAlign: 'left',
+      label: "Currency Description",
+      fieldName: "currencyDescription",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'currencyDescription',
+      fieldValue: "currencyDescription",
       changeFilter: true,
-      placeholder: 'Currency Description',
+      placeholder: "Currency Description",
       body: (rowData: any) => (
         <div>
           <span
@@ -732,14 +759,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Exchange Rate',
-      fieldName: 'exchangeRate',
-      textAlign: 'left',
+      label: "Exchange Rate",
+      fieldName: "exchangeRate",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'exchangeRate',
+      fieldValue: "exchangeRate",
       changeFilter: true,
-      placeholder: 'Exchange Rate',
+      placeholder: "Exchange Rate",
       body: (rowData: any) => (
         <div>
           <span
@@ -756,42 +783,42 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Status',
-      fieldName: 'isActive',
-      textAlign: 'left',
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
       body: (rowData: any) => (
         <div>
-          <span style={{ color: rowData?.isActive == 1 ? 'green' : 'red' }}>
-            {rowData?.isActive == 1 ? 'Active' : 'Inactive'}
+          <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
+            {rowData?.isActive == 1 ? "Active" : "Inactive"}
           </span>
         </div>
       ),
     },
-  ]
+  ];
 
   const IndustryMasterColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.isActive ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
               onClick={() => onDelete(rowData)}
             ></span>
@@ -800,14 +827,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Industry Name',
-      fieldName: 'industryName',
-      textAlign: 'left',
+      label: "Industry Name",
+      fieldName: "industryName",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'industryName',
+      fieldValue: "industryName",
       changeFilter: true,
-      placeholder: 'Industry Name',
+      placeholder: "Industry Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -824,14 +851,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Description',
-      fieldName: 'description',
-      textAlign: 'left',
+      label: "Description",
+      fieldName: "description",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'description',
+      fieldValue: "description",
       changeFilter: true,
-      placeholder: 'Description',
+      placeholder: "Description",
       body: (rowData: any) => (
         <div>
           <span
@@ -848,14 +875,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Industry Head',
-      fieldName: 'industryHead',
-      textAlign: 'left',
+      label: "Industry Head",
+      fieldName: "industryHead",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'industryHead',
+      fieldValue: "industryHead",
       changeFilter: true,
-      placeholder: 'Industry Head',
+      placeholder: "Industry Head",
       body: (rowData: any) => (
         <div>
           <span
@@ -872,42 +899,42 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Status',
-      fieldName: 'isActive',
-      textAlign: 'left',
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
       body: (rowData: any) => (
         <div>
-          <span style={{ color: rowData?.isActive == 1 ? 'green' : 'red' }}>
-            {rowData?.isActive == 1 ? 'Active' : 'Inactive'}
+          <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
+            {rowData?.isActive == 1 ? "Active" : "Inactive"}
           </span>
         </div>
       ),
     },
-  ]
+  ];
 
   const AccountsMasterColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.is_active ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
               onClick={() => onDelete(rowData)}
             ></span>
@@ -916,14 +943,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Company Name',
-      fieldName: 'company_name',
-      textAlign: 'left',
+      label: "Company Name",
+      fieldName: "company_name",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'company_name',
+      fieldValue: "company_name",
       changeFilter: true,
-      placeholder: 'Company Name',
+      placeholder: "Company Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -940,14 +967,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Account Type',
-      fieldName: 'account_type',
-      textAlign: 'left',
+      label: "Account Type",
+      fieldName: "account_type",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'account_type',
+      fieldValue: "account_type",
       changeFilter: true,
-      placeholder: 'Account Type',
+      placeholder: "Account Type",
       body: (rowData: any) => (
         <div>
           <span
@@ -964,9 +991,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Bank Name',
-      fieldName: 'bank_name',
-      textAlign: 'left',
+      label: "Bank Name",
+      fieldName: "bank_name",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -986,9 +1013,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Bank Address',
-      fieldName: 'bank_address',
-      textAlign: 'left',
+      label: "Bank Address",
+      fieldName: "bank_address",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -1008,9 +1035,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Account Number',
-      fieldName: 'account_no',
-      textAlign: 'left',
+      label: "Account Number",
+      fieldName: "account_no",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -1030,9 +1057,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'IFSC Code',
-      fieldName: 'ifsc_code',
-      textAlign: 'left',
+      label: "IFSC Code",
+      fieldName: "ifsc_code",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -1052,9 +1079,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'MICR Code',
-      fieldName: 'micr_code',
-      textAlign: 'left',
+      label: "MICR Code",
+      fieldName: "micr_code",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -1074,9 +1101,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Swift Code',
-      fieldName: 'routing_no_swift_code',
-      textAlign: 'left',
+      label: "Swift Code",
+      fieldName: "routing_no_swift_code",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -1096,9 +1123,9 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Bank Code',
-      fieldName: 'bank_code',
-      textAlign: 'left',
+      label: "Bank Code",
+      fieldName: "bank_code",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
@@ -1118,42 +1145,42 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Status',
-      fieldName: 'is_active',
-      textAlign: 'left',
+      label: "Status",
+      fieldName: "is_active",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
       body: (rowData: any) => (
         <div>
-          <span style={{ color: rowData?.is_active == 1 ? 'green' : 'red' }}>
-            {rowData?.is_active == 1 ? 'Active' : 'Inactive'}
+          <span style={{ color: rowData?.is_active == 1 ? "green" : "red" }}>
+            {rowData?.is_active == 1 ? "Active" : "Inactive"}
           </span>
         </div>
       ),
     },
-  ]
+  ];
 
   const ProductsMasterColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.isActive ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
               onClick={() => onDelete(rowData)}
             ></span>
@@ -1162,14 +1189,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Product Name',
-      fieldName: 'productName',
-      textAlign: 'left',
+      label: "Product Name",
+      fieldName: "productName",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'productName',
+      fieldValue: "productName",
       changeFilter: true,
-      placeholder: 'Product Name',
+      placeholder: "Product Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -1186,14 +1213,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Product Description',
-      fieldName: 'productDescription',
-      textAlign: 'left',
+      label: "Product Description",
+      fieldName: "productDescription",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'productDescription',
+      fieldValue: "productDescription",
       changeFilter: true,
-      placeholder: 'Product Description',
+      placeholder: "Product Description",
       body: (rowData: any) => (
         <div>
           <span
@@ -1210,42 +1237,42 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Status',
-      fieldName: 'isActive',
-      textAlign: 'left',
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
       body: (rowData: any) => (
         <div>
-          <span style={{ color: rowData?.isActive == 1 ? 'green' : 'red' }}>
-            {rowData?.isActive == 1 ? 'Active' : 'Inactive'}
+          <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
+            {rowData?.isActive == 1 ? "Active" : "Inactive"}
           </span>
         </div>
       ),
     },
-  ]
+  ];
 
   const ProjectsMasterColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.isActive ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
               onClick={() => onDelete(rowData)}
             ></span>
@@ -1254,14 +1281,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Project Name',
-      fieldName: 'projectName',
-      textAlign: 'left',
+      label: "Project Name",
+      fieldName: "projectName",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'projectName',
+      fieldValue: "projectName",
       changeFilter: true,
-      placeholder: 'Project Name',
+      placeholder: "Project Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -1278,14 +1305,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Project Description',
-      fieldName: 'projectDescription',
-      textAlign: 'left',
+      label: "Project Description",
+      fieldName: "projectDescription",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'projectDescription',
+      fieldValue: "projectDescription",
       changeFilter: true,
-      placeholder: 'Project Description',
+      placeholder: "Project Description",
       body: (rowData: any) => (
         <div>
           <span
@@ -1302,42 +1329,42 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Status',
-      fieldName: 'isActive',
-      textAlign: 'left',
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
       body: (rowData: any) => (
         <div>
-          <span style={{ color: rowData?.isActive == 1 ? 'green' : 'red' }}>
-            {rowData?.isActive == 1 ? 'Active' : 'Inactive'}
+          <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
+            {rowData?.isActive == 1 ? "Active" : "Inactive"}
           </span>
         </div>
       ),
     },
-  ]
+  ];
 
   const TaxMasterColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.isActive ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
               onClick={() => onDelete(rowData)}
             ></span>
@@ -1346,14 +1373,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Tax Type',
-      fieldName: 'taxType',
-      textAlign: 'left',
+      label: "Tax Type",
+      fieldName: "taxType",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'taxType',
+      fieldValue: "taxType",
       changeFilter: true,
-      placeholder: 'Tax Type',
+      placeholder: "Tax Type",
       body: (rowData: any) => (
         <div>
           <span
@@ -1370,14 +1397,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Tax Percentage',
-      fieldName: 'taxPercentage',
-      textAlign: 'left',
+      label: "Tax Percentage",
+      fieldName: "taxPercentage",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'taxPercentage',
+      fieldValue: "taxPercentage",
       changeFilter: true,
-      placeholder: 'Tax Percentage',
+      placeholder: "Tax Percentage",
       body: (rowData: any) => (
         <div>
           <span
@@ -1394,14 +1421,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Effective Date',
-      fieldName: 'effectiveDate',
-      textAlign: 'left',
+      label: "Effective Date",
+      fieldName: "effectiveDate",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'effectiveDate',
+      fieldValue: "effectiveDate",
       changeFilter: true,
-      placeholder: 'Effective Date',
+      placeholder: "Effective Date",
       body: (rowData: any) => (
         <div>
           <span
@@ -1418,32 +1445,32 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Status',
-      fieldName: 'isActive',
-      textAlign: 'left',
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
       body: (rowData: any) => (
         <div>
-          <span style={{ color: rowData?.isActive == 1 ? 'green' : 'red' }}>
-            {rowData?.isActive == 1 ? 'Active' : 'Inactive'}
+          <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
+            {rowData?.isActive == 1 ? "Active" : "Inactive"}
           </span>
         </div>
       ),
     },
-  ]
+  ];
 
   const CountryMasterColumns = [
     {
-      label: 'Country Code',
-      fieldName: 'code',
-      textAlign: 'left',
+      label: "Country Code",
+      fieldName: "code",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'code',
+      fieldValue: "code",
       changeFilter: true,
-      placeholder: 'Country Code',
+      placeholder: "Country Code",
       body: (rowData: any) => (
         <div>
           <span
@@ -1460,14 +1487,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Currency',
-      fieldName: 'currency',
-      textAlign: 'left',
+      label: "Currency",
+      fieldName: "currency",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'currency',
+      fieldValue: "currency",
       changeFilter: true,
-      placeholder: 'Currency',
+      placeholder: "Currency",
       body: (rowData: any) => (
         <div>
           <span
@@ -1484,14 +1511,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Country Name',
-      fieldName: 'name',
-      textAlign: 'left',
+      label: "Country Name",
+      fieldName: "name",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'name',
+      fieldValue: "name",
       changeFilter: true,
-      placeholder: 'Country Name',
+      placeholder: "Country Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -1508,14 +1535,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Language',
-      fieldName: 'language',
-      textAlign: 'left',
+      label: "Language",
+      fieldName: "language",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'language',
+      fieldValue: "language",
       changeFilter: true,
-      placeholder: 'Language',
+      placeholder: "Language",
       body: (rowData: any) => (
         <div>
           <span
@@ -1532,14 +1559,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Phone Code',
-      fieldName: 'phone_code',
-      textAlign: 'left',
+      label: "Phone Code",
+      fieldName: "phone_code",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'phone_code',
+      fieldValue: "phone_code",
       changeFilter: true,
-      placeholder: 'Phone Code',
+      placeholder: "Phone Code",
       body: (rowData: any) => (
         <div>
           <span
@@ -1555,27 +1582,27 @@ const Master: React.FC = () => {
         </div>
       ),
     },
-  ]
+  ];
 
   const StateMasterColumns = [
     {
-      label: 'Action',
-      fieldName: 'action',
-      textAlign: 'left',
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
       frozen: false,
       sort: false,
       filter: false,
       body: (rowData: any) => (
-        <div style={{ display: 'flex', gap: '10px', marginLeft: '20px' }}>
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             title="Update"
           ></span>
           {rowData.isActive ? (
             <span
               className="pi pi-trash"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               title="Deactivate"
             ></span>
           ) : null}
@@ -1583,14 +1610,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'State Code',
-      fieldName: 'state_code',
-      textAlign: 'left',
+      label: "State Code",
+      fieldName: "state_code",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'state_code',
+      fieldValue: "state_code",
       changeFilter: true,
-      placeholder: 'State Code',
+      placeholder: "State Code",
       body: (rowData: any) => (
         <div>
           <span
@@ -1607,14 +1634,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'State Name',
-      fieldName: 'state_name',
-      textAlign: 'left',
+      label: "State Name",
+      fieldName: "state_name",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'state_name',
+      fieldValue: "state_name",
       changeFilter: true,
-      placeholder: 'State Name',
+      placeholder: "State Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -1631,14 +1658,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: 'Country Name',
-      fieldName: 'country_name',
-      textAlign: 'left',
+      label: "Country Name",
+      fieldName: "country_name",
+      textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: 'country_name',
+      fieldValue: "country_name",
       changeFilter: true,
-      placeholder: 'Country Name',
+      placeholder: "Country Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -1654,442 +1681,1325 @@ const Master: React.FC = () => {
         </div>
       ),
     },
-  ]
+  ];
+
+  const ClientMasterColumns = [
+    {
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
+      frozen: false,
+      sort: false,
+      filter: false,
+      body: (rowData: any) => (
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
+          <span
+            className="pi pi-pencil"
+            style={{ cursor: "pointer" }}
+            title="Update"
+            onClick={() => onUpdate(rowData)}
+          ></span>
+          {rowData.isactive ? (
+            <span
+              className="pi pi-trash"
+              style={{ cursor: "pointer" }}
+              title="Deactivate"
+              onClick={() => onDelete(rowData)}
+            ></span>
+          ) : null}
+        </div>
+      ),
+    },
+    {
+      label: "Company Name",
+      fieldName: "company_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "company_name",
+      changeFilter: true,
+      placeholder: "Company Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.company_name}
+          >
+            {rowData.company_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Client Name",
+      fieldName: "name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "name",
+      changeFilter: true,
+      placeholder: "Client Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.name}
+          >
+            {rowData.name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Alias Name",
+      fieldName: "alias",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "alias",
+      changeFilter: true,
+      placeholder: "Alias Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.alias}
+          >
+            {rowData.alias}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "PAN Number",
+      fieldName: "pan_no",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "pan_no",
+      changeFilter: true,
+      placeholder: "PAN Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.pan_no}
+          >
+            {rowData.pan_no}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Address 1",
+      fieldName: "address1",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "address1",
+      changeFilter: true,
+      placeholder: "Address 1",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.address1}
+          >
+            {rowData.address1}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Address 2",
+      fieldName: "address2",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "address2",
+      changeFilter: true,
+      placeholder: "Address 2",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.address2}
+          >
+            {rowData.address2}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Address 3",
+      fieldName: "address3",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "address3",
+      changeFilter: true,
+      placeholder: "Address 3",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.address3}
+          >
+            {rowData.address3}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "PIN Number",
+      fieldName: "pin",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "pin",
+      changeFilter: true,
+      placeholder: "PIN Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.pin}
+          >
+            {rowData.pin}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Country Name",
+      fieldName: "country_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "country_name",
+      changeFilter: true,
+      placeholder: "Country Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.country_name}
+          >
+            {rowData.country_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "State Name",
+      fieldName: "state_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "state_name",
+      changeFilter: true,
+      placeholder: "State Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.state_name}
+          >
+            {rowData.state_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Polestar Bank Account Number",
+      fieldName: "polestar_bank_account_number",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "polestar_bank_account_number",
+      changeFilter: true,
+      placeholder: "Polestar Bank Account Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.polestar_bank_account_number}
+          >
+            {rowData.polestar_bank_account_number}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "GSTN Number",
+      fieldName: "gstn",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "gstn",
+      changeFilter: true,
+      placeholder: "GSTN Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.gstn}
+          >
+            {rowData.gstn}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Address 1",
+      fieldName: "client_ship_to_address1",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_address1",
+      changeFilter: true,
+      placeholder: "Shipping Address 1",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_address1}
+          >
+            {rowData.client_ship_to_address1}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Address 2",
+      fieldName: "client_ship_to_address2",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_address2",
+      changeFilter: true,
+      placeholder: "Shipping Address 2",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_address2}
+          >
+            {rowData.client_ship_to_address2}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Address 3",
+      fieldName: "client_ship_to_address3",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_address3",
+      changeFilter: true,
+      placeholder: "Shipping Address 3",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_address3}
+          >
+            {rowData.client_ship_to_address3}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping PIN",
+      fieldName: "client_ship_to_pin",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_pin",
+      changeFilter: true,
+      placeholder: "Shipping PIN",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_pin}
+          >
+            {rowData.client_ship_to_pin}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Country Name",
+      fieldName: "client_ship_to_country_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_country_name",
+      changeFilter: true,
+      placeholder: "Shipping Country Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_country_name}
+          >
+            {rowData.client_ship_to_country_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping State Name",
+      fieldName: "client_ship_to_state_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_state_name",
+      changeFilter: true,
+      placeholder: "Shipping State Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_state_name}
+          >
+            {rowData.client_ship_to_state_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping GSTN Number",
+      fieldName: "client_ship_to_gstn",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_gstn",
+      changeFilter: true,
+      placeholder: "Shipping GSTN Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_gstn}
+          >
+            {rowData.client_ship_to_gstn}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Salutation",
+      fieldName: "salutation",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "salutation",
+      changeFilter: true,
+      placeholder: "Salutation",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.salutation}
+          >
+            {rowData.salutation}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "First Name",
+      fieldName: "first_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "first_name",
+      changeFilter: true,
+      placeholder: "First Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.first_name}
+          >
+            {rowData.first_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Last Name",
+      fieldName: "last_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "last_name",
+      changeFilter: true,
+      placeholder: "Last Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.last_name}
+          >
+            {rowData.last_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Email",
+      fieldName: "email",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "email",
+      changeFilter: true,
+      placeholder: "Email",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.email}
+          >
+            {rowData.email}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Phone Number",
+      fieldName: "phone",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "phone",
+      changeFilter: true,
+      placeholder: "Phone Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.phone}
+          >
+            {rowData.phone}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "MSA Flag",
+      fieldName: "msa_flag",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "msa_flag",
+      changeFilter: true,
+      placeholder: "MSA Flag",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.msa_flag}
+          >
+            <span>
+              {rowData?.msa_flag === 1 ? "Yes" : "No"}
+            </span>
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Is Performa",
+      fieldName: "is_performa",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "is_performa",
+      changeFilter: true,
+      placeholder: "Is Performa",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.is_performa}
+          >
+            <span>
+              {rowData?.is_performa === 1 ? "Yes" : "No"}
+            </span>
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "MSA Start Date",
+      fieldName: "msa_start_date",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "msa_start_date",
+      changeFilter: true,
+      placeholder: "MSA Start Date",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.msa_start_date}
+          >
+            {rowData.msa_start_date}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "MSA End Date",
+      fieldName: "msa_end_date",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "msa_end_date",
+      changeFilter: true,
+      placeholder: "MSA End Date",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.msa_end_date}
+          >
+            {rowData.msa_end_date}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Non Solicitation Clause",
+      fieldName: "non_solicitation_clause",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "non_solicitation_clause",
+      changeFilter: true,
+      placeholder: "Non Solicitation Clause",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.non_solicitation_clause}
+          >
+            <span>
+              {rowData?.non_solicitation_clause === 1 ? "Yes" : "No"}
+            </span>
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Use Logo Permission",
+      fieldName: "use_logo_permission",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "use_logo_permission",
+      changeFilter: true,
+      placeholder: "Use Logo Permission",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.use_logo_permission}
+          >
+            <span>
+              {rowData?.use_logo_permission === 1 ? "Yes" : "No"}
+            </span>
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Client Category",
+      fieldName: "client_category",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_category",
+      changeFilter: true,
+      placeholder: "Client Category",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_category}
+          >
+            {rowData.client_category}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Servicing Type",
+      fieldName: "servicing_type",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "servicing_type",
+      changeFilter: true,
+      placeholder: "Servicing Type",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.servicing_type}
+          >
+            {rowData.servicing_type}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Missing MSA Deadline",
+      fieldName: "missing_msa_deadline",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "missing_msa_deadline",
+      changeFilter: true,
+      placeholder: "Missing MSA Deadline",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.missing_msa_deadline}
+          >
+            <span>
+              {rowData?.missing_msa_deadline === 1 ? "Yes" : "No"}
+            </span>
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Is MSA Missing",
+      fieldName: "is_msa_missing",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "is_msa_missing",
+      changeFilter: true,
+      placeholder: "Is MSA Missing",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.is_msa_missing}
+          >
+            <span>
+              {rowData?.is_msa_missing === 1 ? "Yes" : "No"}
+            </span>
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Logopath",
+      fieldName: "logopath",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "logopath",
+      changeFilter: true,
+      placeholder: "Logopath",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.logopath}
+          >
+            {rowData.logopath}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+  ];
 
   const onDelete = (data: unknown) => {
-    patchData = data
+    patchData = data;
     setActionPopupToggle({
       displayToggle: false,
-      title: 'Delete',
-      message: 'Are you sure you want to deactivate this record',
+      title: "Delete",
+      message: "Are you sure you want to deactivate this record",
       acceptFunction: confirmDelete,
-    })
-    setShowConfirmDialogue(true)
-  }
+    });
+    setShowConfirmDialogue(true);
+  };
 
-  const [stateData, setStateData] = useState<any>()
+  const [stateData, setStateData] = useState<any>();
 
   const onUpdate = (data: any) => {
-    setStateData(data)
+    setStateData(data);
     switch (activeIndex) {
       case 0:
-        updateCompanyMaster(data)
-        break
+        updateCompanyMaster(data);
+        break;
       case 1:
-        updateCurrencyMaster(data)
-        break
+        updateCurrencyMaster(data);
+        break;
       case 2:
-        updateAccountsMaster(data)
-        break
+        updateAccountsMaster(data);
+        break;
       case 3:
-        updateIndustryMaster(data)
-        break
+        updateIndustryMaster(data);
+        break;
       case 4:
-        updateProductMaster(data)
-        break
+        updateProductMaster(data);
+        break;
       case 5:
-        updateProjectMaster(data)
-        break
+        updateProjectMaster(data);
+        break;
       case 6:
-        updateTaxMaster(data)
-        break
+        updateTaxMaster(data);
+        break;
       default:
-        break
+        break;
     }
-    setFormPopup(true)
-  }
+    setFormPopup(true);
+  };
 
   const onPopUpClose = (e?: any) => {
-    setShowConfirmDialogue(false)
-  }
+    setShowConfirmDialogue(false);
+  };
 
   const CompanyFormFields = {
     companyName: {
-      inputType: 'inputtext',
-      label: 'Company Name',
+      inputType: "inputtext",
+      label: "Company Name",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     Website: {
-      inputType: 'inputtext',
-      label: 'Website',
+      inputType: "inputtext",
+      label: "Website",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     CINNO: {
-      inputType: 'inputtext',
-      label: 'CINNO',
+      inputType: "inputtext",
+      label: "CINNO",
       value: null,
       validation: {
         required: true,
         // minlength: 2,
         // maxlength: 10,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     IECode: {
-      inputType: 'inputtext',
-      label: 'IECode',
+      inputType: "inputtext",
+      label: "IECode",
       value: null,
       validation: {
         required: true,
         // minlength: 2,
         // maxlength: 100,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     PAN: {
-      inputType: 'inputtext',
-      label: 'PAN',
+      inputType: "inputtext",
+      label: "PAN",
       value: null,
       validation: {
         required: true,
         // minlength: 2,
         // maxlength: 100,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     Email: {
-      inputType: 'inputtext',
-      label: 'Email',
+      inputType: "inputtext",
+      label: "Email",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     description: {
-      inputType: 'inputtextarea',
-      label: 'Description',
+      inputType: "inputtextarea",
+      label: "Description",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
       rows: 3,
     },
-  }
+  };
 
   const updateCompanyMaster = (data: any) => {
     try {
-      CompanyFormFields.companyName.value = data?.companyName
-      CompanyFormFields.Website.value = data?.Website
-      CompanyFormFields.CINNO.value = data?.CINNO
-      CompanyFormFields.IECode.value = data?.IECode
-      CompanyFormFields.PAN.value = data?.PAN
-      CompanyFormFields.Email.value = data?.Email
-      CompanyFormFields.description.value = data?.description
-      setCompanyForm(_.cloneDeep(CompanyFormFields))
+      CompanyFormFields.companyName.value = data?.companyName;
+      CompanyFormFields.Website.value = data?.Website;
+      CompanyFormFields.CINNO.value = data?.CINNO;
+      CompanyFormFields.IECode.value = data?.IECode;
+      CompanyFormFields.PAN.value = data?.PAN;
+      CompanyFormFields.Email.value = data?.Email;
+      CompanyFormFields.description.value = data?.description;
+      setCompanyForm(_.cloneDeep(CompanyFormFields));
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }
+  };
 
   const CurrencyFormFields = {
     currencyName: {
-      inputType: 'inputtext',
-      label: 'Currency Name',
+      inputType: "inputtext",
+      label: "Currency Name",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
     },
     currencyDescription: {
-      inputType: 'inputtextarea',
-      label: 'Currency Description',
+      inputType: "inputtextarea",
+      label: "Currency Description",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
       row: 3,
     },
     exchangeRate: {
-      inputType: 'inputtext',
-      label: 'Exchange Rate',
+      inputType: "inputtext",
+      label: "Exchange Rate",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
     },
-  }
+  };
 
   const updateCurrencyMaster = (data: any) => {
     try {
-      CurrencyFormFields.currencyName.value = data?.currencyName
-      CurrencyFormFields.currencyDescription.value = data?.currencyDescription
-      CurrencyFormFields.exchangeRate.value = data?.exchangeRate
-      setCurrencyForm(_.cloneDeep(CurrencyFormFields))
+      CurrencyFormFields.currencyName.value = data?.currencyName;
+      CurrencyFormFields.currencyDescription.value = data?.currencyDescription;
+      CurrencyFormFields.exchangeRate.value = data?.exchangeRate;
+      setCurrencyForm(_.cloneDeep(CurrencyFormFields));
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }
+  };
 
   const AccountsFormFields = {
     companyName: {
-      inputType: 'singleSelect',
-      label: 'Company Name',
+      inputType: "singleSelect",
+      label: "Company Name",
       options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     account_type: {
-      inputType: 'singleSelect',
-      label: 'Account Type',
-      options: ['Domestic', 'International'],
+      inputType: "singleSelect",
+      label: "Account Type",
+      options: ["Domestic", "International"],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     bank_name: {
-      inputType: 'inputtext',
-      label: 'Bank Name',
+      inputType: "inputtext",
+      label: "Bank Name",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     bank_address: {
-      inputType: 'inputtext',
-      label: 'Bank Address',
+      inputType: "inputtext",
+      label: "Bank Address",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     account_no: {
-      inputType: 'inputtext',
-      label: 'Account Number',
+      inputType: "inputtext",
+      label: "Account Number",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     ifsc_code: {
-      inputType: 'inputtext',
-      label: 'IFSC Code',
+      inputType: "inputtext",
+      label: "IFSC Code",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     micr_code: {
-      inputType: 'inputtext',
-      label: 'MICR Code',
+      inputType: "inputtext",
+      label: "MICR Code",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
       rows: 3,
     },
     routing_no_swift_code: {
-      inputType: 'inputtext',
-      label: 'Swift Code',
+      inputType: "inputtext",
+      label: "Swift Code",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
       rows: 3,
     },
     bank_code: {
-      inputType: 'inputtext',
-      label: 'Bank Code',
+      inputType: "inputtext",
+      label: "Bank Code",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
       rows: 3,
     },
-  }
+  };
 
   const updateAccountsMaster = (data: any) => {
     try {
-      accountFieldsStructure.companyName.value = data?.company_name
-      accountFieldsStructure.account_type.value = data?.account_type
-      accountFieldsStructure.bank_name.value = data?.bank_name
-      accountFieldsStructure.bank_address.value = data?.bank_address
-      accountFieldsStructure.account_no.value = data?.account_no
-      accountFieldsStructure.account_no.value = data?.account_no
-      accountFieldsStructure.ifsc_code.value = data?.ifsc_code
-      accountFieldsStructure.micr_code.value = data?.micr_code
-      accountFieldsStructure.routing_no_swift_code.value = data?.routing_no_swift_code
-      accountFieldsStructure.bank_code.value = data?.bank_code
-      accountFieldsStructure.bank_code.value = data?.bank_code
-      setAccountForm(_.cloneDeep(accountFieldsStructure))
+      accountFieldsStructure.companyName.value = data?.company_name;
+      accountFieldsStructure.account_type.value = data?.account_type;
+      accountFieldsStructure.bank_name.value = data?.bank_name;
+      accountFieldsStructure.bank_address.value = data?.bank_address;
+      accountFieldsStructure.account_no.value = data?.account_no;
+      accountFieldsStructure.account_no.value = data?.account_no;
+      accountFieldsStructure.ifsc_code.value = data?.ifsc_code;
+      accountFieldsStructure.micr_code.value = data?.micr_code;
+      accountFieldsStructure.routing_no_swift_code.value =
+        data?.routing_no_swift_code;
+      accountFieldsStructure.bank_code.value = data?.bank_code;
+      accountFieldsStructure.bank_code.value = data?.bank_code;
+      setAccountForm(_.cloneDeep(accountFieldsStructure));
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }
+  };
 
-  const [accountFieldsStructure, setAccountFieldsStructure]: any = useState(AccountsFormFields)
+  const [accountFieldsStructure, setAccountFieldsStructure]: any =
+    useState(AccountsFormFields);
 
   const IndustryFormFields = {
     industryName: {
-      inputType: 'inputtext',
-      label: 'Industry Name',
+      inputType: "inputtext",
+      label: "Industry Name",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
     },
     description: {
-      inputType: 'inputtextarea',
-      label: 'Description',
+      inputType: "inputtextarea",
+      label: "Description",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
       rows: 3,
     },
     industryHead: {
-      inputType: 'inputtext',
-      label: 'Industry Head',
+      inputType: "inputtext",
+      label: "Industry Head",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
     },
-  }
+  };
 
   const updateIndustryMaster = (data: any) => {
     try {
-      IndustryFormFields.industryName.value = data?.industryName
-      IndustryFormFields.description.value = data?.description
-      IndustryFormFields.industryHead.value = data?.industryHead
-      setIndustryForm(_.cloneDeep(IndustryFormFields))
+      IndustryFormFields.industryName.value = data?.industryName;
+      IndustryFormFields.description.value = data?.description;
+      IndustryFormFields.industryHead.value = data?.industryHead;
+      setIndustryForm(_.cloneDeep(IndustryFormFields));
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }
+  };
 
   const ProductFormFields = {
     productName: {
-      inputType: 'inputtext',
-      label: 'Product Name',
+      inputType: "inputtext",
+      label: "Product Name",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
     },
     productDescription: {
-      inputType: 'inputtextarea',
-      label: 'Product Description',
+      inputType: "inputtextarea",
+      label: "Product Description",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
       rows: 3,
     },
-  }
+  };
 
   const updateProductMaster = (data: any) => {
     try {
-      ProductFormFields.productName.value = data?.productName
-      ProductFormFields.productDescription.value = data?.productDescription
-      setProductForm(_.cloneDeep(ProductFormFields))
+      ProductFormFields.productName.value = data?.productName;
+      ProductFormFields.productDescription.value = data?.productDescription;
+      setProductForm(_.cloneDeep(ProductFormFields));
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }
+  };
 
   const ProjectFormFields = {
     projectName: {
-      inputType: 'inputtext',
-      label: 'Project Name',
+      inputType: "inputtext",
+      label: "Project Name",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
     },
     projectDescription: {
-      inputType: 'inputtextarea',
-      label: 'Project Description',
+      inputType: "inputtextarea",
+      label: "Project Description",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-12',
+      fieldWidth: "col-md-12",
       rows: 3,
     },
-  }
+  };
 
   const updateProjectMaster = (data: any) => {
     try {
-      ProjectFormFields.projectName.value = data?.projectName
-      ProjectFormFields.projectDescription.value = data?.projectDescription
-      setProjectForm(_.cloneDeep(ProjectFormFields))
+      ProjectFormFields.projectName.value = data?.projectName;
+      ProjectFormFields.projectDescription.value = data?.projectDescription;
+      setProjectForm(_.cloneDeep(ProjectFormFields));
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }
+  };
 
   const TaxFormFields = {
     taxType: {
-      inputType: 'inputtext',
-      label: 'Tax Type',
+      inputType: "inputtext",
+      label: "Tax Type",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     taxPercentage: {
-      inputType: 'inputtext',
-      label: 'Tax Percentage',
+      inputType: "inputtext",
+      label: "Tax Percentage",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
     effectiveDate: {
-      inputType: 'singleDatePicker',
-      label: 'Effective Date',
+      inputType: "singleDatePicker",
+      label: "Effective Date",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: 'col-md-6',
+      fieldWidth: "col-md-6",
     },
-  }
+  };
 
   const updateTaxMaster = (data: any) => {
     try {
-      console.log('data', data)
-      TaxFormFields.taxType.value = data?.taxType
-      TaxFormFields.taxPercentage.value = data?.taxPercentage
-      TaxFormFields.effectiveDate.value = data?.effectiveDate
-      setTaxForm(_.cloneDeep(TaxFormFields))
+      console.log("data", data);
+      TaxFormFields.taxType.value = data?.taxType;
+      TaxFormFields.taxPercentage.value = data?.taxPercentage;
+      TaxFormFields.effectiveDate.value = data?.effectiveDate;
+      setTaxForm(_.cloneDeep(TaxFormFields));
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }
+  };
 
   // const CountryFormFields = {
   //   code: {
@@ -2141,95 +3051,95 @@ const Master: React.FC = () => {
 
   const [CompanyForm, setCompanyForm] = useState<any>(
     _.cloneDeep(CompanyFormFields)
-  )
+  );
 
   const [CurrencyForm, setCurrencyForm] = useState<any>(
     _.cloneDeep(CurrencyFormFields)
-  )
+  );
 
   const [AccountForm, setAccountForm] = useState<any>(
     _.cloneDeep(accountFieldsStructure)
-  )
+  );
 
   const [IndustryForm, setIndustryForm] = useState<any>(
     _.cloneDeep(IndustryFormFields)
-  )
+  );
 
   const [ProductForm, setProductForm] = useState<any>(
     _.cloneDeep(ProductFormFields)
-  )
+  );
 
   const [ProjectForm, setProjectForm] = useState<any>(
     _.cloneDeep(ProjectFormFields)
-  )
+  );
 
   // const [CountryForm, setCountryForm] = useState<any>(
   //   _.cloneDeep(CountryFormFields)
   // )
 
-  const [TaxForm, setTaxForm] = useState<any>(_.cloneDeep(TaxFormFields))
+  const [TaxForm, setTaxForm] = useState<any>(_.cloneDeep(TaxFormFields));
 
   const closeFormPopup = () => {
-    setFormPopup(false)
-    setCompanyForm(_.cloneDeep(CompanyFormFields))
-    setCurrencyForm(_.cloneDeep(CurrencyFormFields))
-    setAccountForm(_.cloneDeep(accountFieldsStructure))
-    setIndustryForm(_.cloneDeep(IndustryFormFields))
-    setProductForm(_.cloneDeep(ProductFormFields))
-    setProjectForm(_.cloneDeep(ProjectFormFields))
-    setTaxForm(_.cloneDeep(TaxFormFields))
+    setFormPopup(false);
+    setCompanyForm(_.cloneDeep(CompanyFormFields));
+    setCurrencyForm(_.cloneDeep(CurrencyFormFields));
+    setAccountForm(_.cloneDeep(accountFieldsStructure));
+    setIndustryForm(_.cloneDeep(IndustryFormFields));
+    setProductForm(_.cloneDeep(ProductFormFields));
+    setProjectForm(_.cloneDeep(ProjectFormFields));
+    setTaxForm(_.cloneDeep(TaxFormFields));
     // setCountryForm(_.cloneDeep(CountryFormFields))
-    setAttachments([])
-  }
+    setAttachments([]);
+  };
 
   const companyFormHandler = (form: FormType) => {
-    setCompanyForm(form)
-  }
+    setCompanyForm(form);
+  };
 
   const currencyFormHandler = (form: FormType) => {
-    setCurrencyForm(form)
-  }
+    setCurrencyForm(form);
+  };
 
   const accountsFormHandler = (form: FormType) => {
-    setAccountForm(form)
-  }
+    setAccountForm(form);
+  };
 
   const industryFormHandler = (form: FormType) => {
-    setIndustryForm(form)
-  }
+    setIndustryForm(form);
+  };
 
   const productFormHandler = (form: FormType) => {
-    setProductForm(form)
-  }
+    setProductForm(form);
+  };
 
   const projectFormHandler = (form: FormType) => {
-    setProjectForm(form)
-  }
+    setProjectForm(form);
+  };
 
   const taxFormHandler = (form: FormType) => {
-    setTaxForm(form)
-  }
+    setTaxForm(form);
+  };
 
   // const countryFormHandler = (form: FormType) => {
   //   setCountryForm(form)
   // }
 
   const createNewCompany = (event: FormEvent) => {
-    event.preventDefault()
-    let companyValidityFlag = true
-    const companyFormValid: boolean[] = []
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
     _.each(CompanyForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid)
-        companyValidityFlag = companyValidityFlag && item.valid
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
       }
-    })
+    });
 
-    setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
-      const formData: any = new FormData()
+      const formData: any = new FormData();
 
       const obj = {
         companyName: CompanyForm?.companyName?.value,
@@ -2241,14 +3151,14 @@ const Master: React.FC = () => {
         description: CompanyForm?.description?.value,
         isactive: 1,
         updatedBy: loggedInUserId,
-      }
+      };
 
       Object.entries(obj).forEach(([key, value]: any) => {
-        formData.set(key, value)
-      })
+        formData.set(key, value);
+      });
 
       if (attachments?.length) {
-        formData.set('file', attachments[0])
+        formData.set("file", attachments[0]);
       }
 
       if (!stateData?.id) {
@@ -2256,61 +3166,61 @@ const Master: React.FC = () => {
           .createCompanyMaster(formData)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({})
-              closeFormPopup()
-              getCompanyMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getCompanyMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       } else {
-        const formData: any = new FormData()
-        const updatePayload = { ...obj, companyId: stateData?.id }
+        const formData: any = new FormData();
+        const updatePayload = { ...obj, companyId: stateData?.id };
 
         Object.entries(updatePayload).forEach(([key, value]: any) => {
-          formData.set(key, value)
-        })
+          formData.set(key, value);
+        });
 
         if (attachments?.length) {
-          formData.set('file', attachments[0])
+          formData.set("file", attachments[0]);
         }
 
         companyService
           .updateCompanyMaster(formData)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({})
-              closeFormPopup()
-              getCompanyMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getCompanyMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       }
     } else {
-      ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const createNewCurrency = (event: FormEvent) => {
-    event.preventDefault()
-    let companyValidityFlag = true
-    const companyFormValid: boolean[] = []
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
     _.each(CurrencyForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid)
-        companyValidityFlag = companyValidityFlag && item.valid
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
       }
-    })
+    });
 
-    setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
       const obj = {
@@ -2319,61 +3229,64 @@ const Master: React.FC = () => {
         exchangeRate: CurrencyForm?.exchangeRate?.value,
         isActive: 1,
         updatedBy: loggedInUserId,
-      }
+      };
 
       if (!stateData?.id) {
         currencyService
           .createCurrencyMaster(obj)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({})
-              closeFormPopup()
-              getCurrencyMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getCurrencyMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       } else {
-        const updatePayload = { ...obj, currencyId: stateData?.id }
+        const updatePayload = { ...obj, currencyId: stateData?.id };
 
         currencyService
           .updateCurrencyMaster(updatePayload)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({})
-              closeFormPopup()
-              getCurrencyMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getCurrencyMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       }
     } else {
-      ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const createNewAccount = (event: FormEvent) => {
-    event.preventDefault()
-    let companyValidityFlag = true
-    const companyFormValid: boolean[] = []
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
     _.each(AccountForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid)
-        companyValidityFlag = companyValidityFlag && item.valid
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
       }
-    })
+    });
 
-    const companyId = companyMaster.find((company: any) => company.companyName === AccountForm.companyName.value)?.id ?? null;
+    const companyId =
+      companyMaster.find(
+        (company: any) => company.companyName === AccountForm.companyName.value
+      )?.id ?? null;
 
-    setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
       const obj = {
@@ -2388,60 +3301,59 @@ const Master: React.FC = () => {
         bankCode: AccountForm?.bank_code?.value,
         isActive: 1,
         updatedBy: loggedInUserId,
-      }
+      };
 
-      if(!stateData?.id) {
+      if (!stateData?.id) {
         accountsService
-        .createAccountsMaster(obj)
-        .then((response: any) => {
-          if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-            setStateData({})
-            closeFormPopup()
-            getAccountsMaster()
-            ToasterService.show(response?.message, CONSTANTS.SUCCESS)
-          }
-        })
-        .catch((error: any) => {
-          setStateData({})
-          ToasterService.show(error, CONSTANTS.ERROR)
-        })
-      }
-      else {
-        const updatePayload = { ...obj, accountId: stateData?.id }
+          .createAccountsMaster(obj)
+          .then((response: any) => {
+            if (response?.statusCode == HTTP_RESPONSE.CREATED) {
+              setStateData({});
+              closeFormPopup();
+              getAccountsMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      } else {
+        const updatePayload = { ...obj, accountId: stateData?.id };
 
         accountsService
-        .updateAccountsMaster(updatePayload)
-        .then((response: any) => {
-          if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-            setStateData({})
-            closeFormPopup()
-            getAccountsMaster()
-            ToasterService.show(response?.message, CONSTANTS.SUCCESS)
-          }
-        })
-        .catch((error: any) => {
-          setStateData({})
-          ToasterService.show(error, CONSTANTS.ERROR)
-        })
+          .updateAccountsMaster(updatePayload)
+          .then((response: any) => {
+            if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
+              setStateData({});
+              closeFormPopup();
+              getAccountsMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       }
     } else {
-      ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const createNewIndustry = (event: FormEvent) => {
-    event.preventDefault()
-    let companyValidityFlag = true
-    const companyFormValid: boolean[] = []
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
     _.each(IndustryForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid)
-        companyValidityFlag = companyValidityFlag && item.valid
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
       }
-    })
+    });
 
-    setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
       const obj = {
@@ -2450,59 +3362,59 @@ const Master: React.FC = () => {
         industryHead: IndustryForm?.industryHead?.value,
         isActive: 1,
         updatedBy: loggedInUserId,
-      }
+      };
 
       if (!stateData?.id) {
         industryService
           .createIndustryMaster(obj)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({})
-              closeFormPopup()
-              getIndustryMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getIndustryMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       } else {
-        const updatePayload = { ...obj, industryId: stateData?.id }
+        const updatePayload = { ...obj, industryId: stateData?.id };
 
         industryService
           .updateIndustryMaster(updatePayload)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({})
-              closeFormPopup()
-              getIndustryMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getIndustryMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       }
     } else {
-      ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const createNewProduct = (event: FormEvent) => {
-    event.preventDefault()
-    let companyValidityFlag = true
-    const companyFormValid: boolean[] = []
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
     _.each(ProductForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid)
-        companyValidityFlag = companyValidityFlag && item.valid
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
       }
-    })
+    });
 
-    setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
       const obj = {
@@ -2510,59 +3422,59 @@ const Master: React.FC = () => {
         productDescription: ProductForm?.productDescription?.value,
         isActive: 1,
         updatedBy: loggedInUserId,
-      }
+      };
 
       if (!stateData?.id) {
         productService
           .createProductMaster(obj)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({})
-              closeFormPopup()
-              getProductMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getProductMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       } else {
-        const updatePayload = { ...obj, productId: stateData?.id }
+        const updatePayload = { ...obj, productId: stateData?.id };
 
         productService
           .updateProductMaster(updatePayload)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({})
-              closeFormPopup()
-              getProductMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getProductMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       }
     } else {
-      ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const createNewProject = (event: FormEvent) => {
-    event.preventDefault()
-    let companyValidityFlag = true
-    const companyFormValid: boolean[] = []
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
     _.each(ProjectForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid)
-        companyValidityFlag = companyValidityFlag && item.valid
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
       }
-    })
+    });
 
-    setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
       const obj = {
@@ -2570,59 +3482,59 @@ const Master: React.FC = () => {
         projectDescription: ProjectForm?.projectDescription?.value,
         isActive: 1,
         updatedBy: loggedInUserId,
-      }
+      };
 
       if (!stateData?.id) {
         projectService
           .createProjectMaster(obj)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({})
-              closeFormPopup()
-              getProjectMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getProjectMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       } else {
-        const updatePayload = { ...obj, projectId: stateData?.id }
+        const updatePayload = { ...obj, projectId: stateData?.id };
 
         projectService
           .updateProjectMaster(updatePayload)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({})
-              closeFormPopup()
-              getProjectMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getProjectMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       }
     } else {
-      ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const createNewTax = (event: FormEvent) => {
-    event.preventDefault()
-    let companyValidityFlag = true
-    const companyFormValid: boolean[] = []
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
     _.each(TaxForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid)
-        companyValidityFlag = companyValidityFlag && item.valid
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
       }
-    })
+    });
 
-    setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
       const obj = {
@@ -2631,45 +3543,45 @@ const Master: React.FC = () => {
         effectiveDate: TaxForm?.effectiveDate?.value,
         isactive: 1,
         updatedBy: loggedInUserId,
-      }
+      };
 
       if (!stateData?.id) {
         taxService
           .createTaxMaster(obj)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({})
-              closeFormPopup()
-              getTaxMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getTaxMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       } else {
-        const updatePayload = { ...obj, taxId: stateData?.id }
+        const updatePayload = { ...obj, taxId: stateData?.id };
 
         taxService
           .updateTaxMaster(updatePayload)
           .then((response: any) => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({})
-              closeFormPopup()
-              getTaxMaster()
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS)
+              setStateData({});
+              closeFormPopup();
+              getTaxMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
           .catch((error: any) => {
-            setStateData({})
-            ToasterService.show(error, CONSTANTS.ERROR)
-          })
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
       }
     } else {
-      ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   // const createNewCountry = (event: FormEvent) => {
   //   event.preventDefault()
@@ -2970,11 +3882,11 @@ const Master: React.FC = () => {
                   </div>
                 </div>
                 <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                    <FormComponent
-                      form={_.cloneDeep(AccountForm)}
-                      formUpdateEvent={accountsFormHandler}
-                      isFormValidFlag={isFormValid}
-                    />
+                  <FormComponent
+                    form={_.cloneDeep(AccountForm)}
+                    formUpdateEvent={accountsFormHandler}
+                    isFormValidFlag={isFormValid}
+                  />
                 </div>
 
                 <div className="popup-lower-btn">
@@ -3396,9 +4308,122 @@ const Master: React.FC = () => {
             </div>
           ) : null}
         </TabPanel>
+        <TabPanel header="Client">
+          {openClientForm ? (
+            <TabView activeIndex={activeIndex} onTabChange={onTabChange}>
+              <TabPanel header="Client">
+                {/* <FormComponent
+                  form={_.cloneDeep(ClientForm)}
+                  formUpdateEvent={clientFormHandler}
+                  isFormValidFlag={isFormValid}
+                ></FormComponent> */}
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={activeIndex}
+                  />
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={activeIndex}
+                  />
+                </div>
+              </TabPanel>
+              <TabPanel header="Client Bill To">
+                <FormComponent
+                  form={_.cloneDeep(CompanyForm)}
+                  formUpdateEvent={companyFormHandler}
+                  isFormValidFlag={isFormValid}
+                ></FormComponent>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={activeIndex}
+                  />
+                </div>
+              </TabPanel>
+              <TabPanel header="Client Ship To">
+                <FormComponent
+                  form={_.cloneDeep(CompanyForm)}
+                  formUpdateEvent={companyFormHandler}
+                  isFormValidFlag={isFormValid}
+                ></FormComponent>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={activeIndex}
+                  />
+                </div>
+              </TabPanel>
+              <TabPanel header="Contact">
+                <FormComponent
+                  form={_.cloneDeep(CompanyForm)}
+                  formUpdateEvent={companyFormHandler}
+                  isFormValidFlag={isFormValid}
+                ></FormComponent>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={activeIndex}
+                  />
+                </div>
+              </TabPanel>
+            </TabView>
+          ) : (
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  marginBottom: "0.5em",
+                }}
+              >
+                <ButtonComponent
+                  label="New Client"
+                  icon="pi pi-check"
+                  iconPos="right"
+                  submitEvent={openClientFormButton}
+                />
+              </div>
+              <p className="m-0">
+                <DataTableBasicDemo
+                  data={clientMaster}
+                  column={ClientMasterColumns}
+                  showGridlines={true}
+                  resizableColumns={true}
+                  rows={20}
+                  paginator={true}
+                  sortable={true}
+                  headerRequired={true}
+                  scrollHeight={"calc(100vh - 80px)"}
+                  downloadedfileName={"Brandwise_Denomination_table"}
+                />
+                {showConfirmDialogue ? (
+                  <ConfirmDialogue
+                    actionPopupToggle={actionPopupToggle}
+                    onCloseFunction={onPopUpClose}
+                  />
+                ) : null}
+              </p>
+            </>
+          )}
+        </TabPanel>
       </TabView>
     </>
   );
-}
+};
 
-export default Master
+export default Master;

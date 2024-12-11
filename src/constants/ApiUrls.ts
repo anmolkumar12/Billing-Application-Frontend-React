@@ -15,6 +15,7 @@ export const APIURLS = {
   GET_TAX_MASTER: '/api/masters/taxTypeList',
   GET_COUNTRY_MASTER: '/api/masters/countriesList',
   GET_STATE_MASTER: '/api/masters/statesList',
+  GET_CLIENT_MASTER: '/api/masters/clientsList',
   TOGGLE_COMPANY_STATUS: '/api/masters/activateDeactivate',
   TOGGLE_CURRENCY_STATUS: '/api/masters/toggleCurrencyActiveStatus',
   TOGGLE_INDUSTRY_STATUS: '/api/masters/toggleIndustryActiveStatus',
