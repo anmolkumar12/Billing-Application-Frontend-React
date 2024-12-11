@@ -226,8 +226,8 @@ const Payments: React.FC = () => {
         {rowData?.couponCount ? (
           <div
             onClick={() => {
-              setCouponDetailsPopup(true),
-                voucherDetails(rowData?.invoiceNumber)
+              // setCouponDetailsPopup(true),
+              //   voucherDetails(rowData?.invoiceNumber)
             }}
             style={{ cursor: 'pointer', color: '#374baa' }}
           >
