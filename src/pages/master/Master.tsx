@@ -45,10 +45,11 @@ const Master: React.FC = () => {
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeClientIndex, setActiveClientIndex] = useState(0);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
-  const [openClientForm, setClientForm] = useState(false);
+  const [openClientForm, setOpenClientForm] = useState(false);
   const [attachments, setAttachments]: any = useState([]);
 
   const loggedInUserId = AuthService?.userInfo?.value?.userId;
@@ -98,7 +99,15 @@ const Master: React.FC = () => {
         getStateMaster();
         break;
       case 9:
+        setOpenClientForm(false);
         getClientMaster();
+        getCompanyMaster();
+        getCountryMaster();
+        getAccountsMaster();
+        formatCompany_ClientDetails();
+        formatCountry_ClientDetails();
+        formatAccount_ClientDetails();
+        formatCountry_Client_ShipDetails();
         break;
       default:
         break;
@@ -107,6 +116,10 @@ const Master: React.FC = () => {
 
   const onTabChange = (e: any) => {
     setActiveIndex(e.index);
+  };
+
+  const onClientTabChange = (e: any) => {
+    setActiveClientIndex(e.index);
   };
 
   const formatCompanyDetails = () => {
@@ -118,6 +131,46 @@ const Master: React.FC = () => {
     setAccountFieldsStructure(accountFieldsStructure);
     accountsFormHandler(accountFieldsStructure);
   };
+
+  const formatCompany_ClientDetails = () => {
+    const companyList = companyMaster.map(
+      (company: any) => company?.companyName
+    );
+
+    clientFieldsStructure.company_name.options = companyList;
+    setClientFieldsStructure(clientFieldsStructure);
+    clientFormHandler(clientFieldsStructure);
+  };
+
+  const formatCountry_ClientDetails = () => {
+    const countrylist = countryMaster.map(
+      (country: any) => country?.name
+    )
+
+    clientBillFieldsStructure.country_name.options = countrylist;
+    setClientBillFieldsStructure(clientBillFieldsStructure);
+    clientBillFormHandler(clientBillFieldsStructure);
+  }
+
+  const formatAccount_ClientDetails = () => {
+    const accountslist = accountsMaster.map(
+      (account: any) => account?.account_no
+    )
+
+    clientBillFieldsStructure.polestar_bank_account_number.options = accountslist;
+    setClientBillFieldsStructure(clientBillFieldsStructure);
+    clientBillFormHandler(clientBillFieldsStructure);
+  }
+
+  const formatCountry_Client_ShipDetails = () => {
+    const countrylist = countryMaster.map(
+      (country: any) => country?.name
+    )
+
+    clientShipFieldsStructure.client_ship_to_country_name.options = countrylist;
+    setClientShipFieldsStructure(clientShipFieldsStructure);
+    clientShipFormHandler(clientShipFieldsStructure);
+  }
 
   const getCompanyMaster = () => {
     setLoader(true);
@@ -392,13 +445,36 @@ const Master: React.FC = () => {
       });
   };
 
+  const deactivateClientMaster = () => {
+    setLoader(true);
+    clientService
+      .deactivateClientMaster(patchData)
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          "Client record deactivated successfully",
+          CONSTANTS.SUCCESS
+        );
+        getClientMaster();
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
+
   const openSaveForm = () => {
     setFormPopup(true);
   };
 
   const openClientFormButton = () => {
-    setClientForm(true);
+    setOpenClientForm(true);
   };
+
+  const closeClientForm = () => {
+    setOpenClientForm(false);
+  }
 
   const selectAttachment = (files: any) => {
     setAttachments([]);
@@ -455,6 +531,9 @@ const Master: React.FC = () => {
         break;
       case 6:
         deactivateTaxMaster();
+        break;
+      case 9:
+        deactivateClientMaster();
         break;
       default:
         break;
@@ -2301,9 +2380,7 @@ const Master: React.FC = () => {
             id={`companyNameTooltip-${rowData.id}`}
             data-pr-tooltip={rowData.msa_flag}
           >
-            <span>
-              {rowData?.msa_flag === 1 ? "Yes" : "No"}
-            </span>
+            <span>{rowData?.msa_flag === 1 ? "Yes" : "No"}</span>
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2327,9 +2404,7 @@ const Master: React.FC = () => {
             id={`companyNameTooltip-${rowData.id}`}
             data-pr-tooltip={rowData.is_performa}
           >
-            <span>
-              {rowData?.is_performa === 1 ? "Yes" : "No"}
-            </span>
+            <span>{rowData?.is_performa === 1 ? "Yes" : "No"}</span>
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2401,9 +2476,7 @@ const Master: React.FC = () => {
             id={`companyNameTooltip-${rowData.id}`}
             data-pr-tooltip={rowData.non_solicitation_clause}
           >
-            <span>
-              {rowData?.non_solicitation_clause === 1 ? "Yes" : "No"}
-            </span>
+            <span>{rowData?.non_solicitation_clause === 1 ? "Yes" : "No"}</span>
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2427,9 +2500,7 @@ const Master: React.FC = () => {
             id={`companyNameTooltip-${rowData.id}`}
             data-pr-tooltip={rowData.use_logo_permission}
           >
-            <span>
-              {rowData?.use_logo_permission === 1 ? "Yes" : "No"}
-            </span>
+            <span>{rowData?.use_logo_permission === 1 ? "Yes" : "No"}</span>
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2501,9 +2572,7 @@ const Master: React.FC = () => {
             id={`companyNameTooltip-${rowData.id}`}
             data-pr-tooltip={rowData.missing_msa_deadline}
           >
-            <span>
-              {rowData?.missing_msa_deadline === 1 ? "Yes" : "No"}
-            </span>
+            <span>{rowData?.missing_msa_deadline === 1 ? "Yes" : "No"}</span>
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2527,9 +2596,7 @@ const Master: React.FC = () => {
             id={`companyNameTooltip-${rowData.id}`}
             data-pr-tooltip={rowData.is_msa_missing}
           >
-            <span>
-              {rowData?.is_msa_missing === 1 ? "Yes" : "No"}
-            </span>
+            <span>{rowData?.is_msa_missing === 1 ? "Yes" : "No"}</span>
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2601,6 +2668,9 @@ const Master: React.FC = () => {
       case 6:
         updateTaxMaster(data);
         break;
+      // case 9:
+      //   updateClientMaster(data);
+      //   break;
       default:
         break;
     }
@@ -3001,53 +3071,340 @@ const Master: React.FC = () => {
     }
   };
 
-  // const CountryFormFields = {
-  //   code: {
-  //     inputType: 'inputtext',
-  //     label: 'Country Code',
-  //     value: null,
-  //     validation: {
-  //       required: true,
-  //     },
-  //     fieldWidth: 'col-md-6',
-  //   },
-  //   currency: {
-  //     inputType: 'inputtext',
-  //     label: 'Currency',
-  //     value: null,
-  //     validation: {
-  //       required: true,
-  //     },
-  //     fieldWidth: 'col-md-6',
-  //   },
-  //   name: {
-  //     inputType: 'inputtext',
-  //     label: 'Currency Name',
-  //     value: null,
-  //     validation: {
-  //       required: true,
-  //     },
-  //     fieldWidth: 'col-md-6',
-  //   },
-  //   language: {
-  //     inputType: 'inputtext',
-  //     label: 'Language',
-  //     value: null,
-  //     validation: {
-  //       required: true,
-  //     },
-  //     fieldWidth: 'col-md-6',
-  //   },
-  //   phone_code: {
-  //     inputType: 'inputtext',
-  //     label: 'Phone Code',
-  //     value: null,
-  //     validation: {
-  //       required: true,
-  //     },
-  //     fieldWidth: 'col-md-6',
-  //   },
-  // }
+  const ClientFormFields = {
+    company_name: {
+      inputType: "singleSelect",
+      label: "Company Name",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    name: {
+      inputType: "inputtext",
+      label: "Client Name",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    alias: {
+      inputType: "inputtext",
+      label: "Alias",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    pan_no: {
+      inputType: "inputtext",
+      label: "PAN Number",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    servicing_type: {
+      inputType: "singleSelect",
+      label: "Servicing Type",
+      options: ["Domestic", "International"],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    client_category: {
+      inputType: "inputtext",
+      label: "Client Category",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    msa_start_date: {
+      inputType: "singleDatePicker",
+      label: "MSA Start Date",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    msa_end_date: {
+      inputType: "singleDatePicker",
+      label: "MSA End Date",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    missing_msa_deadline: {
+      inputType: "inputSwitch",
+      label: "Missing MSA Deadline",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    is_msa_missing: {
+      inputType: "inputSwitch",
+      label: "Is MSA Missing",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    msa_flag: {
+      inputType: "inputSwitch",
+      label: "Is MSA",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    is_performa: {
+      inputType: "inputSwitch",
+      label: "Is Performa",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    non_solicitation_clause: {
+      inputType: "inputSwitch",
+      label: "Non Solicitation Clause",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    use_logo_permission: {
+      inputType: "inputSwitch",
+      label: "Use Logo Permission",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+  };
+
+  const [clientFieldsStructure, setClientFieldsStructure]: any =
+    useState(ClientFormFields);
+
+  const ClientBillFormFields = {
+    address1: {
+      inputType: "inputtext",
+      label: "Address 1",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    address2: {
+      inputType: "inputtext",
+      label: "Address 2",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    address3: {
+      inputType: "inputtext",
+      label: "Address 3",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    pin: {
+      inputType: "inputtext",
+      label: "PIN",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    country_name: {
+      inputType: "singleSelect",
+      label: "Country",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    state_id: {
+      inputType: "singleSelect",
+      label: "State",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    polestar_bank_account_number: {
+      inputType: "singleSelect",
+      label: "Polestar Bank Account Number",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    gstn: {
+      inputType: "inputtext",
+      label: "GSTN",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+  };
+
+  const [clientBillFieldsStructure, setClientBillFieldsStructure]: any =
+    useState(ClientBillFormFields);
+
+  const ClientShipFormFields = {
+    client_ship_to_address1: {
+      inputType: "inputtext",
+      label: "Address 1",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    client_ship_to_address2: {
+      inputType: "inputtext",
+      label: "Address 2",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    client_ship_to_address3: {
+      inputType: "inputtext",
+      label: "Address 3",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    client_ship_to_pin: {
+      inputType: "inputtext",
+      label: "PIN",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    client_ship_to_country_name: {
+      inputType: "singleSelect",
+      label: "Country",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    client_ship_to_state_name: {
+      inputType: "singleSelect",
+      label: "State",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    client_ship_to_gstn: {
+      inputType: "inputtext",
+      label: "GSTN",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+  };
+
+  const [clientShipFieldsStructure, setClientShipFieldsStructure]: any =
+    useState(ClientShipFormFields);
+
+  const ClientContactFormFields = {
+    salutation: {
+      inputType: "inputtext",
+      label: "Salutation",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    first_name: {
+      inputType: "inputtext",
+      label: "First Name",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    last_name: {
+      inputType: "inputtext",
+      label: "Last Name",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    email: {
+      inputType: "inputtext",
+      label: "Email",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    phone: {
+      inputType: "inputtext",
+      label: "Phone Number",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+  };
 
   const [CompanyForm, setCompanyForm] = useState<any>(
     _.cloneDeep(CompanyFormFields)
@@ -3073,11 +3430,23 @@ const Master: React.FC = () => {
     _.cloneDeep(ProjectFormFields)
   );
 
-  // const [CountryForm, setCountryForm] = useState<any>(
-  //   _.cloneDeep(CountryFormFields)
-  // )
-
   const [TaxForm, setTaxForm] = useState<any>(_.cloneDeep(TaxFormFields));
+
+  const [ClientForm, setClientForm] = useState<any>(
+    _.cloneDeep(clientFieldsStructure)
+  );
+
+  const [ClientBillForm, setClientBillForm] = useState<any>(
+    _.cloneDeep(clientBillFieldsStructure)
+  );
+
+  const [ClientShipForm, setClientShipForm] = useState<any>(
+    _.cloneDeep(clientShipFieldsStructure)
+  );
+
+  const [ClientContactForm, setClientContactForm] = useState<any>(
+    _.cloneDeep(ClientContactFormFields)
+  );
 
   const closeFormPopup = () => {
     setFormPopup(false);
@@ -3088,6 +3457,10 @@ const Master: React.FC = () => {
     setProductForm(_.cloneDeep(ProductFormFields));
     setProjectForm(_.cloneDeep(ProjectFormFields));
     setTaxForm(_.cloneDeep(TaxFormFields));
+    setClientForm(_.cloneDeep(clientFieldsStructure));
+    setClientBillForm(_.cloneDeep(clientBillFieldsStructure));
+    setClientShipForm(_.cloneDeep(clientShipFieldsStructure));
+    setClientContactForm(_.cloneDeep(ClientContactFormFields));
     // setCountryForm(_.cloneDeep(CountryFormFields))
     setAttachments([]);
   };
@@ -3118,6 +3491,26 @@ const Master: React.FC = () => {
 
   const taxFormHandler = (form: FormType) => {
     setTaxForm(form);
+  };
+
+  const clientFormHandler = (form: FormType) => {
+    console.log('form', form);
+
+    setClientForm(form);
+  };
+
+  const clientBillFormHandler = (form: FormType) => {
+    console.log('form', form);
+    
+    setClientBillForm(form);
+  };
+
+  const clientShipFormHandler = (form: FormType) => {
+    setClientShipForm(form);
+  };
+
+  const clientContactFormHandler = (form: FormType) => {
+    setClientContactForm(form);
   };
 
   // const countryFormHandler = (form: FormType) => {
@@ -3582,6 +3975,29 @@ const Master: React.FC = () => {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
   };
+
+  const moveNextClientForm = (event: FormEvent) => {
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
+
+    _.each(ClientForm, (item: any) => {
+      if (item?.validation?.required) {
+        console.log('item', item, companyValidityFlag, item.valid);
+        
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
+      }
+    });
+    console.log('companyValidityFlag', companyValidityFlag);
+
+    setIsFormValid(companyValidityFlag);
+    if (companyValidityFlag) {
+      setActiveClientIndex(activeClientIndex+1);
+    } else {
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+  }
 
   // const createNewCountry = (event: FormEvent) => {
   //   event.preventDefault()
@@ -4310,39 +4726,84 @@ const Master: React.FC = () => {
         </TabPanel>
         <TabPanel header="Client">
           {openClientForm ? (
-            <TabView activeIndex={activeIndex} onTabChange={onTabChange}>
+            <TabView activeIndex={activeClientIndex} onTabChange={onClientTabChange}>
               <TabPanel header="Client">
-                {/* <FormComponent
+                <FormComponent
                   form={_.cloneDeep(ClientForm)}
                   formUpdateEvent={clientFormHandler}
                   isFormValidFlag={isFormValid}
-                ></FormComponent> */}
-
+                ></FormComponent>
+                {/* attachment */}
+                <div className={classes["upload-wrapper"]}>
+                    <div className="row">
+                      <div className="col-md-12">
+                        <div className={classes["upload-file-section"]}>
+                          <div className={classes["upload-file"]}>
+                            <input
+                              type="file"
+                              onClick={(event: any) => {
+                                event.target.value = null;
+                              }}
+                              onChange={(e) => selectAttachment(e.target.files)}
+                              className={classes["upload"]}
+                            />
+                            <img src={ImageUrl.FolderIconImage} />
+                            <p>
+                              Drag files here <span> or browse</span> <br />
+                              <u>Support PDF</u>
+                            </p>
+                            <div className={classes["chip-tm"]}>
+                              {attachments?.length
+                                ? attachments.map((item: any, index: any) => {
+                                    return (
+                                      <Chip
+                                        label={item?.name}
+                                        removable
+                                        onRemove={() => removeFileHandler()}
+                                        key={index}
+                                      />
+                                    );
+                                  })
+                                : null}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* attachment */}
                 <div className="popup-lower-btn">
                   <ButtonComponent
-                    label="Submit"
+                    label="Cancel"
                     icon="pi pi-check"
                     iconPos="right"
-                    submitEvent={activeIndex}
+                    type="default"
+                    submitEvent={closeClientForm}
                   />
                   <ButtonComponent
-                    label="Submit"
+                    label="Next"
                     icon="pi pi-check"
                     iconPos="right"
-                    submitEvent={activeIndex}
+                    submitEvent={moveNextClientForm}
                   />
                 </div>
               </TabPanel>
               <TabPanel header="Client Bill To">
                 <FormComponent
-                  form={_.cloneDeep(CompanyForm)}
-                  formUpdateEvent={companyFormHandler}
+                  form={_.cloneDeep(ClientBillForm)}
+                  formUpdateEvent={clientBillFormHandler}
                   isFormValidFlag={isFormValid}
                 ></FormComponent>
-
                 <div className="popup-lower-btn">
                   <ButtonComponent
-                    label="Submit"
+                    label="Cancel"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    type="default"
+                    submitEvent={closeClientForm}
+                  />
+                  <ButtonComponent
+                    label="Next"
                     icon="pi pi-check"
                     iconPos="right"
                     submitEvent={activeIndex}
@@ -4351,14 +4812,20 @@ const Master: React.FC = () => {
               </TabPanel>
               <TabPanel header="Client Ship To">
                 <FormComponent
-                  form={_.cloneDeep(CompanyForm)}
-                  formUpdateEvent={companyFormHandler}
+                  form={_.cloneDeep(ClientShipForm)}
+                  formUpdateEvent={clientShipFormHandler}
                   isFormValidFlag={isFormValid}
                 ></FormComponent>
-
                 <div className="popup-lower-btn">
                   <ButtonComponent
-                    label="Submit"
+                    label="Cancel"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    type="default"
+                    submitEvent={closeClientForm}
+                  />
+                  <ButtonComponent
+                    label="Next"
                     icon="pi pi-check"
                     iconPos="right"
                     submitEvent={activeIndex}
@@ -4367,14 +4834,20 @@ const Master: React.FC = () => {
               </TabPanel>
               <TabPanel header="Contact">
                 <FormComponent
-                  form={_.cloneDeep(CompanyForm)}
-                  formUpdateEvent={companyFormHandler}
+                  form={_.cloneDeep(ClientContactForm)}
+                  formUpdateEvent={clientContactFormHandler}
                   isFormValidFlag={isFormValid}
                 ></FormComponent>
-
                 <div className="popup-lower-btn">
                   <ButtonComponent
-                    label="Submit"
+                    label="Cancel"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    type="default"
+                    submitEvent={closeClientForm}
+                  />
+                  <ButtonComponent
+                    label="Next"
                     icon="pi pi-check"
                     iconPos="right"
                     submitEvent={activeIndex}
