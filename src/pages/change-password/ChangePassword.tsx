@@ -110,10 +110,10 @@ const ChangePassword: React.FC = () => {
   const resetPasswordFormHandler = (event?: FormEvent) => {
     event?.preventDefault()
     if (checkFormValidity()) {
-      const formData: { [key: string]: any } = {}
+      const formData: { [key: string]: any } = {}      
+      formData.email = AuthService?.userInfo?.value?.email
       formData.newPassword = resetFormState.resetForm.newPassword.value
-      formData.cpassword = resetFormState.resetForm.confirmNewPassword.value
-      formData.password = resetFormState.resetForm.oldPassword.value
+      formData.currentPassword = resetFormState.resetForm.oldPassword.value
       setShowLoader(true)
       AuthService.changePassword(formData)
         .then((response: any) => {
@@ -138,14 +138,9 @@ const ChangePassword: React.FC = () => {
   return (
     <div className="resetPasswordContent">
       <div className="brandLogo">
-        <img src={ImageUrl.VegaLogo} alt="" />
+      <img src="./Polestar Logo.svg" />
       </div>
       <h2>Change Password</h2>
-      <p>
-        VegaLogo Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-        ac eleifend lorem, vitae blandit sapiwen.{' '}
-      </p>
-
       <form action="">
         <div className="inputItem">
           <div className="row m-0">
