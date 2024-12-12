@@ -11,21 +11,48 @@ export class StateMasterService {
       return {}
     }
   }
-  // deactivateAccountsMaster = async (data: any) => {
-  //   try {
-  //     const body = {
-  //       accountId: data.account_id,
-  //       isActive: 0,
-  //       updatedBy: AuthService?.userInfo?.value?.userId,
-  //     }
 
-  //     const response = await HTTPService.postRequest(
-  //       APIURLS.TOGGLE_ACCOUNTS_STATUS,
-  //       body
-  //     )
-  //     return response?.data
-  //   } catch (err) {
-  //     return {}
-  //   }
-  // }
+  createStateMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.CREATE_STATE_MASTER,
+        formData
+      )
+
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  updateStateMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.UPDATE_STATE_MASTER,
+        formData
+      )
+
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  deactivateStateMaster = async (data: any) => {
+    try {
+      const body = {
+        stateId: data.state_id,
+        isActive: 0,
+        updatedBy: AuthService?.userInfo?.value?.userId,
+      }
+
+      const response = await HTTPService.postRequest(
+        APIURLS.TOGGLE_STATES_STATUS,
+        body
+      )
+      return response?.data
+    } catch (err) {
+      return {}
+    }
+  }
 }
