@@ -35,12 +35,12 @@ const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
   const [currencyMaster, setCurrencyMaster] = useState([]);
   const [industryMaster, setIndustryMaster] = useState([]);
-  const [accountsMaster, setAccountsMaster] = useState([]);
+  const [accountsMaster, setAccountsMaster] = useState<any>([]);
   const [productsMaster, setProductsMaster] = useState([]);
   const [projectsMaster, setProjectsMaster] = useState([]);
   const [taxMaster, setTaxMaster] = useState([]);
-  const [countryMaster, setCountryMaster] = useState([]);
-  const [stateMaster, setStateMaster] = useState([]);
+  const [countryMaster, setCountryMaster] = useState<any>([]);
+  const [stateMaster, setStateMaster] = useState<any>([]);
   const [clientMaster, setClientMaster] = useState([]);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
@@ -68,50 +68,57 @@ const Master: React.FC = () => {
   const clientService = new ClientMasterService();
 
   useEffect(() => {
-    switch (activeIndex) {
-      case 0:
-        getCompanyMaster();
-        break;
-      case 1:
-        getCurrencyMaster();
-        break;
-      case 2:
-        getAccountsMaster();
-        getCompanyMaster();
-        formatCompanyDetails();
-        break;
-      case 3:
-        getIndustryMaster();
-        break;
-      case 4:
-        getProductMaster();
-        break;
-      case 5:
-        getProjectMaster();
-        break;
-      case 6:
-        getTaxMaster();
-        break;
-      case 7:
-        getCountryMaster();
-        break;
-      case 8:
-        getStateMaster();
-        break;
-      case 9:
-        setOpenClientForm(false);
-        getClientMaster();
-        getCompanyMaster();
-        getCountryMaster();
-        getAccountsMaster();
-        formatCompany_ClientDetails();
-        formatCountry_ClientDetails();
-        formatAccount_ClientDetails();
-        formatCountry_Client_ShipDetails();
-        break;
-      default:
-        break;
-    }
+    const fetchData = async () => {
+      switch (activeIndex) {
+        case 0:
+          await getCompanyMaster();
+          break;
+        case 1:
+          await getCurrencyMaster();
+          break;
+        case 2:
+          await getAccountsMaster();
+          await getCompanyMaster();
+          await formatCompanyDetails();
+          break;
+        case 3:
+          await getIndustryMaster();
+          break;
+        case 4:
+          await getProductMaster();
+          break;
+        case 5:
+          await getProjectMaster();
+          break;
+        case 6:
+          await getTaxMaster();
+          break;
+        case 7:
+          await getCountryMaster();
+          break;
+        case 8:
+          await getStateMaster();
+          break;
+        case 9:
+          setOpenClientForm(false);
+          setActiveClientIndex(0);
+          await getClientMaster();
+          await getCompanyMaster();
+          await getCountryMaster();
+          await getStateMaster();
+          await getAccountsMaster();
+          await formatCompany_ClientDetails();
+          await formatCountry_ClientDetails();
+          await formatState_ClientDetails();
+          await formatAccount_ClientDetails();
+          await formatCountry_Client_ShipDetails();
+          await formatState_Client_ShipDetails();
+          break;
+        default:
+          break;
+      }  
+    };
+    fetchData();
   }, [activeIndex]);
 
   const onTabChange = (e: any) => {
@@ -122,195 +129,178 @@ const Master: React.FC = () => {
     setActiveClientIndex(e.index);
   };
 
-  const formatCompanyDetails = () => {
-    const companyList = companyMaster.map(
-      (company: any) => company?.companyName
-    );
-
+  const formatCompanyDetails = async () => {
+    const companyList = companyMaster.map((company: any) => company?.companyName);
     accountFieldsStructure.companyName.options = companyList;
-    setAccountFieldsStructure(accountFieldsStructure);
-    accountsFormHandler(accountFieldsStructure);
+    await setAccountFieldsStructure(accountFieldsStructure);
+    await accountsFormHandler(accountFieldsStructure);
   };
-
-  const formatCompany_ClientDetails = () => {
-    const companyList = companyMaster.map(
-      (company: any) => company?.companyName
-    );
-
+  
+  const formatCompany_ClientDetails = async () => {
+    const companyList = companyMaster.map((company: any) => company?.companyName);
     clientFieldsStructure.company_name.options = companyList;
-    setClientFieldsStructure(clientFieldsStructure);
-    clientFormHandler(clientFieldsStructure);
+    await setClientFieldsStructure(clientFieldsStructure);
+    await clientFormHandler(clientFieldsStructure);
   };
-
-  const formatCountry_ClientDetails = () => {
-    const countrylist = countryMaster.map(
-      (country: any) => country?.name
-    )
-
+  
+  const formatCountry_ClientDetails = async () => {
+    console.log("countryMaster", countryMaster);
+    const countrylist = countryMaster.map((country: any) => country?.name);
     clientBillFieldsStructure.country_name.options = countrylist;
-    setClientBillFieldsStructure(clientBillFieldsStructure);
-    clientBillFormHandler(clientBillFieldsStructure);
-  }
-
-  const formatAccount_ClientDetails = () => {
-    const accountslist = accountsMaster.map(
-      (account: any) => account?.account_no
-    )
-
+    await setClientBillFieldsStructure(clientBillFieldsStructure);
+    await clientBillFormHandler(clientBillFieldsStructure);
+  };
+  
+  const formatState_ClientDetails = async () => {
+    console.log('stateMaster', stateMaster);
+    const statelist = stateMaster.map((state: any) => state.state_name);
+    console.log("state", statelist, clientBillFieldsStructure);
+    clientBillFieldsStructure.state_name.options = statelist;
+    await setClientBillFieldsStructure(clientBillFieldsStructure);
+    await clientBillFormHandler(clientBillFieldsStructure);
+  };
+  
+  const formatAccount_ClientDetails = async () => {
+    const accountslist = accountsMaster.map((account: any) => account?.account_no);
     clientBillFieldsStructure.polestar_bank_account_number.options = accountslist;
-    setClientBillFieldsStructure(clientBillFieldsStructure);
-    clientBillFormHandler(clientBillFieldsStructure);
-  }
-
-  const formatCountry_Client_ShipDetails = () => {
-    const countrylist = countryMaster.map(
-      (country: any) => country?.name
-    )
-
+    await setClientBillFieldsStructure(clientBillFieldsStructure);
+    await clientBillFormHandler(clientBillFieldsStructure);
+  };
+  
+  const formatCountry_Client_ShipDetails = async () => {
+    const countrylist = countryMaster.map((country: any) => country?.name);
     clientShipFieldsStructure.client_ship_to_country_name.options = countrylist;
-    setClientShipFieldsStructure(clientShipFieldsStructure);
-    clientShipFormHandler(clientShipFieldsStructure);
-  }
-
-  const getCompanyMaster = () => {
-    setLoader(true);
-    companyService
-      .getCompanyMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setCompanyMaster(response?.companies);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    await setClientShipFieldsStructure(clientShipFieldsStructure);
+    await clientShipFormHandler(clientShipFieldsStructure);
+  };
+  
+  const formatState_Client_ShipDetails = async () => {
+    const statelist = stateMaster.map((state: any) => state?.state_name);
+    clientShipFieldsStructure.client_ship_to_state_name.options = statelist;
+    await setClientShipFieldsStructure(clientShipFieldsStructure);
+    await clientShipFormHandler(clientShipFieldsStructure);
   };
 
-  const getCurrencyMaster = () => {
+  const getCompanyMaster = async () => {
     setLoader(true);
-    currencyService
-      .getCurrencyMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setCurrencyMaster(response?.currencies);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await companyService.getCompanyMaster();
+      setCompanyMaster(response?.companies);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getIndustryMaster = () => {
+  
+  const getCurrencyMaster = async () => {
     setLoader(true);
-    industryService
-      .getIndustryMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setIndustryMaster(response?.industries);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await currencyService.getCurrencyMaster();
+      setCurrencyMaster(response?.currencies);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getAccountsMaster = () => {
+  
+  const getIndustryMaster = async () => {
     setLoader(true);
-    accountsService
-      .getAccountsMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setAccountsMaster(response?.accounts);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await industryService.getIndustryMaster();
+      setIndustryMaster(response?.industries);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getProductMaster = () => {
+  
+  const getAccountsMaster = async () => {
     setLoader(true);
-    productService
-      .getProductMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setProductsMaster(response?.products);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await accountsService.getAccountsMaster();
+      setAccountsMaster(response?.accounts);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getProjectMaster = () => {
+  
+  const getProductMaster = async () => {
     setLoader(true);
-    projectService
-      .getProjectMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setProjectsMaster(response?.projects);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await productService.getProductMaster();
+      setProductsMaster(response?.products);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getTaxMaster = () => {
+  
+  const getProjectMaster = async () => {
     setLoader(true);
-    taxService
-      .getTaxMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setTaxMaster(response?.taxes);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await projectService.getProjectMaster();
+      setProjectsMaster(response?.projects);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getCountryMaster = () => {
+  
+  const getTaxMaster = async () => {
     setLoader(true);
-    countryService
-      .getCountryMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setCountryMaster(response?.countries);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await taxService.getTaxMaster();
+      setTaxMaster(response?.taxes);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getStateMaster = () => {
+  
+  const getCountryMaster = async () => {
     setLoader(true);
-    stateService
-      .getStateMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setStateMaster(response?.states);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await countryService.getCountryMaster();
+      setCountryMaster(response?.countries);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
-
-  const getClientMaster = () => {
+  
+  const getStateMaster = async () => {
     setLoader(true);
-    clientService
-      .getClientMaster()
-      .then((response: any) => {
-        setLoader(false);
-        setClientMaster(response?.clients);
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+    try {
+      const response = await stateService.getStateMaster();
+      setStateMaster(response?.states);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
+  
+  const getClientMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientMaster();
+      setClientMaster(response?.clients);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+  
 
   const deactivateCompanyMaster = () => {
     setLoader(true);
@@ -483,8 +473,8 @@ const Master: React.FC = () => {
         if (
           eventList.name
             .split(".")
-            [eventList.name.split(".").length - 1].toLowerCase() ==
-          FILE_TYPES.PDF
+            [eventList.name.split(".").length - 1].toLowerCase() ===
+          FILE_TYPES.PNG
         ) {
           if (eventList.size > 10485760) {
             return ToasterService.show(
@@ -496,7 +486,7 @@ const Master: React.FC = () => {
           }
         } else {
           ToasterService.show(
-            `Invalid file format you can only attach the pdf here!`,
+            `Invalid file format you can only attach the png here!`,
             "error"
           );
           eventList = null;
@@ -1778,7 +1768,7 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isactive ? (
+          {rowData.isActive ? (
             <span
               className="pi pi-trash"
               style={{ cursor: "pointer" }}
@@ -2629,6 +2619,21 @@ const Master: React.FC = () => {
         </div>
       ),
     },
+    {
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span style={{ color: rowData?.isActive === 1 ? "green" : "red" }}>
+            {rowData?.isActive === 1 ? "Active" : "Inactive"}
+          </span>
+        </div>
+      ),
+    }
   ];
 
   const onDelete = (data: unknown) => {
@@ -3105,7 +3110,7 @@ const Master: React.FC = () => {
       label: "PAN Number",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3115,7 +3120,7 @@ const Master: React.FC = () => {
       options: ["Domestic", "International"],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3124,7 +3129,7 @@ const Master: React.FC = () => {
       label: "Client Category",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3133,7 +3138,7 @@ const Master: React.FC = () => {
       label: "MSA Start Date",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3142,61 +3147,61 @@ const Master: React.FC = () => {
       label: "MSA End Date",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
     missing_msa_deadline: {
       inputType: "inputSwitch",
       label: "Missing MSA Deadline",
-      value: null,
+      value: false,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
     is_msa_missing: {
       inputType: "inputSwitch",
       label: "Is MSA Missing",
-      value: null,
+      value: false,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
     msa_flag: {
       inputType: "inputSwitch",
       label: "Is MSA",
-      value: null,
+      value: false,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
     is_performa: {
       inputType: "inputSwitch",
       label: "Is Performa",
-      value: null,
+      value: false,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
     non_solicitation_clause: {
       inputType: "inputSwitch",
       label: "Non Solicitation Clause",
-      value: null,
+      value: false,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
     use_logo_permission: {
       inputType: "inputSwitch",
       label: "Use Logo Permission",
-      value: null,
+      value: false,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3220,7 +3225,7 @@ const Master: React.FC = () => {
       label: "Address 2",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3229,7 +3234,7 @@ const Master: React.FC = () => {
       label: "Address 3",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3238,7 +3243,7 @@ const Master: React.FC = () => {
       label: "PIN",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3248,17 +3253,17 @@ const Master: React.FC = () => {
       options: [],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
-    state_id: {
+    state_name: {
       inputType: "singleSelect",
       label: "State",
       options: [],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3277,7 +3282,7 @@ const Master: React.FC = () => {
       label: "GSTN",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3301,7 +3306,7 @@ const Master: React.FC = () => {
       label: "Address 2",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3310,7 +3315,7 @@ const Master: React.FC = () => {
       label: "Address 3",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3319,7 +3324,7 @@ const Master: React.FC = () => {
       label: "PIN",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3329,7 +3334,7 @@ const Master: React.FC = () => {
       options: [],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3348,7 +3353,7 @@ const Master: React.FC = () => {
       label: "GSTN",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3359,8 +3364,9 @@ const Master: React.FC = () => {
 
   const ClientContactFormFields = {
     salutation: {
-      inputType: "inputtext",
+      inputType: "singleSelect",
       label: "Salutation",
+      options: ['Mr.', 'Mrs.'],
       value: null,
       validation: {
         required: true,
@@ -3381,7 +3387,7 @@ const Master: React.FC = () => {
       label: "Last Name",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3390,7 +3396,7 @@ const Master: React.FC = () => {
       label: "Email",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3400,7 +3406,7 @@ const Master: React.FC = () => {
       options: [],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3465,57 +3471,49 @@ const Master: React.FC = () => {
     setAttachments([]);
   };
 
-  const companyFormHandler = (form: FormType) => {
-    setCompanyForm(form);
+  const companyFormHandler = async (form: FormType) => {
+    await setCompanyForm(form);
   };
 
-  const currencyFormHandler = (form: FormType) => {
-    setCurrencyForm(form);
+  const currencyFormHandler = async (form: FormType) => {
+    await setCurrencyForm(form);
   };
 
-  const accountsFormHandler = (form: FormType) => {
-    setAccountForm(form);
+  const accountsFormHandler = async (form: FormType) => {
+    await setAccountForm(form);
   };
 
-  const industryFormHandler = (form: FormType) => {
-    setIndustryForm(form);
+  const industryFormHandler = async (form: FormType) => {
+    await setIndustryForm(form);
   };
 
-  const productFormHandler = (form: FormType) => {
-    setProductForm(form);
+  const productFormHandler = async (form: FormType) => {
+    await setProductForm(form);
   };
 
-  const projectFormHandler = (form: FormType) => {
-    setProjectForm(form);
+  const projectFormHandler = async (form: FormType) => {
+    await setProjectForm(form);
   };
 
-  const taxFormHandler = (form: FormType) => {
-    setTaxForm(form);
+  const taxFormHandler = async (form: FormType) => {
+    await setTaxForm(form);
   };
 
-  const clientFormHandler = (form: FormType) => {
-    console.log('form', form);
-
-    setClientForm(form);
+  const clientFormHandler = async (form: FormType) => {
+    await setClientForm(form);
   };
 
-  const clientBillFormHandler = (form: FormType) => {
-    console.log('form', form);
-    
-    setClientBillForm(form);
+  const clientBillFormHandler = async (form: FormType) => {
+    await setClientBillForm(form);
   };
 
-  const clientShipFormHandler = (form: FormType) => {
-    setClientShipForm(form);
+  const clientShipFormHandler = async (form: FormType) => {
+    await setClientShipForm(form);
   };
 
-  const clientContactFormHandler = (form: FormType) => {
-    setClientContactForm(form);
+  const clientContactFormHandler = async (form: FormType) => {
+    await setClientContactForm(form);
   };
-
-  // const countryFormHandler = (form: FormType) => {
-  //   setCountryForm(form)
-  // }
 
   const createNewCompany = (event: FormEvent) => {
     event.preventDefault();
@@ -3976,6 +3974,138 @@ const Master: React.FC = () => {
     }
   };
 
+  const creatClientForm = (event: FormEvent) => {
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
+
+    _.each(ClientContactForm, (item: any) => {
+      if (item?.validation?.required) {
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
+      }
+    });
+
+    setIsFormValid(companyValidityFlag);
+
+    const companyId =
+      companyMaster.find(
+        (company: any) => company.companyName === ClientForm.company_name.value
+      )?.id ?? null;
+
+    const countryId =
+      countryMaster.find(
+        (country: any) => country.name === ClientBillForm.country_name.value
+      )?.id ?? null;
+
+    const stateId =
+      stateMaster.find(
+        (state: any) => state.state_name === ClientBillForm.state_name.value
+      )?.state_id ?? null;
+
+    const polestar_bank_account_id =
+      accountsMaster.find(
+        (account: any) => account.account_no === ClientBillForm.polestar_bank_account_number.value
+      )?.account_id ?? null;
+
+    const client_ship_to_country_id =
+      countryMaster.find(
+        (country: any) => country.name === ClientShipForm.client_ship_to_country_name.value
+      )?.id ?? null;
+
+    const client_ship_to_state_id =
+      stateMaster.find(
+        (state: any) => state.state_name === ClientShipForm.client_ship_to_state_name.value
+      )?.state_id ?? null;
+
+    if (companyValidityFlag) {
+      console.log('Client forms', ClientForm, ClientBillForm, ClientShipForm, ClientContactForm);
+      const formData: any = new FormData();
+
+      const obj = {
+        company_id: companyId,
+        name: ClientForm?.name?.value,
+        alias: ClientForm?.alias?.value,
+        pan_no: ClientForm?.pan_no?.value,
+        address1: ClientBillForm?.address1?.value,
+        address2: ClientBillForm?.address2?.value,
+        address3: ClientBillForm?.address3?.value,
+        pin: ClientBillForm?.pin?.value,
+        country_id: countryId,
+        state_id: stateId,
+        polestar_bank_account_id: polestar_bank_account_id,
+        gstn: ClientBillForm?.gstn?.value,
+        client_ship_to_address1: ClientShipForm?.client_ship_to_address1?.value,
+        client_ship_to_address2: ClientShipForm?.client_ship_to_address2?.value,
+        client_ship_to_address3: ClientShipForm?.client_ship_to_address3?.value,
+        client_ship_to_pin: ClientShipForm?.client_ship_to_pin?.value,
+        client_ship_to_gstn: ClientShipForm?.client_ship_to_gstn?.value,
+        client_ship_to_country_id: client_ship_to_country_id,
+        client_ship_to_state_id: client_ship_to_state_id,
+        salutation: ClientContactForm?.salutation?.value,
+        first_name: ClientContactForm?.first_name?.value,
+        last_name: ClientContactForm?.last_name?.value,
+        email: ClientContactForm?.email?.value,
+        phone: ClientContactForm?.phone?.value,
+        msa_flag: ClientForm?.msa_flag?.value ? 1 : 0,
+        is_performa: ClientForm?.is_performa?.value ? 1 : 0,
+        msa_start_date: ClientForm?.msa_start_date?.value,
+        msa_end_date: ClientForm?.msa_end_date?.value,
+        non_solicitation_clause: ClientForm?.non_solicitation_clause?.value ? 1 : 0,
+        use_logo_permission: ClientForm?.use_logo_permission?.value ? 1 : 0,
+        client_category: ClientForm?.client_category?.value,
+        servicing_type: ClientForm?.servicing_type?.value,
+        missing_msa_deadline: ClientForm?.missing_msa_deadline?.value ? 1 : 0,
+        is_msa_missing: ClientForm?.is_msa_missing?.value ? 1 : 0,
+        updated_by: loggedInUserId,
+      };
+
+      Object.entries(obj).forEach(([key, value]: any) => {
+        formData.set(key, value);
+      });
+
+      if (attachments?.length) {
+        formData.set("file", attachments[0]);
+      }
+
+      // if (!stateData?.id) {
+        clientService
+          .createClientMaster(formData)
+          .then((response: any) => {
+            if (response?.statusCode == HTTP_RESPONSE.CREATED) {
+              setStateData({});
+              closeFormPopup();
+              getClientMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      // } else {
+      //   const updatePayload = { ...obj, taxId: stateData?.id };
+
+      //   taxService
+      //     .updateTaxMaster(updatePayload)
+      //     .then((response: any) => {
+      //       if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
+      //         setStateData({});
+      //         closeFormPopup();
+      //         getTaxMaster();
+      //         ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+      //       }
+      //     })
+      //     .catch((error: any) => {
+      //       setStateData({});
+      //       ToasterService.show(error, CONSTANTS.ERROR);
+      //     });
+      // }
+    } else {
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+  }
+
   const moveNextClientForm = (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
@@ -3999,47 +4129,49 @@ const Master: React.FC = () => {
     }
   }
 
-  // const createNewCountry = (event: FormEvent) => {
-  //   event.preventDefault()
-  //   let companyValidityFlag = true
-  //   const companyFormValid: boolean[] = []
+  const moveNextClientBillForm = (event: FormEvent) => {
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
-  //   _.each(CountryForm, (item: any) => {
-  //     if (item?.validation?.required) {
-  //       companyFormValid.push(item.valid)
-  //       companyValidityFlag = companyValidityFlag && item.valid
-  //     }
-  //   })
+    _.each(ClientBillForm, (item: any) => {
+      if (item?.validation?.required) {        
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
+      }
+    });
 
-  //   setIsFormValid(companyValidityFlag)
+    setIsFormValid(companyValidityFlag);
+    if (companyValidityFlag) {
+      setActiveClientIndex(activeClientIndex+1);
+    } else {
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+  }
 
-  //   if (companyValidityFlag) {
-  //     const obj = {
-  //       code: CountryForm?.code?.value,
-  //       currency: CountryForm?.currency?.value,
-  //       name: CountryForm?.name?.value,
-  //       language: CountryForm?.language?.value,
-  //       phone_code: CountryForm?.phone_code?.value,
-  //       isactive: 1,
-  //       updatedBy: loggedInUserId,
-  //     }
+  const moveNextClientShipForm = (event: FormEvent) => {
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
 
-  //     taxService
-  //       .createTaxMaster(obj)
-  //       .then((response: any) => {
-  //         if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-  //           closeFormPopup()
-  //           getTaxMaster()
-  //           ToasterService.show(response?.message, CONSTANTS.SUCCESS)
-  //         }
-  //       })
-  //       .catch((error: any) => {
-  //         ToasterService.show(error, CONSTANTS.ERROR)
-  //       })
-  //   } else {
-  //     ToasterService.show('Please Check all the Fields!', CONSTANTS.ERROR)
-  //   }
-  // }
+    _.each(ClientShipForm, (item: any) => {
+      if (item?.validation?.required) {        
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
+      }
+    });
+
+    setIsFormValid(companyValidityFlag);
+    if (companyValidityFlag) {
+      setActiveClientIndex(activeClientIndex+1);
+    } else {
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+  }
+
+  const backToPreviousForm = () => {
+    setActiveClientIndex(activeClientIndex - 1);
+  }
 
   return loader ? (
     <Loader />
@@ -4726,7 +4858,10 @@ const Master: React.FC = () => {
         </TabPanel>
         <TabPanel header="Client">
           {openClientForm ? (
-            <TabView activeIndex={activeClientIndex} onTabChange={onClientTabChange}>
+            <TabView
+              activeIndex={activeClientIndex}
+              onTabChange={onClientTabChange}
+            >
               <TabPanel header="Client">
                 <FormComponent
                   form={_.cloneDeep(ClientForm)}
@@ -4735,43 +4870,43 @@ const Master: React.FC = () => {
                 ></FormComponent>
                 {/* attachment */}
                 <div className={classes["upload-wrapper"]}>
-                    <div className="row">
-                      <div className="col-md-12">
-                        <div className={classes["upload-file-section"]}>
-                          <div className={classes["upload-file"]}>
-                            <input
-                              type="file"
-                              onClick={(event: any) => {
-                                event.target.value = null;
-                              }}
-                              onChange={(e) => selectAttachment(e.target.files)}
-                              className={classes["upload"]}
-                            />
-                            <img src={ImageUrl.FolderIconImage} />
-                            <p>
-                              Drag files here <span> or browse</span> <br />
-                              <u>Support PDF</u>
-                            </p>
-                            <div className={classes["chip-tm"]}>
-                              {attachments?.length
-                                ? attachments.map((item: any, index: any) => {
-                                    return (
-                                      <Chip
-                                        label={item?.name}
-                                        removable
-                                        onRemove={() => removeFileHandler()}
-                                        key={index}
-                                      />
-                                    );
-                                  })
-                                : null}
-                            </div>
+                  <div className="row">
+                    <div className="col-md-12">
+                      <div className={classes["upload-file-section"]}>
+                        <div className={classes["upload-file"]}>
+                          <input
+                            type="file"
+                            onClick={(event: any) => {
+                              event.target.value = null;
+                            }}
+                            onChange={(e) => selectAttachment(e.target.files)}
+                            className={classes["upload"]}
+                          />
+                          <img src={ImageUrl.FolderIconImage} />
+                          <p>
+                            Drag files here <span> or browse</span> <br />
+                            <u>Support PNG</u>
+                          </p>
+                          <div className={classes["chip-tm"]}>
+                            {attachments?.length
+                              ? attachments.map((item: any, index: any) => {
+                                  return (
+                                    <Chip
+                                      label={item?.name}
+                                      removable
+                                      onRemove={() => removeFileHandler()}
+                                      key={index}
+                                    />
+                                  );
+                                })
+                              : null}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  {/* attachment */}
+                </div>
+                {/* attachment */}
                 <div className="popup-lower-btn">
                   <ButtonComponent
                     label="Cancel"
@@ -4796,6 +4931,13 @@ const Master: React.FC = () => {
                 ></FormComponent>
                 <div className="popup-lower-btn">
                   <ButtonComponent
+                    label="Back"
+                    icon="pi pi-check"
+                    iconPos="left"
+                    type="default"
+                    submitEvent={backToPreviousForm}
+                  />
+                  <ButtonComponent
                     label="Cancel"
                     icon="pi pi-check"
                     iconPos="right"
@@ -4806,7 +4948,7 @@ const Master: React.FC = () => {
                     label="Next"
                     icon="pi pi-check"
                     iconPos="right"
-                    submitEvent={activeIndex}
+                    submitEvent={moveNextClientBillForm}
                   />
                 </div>
               </TabPanel>
@@ -4818,6 +4960,13 @@ const Master: React.FC = () => {
                 ></FormComponent>
                 <div className="popup-lower-btn">
                   <ButtonComponent
+                    label="Back"
+                    icon="pi pi-check"
+                    iconPos="left"
+                    type="default"
+                    submitEvent={backToPreviousForm}
+                  />
+                  <ButtonComponent
                     label="Cancel"
                     icon="pi pi-check"
                     iconPos="right"
@@ -4828,7 +4977,7 @@ const Master: React.FC = () => {
                     label="Next"
                     icon="pi pi-check"
                     iconPos="right"
-                    submitEvent={activeIndex}
+                    submitEvent={moveNextClientShipForm}
                   />
                 </div>
               </TabPanel>
@@ -4840,6 +4989,13 @@ const Master: React.FC = () => {
                 ></FormComponent>
                 <div className="popup-lower-btn">
                   <ButtonComponent
+                    label="Back"
+                    icon="pi pi-check"
+                    iconPos="left"
+                    type="default"
+                    submitEvent={backToPreviousForm}
+                  />
+                  <ButtonComponent
                     label="Cancel"
                     icon="pi pi-check"
                     iconPos="right"
@@ -4847,10 +5003,10 @@ const Master: React.FC = () => {
                     submitEvent={closeClientForm}
                   />
                   <ButtonComponent
-                    label="Next"
+                    label="Submit Form"
                     icon="pi pi-check"
                     iconPos="right"
-                    submitEvent={activeIndex}
+                    submitEvent={creatClientForm}
                   />
                 </div>
               </TabPanel>
