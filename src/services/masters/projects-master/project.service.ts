@@ -42,7 +42,7 @@ export class ProjectMasterService {
     try {
       const body = {
         projectId: data.id,
-        isActive: 0,
+        isActive: !data.isActive,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 

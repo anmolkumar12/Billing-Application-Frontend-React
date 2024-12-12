@@ -576,14 +576,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isactive ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isactive ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isactive ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -798,14 +796,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isActive ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -916,9 +912,9 @@ const Master: React.FC = () => {
           ></span>
           {rowData.isActive ? (
             <span
-              className="pi pi-trash"
+              className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
               style={{ cursor: "pointer" }}
-              title="Deactivate"
+              title={rowData.isActive ? 'Deactivate' : 'Activate'}
               onClick={() => onDelete(rowData)}
             ></span>
           ) : null}
@@ -1030,14 +1026,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.is_active ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.is_active ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.is_active ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -1276,14 +1270,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isActive ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -1368,14 +1360,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isActive ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -1460,14 +1450,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isActive ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -1699,14 +1687,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isActive ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -1815,14 +1801,12 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isActive ? (
-            <span
-              className="pi pi-trash"
-              style={{ cursor: "pointer" }}
-              title="Deactivate"
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
@@ -2688,7 +2672,7 @@ const Master: React.FC = () => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: "Are you sure you want to deactivate this record",
+      message: `Are you sure you want to activate/deactivate this record`,
       acceptFunction: confirmDelete,
     });
     setShowConfirmDialogue(true);

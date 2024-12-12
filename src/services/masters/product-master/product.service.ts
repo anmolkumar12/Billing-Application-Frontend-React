@@ -42,7 +42,7 @@ export class ProductMasterService {
     try {
       const body = {
         productId: data.id,
-        isActive: 0,
+        isActive: !data.isActive,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 
