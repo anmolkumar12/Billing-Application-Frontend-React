@@ -171,9 +171,9 @@ const Login: React.FC = () => {
   return (
     <div className="loginMainBody">
       <div className="login-right-body">
-        <h3>Invoice Management System</h3>
+        <h3>Effortless Billing Solutions for Your Business</h3>
         <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vitae reiciendis, explicabo facilis ea est eaque quos aliquid sunt ipsum omnis quas deleniti error ratione, vero tenetur nisi. Corporis, necessitatibus odit.
+        Effortlessly manage and track your billing processes with real-time updates, ensuring accuracy and efficiency for both short-term and long-term financial goals
         </p>
         <img src={ImageUrl.LoginImage} alt="" />
       </div>
@@ -183,6 +183,9 @@ const Login: React.FC = () => {
           <img src="./Polestar Logo.svg" />
           </div>
           <h2>Login</h2>
+          <p>
+          Log in to access exclusive billing features, manage transactions, track payments, and more. Install the Billing App for a seamless and enhanced experience.
+          </p>
 
           <form action="">
             <div className="inputItem">
@@ -265,7 +268,7 @@ const Login: React.FC = () => {
               </button>
             </div>
           </form>
-          <div className="sign-up-section">
+          {/* <div className="sign-up-section">
             <h6>Or Login With</h6>
             <ul>
               <li onClick={google}>
@@ -279,7 +282,7 @@ const Login: React.FC = () => {
                 </div>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
         {/* <img className="loginImg" src={ImageUrl.loginImage} alt="" /> */}
       </div>
