@@ -171,23 +171,18 @@ const Login: React.FC = () => {
   return (
     <div className="loginMainBody">
       <div className="login-right-body">
-        <h3>Gift vouchers at best prices</h3>
+        <h3>Invoice Management System</h3>
         <p>
-          Plan, Communicate and Benchmark your short-term and long-term
-          Incentives, perks, employee rewards benefits in real-time
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vitae reiciendis, explicabo facilis ea est eaque quos aliquid sunt ipsum omnis quas deleniti error ratione, vero tenetur nisi. Corporis, necessitatibus odit.
         </p>
         <img src={ImageUrl.LoginImage} alt="" />
       </div>
       <div className="login-body">
         <div className="loginContent">
           <div className="brandLogo">
-            <img src={ImageUrl.VegaLogo} alt="" />
+          <img src="./Polestar Logo.svg" />
           </div>
           <h2>Login</h2>
-          <p>
-            Login to avail Perks, Offers, Rewards, Discounts and more. Install
-            Vega HR app for a better employee experience.
-          </p>
 
           <form action="">
             <div className="inputItem">
