@@ -180,7 +180,7 @@ const Login: React.FC = () => {
       <div className="login-body">
         <div className="loginContent">
           <div className="brandLogo">
-            <img src={ImageUrl.VegaLogo} alt="" />
+          <img src="./Polestar Logo.svg" />
           </div>
           <h2>Login</h2>
           <p>

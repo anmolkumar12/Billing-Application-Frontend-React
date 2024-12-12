@@ -105,11 +105,11 @@ const Master: React.FC = () => {
           setOpenClientForm(false);
           setActiveClientIndex(0);
           await getClientMaster();
-          await getCompanyMaster();
+          await getIndustryMaster();
           await getCountryMaster();
           await getStateMaster();
           await getAccountsMaster();
-          await formatCompany_ClientDetails();
+          await formatIndustry_ClientDetails();
           await formatCountry_ClientDetails();
           await formatState_ClientDetails();
           await formatAccount_ClientDetails();
@@ -140,11 +140,11 @@ const Master: React.FC = () => {
     await accountsFormHandler(accountFieldsStructure);
   };
 
-  const formatCompany_ClientDetails = async () => {
-    const companyList = companyMaster.map(
-      (company: any) => company?.companyName
+  const formatIndustry_ClientDetails = async () => {
+    const industryList = industryMaster.map(
+      (industry: any) => industry?.industryName
     );
-    clientFieldsStructure.company_name.options = companyList;
+    clientFieldsStructure.industry_name.options = industryList;
     await setClientFieldsStructure(clientFieldsStructure);
     await clientFormHandler(clientFieldsStructure);
   };
@@ -601,14 +601,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Company Name",
+      label: "Name",
       fieldName: "companyName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "companyName",
       changeFilter: true,
-      placeholder: "Company Name",
+      placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -713,6 +713,50 @@ const Master: React.FC = () => {
       ),
     },
     {
+      label: "GST",
+      fieldName: "gst_number",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.gst_number}
+          >
+            {rowData.gst_number}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Address",
+      fieldName: "address",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.address}
+          >
+            {rowData.address}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
       label: "Email",
       fieldName: "Email",
       textAlign: "left",
@@ -799,14 +843,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Currency Name",
+      label: "Name",
       fieldName: "currencyName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "currencyName",
       changeFilter: true,
-      placeholder: "Currency Name",
+      placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -823,14 +867,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Currency Description",
+      label: "Description",
       fieldName: "currencyDescription",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "currencyDescription",
       changeFilter: true,
-      placeholder: "Currency Description",
+      placeholder: "Description",
       body: (rowData: any) => (
         <div>
           <span
@@ -838,30 +882,6 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.currencyDescription}
           >
             {rowData.currencyDescription}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Exchange Rate",
-      fieldName: "exchangeRate",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "exchangeRate",
-      changeFilter: true,
-      placeholder: "Exchange Rate",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.exchangeRate}
-          >
-            {rowData.exchangeRate}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -903,26 +923,24 @@ const Master: React.FC = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          {rowData.isActive ? (
-            <span
-              className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
-              style={{ cursor: "pointer" }}
-              title={rowData.isActive ? "Deactivate" : "Activate"}
-              onClick={() => onDelete(rowData)}
-            ></span>
-          ) : null}
+          <span
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
+            onClick={() => onDelete(rowData)}
+          ></span>
         </div>
       ),
     },
     {
-      label: "Industry Name",
+      label: "Name",
       fieldName: "industryName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "industryName",
       changeFilter: true,
-      placeholder: "Industry Name",
+      placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -930,30 +948,6 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.industryName}
           >
             {rowData.industryName}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Description",
-      fieldName: "description",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "description",
-      changeFilter: true,
-      placeholder: "Description",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.description}
-          >
-            {rowData.description}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -978,6 +972,30 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.industryHead}
           >
             {rowData.industryHead}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Description",
+      fieldName: "description",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "description",
+      changeFilter: true,
+      placeholder: "Description",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.description}
+          >
+            {rowData.description}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -1029,14 +1047,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Company Name",
+      label: "Company",
       fieldName: "company_name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "company_name",
       changeFilter: true,
-      placeholder: "Company Name",
+      placeholder: "Company",
       body: (rowData: any) => (
         <div>
           <span
@@ -1077,7 +1095,7 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Bank Name",
+      label: "Bank",
       fieldName: "bank_name",
       textAlign: "left",
       frozen: false,
@@ -1273,14 +1291,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Product Name",
+      label: "Name",
       fieldName: "productName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "productName",
       changeFilter: true,
-      placeholder: "Product Name",
+      placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -1363,14 +1381,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Project Name",
+      label: "Name",
       fieldName: "projectName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "projectName",
       changeFilter: true,
-      placeholder: "Project Name",
+      placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -1453,14 +1471,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Tax Type",
+      label: "Type",
       fieldName: "taxType",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "taxType",
       changeFilter: true,
-      placeholder: "Tax Type",
+      placeholder: "Type",
       body: (rowData: any) => (
         <div>
           <span
@@ -1477,14 +1495,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Tax Percentage",
+      label: "Percentage",
       fieldName: "taxPercentage",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "taxPercentage",
       changeFilter: true,
-      placeholder: "Tax Percentage",
+      placeholder: "Percentage",
       body: (rowData: any) => (
         <div>
           <span
@@ -1690,14 +1708,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "State Name",
+      label: "State",
       fieldName: "state_name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "state_name",
       changeFilter: true,
-      placeholder: "State Name",
+      placeholder: "State",
       body: (rowData: any) => (
         <div>
           <span
@@ -1738,14 +1756,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Country Name",
+      label: "Country",
       fieldName: "country_name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "country_name",
       changeFilter: true,
-      placeholder: "Country Name",
+      placeholder: "Country",
       body: (rowData: any) => (
         <div>
           <span
@@ -1804,14 +1822,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Company Name",
-      fieldName: "company_name",
+      label: "Industry",
+      fieldName: "industry_name",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "company_name",
+      fieldValue: "industry_name",
       changeFilter: true,
-      placeholder: "Company Name",
+      placeholder: "Industry",
       body: (rowData: any) => (
         <div>
           <span
@@ -1996,14 +2014,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Country Name",
+      label: "Country",
       fieldName: "country_name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "country_name",
       changeFilter: true,
-      placeholder: "Country Name",
+      placeholder: "Country",
       body: (rowData: any) => (
         <div>
           <span
@@ -2020,14 +2038,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "State Name",
+      label: "State",
       fieldName: "state_name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "state_name",
       changeFilter: true,
-      placeholder: "State Name",
+      placeholder: "State",
       body: (rowData: any) => (
         <div>
           <span
@@ -2188,14 +2206,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Shipping Country Name",
+      label: "Shipping Country",
       fieldName: "client_ship_to_country_name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "client_ship_to_country_name",
       changeFilter: true,
-      placeholder: "Shipping Country Name",
+      placeholder: "Shipping Country",
       body: (rowData: any) => (
         <div>
           <span
@@ -2212,14 +2230,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Shipping State Name",
+      label: "Shipping State",
       fieldName: "client_ship_to_state_name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "client_ship_to_state_name",
       changeFilter: true,
-      placeholder: "Shipping State Name",
+      placeholder: "Shipping State",
       body: (rowData: any) => (
         <div>
           <span
@@ -2395,30 +2413,6 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.msa_flag}
           >
             <span>{rowData?.msa_flag === 1 ? "Yes" : "No"}</span>
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Is Performa",
-      fieldName: "is_performa",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "is_performa",
-      changeFilter: true,
-      placeholder: "Is Performa",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.is_performa}
-          >
-            <span>{rowData?.is_performa === 1 ? "Yes" : "No"}</span>
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2714,8 +2708,6 @@ const Master: React.FC = () => {
       value: null,
       validation: {
         required: true,
-        // minlength: 2,
-        // maxlength: 10,
       },
       fieldWidth: "col-md-6",
     },
@@ -2725,8 +2717,6 @@ const Master: React.FC = () => {
       value: null,
       validation: {
         required: true,
-        // minlength: 2,
-        // maxlength: 100,
       },
       fieldWidth: "col-md-6",
     },
@@ -2736,8 +2726,24 @@ const Master: React.FC = () => {
       value: null,
       validation: {
         required: true,
-        // minlength: 2,
-        // maxlength: 100,
+      },
+      fieldWidth: "col-md-6",
+    },
+    gst_number: {
+      inputType: "inputtext",
+      label: "GST",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    address: {
+      inputType: "inputtext",
+      label: "Address",
+      value: null,
+      validation: {
+        required: true,
       },
       fieldWidth: "col-md-6",
     },
@@ -2755,7 +2761,7 @@ const Master: React.FC = () => {
       label: "Description",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-12",
       rows: 3,
@@ -2787,21 +2793,12 @@ const Master: React.FC = () => {
       },
       fieldWidth: "col-md-6",
     },
-    exchangeRate: {
-      inputType: "inputtext",
-      label: "Exchange Rate",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    },
     currencyDescription: {
       inputType: "inputtextarea",
       label: "Description",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-12",
       row: 3,
@@ -2812,7 +2809,6 @@ const Master: React.FC = () => {
     try {
       CurrencyFormFields.currencyName.value = data?.currencyName;
       CurrencyFormFields.currencyDescription.value = data?.currencyDescription;
-      CurrencyFormFields.exchangeRate.value = data?.exchangeRate;
       setCurrencyForm(_.cloneDeep(CurrencyFormFields));
     } catch (error) {
       console.log("error", error);
@@ -2822,7 +2818,7 @@ const Master: React.FC = () => {
   const AccountsFormFields = {
     companyName: {
       inputType: "singleSelect",
-      label: "Company Name",
+      label: "Company",
       options: [],
       value: null,
       validation: {
@@ -2833,7 +2829,7 @@ const Master: React.FC = () => {
     account_type: {
       inputType: "singleSelect",
       label: "Account Type",
-      options: ["Domestic", "International"],
+      options: ["Savings", "Current"],
       value: null,
       validation: {
         required: true,
@@ -2842,7 +2838,7 @@ const Master: React.FC = () => {
     },
     bank_name: {
       inputType: "inputtext",
-      label: "Bank Name",
+      label: "Bank",
       value: null,
       validation: {
         required: true,
@@ -2881,7 +2877,7 @@ const Master: React.FC = () => {
       label: "MICR Code",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
       rows: 3,
@@ -2891,7 +2887,7 @@ const Master: React.FC = () => {
       label: "Swift Code",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
       rows: 3,
@@ -2901,7 +2897,7 @@ const Master: React.FC = () => {
       label: "Bank Code",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
       rows: 3,
@@ -2934,7 +2930,7 @@ const Master: React.FC = () => {
   const IndustryFormFields = {
     industryName: {
       inputType: "inputtext",
-      label: "Industry Name",
+      label: "Name",
       value: null,
       validation: {
         required: true,
@@ -2955,7 +2951,7 @@ const Master: React.FC = () => {
       label: "Description",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-12",
       rows: 3,
@@ -2964,14 +2960,17 @@ const Master: React.FC = () => {
 
   const updateIndustryMaster = (data: any) => {
     try {
-      IndustryFormFields.industryName.value = data?.industryName;
-      IndustryFormFields.description.value = data?.description;
-      IndustryFormFields.industryHead.value = data?.industryHead;
-      setIndustryForm(_.cloneDeep(IndustryFormFields));
+      industryFieldsStructure.industryName.value = data?.industryName;
+      industryFieldsStructure.description.value = data?.description;
+      industryFieldsStructure.industryHead.value = data?.industryHead;
+      setIndustryForm(_.cloneDeep(industryFieldsStructure));
     } catch (error) {
       console.log("error", error);
     }
   };
+
+  const [industryFieldsStructure, setIndustryFieldsStructure]: any =
+    useState(IndustryFormFields);
 
   const ProductFormFields = {
     productName: {
@@ -2988,7 +2987,7 @@ const Master: React.FC = () => {
       label: "Description",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-12",
       rows: 3,
@@ -3008,7 +3007,7 @@ const Master: React.FC = () => {
   const ProjectFormFields = {
     projectName: {
       inputType: "inputtext",
-      label: "Project Name",
+      label: "Name",
       value: null,
       validation: {
         required: true,
@@ -3017,10 +3016,10 @@ const Master: React.FC = () => {
     },
     projectDescription: {
       inputType: "inputtextarea",
-      label: "Project Description",
+      label: "Description",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-12",
       rows: 3,
@@ -3040,7 +3039,7 @@ const Master: React.FC = () => {
   const TaxFormFields = {
     taxType: {
       inputType: "inputtext",
-      label: "Tax Type",
+      label: "Type",
       value: null,
       validation: {
         required: true,
@@ -3049,7 +3048,7 @@ const Master: React.FC = () => {
     },
     taxPercentage: {
       inputType: "inputtext",
-      label: "Tax Percentage",
+      label: "Percentage",
       value: null,
       validation: {
         required: true,
@@ -3081,7 +3080,7 @@ const Master: React.FC = () => {
   const StatesFormFields = {
     country_name: {
       inputType: "singleSelect",
-      label: "Country Name",
+      label: "Country",
       options: [],
       value: null,
       validation: {
@@ -3091,7 +3090,7 @@ const Master: React.FC = () => {
     },
     state_name: {
       inputType: "inputtext",
-      label: "State Name",
+      label: "State",
       value: null,
       validation: {
         required: true,
@@ -3125,13 +3124,13 @@ const Master: React.FC = () => {
     useState(StatesFormFields);
 
   const ClientFormFields = {
-    company_name: {
+    industry_name: {
       inputType: "singleSelect",
-      label: "Company Name",
+      label: "Industry",
       options: [],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3149,7 +3148,7 @@ const Master: React.FC = () => {
       label: "Alias",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3199,15 +3198,6 @@ const Master: React.FC = () => {
       },
       fieldWidth: "col-md-6",
     },
-    missing_msa_deadline: {
-      inputType: "inputSwitch",
-      label: "Missing MSA Deadline",
-      value: false,
-      validation: {
-        required: false,
-      },
-      fieldWidth: "col-md-6",
-    },
     is_msa_missing: {
       inputType: "inputSwitch",
       label: "MSA Missing?",
@@ -3219,16 +3209,7 @@ const Master: React.FC = () => {
     },
     msa_flag: {
       inputType: "inputSwitch",
-      label: "Is MSA",
-      value: false,
-      validation: {
-        required: false,
-      },
-      fieldWidth: "col-md-6",
-    },
-    is_performa: {
-      inputType: "inputSwitch",
-      label: "Is Performa",
+      label: "Is NDA",
       value: false,
       validation: {
         required: false,
@@ -3414,10 +3395,10 @@ const Master: React.FC = () => {
     salutation: {
       inputType: "singleSelect",
       label: "Salutation",
-      options: ["Mr.", "Mrs."],
+      options: ["Mr.", "Mrs.", "M/S"],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -3473,7 +3454,7 @@ const Master: React.FC = () => {
   );
 
   const [IndustryForm, setIndustryForm] = useState<any>(
-    _.cloneDeep(IndustryFormFields)
+    _.cloneDeep(industryFieldsStructure)
   );
 
   const [ProductForm, setProductForm] = useState<any>(
@@ -3511,7 +3492,7 @@ const Master: React.FC = () => {
     setCompanyForm(_.cloneDeep(CompanyFormFields));
     setCurrencyForm(_.cloneDeep(CurrencyFormFields));
     setAccountForm(_.cloneDeep(accountFieldsStructure));
-    setIndustryForm(_.cloneDeep(IndustryFormFields));
+    setIndustryForm(_.cloneDeep(industryFieldsStructure));
     setProductForm(_.cloneDeep(ProductFormFields));
     setProjectForm(_.cloneDeep(ProjectFormFields));
     setTaxForm(_.cloneDeep(TaxFormFields));
