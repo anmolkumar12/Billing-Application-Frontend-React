@@ -98,6 +98,8 @@ const Master: React.FC = () => {
           break;
         case 8:
           await getStateMaster();
+          await getCountryMaster();
+          await formatCountry_StateDetails();
           break;
         case 9:
           setOpenClientForm(false);
@@ -142,13 +144,19 @@ const Master: React.FC = () => {
     await setClientFieldsStructure(clientFieldsStructure);
     await clientFormHandler(clientFieldsStructure);
   };
-  
+
   const formatCountry_ClientDetails = async () => {
-    console.log("countryMaster", countryMaster);
     const countrylist = countryMaster.map((country: any) => country?.name);
     clientBillFieldsStructure.country_name.options = countrylist;
     await setClientBillFieldsStructure(clientBillFieldsStructure);
     await clientBillFormHandler(clientBillFieldsStructure);
+  };
+
+  const formatCountry_StateDetails = async () => {
+    const countrylist = countryMaster.map((country: any) => country?.name);
+    statesFieldsStructure.country_name.options = countrylist;
+    await setStatesFieldsStructure(statesFieldsStructure);
+    await statesFormHandler(statesFieldsStructure);
   };
   
   const formatState_ClientDetails = async () => {
@@ -435,6 +443,25 @@ const Master: React.FC = () => {
       });
   };
 
+  const deactivateStatesMaster = () => {
+    setLoader(true);
+    stateService
+      .deactivateStateMaster(patchData)
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          "States record deactivated successfully",
+          CONSTANTS.SUCCESS
+        );
+        getStateMaster();
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
+
   const deactivateClientMaster = () => {
     setLoader(true);
     clientService
@@ -521,6 +548,9 @@ const Master: React.FC = () => {
         break;
       case 6:
         deactivateTaxMaster();
+        break;
+      case 8:
+        deactivateStatesMaster();
         break;
       case 9:
         deactivateClientMaster();
@@ -1667,12 +1697,14 @@ const Master: React.FC = () => {
             className="pi pi-pencil"
             style={{ cursor: "pointer" }}
             title="Update"
+            onClick={() => onUpdate(rowData)}
           ></span>
           {rowData.isActive ? (
             <span
               className="pi pi-trash"
               style={{ cursor: "pointer" }}
               title="Deactivate"
+              onClick={() => onDelete(rowData)}
             ></span>
           ) : null}
         </div>
@@ -1747,6 +1779,21 @@ const Master: React.FC = () => {
             target={`#companyNameTooltip-${rowData.id}`}
             position="top"
           />
+        </div>
+      ),
+    },
+    {
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span style={{ color: rowData?.isActive === 1 ? "green" : "red" }}>
+            {rowData?.isActive === 1 ? "Active" : "Inactive"}
+          </span>
         </div>
       ),
     },
@@ -2673,6 +2720,9 @@ const Master: React.FC = () => {
       case 6:
         updateTaxMaster(data);
         break;
+      case 8:
+        updateStateMaster(data);
+        break;
       // case 9:
       //   updateClientMaster(data);
       //   break;
@@ -3066,7 +3116,6 @@ const Master: React.FC = () => {
 
   const updateTaxMaster = (data: any) => {
     try {
-      console.log("data", data);
       TaxFormFields.taxType.value = data?.taxType;
       TaxFormFields.taxPercentage.value = data?.taxPercentage;
       TaxFormFields.effectiveDate.value = data?.effectiveDate;
@@ -3075,6 +3124,52 @@ const Master: React.FC = () => {
       console.log("error", error);
     }
   };
+
+  const StatesFormFields = {
+    country_name: {
+      inputType: "singleSelect",
+      label: "Country Name",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    state_name: {
+      inputType: "inputtext",
+      label: "State Name",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    state_code: {
+      inputType: "inputtext",
+      label: "State Code",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+  };
+
+  const updateStateMaster = (data: any) => {
+    try {
+      statesFieldsStructure.country_name.value = data?.country_name;
+      statesFieldsStructure.state_name.value = data?.state_name;
+      statesFieldsStructure.state_code.value = data?.state_code;
+      
+      setStatesForm(_.cloneDeep(statesFieldsStructure));
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const [statesFieldsStructure, setStatesFieldsStructure]: any =
+    useState(StatesFormFields);
 
   const ClientFormFields = {
     company_name: {
@@ -3438,6 +3533,8 @@ const Master: React.FC = () => {
 
   const [TaxForm, setTaxForm] = useState<any>(_.cloneDeep(TaxFormFields));
 
+  const [StatesForm, setStatesForm] = useState<any>(_.cloneDeep(statesFieldsStructure));
+
   const [ClientForm, setClientForm] = useState<any>(
     _.cloneDeep(clientFieldsStructure)
   );
@@ -3463,6 +3560,7 @@ const Master: React.FC = () => {
     setProductForm(_.cloneDeep(ProductFormFields));
     setProjectForm(_.cloneDeep(ProjectFormFields));
     setTaxForm(_.cloneDeep(TaxFormFields));
+    setStatesForm(_.cloneDeep(statesFieldsStructure));
     setClientForm(_.cloneDeep(clientFieldsStructure));
     setClientBillForm(_.cloneDeep(clientBillFieldsStructure));
     setClientShipForm(_.cloneDeep(clientShipFieldsStructure));
@@ -3497,6 +3595,10 @@ const Master: React.FC = () => {
 
   const taxFormHandler = async (form: FormType) => {
     await setTaxForm(form);
+  };
+
+  const statesFormHandler = async (form: FormType) => {
+    await setStatesForm(form);
   };
 
   const clientFormHandler = async (form: FormType) => {
@@ -3961,6 +4063,72 @@ const Master: React.FC = () => {
               setStateData({});
               closeFormPopup();
               getTaxMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      }
+    } else {
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+  };
+
+  const createNewState = (event: FormEvent) => {
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
+
+    _.each(StatesForm, (item: any) => {
+      if (item?.validation?.required) {
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
+      }
+    });
+
+    setIsFormValid(companyValidityFlag);
+
+    const countryId =
+      countryMaster.find(
+        (country: any) => country.name === StatesForm.country_name.value
+      )?.id ?? null;
+
+    if (companyValidityFlag) {
+      const obj = {
+        stateName: StatesForm?.state_name?.value,
+        stateCode: StatesForm?.state_code?.value,
+        countryId: countryId,
+        isactive: 1,
+        updatedBy: loggedInUserId,
+      };
+
+      if (!stateData?.state_id) {
+        stateService
+          .createStateMaster(obj)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+              setStateData({});
+              closeFormPopup();
+              getStateMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      } else {
+        const updatePayload = { ...obj, stateId: stateData?.state_id };
+
+        stateService
+          .updateStateMaster(updatePayload)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+              setStateData({});
+              closeFormPopup();
+              getStateMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4838,8 +5006,8 @@ const Master: React.FC = () => {
                 </div>
                 <div className="popup-content" style={{ padding: "1rem 2rem" }}>
                   <FormComponent
-                    form={_.cloneDeep(CompanyForm)}
-                    formUpdateEvent={companyFormHandler}
+                    form={_.cloneDeep(StatesForm)}
+                    formUpdateEvent={statesFormHandler}
                     isFormValidFlag={isFormValid}
                   ></FormComponent>
                 </div>
@@ -4849,7 +5017,7 @@ const Master: React.FC = () => {
                     label="Submit"
                     icon="pi pi-check"
                     iconPos="right"
-                    submitEvent={activeIndex}
+                    submitEvent={createNewState}
                   />
                 </div>
               </div>
