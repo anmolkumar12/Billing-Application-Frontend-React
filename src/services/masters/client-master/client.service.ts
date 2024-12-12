@@ -16,10 +16,9 @@ export class ClientMasterService {
   createClientMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.CREATE_ACCOUNTS_MASTER,
+        APIURLS.CREATE_CLIENT_MASTER,
         formData
-      )
-
+      )      
       return response?.data
     } catch (error) {
       return error
@@ -42,13 +41,13 @@ export class ClientMasterService {
   deactivateClientMaster = async (data: any) => {
     try {
       const body = {
-        accountId: data.account_id,
+        clientId: data.id,
         isActive: 0,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 
       const response = await HTTPService.postRequest(
-        APIURLS.TOGGLE_ACCOUNTS_STATUS,
+        APIURLS.TOGGLE_CLIENT_STATUS,
         body
       )
       return response?.data
