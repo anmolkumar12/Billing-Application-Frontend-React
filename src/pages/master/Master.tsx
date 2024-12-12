@@ -118,7 +118,7 @@ const Master: React.FC = () => {
           break;
         default:
           break;
-      }  
+      }
     };
     fetchData();
   }, [activeIndex]);
@@ -132,14 +132,18 @@ const Master: React.FC = () => {
   };
 
   const formatCompanyDetails = async () => {
-    const companyList = companyMaster.map((company: any) => company?.companyName);
+    const companyList = companyMaster.map(
+      (company: any) => company?.companyName
+    );
     accountFieldsStructure.companyName.options = companyList;
     await setAccountFieldsStructure(accountFieldsStructure);
     await accountsFormHandler(accountFieldsStructure);
   };
-  
+
   const formatCompany_ClientDetails = async () => {
-    const companyList = companyMaster.map((company: any) => company?.companyName);
+    const companyList = companyMaster.map(
+      (company: any) => company?.companyName
+    );
     clientFieldsStructure.company_name.options = companyList;
     await setClientFieldsStructure(clientFieldsStructure);
     await clientFormHandler(clientFieldsStructure);
@@ -158,30 +162,33 @@ const Master: React.FC = () => {
     await setStatesFieldsStructure(statesFieldsStructure);
     await statesFormHandler(statesFieldsStructure);
   };
-  
+
   const formatState_ClientDetails = async () => {
-    console.log('stateMaster', stateMaster);
+    console.log("stateMaster", stateMaster);
     const statelist = stateMaster.map((state: any) => state.state_name);
     console.log("state", statelist, clientBillFieldsStructure);
     clientBillFieldsStructure.state_name.options = statelist;
     await setClientBillFieldsStructure(clientBillFieldsStructure);
     await clientBillFormHandler(clientBillFieldsStructure);
   };
-  
+
   const formatAccount_ClientDetails = async () => {
-    const accountslist = accountsMaster.map((account: any) => account?.account_no);
-    clientBillFieldsStructure.polestar_bank_account_number.options = accountslist;
+    const accountslist = accountsMaster.map(
+      (account: any) => account?.account_no
+    );
+    clientBillFieldsStructure.polestar_bank_account_number.options =
+      accountslist;
     await setClientBillFieldsStructure(clientBillFieldsStructure);
     await clientBillFormHandler(clientBillFieldsStructure);
   };
-  
+
   const formatCountry_Client_ShipDetails = async () => {
     const countrylist = countryMaster.map((country: any) => country?.name);
     clientShipFieldsStructure.client_ship_to_country_name.options = countrylist;
     await setClientShipFieldsStructure(clientShipFieldsStructure);
     await clientShipFormHandler(clientShipFieldsStructure);
   };
-  
+
   const formatState_Client_ShipDetails = async () => {
     const statelist = stateMaster.map((state: any) => state?.state_name);
     clientShipFieldsStructure.client_ship_to_state_name.options = statelist;
@@ -200,7 +207,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getCurrencyMaster = async () => {
     setLoader(true);
     try {
@@ -212,7 +219,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getIndustryMaster = async () => {
     setLoader(true);
     try {
@@ -224,7 +231,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getAccountsMaster = async () => {
     setLoader(true);
     try {
@@ -236,7 +243,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getProductMaster = async () => {
     setLoader(true);
     try {
@@ -248,7 +255,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getProjectMaster = async () => {
     setLoader(true);
     try {
@@ -260,7 +267,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getTaxMaster = async () => {
     setLoader(true);
     try {
@@ -272,7 +279,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getCountryMaster = async () => {
     setLoader(true);
     try {
@@ -284,7 +291,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getStateMaster = async () => {
     setLoader(true);
     try {
@@ -296,7 +303,7 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getClientMaster = async () => {
     setLoader(true);
     try {
@@ -308,7 +315,6 @@ const Master: React.FC = () => {
       setLoader(false);
     }
   };
-  
 
   const deactivateCompanyMaster = () => {
     setLoader(true);
@@ -491,9 +497,11 @@ const Master: React.FC = () => {
 
   const closeClientForm = () => {
     setOpenClientForm(false);
-  }
+  };
 
   const selectAttachment = (files: any) => {
+    console.log("files", files);
+
     setAttachments([]);
     if (files && files[0]) {
       _.each(files, (eventList) => {
@@ -509,11 +517,15 @@ const Master: React.FC = () => {
               "error"
             );
           } else {
-            setAttachments((prevVals: any) => [...prevVals, eventList]);
+            const fileWithUrl = {
+              ...eventList,
+              preview: URL.createObjectURL(eventList),
+            };
+            setAttachments((prevVals: any) => [...prevVals, fileWithUrl]);
           }
         } else {
           ToasterService.show(
-            `Invalid file format you can only attach the png here!`,
+            `Invalid file format. You can only attach PNG files here!`,
             "error"
           );
           eventList = null;
@@ -522,8 +534,11 @@ const Master: React.FC = () => {
     }
   };
 
-  const removeFileHandler = () => {
-    setAttachments([]);
+  const removeFileHandler = (index: any) => {
+    const updatedAttachments = attachments.filter(
+      (_: any, i: any) => i !== index
+    );
+    setAttachments(updatedAttachments);
   };
 
   const confirmDelete = () => {
@@ -577,9 +592,9 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isactive ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.isactive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isactive ? 'Deactivate' : 'Activate'}
+            title={rowData.isactive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
@@ -720,28 +735,6 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Logo Path",
-      fieldName: "logopath",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.logopath}
-          >
-            {rowData.logopath}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
       label: "Description",
       fieldName: "description",
       textAlign: "left",
@@ -797,9 +790,9 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
@@ -912,9 +905,9 @@ const Master: React.FC = () => {
           ></span>
           {rowData.isActive ? (
             <span
-              className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+              className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
               style={{ cursor: "pointer" }}
-              title={rowData.isActive ? 'Deactivate' : 'Activate'}
+              title={rowData.isActive ? "Deactivate" : "Activate"}
               onClick={() => onDelete(rowData)}
             ></span>
           ) : null}
@@ -1027,9 +1020,9 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.is_active ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.is_active ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.is_active ? 'Deactivate' : 'Activate'}
+            title={rowData.is_active ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
@@ -1271,9 +1264,9 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
@@ -1304,14 +1297,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Product Description",
+      label: "Description",
       fieldName: "productDescription",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "productDescription",
       changeFilter: true,
-      placeholder: "Product Description",
+      placeholder: "Description",
       body: (rowData: any) => (
         <div>
           <span
@@ -1361,9 +1354,9 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
@@ -1394,14 +1387,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Project Description",
+      label: "Description",
       fieldName: "projectDescription",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "projectDescription",
       changeFilter: true,
-      placeholder: "Project Description",
+      placeholder: "Description",
       body: (rowData: any) => (
         <div>
           <span
@@ -1451,9 +1444,9 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
@@ -1550,62 +1543,14 @@ const Master: React.FC = () => {
 
   const CountryMasterColumns = [
     {
-      label: "Country Code",
-      fieldName: "code",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "code",
-      changeFilter: true,
-      placeholder: "Country Code",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.code}
-          >
-            {rowData.code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Currency",
-      fieldName: "currency",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "currency",
-      changeFilter: true,
-      placeholder: "Currency",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.currency}
-          >
-            {rowData.currency}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Country Name",
+      label: "Country",
       fieldName: "name",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "name",
       changeFilter: true,
-      placeholder: "Country Name",
+      placeholder: "Country",
       body: (rowData: any) => (
         <div>
           <span
@@ -1646,6 +1591,30 @@ const Master: React.FC = () => {
       ),
     },
     {
+      label: "Country Code",
+      fieldName: "code",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "code",
+      changeFilter: true,
+      placeholder: "Country Code",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.code}
+          >
+            {rowData.code}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
       label: "Phone Code",
       fieldName: "phone_code",
       textAlign: "left",
@@ -1661,6 +1630,30 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.phone_code}
           >
             {rowData.phone_code}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Currency",
+      fieldName: "currency",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "currency",
+      changeFilter: true,
+      placeholder: "Currency",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.currency}
+          >
+            {rowData.currency}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -1688,35 +1681,11 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
-        </div>
-      ),
-    },
-    {
-      label: "State Code",
-      fieldName: "state_code",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "state_code",
-      changeFilter: true,
-      placeholder: "State Code",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.state_code}
-          >
-            {rowData.state_code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
         </div>
       ),
     },
@@ -1736,6 +1705,30 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.state_name}
           >
             {rowData.state_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "State Code",
+      fieldName: "state_code",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "state_code",
+      changeFilter: true,
+      placeholder: "State Code",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.state_code}
+          >
+            {rowData.state_code}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -1802,9 +1795,9 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? 'check-circle' : 'ban'}`}
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isActive ? 'Deactivate' : 'Activate'}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
@@ -2603,14 +2596,14 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Is MSA Missing",
+      label: "MSA Missing?",
       fieldName: "is_msa_missing",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "is_msa_missing",
       changeFilter: true,
-      placeholder: "Is MSA Missing",
+      placeholder: "MSA Missing?",
       body: (rowData: any) => (
         <div>
           <span
@@ -2618,30 +2611,6 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.is_msa_missing}
           >
             <span>{rowData?.is_msa_missing === 1 ? "Yes" : "No"}</span>
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Logopath",
-      fieldName: "logopath",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "logopath",
-      changeFilter: true,
-      placeholder: "Logopath",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.logopath}
-          >
-            {rowData.logopath}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2664,7 +2633,7 @@ const Master: React.FC = () => {
           </span>
         </div>
       ),
-    }
+    },
   ];
 
   const onDelete = (data: unknown) => {
@@ -2816,17 +2785,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-12",
-    },
-    currencyDescription: {
-      inputType: "inputtextarea",
-      label: "Currency Description",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-12",
-      row: 3,
+      fieldWidth: "col-md-6",
     },
     exchangeRate: {
       inputType: "inputtext",
@@ -2835,7 +2794,17 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
+      fieldWidth: "col-md-6",
+    },
+    currencyDescription: {
+      inputType: "inputtextarea",
+      label: "Description",
+      value: null,
+      validation: {
+        required: true,
+      },
       fieldWidth: "col-md-12",
+      row: 3,
     },
   };
 
@@ -2970,7 +2939,16 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-12",
+      fieldWidth: "col-md-6",
+    },
+    industryHead: {
+      inputType: "inputtext",
+      label: "Industry Head",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
     },
     description: {
       inputType: "inputtextarea",
@@ -2981,15 +2959,6 @@ const Master: React.FC = () => {
       },
       fieldWidth: "col-md-12",
       rows: 3,
-    },
-    industryHead: {
-      inputType: "inputtext",
-      label: "Industry Head",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-12",
     },
   };
 
@@ -3016,7 +2985,7 @@ const Master: React.FC = () => {
     },
     productDescription: {
       inputType: "inputtextarea",
-      label: "Product Description",
+      label: "Description",
       value: null,
       validation: {
         required: true,
@@ -3076,7 +3045,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-12",
     },
     taxPercentage: {
       inputType: "inputtext",
@@ -3085,7 +3054,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-12",
     },
     effectiveDate: {
       inputType: "singleDatePicker",
@@ -3094,7 +3063,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-12",
     },
   };
 
@@ -3145,7 +3114,7 @@ const Master: React.FC = () => {
       statesFieldsStructure.country_name.value = data?.country_name;
       statesFieldsStructure.state_name.value = data?.state_name;
       statesFieldsStructure.state_code.value = data?.state_code;
-      
+
       setStatesForm(_.cloneDeep(statesFieldsStructure));
     } catch (error) {
       console.log("error", error);
@@ -3241,7 +3210,7 @@ const Master: React.FC = () => {
     },
     is_msa_missing: {
       inputType: "inputSwitch",
-      label: "Is MSA Missing",
+      label: "MSA Missing?",
       value: false,
       validation: {
         required: false,
@@ -3445,7 +3414,7 @@ const Master: React.FC = () => {
     salutation: {
       inputType: "singleSelect",
       label: "Salutation",
-      options: ['Mr.', 'Mrs.'],
+      options: ["Mr.", "Mrs."],
       value: null,
       validation: {
         required: true,
@@ -3517,7 +3486,9 @@ const Master: React.FC = () => {
 
   const [TaxForm, setTaxForm] = useState<any>(_.cloneDeep(TaxFormFields));
 
-  const [StatesForm, setStatesForm] = useState<any>(_.cloneDeep(statesFieldsStructure));
+  const [StatesForm, setStatesForm] = useState<any>(
+    _.cloneDeep(statesFieldsStructure)
+  );
 
   const [ClientForm, setClientForm] = useState<any>(
     _.cloneDeep(clientFieldsStructure)
@@ -4157,21 +4128,31 @@ const Master: React.FC = () => {
 
     const polestar_bank_account_id =
       accountsMaster.find(
-        (account: any) => account.account_no === ClientBillForm.polestar_bank_account_number.value
+        (account: any) =>
+          account.account_no ===
+          ClientBillForm.polestar_bank_account_number.value
       )?.account_id ?? null;
 
     const client_ship_to_country_id =
       countryMaster.find(
-        (country: any) => country.name === ClientShipForm.client_ship_to_country_name.value
+        (country: any) =>
+          country.name === ClientShipForm.client_ship_to_country_name.value
       )?.id ?? null;
 
     const client_ship_to_state_id =
       stateMaster.find(
-        (state: any) => state.state_name === ClientShipForm.client_ship_to_state_name.value
+        (state: any) =>
+          state.state_name === ClientShipForm.client_ship_to_state_name.value
       )?.state_id ?? null;
 
     if (companyValidityFlag) {
-      console.log('Client forms', ClientForm, ClientBillForm, ClientShipForm, ClientContactForm);
+      console.log(
+        "Client forms",
+        ClientForm,
+        ClientBillForm,
+        ClientShipForm,
+        ClientContactForm
+      );
       const formData: any = new FormData();
 
       const obj = {
@@ -4203,7 +4184,9 @@ const Master: React.FC = () => {
         is_performa: ClientForm?.is_performa?.value ? 1 : 0,
         msa_start_date: ClientForm?.msa_start_date?.value,
         msa_end_date: ClientForm?.msa_end_date?.value,
-        non_solicitation_clause: ClientForm?.non_solicitation_clause?.value ? 1 : 0,
+        non_solicitation_clause: ClientForm?.non_solicitation_clause?.value
+          ? 1
+          : 0,
         use_logo_permission: ClientForm?.use_logo_permission?.value ? 1 : 0,
         client_category: ClientForm?.client_category?.value,
         servicing_type: ClientForm?.servicing_type?.value,
@@ -4221,20 +4204,20 @@ const Master: React.FC = () => {
       }
 
       // if (!stateData?.id) {
-        clientService
-          .createClientMaster(formData)
-          .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              getClientMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
+      clientService
+        .createClientMaster(formData)
+        .then((response: any) => {
+          if (response?.statusCode == HTTP_RESPONSE.CREATED) {
             setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
+            closeFormPopup();
+            getClientMaster();
+            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+          }
+        })
+        .catch((error: any) => {
+          setStateData({});
+          ToasterService.show(error, CONSTANTS.ERROR);
+        });
       // } else {
       //   const updatePayload = { ...obj, taxId: stateData?.id };
 
@@ -4256,7 +4239,7 @@ const Master: React.FC = () => {
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const moveNextClientForm = (event: FormEvent) => {
     event.preventDefault();
@@ -4265,21 +4248,21 @@ const Master: React.FC = () => {
 
     _.each(ClientForm, (item: any) => {
       if (item?.validation?.required) {
-        console.log('item', item, companyValidityFlag, item.valid);
-        
+        console.log("item", item, companyValidityFlag, item.valid);
+
         companyFormValid.push(item.valid);
         companyValidityFlag = companyValidityFlag && item.valid;
       }
     });
-    console.log('companyValidityFlag', companyValidityFlag);
+    console.log("companyValidityFlag", companyValidityFlag);
 
     setIsFormValid(companyValidityFlag);
     if (companyValidityFlag) {
-      setActiveClientIndex(activeClientIndex+1);
+      setActiveClientIndex(activeClientIndex + 1);
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const moveNextClientBillForm = (event: FormEvent) => {
     event.preventDefault();
@@ -4287,7 +4270,7 @@ const Master: React.FC = () => {
     const companyFormValid: boolean[] = [];
 
     _.each(ClientBillForm, (item: any) => {
-      if (item?.validation?.required) {        
+      if (item?.validation?.required) {
         companyFormValid.push(item.valid);
         companyValidityFlag = companyValidityFlag && item.valid;
       }
@@ -4295,11 +4278,11 @@ const Master: React.FC = () => {
 
     setIsFormValid(companyValidityFlag);
     if (companyValidityFlag) {
-      setActiveClientIndex(activeClientIndex+1);
+      setActiveClientIndex(activeClientIndex + 1);
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const moveNextClientShipForm = (event: FormEvent) => {
     event.preventDefault();
@@ -4307,7 +4290,7 @@ const Master: React.FC = () => {
     const companyFormValid: boolean[] = [];
 
     _.each(ClientShipForm, (item: any) => {
-      if (item?.validation?.required) {        
+      if (item?.validation?.required) {
         companyFormValid.push(item.valid);
         companyValidityFlag = companyValidityFlag && item.valid;
       }
@@ -4315,15 +4298,15 @@ const Master: React.FC = () => {
 
     setIsFormValid(companyValidityFlag);
     if (companyValidityFlag) {
-      setActiveClientIndex(activeClientIndex+1);
+      setActiveClientIndex(activeClientIndex + 1);
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const backToPreviousForm = () => {
     setActiveClientIndex(activeClientIndex - 1);
-  }
+  };
 
   return loader ? (
     <Loader />
@@ -4377,7 +4360,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Company Form</h4>
+                    <h4 className="popup-heading">Add New Company</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -4400,33 +4383,45 @@ const Master: React.FC = () => {
                       <div className="col-md-12">
                         <div className={classes["upload-file-section"]}>
                           <div className={classes["upload-file"]}>
-                            <input
-                              type="file"
-                              onClick={(event: any) => {
-                                event.target.value = null;
-                              }}
-                              onChange={(e) => selectAttachment(e.target.files)}
-                              className={classes["upload"]}
-                            />
-                            <img src={ImageUrl.FolderIconImage} />
-                            <p>
-                              Drag files here <span> or browse</span> <br />
-                              <u>Support PDF</u>
-                            </p>
-                            <div className={classes["chip-tm"]}>
-                              {attachments?.length
-                                ? attachments.map((item: any, index: any) => {
-                                    return (
-                                      <Chip
-                                        label={item?.name}
-                                        removable
-                                        onRemove={() => removeFileHandler()}
-                                        key={index}
-                                      />
-                                    );
-                                  })
-                                : null}
-                            </div>
+                            {attachments.length > 0 ? (
+                              <div className={classes["image-preview"]}>
+                                <img
+                                  src={attachments[0].preview}
+                                  alt="Preview"
+                                />
+                                <div className={classes["chip-tm"]}>
+                                  {attachments.map((item: { name: string | undefined; }, index: React.Key | null | undefined) => (
+                                    <Chip
+                                      label={item.name}
+                                      removable
+                                      onRemove={() => removeFileHandler(index)}
+                                      key={index}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            ) : (
+                              <div>
+                                <input
+                                  type="file"
+                                  onClick={(event: any) => {
+                                    event.target.value = null;
+                                  }}
+                                  onChange={(e) =>
+                                    selectAttachment(e.target.files)
+                                  }
+                                  className={classes["upload"]}
+                                />
+                                <img
+                                  src={ImageUrl.FolderIconImage}
+                                  alt="Folder Icon"
+                                />
+                                <p>
+                                  Drag files here <span> or browse</span> <br />
+                                  <u>Support PNG</u>
+                                </p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -4493,7 +4488,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Currency Form</h4>
+                    <h4 className="popup-heading">Add New Currency</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -4570,7 +4565,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Account Form</h4>
+                    <h4 className="popup-heading">Add New Account</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -4647,7 +4642,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Industry Form</h4>
+                    <h4 className="popup-heading">Add New Industry</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -4724,7 +4719,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Product Form</h4>
+                    <h4 className="popup-heading">Add New Product</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -4801,7 +4796,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Project Form</h4>
+                    <h4 className="popup-heading">Add New Project</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -4878,7 +4873,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Tax Form</h4>
+                    <h4 className="popup-heading">Add New Tax</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -4940,7 +4935,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New States"
+              label="New State"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4977,7 +4972,7 @@ const Master: React.FC = () => {
                     }}
                   >
                     <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New States Form</h4>
+                    <h4 className="popup-heading">Add New State</h4>
                   </div>
                   <div
                     className="popup-right-close"
@@ -5026,33 +5021,47 @@ const Master: React.FC = () => {
                     <div className="col-md-12">
                       <div className={classes["upload-file-section"]}>
                         <div className={classes["upload-file"]}>
-                          <input
-                            type="file"
-                            onClick={(event: any) => {
-                              event.target.value = null;
-                            }}
-                            onChange={(e) => selectAttachment(e.target.files)}
-                            className={classes["upload"]}
-                          />
-                          <img src={ImageUrl.FolderIconImage} />
-                          <p>
-                            Drag files here <span> or browse</span> <br />
-                            <u>Support PNG</u>
-                          </p>
-                          <div className={classes["chip-tm"]}>
-                            {attachments?.length
-                              ? attachments.map((item: any, index: any) => {
-                                  return (
+                          {attachments.length > 0 ? (
+                            <div className={classes["image-preview"]}>
+                              <img src={attachments[0].preview} alt="Preview" />
+                              <div className={classes["chip-tm"]}>
+                                {attachments.map(
+                                  (
+                                    item: { name: string | undefined },
+                                    index: React.Key | null | undefined
+                                  ) => (
                                     <Chip
-                                      label={item?.name}
+                                      label={item.name}
                                       removable
-                                      onRemove={() => removeFileHandler()}
+                                      onRemove={() => removeFileHandler(index)}
                                       key={index}
                                     />
-                                  );
-                                })
-                              : null}
-                          </div>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <input
+                                type="file"
+                                onClick={(event: any) => {
+                                  event.target.value = null;
+                                }}
+                                onChange={(e) =>
+                                  selectAttachment(e.target.files)
+                                }
+                                className={classes["upload"]}
+                              />
+                              <img
+                                src={ImageUrl.FolderIconImage}
+                                alt="Folder Icon"
+                              />
+                              <p>
+                                Drag files here <span> or browse</span> <br />
+                                <u>Support PNG</u>
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

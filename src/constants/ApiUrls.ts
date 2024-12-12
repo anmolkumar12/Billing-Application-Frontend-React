@@ -1,6 +1,6 @@
 export const APIURLS = {
   LOGIN: '/api/auth/login',
-  CHANGE_PASSWORD: 'resetPassword/changePassword',
+  CHANGE_PASSWORD: '/api/auth/change-password',
   FORGET_PASSWORD: '/resetPassword', // send email when forget password
   RESET_PASSWORD: '/resetPassword/resetPassword',
   REFRESH_TOKEN: 'refreshToken', //get token from refresh token

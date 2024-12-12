@@ -104,7 +104,7 @@ const Login: React.FC = () => {
         .then((response: any) => {
           console.log('response', response)
           // setShowLoader(false)
-          if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
+          if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
             // const responseData = new AuthModel().modifyUserInfo(response.data)
             // console.log('responseData', responseData)
             TokenService().setToken(
@@ -115,6 +115,7 @@ const Login: React.FC = () => {
             AuthService.userInfo.next({
               name: response?.data?.name,
               userId: response?.data?.userid,
+              email: formData.identifier
             })
             AuthService.currentRole.next(response?.data?.role)
           }
