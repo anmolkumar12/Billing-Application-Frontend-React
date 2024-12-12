@@ -42,7 +42,7 @@ export class CurrencyMasterService {
     try {
       const body = {
         currencyId: data.id,
-        isActive: 0,
+        isActive: !data.isActive,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 

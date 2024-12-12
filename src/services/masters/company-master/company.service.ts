@@ -42,7 +42,7 @@ export class CompanyMasterService {
     try {
       const body = {
         companyId: data.id,
-        isActive: 0,
+        isActive: !data.isactive,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
       const response = await HTTPService.postRequest(

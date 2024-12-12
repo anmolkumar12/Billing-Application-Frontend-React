@@ -42,7 +42,7 @@ export class AccountsMasterService {
     try {
       const body = {
         accountId: data.account_id,
-        isActive: 0,
+        isActive: !data.is_active,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 

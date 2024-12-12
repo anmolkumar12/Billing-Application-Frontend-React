@@ -42,7 +42,7 @@ export class StateMasterService {
     try {
       const body = {
         stateId: data.state_id,
-        isActive: 0,
+        isActive: !data.isActive,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 

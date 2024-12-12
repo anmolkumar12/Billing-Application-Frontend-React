@@ -42,7 +42,7 @@ export class TaxMasterService {
     try {
       const body = {
         taxId: data.id,
-        isActive: 0,
+        isActive: !data.isActive,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 

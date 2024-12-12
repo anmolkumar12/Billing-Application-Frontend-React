@@ -42,7 +42,7 @@ export class IndustryMasterService {
     try {
       const body = {
         industryId: data.id,
-        isActive: 0,
+        isActive: !data.isActive,
         updatedBy: AuthService?.userInfo?.value?.userId,
       }
 
