@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable no-sequences */
 import React, { useEffect, useState } from 'react'
-// import './SideNav.scss'
 import classes from './SideNav.module.scss'
 import { ROUTE_CONSTANTS } from '../../../constants/RouteConstants'
 import { ImageUrl } from '../../../utils/ImageUrl'
@@ -97,6 +98,7 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
                   menuItem.systemRole == AuthService?.currentRole?.value
                 ) {
                   return (
+                                              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                     <li key={index}>
                       <a
                         href="#"
@@ -107,7 +109,9 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
                               : ``
                           ]
                         }
+                        
                         onClick={() => {
+                          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                           setselectedMenu(menuItem.moduleName),
                             history.push(menuItem.link)
                         }}

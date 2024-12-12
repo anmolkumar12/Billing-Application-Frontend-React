@@ -170,10 +170,9 @@ const Login: React.FC = () => {
   return (
     <div className="loginMainBody">
       <div className="login-right-body">
-        <h3>Gift vouchers at best prices</h3>
+        <h3>Effortless Billing Solutions for Your Business</h3>
         <p>
-          Plan, Communicate and Benchmark your short-term and long-term
-          Incentives, perks, employee rewards benefits in real-time
+        Effortlessly manage and track your billing processes with real-time updates, ensuring accuracy and efficiency for both short-term and long-term financial goals
         </p>
         <img src={ImageUrl.LoginImage} alt="" />
       </div>
@@ -184,8 +183,7 @@ const Login: React.FC = () => {
           </div>
           <h2>Login</h2>
           <p>
-            Login to avail Perks, Offers, Rewards, Discounts and more. Install
-            Vega HR app for a better employee experience.
+          Log in to access exclusive billing features, manage transactions, track payments, and more. Install the Billing App for a seamless and enhanced experience.
           </p>
 
           <form action="">
@@ -269,7 +267,7 @@ const Login: React.FC = () => {
               </button>
             </div>
           </form>
-          <div className="sign-up-section">
+          {/* <div className="sign-up-section">
             <h6>Or Login With</h6>
             <ul>
               <li onClick={google}>
@@ -283,7 +281,7 @@ const Login: React.FC = () => {
                 </div>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
         {/* <img className="loginImg" src={ImageUrl.loginImage} alt="" /> */}
       </div>
