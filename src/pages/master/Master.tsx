@@ -601,7 +601,7 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Name",
+      label: "Company",
       fieldName: "companyName",
       textAlign: "left",
       sort: true,
@@ -843,7 +843,7 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Name",
+      label: "Currency",
       fieldName: "currencyName",
       textAlign: "left",
       sort: true,
@@ -933,7 +933,7 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Name",
+      label: "Industry",
       fieldName: "industryName",
       textAlign: "left",
       sort: true,
@@ -1291,7 +1291,7 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Name",
+      label: "Product",
       fieldName: "productName",
       textAlign: "left",
       sort: true,
@@ -1381,7 +1381,7 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Name",
+      label: "Project",
       fieldName: "projectName",
       textAlign: "left",
       sort: true,
@@ -2791,7 +2791,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-12",
     },
     currencyDescription: {
       inputType: "inputtextarea",
@@ -4303,7 +4303,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New Company"
+              label="Add New Company"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4432,7 +4432,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New Currency"
+              label="Add New Currency"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4509,7 +4509,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New Account"
+              label="Add New Account"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4586,7 +4586,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New Industry"
+              label="Add New Industry"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4663,7 +4663,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New Product"
+              label="Add New Product"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4740,7 +4740,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New Project"
+              label="Add New Project"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4817,7 +4817,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New Tax"
+              label="Add New Tax"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
@@ -4916,7 +4916,7 @@ const Master: React.FC = () => {
             }}
           >
             <ButtonComponent
-              label="New State"
+              label="Add New State"
               icon="pi pi-check"
               iconPos="right"
               submitEvent={openSaveForm}
