@@ -22,8 +22,8 @@ import { ToasterService } from "../../services/toaster-service/toaster-service";
 import { CONSTANTS } from "../../constants/Constants";
 import { ButtonComponent } from "../../components/ui/button/Button";
 import { FormComponent } from "../../components/ui/form/form";
-import classes from "../aggregator-analytics/AggregatorAnalytics.module.scss";
-import _ from "lodash";
+import classes from "./Master.module.scss";
+import _, { unset } from "lodash";
 import { FormType } from "../../schemas/FormField";
 import { AuthService } from "../../services/auth-service/auth.service";
 import { FILE_TYPES } from "../../enums/file-types.enum";
@@ -34,7 +34,7 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
   const [currencyMaster, setCurrencyMaster] = useState([]);
-  const [industryMaster, setIndustryMaster] = useState([]);
+  const [industryMaster, setIndustryMaster] = useState<any>([]);
   const [accountsMaster, setAccountsMaster] = useState<any>([]);
   const [productsMaster, setProductsMaster] = useState([]);
   const [projectsMaster, setProjectsMaster] = useState([]);
@@ -1834,9 +1834,9 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.company_name}
+            data-pr-tooltip={rowData.industry_name}
           >
-            {rowData.company_name}
+            {rowData.industry_name}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2670,9 +2670,10 @@ const Master: React.FC = () => {
       case 8:
         updateStateMaster(data);
         break;
-      // case 9:
-      //   updateClientMaster(data);
-      //   break;
+      case 9:
+        updateClientMaster(data);
+        setOpenClientForm(true);
+        break;
       default:
         break;
     }
@@ -2960,17 +2961,14 @@ const Master: React.FC = () => {
 
   const updateIndustryMaster = (data: any) => {
     try {
-      industryFieldsStructure.industryName.value = data?.industryName;
-      industryFieldsStructure.description.value = data?.description;
-      industryFieldsStructure.industryHead.value = data?.industryHead;
-      setIndustryForm(_.cloneDeep(industryFieldsStructure));
+      IndustryFormFields.industryName.value = data?.industryName;
+      IndustryFormFields.description.value = data?.description;
+      IndustryFormFields.industryHead.value = data?.industryHead;
+      setIndustryForm(_.cloneDeep(IndustryFormFields));
     } catch (error) {
       console.log("error", error);
     }
   };
-
-  const [industryFieldsStructure, setIndustryFieldsStructure]: any =
-    useState(IndustryFormFields);
 
   const ProductFormFields = {
     productName: {
@@ -3441,6 +3439,55 @@ const Master: React.FC = () => {
     },
   };
 
+  const updateClientMaster = (data: any) => {
+    try {
+      console.log('data', data);
+
+      clientFieldsStructure.industry_name.value = data?.industry_name;
+      clientFieldsStructure.name.value = data?.name;
+      clientFieldsStructure.alias.value = data?.alias;
+      clientFieldsStructure.pan_no.value = data?.pan_no;
+      clientFieldsStructure.servicing_type.value = data?.servicing_type;
+      clientFieldsStructure.client_category.value = data?.client_category;
+      clientFieldsStructure.msa_start_date.value = data?.msa_start_date;
+      clientFieldsStructure.msa_end_date.value = data?.msa_end_date;
+      clientFieldsStructure.is_msa_missing.value = data?.is_msa_missing;
+      clientFieldsStructure.msa_flag.value = data?.msa_flag;
+      clientFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause;
+      clientFieldsStructure.use_logo_permission.value = data?.use_logo_permission;
+
+      clientBillFieldsStructure.address1.value = data?.address1;
+      clientBillFieldsStructure.address2.value = data?.address2;
+      clientBillFieldsStructure.address3.value = data?.address3;
+      clientBillFieldsStructure.pin.value = data?.pin;
+      clientBillFieldsStructure.country_name.value = data?.country_name;
+      clientBillFieldsStructure.state_name.value = data?.state_name;
+      clientBillFieldsStructure.polestar_bank_account_number.value = data?.polestar_bank_account_number;
+      clientBillFieldsStructure.gstn.value = data?.gstn;
+
+      clientShipFieldsStructure.client_ship_to_address1.value = data?.client_ship_to_address1;
+      clientShipFieldsStructure.client_ship_to_address2.value = data?.client_ship_to_address2;
+      clientShipFieldsStructure.client_ship_to_address3.value = data?.client_ship_to_address3;
+      clientShipFieldsStructure.client_ship_to_pin.value = data?.client_ship_to_pin;
+      clientShipFieldsStructure.client_ship_to_country_name.value = data?.client_ship_to_country_name;
+      clientShipFieldsStructure.client_ship_to_state_name.value = data?.client_ship_to_state_name;
+      clientShipFieldsStructure.client_ship_to_gstn.value = data?.client_ship_to_gstn;
+
+      ClientContactFormFields.salutation.value = data?.salutation;
+      ClientContactFormFields.first_name.value = data?.first_name;
+      ClientContactFormFields.last_name.value = data?.last_name;
+      ClientContactFormFields.email.value = data?.email;
+      ClientContactFormFields.phone.value = data?.phone;
+
+      setClientFieldsStructure(_.cloneDeep(clientFieldsStructure));
+      setClientBillFieldsStructure(_.cloneDeep(clientBillFieldsStructure));
+      setClientShipFieldsStructure(_.cloneDeep(clientShipFieldsStructure));
+      setClientContactForm(_.cloneDeep(ClientContactFormFields));
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const [CompanyForm, setCompanyForm] = useState<any>(
     _.cloneDeep(CompanyFormFields)
   );
@@ -3454,7 +3501,7 @@ const Master: React.FC = () => {
   );
 
   const [IndustryForm, setIndustryForm] = useState<any>(
-    _.cloneDeep(industryFieldsStructure)
+    _.cloneDeep(IndustryFormFields)
   );
 
   const [ProductForm, setProductForm] = useState<any>(
@@ -3489,10 +3536,11 @@ const Master: React.FC = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setOpenClientForm(false);
     setCompanyForm(_.cloneDeep(CompanyFormFields));
     setCurrencyForm(_.cloneDeep(CurrencyFormFields));
     setAccountForm(_.cloneDeep(accountFieldsStructure));
-    setIndustryForm(_.cloneDeep(industryFieldsStructure));
+    setIndustryForm(_.cloneDeep(IndustryFormFields));
     setProductForm(_.cloneDeep(ProductFormFields));
     setProjectForm(_.cloneDeep(ProjectFormFields));
     setTaxForm(_.cloneDeep(TaxFormFields));
@@ -3506,51 +3554,51 @@ const Master: React.FC = () => {
   };
 
   const companyFormHandler = async (form: FormType) => {
-    await setCompanyForm(form);
+    setCompanyForm(form);
   };
 
   const currencyFormHandler = async (form: FormType) => {
-    await setCurrencyForm(form);
+    setCurrencyForm(form);
   };
 
   const accountsFormHandler = async (form: FormType) => {
-    await setAccountForm(form);
+    setAccountForm(form);
   };
 
   const industryFormHandler = async (form: FormType) => {
-    await setIndustryForm(form);
+    setIndustryForm(form);
   };
 
   const productFormHandler = async (form: FormType) => {
-    await setProductForm(form);
+    setProductForm(form);
   };
 
   const projectFormHandler = async (form: FormType) => {
-    await setProjectForm(form);
+    setProjectForm(form);
   };
 
   const taxFormHandler = async (form: FormType) => {
-    await setTaxForm(form);
+    setTaxForm(form);
   };
 
   const statesFormHandler = async (form: FormType) => {
-    await setStatesForm(form);
+    setStatesForm(form);
   };
 
   const clientFormHandler = async (form: FormType) => {
-    await setClientForm(form);
+    setClientForm(form);
   };
 
   const clientBillFormHandler = async (form: FormType) => {
-    await setClientBillForm(form);
+    setClientBillForm(form);
   };
 
   const clientShipFormHandler = async (form: FormType) => {
-    await setClientShipForm(form);
+    setClientShipForm(form);
   };
 
   const clientContactFormHandler = async (form: FormType) => {
-    await setClientContactForm(form);
+    setClientContactForm(form);
   };
 
   const createNewCompany = (event: FormEvent) => {
@@ -3578,6 +3626,8 @@ const Master: React.FC = () => {
         PAN: CompanyForm?.PAN?.value,
         Email: CompanyForm?.Email?.value,
         description: CompanyForm?.description?.value,
+        gst_number: CompanyForm?.gst_number?.value,
+        address: CompanyForm?.address?.value,
         isactive: 1,
         updatedBy: loggedInUserId,
       };
@@ -3969,7 +4019,7 @@ const Master: React.FC = () => {
       const obj = {
         taxType: TaxForm?.taxType?.value,
         taxPercentage: TaxForm?.taxPercentage?.value,
-        effectiveDate: TaxForm?.effectiveDate?.value,
+        effectiveDate: taxService.formatDate(TaxForm?.effectiveDate?.value),
         isactive: 1,
         updatedBy: loggedInUserId,
       };
@@ -4078,7 +4128,7 @@ const Master: React.FC = () => {
     }
   };
 
-  const creatClientForm = (event: FormEvent) => {
+  const creatClientForm = async (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
@@ -4092,52 +4142,46 @@ const Master: React.FC = () => {
 
     setIsFormValid(companyValidityFlag);
 
-    const companyId =
-      companyMaster.find(
-        (company: any) => company.companyName === ClientForm.company_name.value
-      )?.id ?? null;
-
-    const countryId =
-      countryMaster.find(
-        (country: any) => country.name === ClientBillForm.country_name.value
-      )?.id ?? null;
-
-    const stateId =
-      stateMaster.find(
-        (state: any) => state.state_name === ClientBillForm.state_name.value
-      )?.state_id ?? null;
-
-    const polestar_bank_account_id =
-      accountsMaster.find(
-        (account: any) =>
-          account.account_no ===
-          ClientBillForm.polestar_bank_account_number.value
-      )?.account_id ?? null;
-
-    const client_ship_to_country_id =
-      countryMaster.find(
-        (country: any) =>
-          country.name === ClientShipForm.client_ship_to_country_name.value
-      )?.id ?? null;
-
-    const client_ship_to_state_id =
-      stateMaster.find(
-        (state: any) =>
-          state.state_name === ClientShipForm.client_ship_to_state_name.value
-      )?.state_id ?? null;
-
     if (companyValidityFlag) {
-      console.log(
-        "Client forms",
-        ClientForm,
-        ClientBillForm,
-        ClientShipForm,
-        ClientContactForm
-      );
+      const industry_id =
+        industryMaster.find(
+          (industry: any) =>
+            industry.industryName === ClientForm.industry_name.value
+        )?.id ?? null;
+
+      const countryId =
+        countryMaster.find(
+          (country: any) => country.name === ClientBillForm.country_name.value
+        )?.id ?? null;
+
+      const stateId =
+        stateMaster.find(
+          (state: any) => state.state_name === ClientBillForm.state_name.value
+        )?.state_id ?? null;
+
+      const polestar_bank_account_id =
+        accountsMaster.find(
+          (account: any) =>
+            account.account_no ===
+            ClientBillForm.polestar_bank_account_number.value
+        )?.account_id ?? null;
+
+      const client_ship_to_country_id =
+        countryMaster.find(
+          (country: any) =>
+            country.name === ClientShipForm.client_ship_to_country_name.value
+        )?.id ?? null;
+
+      const client_ship_to_state_id =
+        stateMaster.find(
+          (state: any) =>
+            state.state_name === ClientShipForm.client_ship_to_state_name.value
+        )?.state_id ?? null;
+
       const formData: any = new FormData();
 
       const obj = {
-        company_id: companyId,
+        industry_id: industry_id,
         name: ClientForm?.name?.value,
         alias: ClientForm?.alias?.value,
         pan_no: ClientForm?.pan_no?.value,
@@ -4163,8 +4207,8 @@ const Master: React.FC = () => {
         phone: ClientContactForm?.phone?.value,
         msa_flag: ClientForm?.msa_flag?.value ? 1 : 0,
         is_performa: ClientForm?.is_performa?.value ? 1 : 0,
-        msa_start_date: ClientForm?.msa_start_date?.value,
-        msa_end_date: ClientForm?.msa_end_date?.value,
+        msa_start_date: await clientService.formatDate(ClientForm?.msa_start_date?.value),
+        msa_end_date: await clientService.formatDate(ClientForm?.msa_end_date?.value),
         non_solicitation_clause: ClientForm?.non_solicitation_clause?.value
           ? 1
           : 0,
@@ -4184,39 +4228,51 @@ const Master: React.FC = () => {
         formData.set("file", attachments[0]);
       }
 
-      // if (!stateData?.id) {
-      clientService
-        .createClientMaster(formData)
-        .then((response: any) => {
-          if (response?.statusCode == HTTP_RESPONSE.CREATED) {
+      console.log('stateData', stateData);
+      
+      if (!stateData?.id) {
+        clientService
+          .createClientMaster(formData)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+              setStateData({});
+              closeFormPopup();
+              getClientMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
             setStateData({});
-            closeFormPopup();
-            getClientMaster();
-            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-          }
-        })
-        .catch((error: any) => {
-          setStateData({});
-          ToasterService.show(error, CONSTANTS.ERROR);
-        });
-      // } else {
-      //   const updatePayload = { ...obj, taxId: stateData?.id };
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      } else {
+        const formData: any = new FormData();
 
-      //   taxService
-      //     .updateTaxMaster(updatePayload)
-      //     .then((response: any) => {
-      //       if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-      //         setStateData({});
-      //         closeFormPopup();
-      //         getTaxMaster();
-      //         ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-      //       }
-      //     })
-      //     .catch((error: any) => {
-      //       setStateData({});
-      //       ToasterService.show(error, CONSTANTS.ERROR);
-      //     });
-      // }
+        const updatePayload = { ...obj, id: stateData?.id };
+
+        Object.entries(updatePayload).forEach(([key, value]: any) => {
+          formData.set(key, value);
+        });
+
+        if (attachments?.length) {
+          formData.set("file", attachments[0]);
+        }
+
+        clientService
+          .updateClientMaster(formData)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+              setStateData({});
+              closeFormPopup();
+              getClientMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
@@ -4371,14 +4427,21 @@ const Master: React.FC = () => {
                                   alt="Preview"
                                 />
                                 <div className={classes["chip-tm"]}>
-                                  {attachments.map((item: { name: string | undefined; }, index: React.Key | null | undefined) => (
-                                    <Chip
-                                      label={item.name}
-                                      removable
-                                      onRemove={() => removeFileHandler(index)}
-                                      key={index}
-                                    />
-                                  ))}
+                                  {attachments.map(
+                                    (
+                                      item: { name: string | undefined },
+                                      index: React.Key | null | undefined
+                                    ) => (
+                                      <Chip
+                                        label={item.name}
+                                        removable
+                                        onRemove={() =>
+                                          removeFileHandler(index)
+                                        }
+                                        key={index}
+                                      />
+                                    )
+                                  )}
                                 </div>
                               </div>
                             ) : (
@@ -4392,6 +4455,7 @@ const Master: React.FC = () => {
                                     selectAttachment(e.target.files)
                                   }
                                   className={classes["upload"]}
+                                  style={{ width: "unset" }}
                                 />
                                 <img
                                   src={ImageUrl.FolderIconImage}
@@ -4991,65 +5055,75 @@ const Master: React.FC = () => {
               onTabChange={onClientTabChange}
             >
               <TabPanel header="Client">
-                <FormComponent
-                  form={_.cloneDeep(ClientForm)}
-                  formUpdateEvent={clientFormHandler}
-                  isFormValidFlag={isFormValid}
-                ></FormComponent>
-                {/* attachment */}
-                <div className={classes["upload-wrapper"]}>
-                  <div className="row">
-                    <div className="col-md-12">
-                      <div className={classes["upload-file-section"]}>
-                        <div className={classes["upload-file"]}>
-                          {attachments.length > 0 ? (
-                            <div className={classes["image-preview"]}>
-                              <img src={attachments[0].preview} alt="Preview" />
-                              <div className={classes["chip-tm"]}>
-                                {attachments.map(
-                                  (
-                                    item: { name: string | undefined },
-                                    index: React.Key | null | undefined
-                                  ) => (
-                                    <Chip
-                                      label={item.name}
-                                      removable
-                                      onRemove={() => removeFileHandler(index)}
-                                      key={index}
-                                    />
-                                  )
-                                )}
-                              </div>
+                <div className={classes["form-container"]}>
+                  <div className={classes["form-content"]}>
+                    <FormComponent
+                      form={_.cloneDeep(ClientForm)}
+                      formUpdateEvent={clientFormHandler}
+                      isFormValidFlag={isFormValid}
+                    ></FormComponent>
+                    {/* attachment */}
+                    <div className={classes["upload-wrapper"]}>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <div className={classes["upload-file-section"]}>
+                            <div className={classes["upload-file"]}>
+                              {attachments.length > 0 ? (
+                                <div className={classes["image-preview"]}>
+                                  <img
+                                    src={attachments[0].preview}
+                                    alt="Preview"
+                                  />
+                                  <div className={classes["chip-tm"]}>
+                                    {attachments.map(
+                                      (
+                                        item: { name: string | undefined },
+                                        index: React.Key | null | undefined
+                                      ) => (
+                                        <Chip
+                                          label={item.name}
+                                          removable
+                                          onRemove={() =>
+                                            removeFileHandler(index)
+                                          }
+                                          key={index}
+                                        />
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <input
+                                    type="file"
+                                    onClick={(event: any) => {
+                                      event.target.value = null;
+                                    }}
+                                    onChange={(e) =>
+                                      selectAttachment(e.target.files)
+                                    }
+                                    className={classes["upload"]}
+                                  />
+                                  <img
+                                    src={ImageUrl.FolderIconImage}
+                                    alt="Folder Icon"
+                                  />
+                                  <p>
+                                    Drag files here <span> or browse</span>{" "}
+                                    <br />
+                                    <u>Support PNG</u>
+                                  </p>
+                                </div>
+                              )}
                             </div>
-                          ) : (
-                            <div>
-                              <input
-                                type="file"
-                                onClick={(event: any) => {
-                                  event.target.value = null;
-                                }}
-                                onChange={(e) =>
-                                  selectAttachment(e.target.files)
-                                }
-                                className={classes["upload"]}
-                              />
-                              <img
-                                src={ImageUrl.FolderIconImage}
-                                alt="Folder Icon"
-                              />
-                              <p>
-                                Drag files here <span> or browse</span> <br />
-                                <u>Support PNG</u>
-                              </p>
-                            </div>
-                          )}
+                          </div>
                         </div>
                       </div>
                     </div>
+                    {/* attachment */}
                   </div>
                 </div>
-                {/* attachment */}
-                <div className="popup-lower-btn">
+                <div className={classes["popup-lower-btn"]}>
                   <ButtonComponent
                     label="Cancel"
                     icon="pi pi-check"
@@ -5066,90 +5140,114 @@ const Master: React.FC = () => {
                 </div>
               </TabPanel>
               <TabPanel header="Client Bill To">
-                <FormComponent
-                  form={_.cloneDeep(ClientBillForm)}
-                  formUpdateEvent={clientBillFormHandler}
-                  isFormValidFlag={isFormValid}
-                ></FormComponent>
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Back"
-                    icon="pi pi-check"
-                    iconPos="left"
-                    type="default"
-                    submitEvent={backToPreviousForm}
-                  />
-                  <ButtonComponent
-                    label="Cancel"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    type="default"
-                    submitEvent={closeClientForm}
-                  />
-                  <ButtonComponent
-                    label="Next"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={moveNextClientBillForm}
-                  />
+                <div className={classes["form-container"]}>
+                  <div className={classes["form-content"]}>
+                    <FormComponent
+                      form={_.cloneDeep(ClientBillForm)}
+                      formUpdateEvent={clientBillFormHandler}
+                      isFormValidFlag={isFormValid}
+                    ></FormComponent>
+                  </div>
+                </div>
+                <div className={classes["popup-lower"]}>
+                  <div className={classes["popup-lower-left-btn"]}>
+                    <ButtonComponent
+                      label="Back"
+                      icon="pi pi-check"
+                      iconPos="left"
+                      type="default"
+                      submitEvent={backToPreviousForm}
+                    />
+                  </div>
+                  <div className={classes["popup-lower-right-btn"]}>
+                    <ButtonComponent
+                      label="Cancel"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      type="default"
+                      submitEvent={closeClientForm}
+                    />
+                    <ButtonComponent
+                      label="Next"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      submitEvent={moveNextClientBillForm}
+                    />
+                  </div>
                 </div>
               </TabPanel>
               <TabPanel header="Client Ship To">
-                <FormComponent
-                  form={_.cloneDeep(ClientShipForm)}
-                  formUpdateEvent={clientShipFormHandler}
-                  isFormValidFlag={isFormValid}
-                ></FormComponent>
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Back"
-                    icon="pi pi-check"
-                    iconPos="left"
-                    type="default"
-                    submitEvent={backToPreviousForm}
-                  />
-                  <ButtonComponent
-                    label="Cancel"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    type="default"
-                    submitEvent={closeClientForm}
-                  />
-                  <ButtonComponent
-                    label="Next"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={moveNextClientShipForm}
-                  />
+                <div className={classes["form-container"]}>
+                  <div className={classes["form-content"]}>
+                    <FormComponent
+                      form={_.cloneDeep(ClientShipForm)}
+                      formUpdateEvent={clientShipFormHandler}
+                      isFormValidFlag={isFormValid}
+                    ></FormComponent>
+                  </div>
+                </div>
+                <div className={classes["popup-lower"]}>
+                  <div className={classes["popup-lower-left-btn"]}>
+                    <ButtonComponent
+                      label="Back"
+                      icon="pi pi-check"
+                      iconPos="left"
+                      type="default"
+                      submitEvent={backToPreviousForm}
+                    />
+                  </div>
+                  <div className={classes["popup-lower-right-btn"]}>
+                    <ButtonComponent
+                      label="Cancel"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      type="default"
+                      submitEvent={closeClientForm}
+                    />
+                    <ButtonComponent
+                      label="Next"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      submitEvent={moveNextClientShipForm}
+                    />
+                  </div>
                 </div>
               </TabPanel>
               <TabPanel header="Contact">
-                <FormComponent
-                  form={_.cloneDeep(ClientContactForm)}
-                  formUpdateEvent={clientContactFormHandler}
-                  isFormValidFlag={isFormValid}
-                ></FormComponent>
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Back"
-                    icon="pi pi-check"
-                    iconPos="left"
-                    type="default"
-                    submitEvent={backToPreviousForm}
-                  />
-                  <ButtonComponent
-                    label="Cancel"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    type="default"
-                    submitEvent={closeClientForm}
-                  />
-                  <ButtonComponent
-                    label="Submit Form"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={creatClientForm}
-                  />
+                <div className={classes["form-container"]}>
+                  <div className={classes["form-content"]}>
+                    <FormComponent
+                      form={_.cloneDeep(ClientContactForm)}
+                      formUpdateEvent={clientContactFormHandler}
+                      isFormValidFlag={isFormValid}
+                    ></FormComponent>
+                  </div>
+                </div>
+                <div className={classes["popup-lower"]}>
+                  <div className={classes["popup-lower-left-btn"]}>
+                    <ButtonComponent
+                      label="Back"
+                      icon="pi pi-check"
+                      iconPos="left"
+                      type="default"
+                      submitEvent={backToPreviousForm}
+                    />
+                  </div>
+                  <div className={classes["popup-lower-right-btn"]}>
+                    <ButtonComponent
+                      label="Cancel"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      type="default"
+                      submitEvent={closeClientForm}
+                    />
+                    <ButtonComponent
+                      label="Submit Form"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      submitEvent={creatClientForm}
+                    />
+                  </div>
                 </div>
               </TabPanel>
             </TabView>

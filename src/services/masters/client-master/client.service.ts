@@ -18,7 +18,7 @@ export class ClientMasterService {
       const response = await HTTPService.postRequest(
         APIURLS.CREATE_CLIENT_MASTER,
         formData
-      )      
+      )
       return response?.data
     } catch (error) {
       return error
@@ -28,7 +28,7 @@ export class ClientMasterService {
   updateClientMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.UPDATE_ACCOUNTS_MASTER,
+        APIURLS.UPDATE_CLIENT_MASTER,
         formData
       )
 
@@ -53,6 +53,18 @@ export class ClientMasterService {
       return response?.data
     } catch (err) {
       return {}
+    }
+  }
+
+  formatDate = async (dateString: any) => {
+    try {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}/${month}/${day}`;
+    } catch (error: any) {
+      return error.message;
     }
   }
 }
