@@ -255,11 +255,11 @@ const Login: React.FC = () => {
                   ></Checkbox>
                   <label>Remember Me</label>
                 </div>
-                <div className="col-6 d-flex justify-content-end align-items-center p-0">
+                {/* <div className="col-6 d-flex justify-content-end align-items-center p-0">
                   <NavLink to={ROUTE_CONSTANTS.FORGET_PASSWORD} exact>
                     <h6>Forgot Password?</h6>
                   </NavLink>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="submitFormItem">

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react'
 import { Badge } from 'primereact/badge'
 import classes from './TopNavbar.module.scss'
@@ -153,24 +155,6 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
                   {' '}
                   <div
                     className={classes['login-div'] + ' ' + 'perfect-left-row'}
-                  >
-                    <i className="pi pi-user"></i>
-                    <span>Profile</span>
-                  </div>
-                </li>
-                <li onClick={() => setViewprofile(false)}>
-                  {' '}
-                  <div
-                    className={classes['login-div'] + ' ' + 'perfect-left-row'}
-                  >
-                    <i className="pi pi-info-circle"></i>
-                    <span>Contact Support</span>
-                  </div>
-                </li>
-                <li onClick={() => setViewprofile(false)}>
-                  {' '}
-                  <div
-                    className={classes['login-div'] + ' ' + 'perfect-left-row'}
                     onClick={() => setViewResetPopup(true)}
                   >
                     <i className="pi pi-lock"></i>
@@ -185,16 +169,6 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
                   >
                     <i className="pi pi-power-off"></i>
                     <span>Log out</span>
-                  </div>
-                </li>
-                <li onClick={() => setViewprofile(false)}>
-                  {' '}
-                  <div
-                    className={classes['login-div'] + ' ' + 'perfect-left-row'}
-                    onClick={logOutAllDevices}
-                  >
-                    <i className="pi pi-sign-out"></i>
-                    <span>Log out from all Devices</span>
                   </div>
                 </li>
               </ul>

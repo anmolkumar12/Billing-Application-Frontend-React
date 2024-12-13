@@ -42,6 +42,7 @@ export const APIURLS = {
   UPDATE_PROJECT_MASTER: '/api/masters/updateProject',
   UPDATE_TAX_MASTER: '/api/masters/updateTaxType',
   UPDATE_STATE_MASTER: '/api/masters/updateState',
+  UPDATE_CLIENT_MASTER: '/api/masters/updateClientDetails',
   LOGOUT: 'logout',
   LOGOUT_ALL: 'logout/all',
   COUNTRY: 'masters/countries',
