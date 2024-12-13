@@ -69,6 +69,7 @@ const Master: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setFormPopup(false);
       switch (activeIndex) {
         case 0:
           await getCompanyMaster();
@@ -3064,11 +3065,12 @@ const Master: React.FC = () => {
     },
   };
 
-  const updateTaxMaster = (data: any) => {
+  const updateTaxMaster = async (data: any) => {
     try {
       TaxFormFields.taxType.value = data?.taxType;
       TaxFormFields.taxPercentage.value = data?.taxPercentage;
-      TaxFormFields.effectiveDate.value = data?.effectiveDate;
+      TaxFormFields.effectiveDate.value = await taxService.parseDateString(data?.effectiveDate);
+      
       setTaxForm(_.cloneDeep(TaxFormFields));
     } catch (error) {
       console.log("error", error);
@@ -3439,18 +3441,16 @@ const Master: React.FC = () => {
     },
   };
 
-  const updateClientMaster = (data: any) => {
+  const updateClientMaster = async (data: any) => {
     try {
-      console.log('data', data);
-
       clientFieldsStructure.industry_name.value = data?.industry_name;
       clientFieldsStructure.name.value = data?.name;
       clientFieldsStructure.alias.value = data?.alias;
       clientFieldsStructure.pan_no.value = data?.pan_no;
       clientFieldsStructure.servicing_type.value = data?.servicing_type;
       clientFieldsStructure.client_category.value = data?.client_category;
-      clientFieldsStructure.msa_start_date.value = data?.msa_start_date;
-      clientFieldsStructure.msa_end_date.value = data?.msa_end_date;
+      clientFieldsStructure.msa_start_date.value = await clientService.parseDateString(data?.msa_start_date);
+      clientFieldsStructure.msa_end_date.value = await clientService.parseDateString(data?.msa_end_date);
       clientFieldsStructure.is_msa_missing.value = data?.is_msa_missing;
       clientFieldsStructure.msa_flag.value = data?.msa_flag;
       clientFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause;
@@ -4001,7 +4001,7 @@ const Master: React.FC = () => {
     }
   };
 
-  const createNewTax = (event: FormEvent) => {
+  const createNewTax = async (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
@@ -4019,7 +4019,7 @@ const Master: React.FC = () => {
       const obj = {
         taxType: TaxForm?.taxType?.value,
         taxPercentage: TaxForm?.taxPercentage?.value,
-        effectiveDate: taxService.formatDate(TaxForm?.effectiveDate?.value),
+        effectiveDate: await taxService.formatDate(TaxForm?.effectiveDate?.value),
         isactive: 1,
         updatedBy: loggedInUserId,
       };
