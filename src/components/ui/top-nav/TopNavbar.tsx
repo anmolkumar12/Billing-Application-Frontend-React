@@ -241,14 +241,14 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
       {viewResetPopup ? (
         <>
           <div className={classes['resetPasswordPopup']}>
-            <div className="resetPasswordBody">
-              <ChangePassword />
+            <div className={classes['resetPasswordBody']}>
               <div
-                className="close-popup"
+                className={classes['close-popup']}
                 onClick={() => setViewResetPopup(false)}
               >
                 <i className="pi pi-times"></i>
               </div>
+              <ChangePassword />
             </div>
           </div>
         </>

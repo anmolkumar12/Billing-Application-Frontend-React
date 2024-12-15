@@ -6,19 +6,15 @@ import { Password } from 'primereact/password'
 import { Checkbox } from 'primereact/checkbox'
 import { ErrorMessageComponent } from '../../components/error-message/ErrorMessage'
 import { ToasterService } from '../../services/toaster-service/toaster-service'
-import { NavLink, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { ROUTE_CONSTANTS } from '../../constants/RouteConstants'
 import { AuthService } from '../../services/auth-service/auth.service'
 import { TokenService } from '../../services/token-service/token-service'
 import Cookies from 'universal-cookie'
-import { NavigateUserService } from '../../services/navigate-user-service/navigate-user.service'
 import { CONSTANTS } from '../../constants/Constants'
 import { HTTP_RESPONSE } from '../../enums/http-responses.enum'
-import { AuthModel } from '../../services/auth-service/auth.model'
-import { MasterService } from '../../services/master-service/master.service'
 
 const Login: React.FC = () => {
-  const masterService = new MasterService()
   const history = useHistory()
 
   const [isFormValid, setIsFormValid] = useState(true)

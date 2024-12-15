@@ -119,7 +119,7 @@ const ChangePassword: React.FC = () => {
         .then((response: any) => {
           if (
             response &&
-            response?.statusCode == HTTP_RESPONSE.REQUEST_SUCCESS
+            response?.statusCode === HTTP_RESPONSE.REQUEST_SUCCESS
           ) {
             ToasterService.show(response.message, CONSTANTS.SUCCESS)
             TokenService().clearAllToken()
