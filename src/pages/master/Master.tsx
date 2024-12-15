@@ -2778,7 +2778,9 @@ const Master: React.FC = () => {
       CompanyFormFields.IECode.value = data?.IECode;
       CompanyFormFields.PAN.value = data?.PAN;
       CompanyFormFields.Email.value = data?.Email;
-      CompanyFormFields.description.value = data?.description;
+      CompanyFormFields.description.value = data?.description != null ? data?.description : "";
+      CompanyFormFields.gst_number.value = data?.gst_number;
+      CompanyFormFields.address.value = data?.address;
       setCompanyForm(_.cloneDeep(CompanyFormFields));
     } catch (error) {
       console.log("error", error);
@@ -3614,6 +3616,7 @@ const Master: React.FC = () => {
     });
 
     setIsFormValid(companyValidityFlag);
+    console.log('data', companyValidityFlag, CompanyForm, stateData);
 
     if (companyValidityFlag) {
       const formData: any = new FormData();
