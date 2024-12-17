@@ -13,6 +13,26 @@ export class ClientMasterService {
     }
   }
 
+  getClientBillToMaster = async () => {
+    try {
+      const response = await HTTPService.getRequest(APIURLS.GET_CLIENT_BILL_TO_MASTER)
+      
+      return response?.data
+    } catch (err) {
+      return {}
+    }
+  }
+
+  getClientShipToMaster = async () => {
+    try {
+      const response = await HTTPService.getRequest(APIURLS.GET_CLIENT_SHIP_TO_MASTER)
+      
+      return response?.data
+    } catch (err) {
+      return {}
+    }
+  }
+
   createClientMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
@@ -25,10 +45,60 @@ export class ClientMasterService {
     }
   }
 
+  createClientBillToMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.CREATE_CLIENT_BILL_TO_MASTER,
+        formData
+      )
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  createClientShipToMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.CREATE_CLIENT_SHIP_TO_MASTER,
+        formData
+      )
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
   updateClientMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
         APIURLS.UPDATE_CLIENT_MASTER,
+        formData
+      )
+
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  updateClientBillToMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.UPDATE_CLIENT_BILL_TO_MASTER,
+        formData
+      )
+
+      return response?.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  updateClientShipToMaster = async (formData: any) => {
+    try {
+      const response = await HTTPService.postRequest(
+        APIURLS.UPDATE_CLIENT_SHIP_TO_MASTER,
         formData
       )
 
@@ -56,24 +126,39 @@ export class ClientMasterService {
     }
   }
 
-  formatDate = async (dateString: any) => {
+  deactivateClientBillToMaster = async (data: any) => {
     try {
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}/${month}/${day}`;
-    } catch (error: any) {
-      return error.message;
+      const body = {
+        billingId: data.id,
+        isActive: !data.isActive,
+        updatedBy: AuthService?.userInfo?.value?.userId,
+      }
+
+      const response = await HTTPService.postRequest(
+        APIURLS.TOGGLE_CLIENT_BILL_TO_STATUS,
+        body
+      )
+      return response?.data
+    } catch (err) {
+      return {}
     }
   }
 
-  parseDateString = async (dateString: any) => {
-    try {      
-      const [year, month, day] = dateString.split('/').map(Number);
-      return new Date(year, month - 1, day);
-    } catch (error: any) {
-      return error.message;
+  deactivateClientShipToMaster = async (data: any) => {
+    try {
+      const body = {
+        shippingId: data.id,
+        isActive: !data.isActive,
+        updatedBy: AuthService?.userInfo?.value?.userId,
+      }
+
+      const response = await HTTPService.postRequest(
+        APIURLS.TOGGLE_CLIENT_SHIP_TO_STATUS,
+        body
+      )
+      return response?.data
+    } catch (err) {
+      return {}
     }
   }
 }

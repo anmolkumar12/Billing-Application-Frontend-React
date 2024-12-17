@@ -23,7 +23,7 @@ import { CONSTANTS } from "../../constants/Constants";
 import { ButtonComponent } from "../../components/ui/button/Button";
 import { FormComponent } from "../../components/ui/form/form";
 import classes from "./Master.module.scss";
-import _, { unset } from "lodash";
+import _ from "lodash";
 import { FormType } from "../../schemas/FormField";
 import { AuthService } from "../../services/auth-service/auth.service";
 import { FILE_TYPES } from "../../enums/file-types.enum";
@@ -41,7 +41,9 @@ const Master: React.FC = () => {
   const [taxMaster, setTaxMaster] = useState([]);
   const [countryMaster, setCountryMaster] = useState<any>([]);
   const [stateMaster, setStateMaster] = useState<any>([]);
-  const [clientMaster, setClientMaster] = useState([]);
+  const [clientMaster, setClientMaster] = useState<any>([]);
+  const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
+  const [clientShipToMaster, setClientShipToMaster] = useState<any>([]);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -70,6 +72,8 @@ const Master: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       setFormPopup(false);
+      // setStateData({});
+      // closeFormPopup();
       switch (activeIndex) {
         case 0:
           await getCompanyMaster();
@@ -107,15 +111,27 @@ const Master: React.FC = () => {
           setActiveClientIndex(0);
           await getClientMaster();
           await getIndustryMaster();
-          await getCountryMaster();
-          await getStateMaster();
           await getAccountsMaster();
           await formatIndustry_ClientDetails();
+          await formatAccount_ClientDetails();
+          break;
+        case 10:
+          await getClientBillToMaster();
+          await getClientMaster();
+          await getCountryMaster();
+          await getStateMaster();
           await formatCountry_ClientDetails();
           await formatState_ClientDetails();
-          await formatAccount_ClientDetails();
+          await formatClient_BillDetails();
+          break;
+        case 11:
+          await getClientShipToMaster();
+          await getClientMaster();
+          await getCountryMaster();
+          await getStateMaster();
           await formatCountry_Client_ShipDetails();
           await formatState_Client_ShipDetails();
+          await formatClient_ShipDetails();
           break;
         default:
           break;
@@ -152,7 +168,16 @@ const Master: React.FC = () => {
 
   const formatCountry_ClientDetails = async () => {
     const countrylist = countryMaster.map((country: any) => country?.name);
+
     clientBillFieldsStructure.country_name.options = countrylist;
+    await setClientBillFieldsStructure(clientBillFieldsStructure);
+    await clientBillFormHandler(clientBillFieldsStructure);
+  };
+
+  const formatState_ClientDetails = async () => {
+    const statelist = stateMaster.map((state: any) => state.state_name);
+
+    clientBillFieldsStructure.state_name.options = statelist;
     await setClientBillFieldsStructure(clientBillFieldsStructure);
     await clientBillFormHandler(clientBillFieldsStructure);
   };
@@ -164,23 +189,15 @@ const Master: React.FC = () => {
     await statesFormHandler(statesFieldsStructure);
   };
 
-  const formatState_ClientDetails = async () => {
-    console.log("stateMaster", stateMaster);
-    const statelist = stateMaster.map((state: any) => state.state_name);
-    console.log("state", statelist, clientBillFieldsStructure);
-    clientBillFieldsStructure.state_name.options = statelist;
-    await setClientBillFieldsStructure(clientBillFieldsStructure);
-    await clientBillFormHandler(clientBillFieldsStructure);
-  };
-
   const formatAccount_ClientDetails = async () => {
     const accountslist = accountsMaster.map(
       (account: any) => account?.account_no
     );
-    clientBillFieldsStructure.polestar_bank_account_number.options =
+
+    clientFieldsStructure.polestar_bank_account_number.options =
       accountslist;
-    await setClientBillFieldsStructure(clientBillFieldsStructure);
-    await clientBillFormHandler(clientBillFieldsStructure);
+    await setClientFieldsStructure(clientFieldsStructure);
+    await clientFormHandler(clientFieldsStructure);
   };
 
   const formatCountry_Client_ShipDetails = async () => {
@@ -193,6 +210,22 @@ const Master: React.FC = () => {
   const formatState_Client_ShipDetails = async () => {
     const statelist = stateMaster.map((state: any) => state?.state_name);
     clientShipFieldsStructure.client_ship_to_state_name.options = statelist;
+    await setClientShipFieldsStructure(clientShipFieldsStructure);
+    await clientShipFormHandler(clientShipFieldsStructure);
+  };
+
+  const formatClient_BillDetails = async () => {
+    const clientlist = clientMaster.map((client: any) => client?.name);
+
+    clientBillFieldsStructure.client_name.options = clientlist;
+    await setClientBillFieldsStructure(clientBillFieldsStructure);
+    await clientBillFormHandler(clientBillFieldsStructure);
+  };
+
+  const formatClient_ShipDetails = async () => {
+    const clientlist = clientMaster.map((client: any) => client?.name);
+
+    clientShipFieldsStructure.client_name.options = clientlist;
     await setClientShipFieldsStructure(clientShipFieldsStructure);
     await clientShipFormHandler(clientShipFieldsStructure);
   };
@@ -310,6 +343,30 @@ const Master: React.FC = () => {
     try {
       const response = await clientService.getClientMaster();
       setClientMaster(response?.clients);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const getClientBillToMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientBillToMaster();
+      setClientBillToMaster(response?.billingInfo);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const getClientShipToMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientShipToMaster();
+      setClientShipToMaster(response?.shippingInfo);
     } catch (error) {
       console.error(error);
     } finally {
@@ -488,6 +545,44 @@ const Master: React.FC = () => {
       });
   };
 
+  const deactivateClientBillToMaster = () => {
+    setLoader(true);
+    clientService
+      .deactivateClientBillToMaster(patchData)
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          "Client Bill To record deactivated successfully",
+          CONSTANTS.SUCCESS
+        );
+        getClientBillToMaster();
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
+
+  const deactivateClientShipToMaster = () => {
+    setLoader(true);
+    clientService
+      .deactivateClientShipToMaster(patchData)
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          "Client Ship To record deactivated successfully",
+          CONSTANTS.SUCCESS
+        );
+        getClientShipToMaster();
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
+
   const openSaveForm = () => {
     setFormPopup(true);
   };
@@ -500,9 +595,41 @@ const Master: React.FC = () => {
     setOpenClientForm(false);
   };
 
-  const selectAttachment = (files: any) => {
-    console.log("files", files);
+  // const selectAttachment = (files: any) => {
+  //   console.log("files", files);
 
+  //   setAttachments([]);
+  //   if (files && files[0]) {
+  //     _.each(files, (eventList) => {
+  //       if (
+  //         eventList.name
+  //           .split(".")
+  //           [eventList.name.split(".").length - 1].toLowerCase() ===
+  //         FILE_TYPES.PDF
+  //       ) {
+  //         if (eventList.size > 10485760) {
+  //           return ToasterService.show(
+  //             "file size is too large, allowed maximum size is 10 MB.",
+  //             "error"
+  //           );
+  //         } else {
+  //           const fileWithUrl = {
+  //             ...eventList,
+  //             preview: URL.createObjectURL(eventList),
+  //           };
+  //           setAttachments((prevVals: any) => [...prevVals, fileWithUrl]);
+  //         }
+  //       } else {
+  //         ToasterService.show(
+  //           `Invalid file format. You can only attach PNG files here!`,
+  //           "error"
+  //         );
+  //         eventList = null;
+  //       }
+  //     });
+  //   }
+  // };
+  const selectAttachment = (files: any) => {
     setAttachments([]);
     if (files && files[0]) {
       _.each(files, (eventList) => {
@@ -518,15 +645,11 @@ const Master: React.FC = () => {
               "error"
             );
           } else {
-            const fileWithUrl = {
-              ...eventList,
-              preview: URL.createObjectURL(eventList),
-            };
-            setAttachments((prevVals: any) => [...prevVals, fileWithUrl]);
+            setAttachments((prevVals: any) => [...prevVals, eventList]);
           }
         } else {
           ToasterService.show(
-            `Invalid file format. You can only attach PNG files here!`,
+            `Invalid file format you can only attach the pdf here!`,
             "error"
           );
           eventList = null;
@@ -535,11 +658,8 @@ const Master: React.FC = () => {
     }
   };
 
-  const removeFileHandler = (index: any) => {
-    const updatedAttachments = attachments.filter(
-      (_: any, i: any) => i !== index
-    );
-    setAttachments(updatedAttachments);
+  const removeFileHandler = () => {
+    setAttachments([]);
   };
 
   const confirmDelete = () => {
@@ -570,6 +690,12 @@ const Master: React.FC = () => {
         break;
       case 9:
         deactivateClientMaster();
+        break;
+      case 10:
+        deactivateClientBillToMaster();
+        break;
+      case 11:
+        deactivateClientShipToMaster();
         break;
       default:
         break;
@@ -1919,150 +2045,6 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Address 1",
-      fieldName: "address1",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "address1",
-      changeFilter: true,
-      placeholder: "Address 1",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address1}
-          >
-            {rowData.address1}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Address 2",
-      fieldName: "address2",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "address2",
-      changeFilter: true,
-      placeholder: "Address 2",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address2}
-          >
-            {rowData.address2}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Address 3",
-      fieldName: "address3",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "address3",
-      changeFilter: true,
-      placeholder: "Address 3",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address3}
-          >
-            {rowData.address3}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "PIN Number",
-      fieldName: "pin",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "pin",
-      changeFilter: true,
-      placeholder: "PIN Number",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.pin}
-          >
-            {rowData.pin}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Country",
-      fieldName: "country_name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "country_name",
-      changeFilter: true,
-      placeholder: "Country",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.country_name}
-          >
-            {rowData.country_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "State",
-      fieldName: "state_name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "state_name",
-      changeFilter: true,
-      placeholder: "State",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.state_name}
-          >
-            {rowData.state_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
       label: "Polestar Bank Account Number",
       fieldName: "polestar_bank_account_number",
       textAlign: "left",
@@ -2078,198 +2060,6 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.polestar_bank_account_number}
           >
             {rowData.polestar_bank_account_number}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "GSTN Number",
-      fieldName: "gstn",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "gstn",
-      changeFilter: true,
-      placeholder: "GSTN Number",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.gstn}
-          >
-            {rowData.gstn}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Shipping Address 1",
-      fieldName: "client_ship_to_address1",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "client_ship_to_address1",
-      changeFilter: true,
-      placeholder: "Shipping Address 1",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_address1}
-          >
-            {rowData.client_ship_to_address1}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Shipping Address 2",
-      fieldName: "client_ship_to_address2",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "client_ship_to_address2",
-      changeFilter: true,
-      placeholder: "Shipping Address 2",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_address2}
-          >
-            {rowData.client_ship_to_address2}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Shipping Address 3",
-      fieldName: "client_ship_to_address3",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "client_ship_to_address3",
-      changeFilter: true,
-      placeholder: "Shipping Address 3",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_address3}
-          >
-            {rowData.client_ship_to_address3}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Shipping PIN",
-      fieldName: "client_ship_to_pin",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "client_ship_to_pin",
-      changeFilter: true,
-      placeholder: "Shipping PIN",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_pin}
-          >
-            {rowData.client_ship_to_pin}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Shipping Country",
-      fieldName: "client_ship_to_country_name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "client_ship_to_country_name",
-      changeFilter: true,
-      placeholder: "Shipping Country",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_country_name}
-          >
-            {rowData.client_ship_to_country_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Shipping State",
-      fieldName: "client_ship_to_state_name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "client_ship_to_state_name",
-      changeFilter: true,
-      placeholder: "Shipping State",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_state_name}
-          >
-            {rowData.client_ship_to_state_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Shipping GSTN Number",
-      fieldName: "client_ship_to_gstn",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "client_ship_to_gstn",
-      changeFilter: true,
-      placeholder: "Shipping GSTN Number",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_gstn}
-          >
-            {rowData.client_ship_to_gstn}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2414,6 +2204,30 @@ const Master: React.FC = () => {
             data-pr-tooltip={rowData.msa_flag}
           >
             <span>{rowData?.msa_flag === 1 ? "Yes" : "No"}</span>
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "GSTN Number",
+      fieldName: "gstn",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "gstn",
+      changeFilter: true,
+      placeholder: "GSTN Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.gstn}
+          >
+            {rowData.gstn}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -2631,6 +2445,450 @@ const Master: React.FC = () => {
     },
   ];
 
+  const ClientBillToMasterColumns = [
+    {
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
+      frozen: false,
+      sort: false,
+      filter: false,
+      body: (rowData: any) => (
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
+          <span
+            className="pi pi-pencil"
+            style={{ cursor: "pointer" }}
+            title="Update"
+            onClick={() => onUpdate(rowData)}
+          ></span>
+          <span
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
+            onClick={() => onDelete(rowData)}
+          ></span>
+        </div>
+      ),
+    },
+    {
+      label: "Client",
+      fieldName: "client_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_name",
+      changeFilter: true,
+      placeholder: "Client",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_name}
+          >
+            {rowData.client_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Address 1",
+      fieldName: "address1",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "address1",
+      changeFilter: true,
+      placeholder: "Address 1",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.address1}
+          >
+            {rowData.address1}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Address 2",
+      fieldName: "address2",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "address2",
+      changeFilter: true,
+      placeholder: "Address 2",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.address2}
+          >
+            {rowData.address2}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Address 3",
+      fieldName: "address3",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "address3",
+      changeFilter: true,
+      placeholder: "Address 3",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.address3}
+          >
+            {rowData.address3}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "PIN Number",
+      fieldName: "pin",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "pin",
+      changeFilter: true,
+      placeholder: "PIN Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.pin}
+          >
+            {rowData.pin}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Country",
+      fieldName: "country_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "country_name",
+      changeFilter: true,
+      placeholder: "Country",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.country_name}
+          >
+            {rowData.country_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "State",
+      fieldName: "state_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "state_name",
+      changeFilter: true,
+      placeholder: "State",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.state_name}
+          >
+            {rowData.state_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span style={{ color: rowData?.isActive === 1 ? "green" : "red" }}>
+            {rowData?.isActive === 1 ? "Active" : "Inactive"}
+          </span>
+        </div>
+      ),
+    },
+  ];
+
+  const ClientShipToMasterColumns = [
+    {
+      label: "Action",
+      fieldName: "action",
+      textAlign: "left",
+      frozen: false,
+      sort: false,
+      filter: false,
+      body: (rowData: any) => (
+        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
+          <span
+            className="pi pi-pencil"
+            style={{ cursor: "pointer" }}
+            title="Update"
+            onClick={() => onUpdate(rowData)}
+          ></span>
+          <span
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
+            onClick={() => onDelete(rowData)}
+          ></span>
+        </div>
+      ),
+    },
+    {
+      label: "Client",
+      fieldName: "client_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_name",
+      changeFilter: true,
+      placeholder: "Client",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_name}
+          >
+            {rowData.client_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Address 1",
+      fieldName: "client_ship_to_address1",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_address1",
+      changeFilter: true,
+      placeholder: "Shipping Address 1",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_address1}
+          >
+            {rowData.client_ship_to_address1}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Address 2",
+      fieldName: "client_ship_to_address2",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_address2",
+      changeFilter: true,
+      placeholder: "Shipping Address 2",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_address2}
+          >
+            {rowData.client_ship_to_address2}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Address 3",
+      fieldName: "client_ship_to_address3",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_address3",
+      changeFilter: true,
+      placeholder: "Shipping Address 3",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_address3}
+          >
+            {rowData.client_ship_to_address3}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping PIN",
+      fieldName: "client_ship_to_pin",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_pin",
+      changeFilter: true,
+      placeholder: "Shipping PIN",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_pin}
+          >
+            {rowData.client_ship_to_pin}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping Country",
+      fieldName: "country_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "country_name",
+      changeFilter: true,
+      placeholder: "Shipping Country",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.country_name}
+          >
+            {rowData.country_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping State",
+      fieldName: "state_name",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "state_name",
+      changeFilter: true,
+      placeholder: "Shipping State",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.state_name}
+          >
+            {rowData.state_name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Shipping GSTN Number",
+      fieldName: "client_ship_to_gstn",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "client_ship_to_gstn",
+      changeFilter: true,
+      placeholder: "Shipping GSTN Number",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            data-pr-tooltip={rowData.client_ship_to_gstn}
+          >
+            {rowData.client_ship_to_gstn}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Status",
+      fieldName: "isActive",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span style={{ color: rowData?.isActive === 1 ? "green" : "red" }}>
+            {rowData?.isActive === 1 ? "Active" : "Inactive"}
+          </span>
+        </div>
+      ),
+    },
+  ];
+
   const onDelete = (data: unknown) => {
     patchData = data;
     setActionPopupToggle({
@@ -2674,6 +2932,12 @@ const Master: React.FC = () => {
       case 9:
         updateClientMaster(data);
         setOpenClientForm(true);
+        break;
+      case 10:
+        updateClientBillToMaster(data);
+        break;
+      case 11:
+        updateClientShipToMaster(data);
         break;
       default:
         break;
@@ -2778,7 +3042,8 @@ const Master: React.FC = () => {
       CompanyFormFields.IECode.value = data?.IECode;
       CompanyFormFields.PAN.value = data?.PAN;
       CompanyFormFields.Email.value = data?.Email;
-      CompanyFormFields.description.value = data?.description != null ? data?.description : "";
+      CompanyFormFields.description.value =
+        data?.description != null ? data?.description : "";
       CompanyFormFields.gst_number.value = data?.gst_number;
       CompanyFormFields.address.value = data?.address;
       setCompanyForm(_.cloneDeep(CompanyFormFields));
@@ -3037,7 +3302,7 @@ const Master: React.FC = () => {
     }
   };
 
-  const TaxFormFields = {
+  const TaxFormFields: any = {
     taxType: {
       inputType: "inputtext",
       label: "Type",
@@ -3071,8 +3336,8 @@ const Master: React.FC = () => {
     try {
       TaxFormFields.taxType.value = data?.taxType;
       TaxFormFields.taxPercentage.value = data?.taxPercentage;
-      TaxFormFields.effectiveDate.value = await taxService.parseDateString(data?.effectiveDate);
-      
+      TaxFormFields.effectiveDate.value = parseDateString(data?.effectiveDate);
+
       setTaxForm(_.cloneDeep(TaxFormFields));
     } catch (error) {
       console.log("error", error);
@@ -3163,6 +3428,25 @@ const Master: React.FC = () => {
       },
       fieldWidth: "col-md-6",
     },
+    polestar_bank_account_number: {
+      inputType: "singleSelect",
+      label: "Polestar Bank Account Number",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    gstn: {
+      inputType: "inputtext",
+      label: "GSTN",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
     servicing_type: {
       inputType: "singleSelect",
       label: "Servicing Type",
@@ -3238,10 +3522,57 @@ const Master: React.FC = () => {
     },
   };
 
+  const updateClientMaster = async (data: any) => {
+    try {
+      clientFieldsStructure.industry_name.value = data?.industry_name;
+      clientFieldsStructure.name.value = data?.name;
+      clientFieldsStructure.alias.value = data?.alias;
+      clientFieldsStructure.pan_no.value = data?.pan_no;
+      clientFieldsStructure.servicing_type.value = data?.servicing_type;
+      clientFieldsStructure.client_category.value = data?.client_category;
+      clientFieldsStructure.msa_start_date.value = parseDateString(
+        data?.msa_start_date
+      );
+      clientFieldsStructure.msa_end_date.value = parseDateString(
+        data?.msa_end_date
+      );
+      clientFieldsStructure.is_msa_missing.value = data?.is_msa_missing ? true : false;
+      clientFieldsStructure.msa_flag.value = data?.msa_flag ? true : false;
+      clientFieldsStructure.non_solicitation_clause.value =
+        data?.non_solicitation_clause ? true : false;
+      clientFieldsStructure.use_logo_permission.value =
+        data?.use_logo_permission ? true : false;
+      clientFieldsStructure.polestar_bank_account_number.value =
+        data?.polestar_bank_account_number;
+      clientFieldsStructure.gstn.value = data?.gstn;
+
+      ClientContactFormFields.salutation.value = data?.salutation;
+      ClientContactFormFields.first_name.value = data?.first_name;
+      ClientContactFormFields.last_name.value = data?.last_name;
+      ClientContactFormFields.email.value = data?.email;
+      ClientContactFormFields.phone.value = data?.phone;
+
+      setClientFieldsStructure(_.cloneDeep(clientFieldsStructure));
+      setClientContactForm(_.cloneDeep(ClientContactFormFields));
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const [clientFieldsStructure, setClientFieldsStructure]: any =
     useState(ClientFormFields);
 
   const ClientBillFormFields = {
+    client_name: {
+      inputType: "singleSelect",
+      label: "Client",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
     address1: {
       inputType: "inputtext",
       label: "Address 1",
@@ -3298,9 +3629,15 @@ const Master: React.FC = () => {
       },
       fieldWidth: "col-md-6",
     },
-    polestar_bank_account_number: {
+  };
+
+  const [clientBillFieldsStructure, setClientBillFieldsStructure]: any =
+    useState(ClientBillFormFields);
+
+  const ClientShipFormFields = {
+    client_name: {
       inputType: "singleSelect",
-      label: "Polestar Bank Account Number",
+      label: "Client",
       options: [],
       value: null,
       validation: {
@@ -3308,21 +3645,6 @@ const Master: React.FC = () => {
       },
       fieldWidth: "col-md-6",
     },
-    gstn: {
-      inputType: "inputtext",
-      label: "GSTN",
-      value: null,
-      validation: {
-        required: false,
-      },
-      fieldWidth: "col-md-6",
-    },
-  };
-
-  const [clientBillFieldsStructure, setClientBillFieldsStructure]: any =
-    useState(ClientBillFormFields);
-
-  const ClientShipFormFields = {
     client_ship_to_address1: {
       inputType: "inputtext",
       label: "Address 1",
@@ -3443,51 +3765,59 @@ const Master: React.FC = () => {
     },
   };
 
-  const updateClientMaster = async (data: any) => {
+  const updateClientBillToMaster = async (data: any) => {
     try {
-      clientFieldsStructure.industry_name.value = data?.industry_name;
-      clientFieldsStructure.name.value = data?.name;
-      clientFieldsStructure.alias.value = data?.alias;
-      clientFieldsStructure.pan_no.value = data?.pan_no;
-      clientFieldsStructure.servicing_type.value = data?.servicing_type;
-      clientFieldsStructure.client_category.value = data?.client_category;
-      clientFieldsStructure.msa_start_date.value = await clientService.parseDateString(data?.msa_start_date);
-      clientFieldsStructure.msa_end_date.value = await clientService.parseDateString(data?.msa_end_date);
-      clientFieldsStructure.is_msa_missing.value = data?.is_msa_missing;
-      clientFieldsStructure.msa_flag.value = data?.msa_flag;
-      clientFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause;
-      clientFieldsStructure.use_logo_permission.value = data?.use_logo_permission;
-
+      clientBillFieldsStructure.client_name.value = data?.client_name;
       clientBillFieldsStructure.address1.value = data?.address1;
       clientBillFieldsStructure.address2.value = data?.address2;
       clientBillFieldsStructure.address3.value = data?.address3;
       clientBillFieldsStructure.pin.value = data?.pin;
       clientBillFieldsStructure.country_name.value = data?.country_name;
       clientBillFieldsStructure.state_name.value = data?.state_name;
-      clientBillFieldsStructure.polestar_bank_account_number.value = data?.polestar_bank_account_number;
-      clientBillFieldsStructure.gstn.value = data?.gstn;
 
-      clientShipFieldsStructure.client_ship_to_address1.value = data?.client_ship_to_address1;
-      clientShipFieldsStructure.client_ship_to_address2.value = data?.client_ship_to_address2;
-      clientShipFieldsStructure.client_ship_to_address3.value = data?.client_ship_to_address3;
-      clientShipFieldsStructure.client_ship_to_pin.value = data?.client_ship_to_pin;
-      clientShipFieldsStructure.client_ship_to_country_name.value = data?.client_ship_to_country_name;
-      clientShipFieldsStructure.client_ship_to_state_name.value = data?.client_ship_to_state_name;
-      clientShipFieldsStructure.client_ship_to_gstn.value = data?.client_ship_to_gstn;
-
-      ClientContactFormFields.salutation.value = data?.salutation;
-      ClientContactFormFields.first_name.value = data?.first_name;
-      ClientContactFormFields.last_name.value = data?.last_name;
-      ClientContactFormFields.email.value = data?.email;
-      ClientContactFormFields.phone.value = data?.phone;
-
-      setClientFieldsStructure(_.cloneDeep(clientFieldsStructure));
       setClientBillFieldsStructure(_.cloneDeep(clientBillFieldsStructure));
-      setClientShipFieldsStructure(_.cloneDeep(clientShipFieldsStructure));
-      setClientContactForm(_.cloneDeep(ClientContactFormFields));
     } catch (error) {
       console.log("error", error);
     }
+  };
+
+  const updateClientShipToMaster = async (data: any) => {
+    try {
+      console.log('data', data);
+
+      clientShipFieldsStructure.client_name.value = data?.client_name;
+      clientShipFieldsStructure.client_ship_to_address1.value =
+        data?.client_ship_to_address1;
+      clientShipFieldsStructure.client_ship_to_address2.value =
+        data?.client_ship_to_address2;
+      clientShipFieldsStructure.client_ship_to_address3.value =
+        data?.client_ship_to_address3;
+      clientShipFieldsStructure.client_ship_to_pin.value =
+        data?.client_ship_to_pin;
+      clientShipFieldsStructure.client_ship_to_country_name.value =
+        data?.country_name;
+      clientShipFieldsStructure.client_ship_to_state_name.value =
+        data?.state_name;
+      clientShipFieldsStructure.client_ship_to_gstn.value =
+        data?.client_ship_to_gstn;
+
+      setClientShipFieldsStructure(_.cloneDeep(clientShipFieldsStructure));
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const parseDateString = (dateString: any) => {
+    const [year, month, day] = dateString.split("/").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
   };
 
   const [CompanyForm, setCompanyForm] = useState<any>(
@@ -3541,15 +3871,15 @@ const Master: React.FC = () => {
     setOpenClientForm(false);
     setCompanyForm(_.cloneDeep(CompanyFormFields));
     setCurrencyForm(_.cloneDeep(CurrencyFormFields));
-    setAccountForm(_.cloneDeep(accountFieldsStructure));
+    setAccountForm(_.cloneDeep(AccountsFormFields));
     setIndustryForm(_.cloneDeep(IndustryFormFields));
     setProductForm(_.cloneDeep(ProductFormFields));
     setProjectForm(_.cloneDeep(ProjectFormFields));
     setTaxForm(_.cloneDeep(TaxFormFields));
-    setStatesForm(_.cloneDeep(statesFieldsStructure));
-    setClientForm(_.cloneDeep(clientFieldsStructure));
-    setClientBillForm(_.cloneDeep(clientBillFieldsStructure));
-    setClientShipForm(_.cloneDeep(clientShipFieldsStructure));
+    setStatesForm(_.cloneDeep(StatesFormFields));
+    setClientForm(_.cloneDeep(ClientFormFields));
+    setClientBillForm(_.cloneDeep(ClientBillFormFields));
+    setClientShipForm(_.cloneDeep(ClientShipFormFields));
     setClientContactForm(_.cloneDeep(ClientContactFormFields));
     // setCountryForm(_.cloneDeep(CountryFormFields))
     setAttachments([]);
@@ -3616,7 +3946,6 @@ const Master: React.FC = () => {
     });
 
     setIsFormValid(companyValidityFlag);
-    console.log('data', companyValidityFlag, CompanyForm, stateData);
 
     if (companyValidityFlag) {
       const formData: any = new FormData();
@@ -3647,7 +3976,7 @@ const Master: React.FC = () => {
         companyService
           .createCompanyMaster(formData)
           .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.CREATED) {
+            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
               getCompanyMaster();
@@ -3673,7 +4002,7 @@ const Master: React.FC = () => {
         companyService
           .updateCompanyMaster(formData)
           .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
+            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
               getCompanyMaster();
@@ -3734,7 +4063,7 @@ const Master: React.FC = () => {
         currencyService
           .updateCurrencyMaster(updatePayload)
           .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
+            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
               getCurrencyMaster();
@@ -4022,7 +4351,7 @@ const Master: React.FC = () => {
       const obj = {
         taxType: TaxForm?.taxType?.value,
         taxPercentage: TaxForm?.taxPercentage?.value,
-        effectiveDate: await taxService.formatDate(TaxForm?.effectiveDate?.value),
+        effectiveDate: formatDate(TaxForm?.effectiveDate?.value),
         isactive: 1,
         updatedBy: loggedInUserId,
       };
@@ -4131,7 +4460,7 @@ const Master: React.FC = () => {
     }
   };
 
-  const creatClientForm = async (event: FormEvent) => {
+  const createClientForm = async (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
@@ -4152,34 +4481,12 @@ const Master: React.FC = () => {
             industry.industryName === ClientForm.industry_name.value
         )?.id ?? null;
 
-      const countryId =
-        countryMaster.find(
-          (country: any) => country.name === ClientBillForm.country_name.value
-        )?.id ?? null;
-
-      const stateId =
-        stateMaster.find(
-          (state: any) => state.state_name === ClientBillForm.state_name.value
-        )?.state_id ?? null;
-
       const polestar_bank_account_id =
         accountsMaster.find(
           (account: any) =>
             account.account_no ===
-            ClientBillForm.polestar_bank_account_number.value
+          ClientForm.polestar_bank_account_number.value
         )?.account_id ?? null;
-
-      const client_ship_to_country_id =
-        countryMaster.find(
-          (country: any) =>
-            country.name === ClientShipForm.client_ship_to_country_name.value
-        )?.id ?? null;
-
-      const client_ship_to_state_id =
-        stateMaster.find(
-          (state: any) =>
-            state.state_name === ClientShipForm.client_ship_to_state_name.value
-        )?.state_id ?? null;
 
       const formData: any = new FormData();
 
@@ -4188,21 +4495,8 @@ const Master: React.FC = () => {
         name: ClientForm?.name?.value,
         alias: ClientForm?.alias?.value,
         pan_no: ClientForm?.pan_no?.value,
-        address1: ClientBillForm?.address1?.value,
-        address2: ClientBillForm?.address2?.value,
-        address3: ClientBillForm?.address3?.value,
-        pin: ClientBillForm?.pin?.value,
-        country_id: countryId,
-        state_id: stateId,
         polestar_bank_account_id: polestar_bank_account_id,
-        gstn: ClientBillForm?.gstn?.value,
-        client_ship_to_address1: ClientShipForm?.client_ship_to_address1?.value,
-        client_ship_to_address2: ClientShipForm?.client_ship_to_address2?.value,
-        client_ship_to_address3: ClientShipForm?.client_ship_to_address3?.value,
-        client_ship_to_pin: ClientShipForm?.client_ship_to_pin?.value,
-        client_ship_to_gstn: ClientShipForm?.client_ship_to_gstn?.value,
-        client_ship_to_country_id: client_ship_to_country_id,
-        client_ship_to_state_id: client_ship_to_state_id,
+        gstn: ClientForm?.gstn?.value,
         salutation: ClientContactForm?.salutation?.value,
         first_name: ClientContactForm?.first_name?.value,
         last_name: ClientContactForm?.last_name?.value,
@@ -4210,8 +4504,8 @@ const Master: React.FC = () => {
         phone: ClientContactForm?.phone?.value,
         msa_flag: ClientForm?.msa_flag?.value ? 1 : 0,
         is_performa: ClientForm?.is_performa?.value ? 1 : 0,
-        msa_start_date: await clientService.formatDate(ClientForm?.msa_start_date?.value),
-        msa_end_date: await clientService.formatDate(ClientForm?.msa_end_date?.value),
+        msa_start_date: formatDate(ClientForm?.msa_start_date?.value),
+        msa_end_date: formatDate(ClientForm?.msa_end_date?.value),
         non_solicitation_clause: ClientForm?.non_solicitation_clause?.value
           ? 1
           : 0,
@@ -4231,8 +4525,6 @@ const Master: React.FC = () => {
         formData.set("file", attachments[0]);
       }
 
-      console.log('stateData', stateData);
-      
       if (!stateData?.id) {
         clientService
           .createClientMaster(formData)
@@ -4281,30 +4573,7 @@ const Master: React.FC = () => {
     }
   };
 
-  const moveNextClientForm = (event: FormEvent) => {
-    event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
-
-    _.each(ClientForm, (item: any) => {
-      if (item?.validation?.required) {
-        console.log("item", item, companyValidityFlag, item.valid);
-
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
-      }
-    });
-    console.log("companyValidityFlag", companyValidityFlag);
-
-    setIsFormValid(companyValidityFlag);
-    if (companyValidityFlag) {
-      setActiveClientIndex(activeClientIndex + 1);
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-    }
-  };
-
-  const moveNextClientBillForm = (event: FormEvent) => {
+  const createClientBillInfo = async (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
@@ -4317,19 +4586,158 @@ const Master: React.FC = () => {
     });
 
     setIsFormValid(companyValidityFlag);
+
     if (companyValidityFlag) {
-      setActiveClientIndex(activeClientIndex + 1);
+      const clientId =
+        clientMaster.find(
+          (client: any) => client.name === ClientBillForm.client_name.value
+        )?.id ?? null;
+
+      const countryId =
+        countryMaster.find(
+          (country: any) => country.name === ClientBillForm.country_name.value
+        )?.id ?? null;
+
+      const stateId =
+        stateMaster.find(
+          (state: any) => state.state_name === ClientBillForm.state_name.value
+        )?.state_id ?? null;
+
+      const obj = {
+        clientId: clientId,
+        address1: ClientBillForm?.address1?.value,
+        address2: ClientBillForm?.address2?.value,
+        address3: ClientBillForm?.address3?.value,
+        pin: ClientBillForm?.pin?.value,
+        countryId: countryId,
+        stateId: stateId,
+        updatedBy: loggedInUserId,
+      };
+
+      if (!stateData?.id) {
+        clientService
+          .createClientBillToMaster(obj)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+              setStateData({});
+              closeFormPopup();
+              getClientBillToMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      } else {
+        const updatePayload = { ...obj, billingId: stateData?.id };
+
+        clientService
+          .updateClientBillToMaster(updatePayload)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+              setStateData({});
+              closeFormPopup();
+              getClientBillToMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  };
+  }
 
-  const moveNextClientShipForm = (event: FormEvent) => {
+  const createClientShipInfo = async (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
     _.each(ClientShipForm, (item: any) => {
+      if (item?.validation?.required) {
+        companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.valid;
+      }
+    });
+
+    setIsFormValid(companyValidityFlag);
+
+    if (companyValidityFlag) {
+      const clientId =
+        clientMaster.find(
+          (client: any) => client.name === ClientShipForm.client_name.value
+        )?.id ?? null;
+
+      const countryId =
+        countryMaster.find(
+          (country: any) => country.name === ClientShipForm.client_ship_to_country_name.value
+        )?.id ?? null;
+
+      const stateId =
+        stateMaster.find(
+          (state: any) => state.state_name === ClientShipForm.client_ship_to_state_name.value
+        )?.state_id ?? null;
+
+      const obj = {
+        clientId: clientId,
+        address1: ClientShipForm?.client_ship_to_address1?.value,
+        address2: ClientShipForm?.client_ship_to_address2?.value,
+        address3: ClientShipForm?.client_ship_to_address3?.value,
+        pin: ClientShipForm?.client_ship_to_pin?.value,
+        gstn: ClientShipForm?.client_ship_to_gstn?.value,
+        countryId: countryId,
+        stateId: stateId,
+        updatedBy: loggedInUserId,
+      };
+
+      if (!stateData?.id) {
+        clientService
+          .createClientShipToMaster(obj)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+              setStateData({});
+              closeFormPopup();
+              getClientShipToMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      } else {
+        const updatePayload = { ...obj, shippingId: stateData?.id };
+
+        clientService
+          .updateClientShipToMaster(updatePayload)
+          .then((response: any) => {
+            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+              setStateData({});
+              closeFormPopup();
+              getClientShipToMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            }
+          })
+          .catch((error: any) => {
+            setStateData({});
+            ToasterService.show(error, CONSTANTS.ERROR);
+          });
+      }
+    } else {
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+  }
+
+  const moveNextClientForm = (event: FormEvent) => {
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const companyFormValid: boolean[] = [];
+
+    _.each(ClientForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
         companyValidityFlag = companyValidityFlag && item.valid;
@@ -4438,9 +4846,7 @@ const Master: React.FC = () => {
                                       <Chip
                                         label={item.name}
                                         removable
-                                        onRemove={() =>
-                                          removeFileHandler(index)
-                                        }
+                                        onRemove={() => removeFileHandler()}
                                         key={index}
                                       />
                                     )
@@ -5086,9 +5492,7 @@ const Master: React.FC = () => {
                                         <Chip
                                           label={item.name}
                                           removable
-                                          onRemove={() =>
-                                            removeFileHandler(index)
-                                          }
+                                          onRemove={() => removeFileHandler()}
                                           key={index}
                                         />
                                       )
@@ -5142,80 +5546,6 @@ const Master: React.FC = () => {
                   />
                 </div>
               </TabPanel>
-              <TabPanel header="Client Bill To">
-                <div className={classes["form-container"]}>
-                  <div className={classes["form-content"]}>
-                    <FormComponent
-                      form={_.cloneDeep(ClientBillForm)}
-                      formUpdateEvent={clientBillFormHandler}
-                      isFormValidFlag={isFormValid}
-                    ></FormComponent>
-                  </div>
-                </div>
-                <div className={classes["popup-lower"]}>
-                  <div className={classes["popup-lower-left-btn"]}>
-                    <ButtonComponent
-                      label="Back"
-                      icon="pi pi-check"
-                      iconPos="left"
-                      type="default"
-                      submitEvent={backToPreviousForm}
-                    />
-                  </div>
-                  <div className={classes["popup-lower-right-btn"]}>
-                    <ButtonComponent
-                      label="Cancel"
-                      icon="pi pi-check"
-                      iconPos="right"
-                      type="default"
-                      submitEvent={closeClientForm}
-                    />
-                    <ButtonComponent
-                      label="Next"
-                      icon="pi pi-check"
-                      iconPos="right"
-                      submitEvent={moveNextClientBillForm}
-                    />
-                  </div>
-                </div>
-              </TabPanel>
-              <TabPanel header="Client Ship To">
-                <div className={classes["form-container"]}>
-                  <div className={classes["form-content"]}>
-                    <FormComponent
-                      form={_.cloneDeep(ClientShipForm)}
-                      formUpdateEvent={clientShipFormHandler}
-                      isFormValidFlag={isFormValid}
-                    ></FormComponent>
-                  </div>
-                </div>
-                <div className={classes["popup-lower"]}>
-                  <div className={classes["popup-lower-left-btn"]}>
-                    <ButtonComponent
-                      label="Back"
-                      icon="pi pi-check"
-                      iconPos="left"
-                      type="default"
-                      submitEvent={backToPreviousForm}
-                    />
-                  </div>
-                  <div className={classes["popup-lower-right-btn"]}>
-                    <ButtonComponent
-                      label="Cancel"
-                      icon="pi pi-check"
-                      iconPos="right"
-                      type="default"
-                      submitEvent={closeClientForm}
-                    />
-                    <ButtonComponent
-                      label="Next"
-                      icon="pi pi-check"
-                      iconPos="right"
-                      submitEvent={moveNextClientShipForm}
-                    />
-                  </div>
-                </div>
-              </TabPanel>
               <TabPanel header="Contact">
                 <div className={classes["form-container"]}>
                   <div className={classes["form-content"]}>
@@ -5242,13 +5572,13 @@ const Master: React.FC = () => {
                       icon="pi pi-check"
                       iconPos="right"
                       type="default"
-                      submitEvent={closeClientForm}
+                      submitEvent={closeFormPopup}
                     />
                     <ButtonComponent
                       label="Submit Form"
                       icon="pi pi-check"
                       iconPos="right"
-                      submitEvent={creatClientForm}
+                      submitEvent={createClientForm}
                     />
                   </div>
                 </div>
@@ -5292,6 +5622,160 @@ const Master: React.FC = () => {
               </p>
             </>
           )}
+        </TabPanel>
+        <TabPanel header="Client Bill To">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add Client Bill Info"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={clientBillToMaster}
+              column={ClientBillToMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add Client Bill Info</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(ClientBillForm)}
+                    formUpdateEvent={clientBillFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createClientBillInfo}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </TabPanel>
+        <TabPanel header="Client Ship To">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add Client Ship Info"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={clientShipToMaster}
+              column={ClientShipToMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 80px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add Client Shipping Info</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(ClientShipForm)}
+                    formUpdateEvent={clientShipFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createClientShipInfo}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
         </TabPanel>
       </TabView>
     </>

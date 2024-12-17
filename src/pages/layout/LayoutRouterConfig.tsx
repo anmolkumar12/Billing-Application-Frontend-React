@@ -10,10 +10,22 @@ const MasterLazyComponent = React.lazy(() => {
   }).then(() => import('../../pages/master/Master'))
 })
 
+const ContractLazyComponent = React.lazy(() => {
+  return new Promise<void>((resolve) => {
+    resolve()
+  }).then(() => import('../../pages/contract/Contract'))
+})
+
 const routes = [
   {
     path: ROUTE_CONSTANTS.MASTER,
     component: MasterLazyComponent,
+    exact: true,
+    isProtected: true,
+  },
+  {
+    path: ROUTE_CONSTANTS.CONTRACT,
+    component: ContractLazyComponent,
     exact: true,
     isProtected: true,
   },
