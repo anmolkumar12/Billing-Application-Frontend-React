@@ -19,6 +19,14 @@ const Layout: React.FC = () => {
       accessRole: ['Admin', 'Manager', 'Viewer'],
     },
     {
+      name: 'Contract',
+      moduleName: 'ContractDashboard',
+      link: ROUTE_CONSTANTS.CONTRACT,
+      icon: 'pi pi-file-pdf',
+      systemRole: ['Admin'],
+      accessRole: ['Admin', 'Manager', 'Viewer'],
+    },
+    {
       name: 'Invoice',
       moduleName: 'InvoiceDashboard',
       link: ROUTE_CONSTANTS.INVOICE,

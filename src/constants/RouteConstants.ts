@@ -5,6 +5,7 @@ export const ROUTE_CONSTANTS = {
   RESET: '/v/reset',
   DASHBOARD: '/dashboard',
   MASTER: '/master',
+  CONTRACT: '/contract',
   INVOICE: '/invoice',
   PAYMENT: '/payment',
   PER_INVOICE: '/per_invoice',
