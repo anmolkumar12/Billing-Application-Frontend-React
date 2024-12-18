@@ -3783,8 +3783,6 @@ const Master: React.FC = () => {
 
   const updateClientShipToMaster = async (data: any) => {
     try {
-      console.log('data', data);
-
       clientShipFieldsStructure.client_name.value = data?.client_name;
       clientShipFieldsStructure.client_ship_to_address1.value =
         data?.client_ship_to_address1;

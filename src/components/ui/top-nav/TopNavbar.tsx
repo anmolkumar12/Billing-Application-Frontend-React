@@ -43,8 +43,10 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
   const getModuleName = () => {
     const path =
       history.location.pathname || new NavigateUserService().getDefaultRoute()
-    if (path == ROUTE_CONSTANTS.MASTER) {
+    if (path === ROUTE_CONSTANTS.MASTER) {
       return 'Masters'
+    } else if (path === ROUTE_CONSTANTS.CONTRACT) {
+      return 'Contract'
     } else {
       return ''
     }
