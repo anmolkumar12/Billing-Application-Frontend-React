@@ -7,6 +7,8 @@ export const ROUTE_CONSTANTS = {
   MASTER: '/master',
   CONTRACT: '/contract',
   INVOICE: '/invoice',
+  SHIFTING: '/shifting',
+  CREDIT_NOTE: '/creditNote',
   PAYMENT: '/payment',
   PER_INVOICE: '/per_invoice',
   INVENTORY: '/inventory',

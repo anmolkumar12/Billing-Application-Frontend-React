@@ -16,6 +16,8 @@ import { HTTP_RESPONSE } from '../../enums/http-responses.enum'
 
 const Login: React.FC = () => {
   const history = useHistory()
+  const cookies = new Cookies()
+  const dateNow = new Date()
 
   const [isFormValid, setIsFormValid] = useState(true)
 
@@ -76,8 +78,6 @@ const Login: React.FC = () => {
 
   const storeCookie = () => {
     if (loginFormState.loginForm.isRemember) {
-      const cookies = new Cookies()
-      const dateNow = new Date()
       dateNow.setDate(dateNow.getDate() + 7)
       cookies.set('email', loginFormState.loginForm.email, { expires: dateNow })
       cookies.set('password', loginFormState.loginForm.password, {
@@ -108,11 +108,14 @@ const Login: React.FC = () => {
               // responseData?.tokens?.refreshToken
             )
             storeCookie()
-            AuthService.userInfo.next({
+            const userInfo = {
               name: response?.data?.name,
               userId: response?.data?.userid,
               email: formData.identifier
-            })
+            }
+            cookies.set('userInfo', userInfo)
+            cookies.set('userRole', response?.data?.role)
+            AuthService.userInfo.next(userInfo)
             AuthService.currentRole.next(response?.data?.role)
           }
           ToasterService.show('Logged In Successfully.', CONSTANTS.SUCCESS)

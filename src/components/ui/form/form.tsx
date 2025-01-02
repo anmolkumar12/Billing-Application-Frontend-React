@@ -19,7 +19,7 @@ import { SingleSelectComponent } from '../single-select/SingleSelect'
 import { ContactNumberComponent } from '../contact-number/ContactNumber'
 import { TextEditor } from '../text-editor/TextEditor'
 
-export const FormComponent: React.FC<{
+const FormComponent: React.FC<{
   form: FormType
   formUpdateEvent: any
   isFormValidFlag: boolean
@@ -63,18 +63,17 @@ export const FormComponent: React.FC<{
       }
 
       setState({ currentForm: clonnedForm })
-      formUpdateEvent(state.currentForm)
+      formUpdateEvent(clonnedForm)
     }
     return () => {
       isMountRef.current = false
     }
   }, [])
   useEffect(() => {
-    isMountRef2.current = true
-
-    isMountRef2.current && setState({ currentForm: form })
-    return () => {
-      isMountRef2.current = false
+    if (!_.isEqual(form, state.currentForm)) {
+      console.log("Form has changed, updating...");
+      setState({ currentForm: form });
+      formUpdateEvent(form);
     }
   }, [form])
 
@@ -100,11 +99,14 @@ export const FormComponent: React.FC<{
   }, [updateOptions])
 
   const inputChangedHandler = (newValue: any, fieldKey: string) => {
-    const updatedForm: FormType = { ...state.currentForm }
-    updatedForm[fieldKey].value = newValue
-    // updatedForm[fieldKey].touched = true;
-    setState({ currentForm: updatedForm })
-    formUpdateEvent(state.currentForm)
+    setState((prevState) => {
+      const updatedForm = { ...prevState.currentForm };
+      if (updatedForm[fieldKey].value !== newValue) {
+        updatedForm[fieldKey].value = newValue;
+        formUpdateEvent(updatedForm);
+      }
+      return { currentForm: updatedForm };
+    });
   }
 
   // default handle blur
@@ -112,7 +114,7 @@ export const FormComponent: React.FC<{
     const updatedForm: FormType = { ...state.currentForm }
     updatedForm[fieldKey].touched = true
     setState({ currentForm: updatedForm })
-    formUpdateEvent(state.currentForm)
+    formUpdateEvent(updatedForm)
   }
 
   const { blurHandler = handleBlur } = props
@@ -126,7 +128,7 @@ export const FormComponent: React.FC<{
     updatedForm[fieldKey].valid = valid
     updatedForm[fieldKey].errorMessage = errorMessage
     setState({ currentForm: updatedForm })
-    formUpdateEvent(state.currentForm)
+    formUpdateEvent(updatedForm)
   }
 
   return (
@@ -551,4 +553,6 @@ export const FormComponent: React.FC<{
       </div>
     </form>
   )
-}
+};
+
+export default FormComponent;

@@ -14,9 +14,13 @@ import { ROUTE_CONSTANTS } from '../../../constants/RouteConstants'
 import { HTTP_RESPONSE } from '../../../enums/http-responses.enum'
 import { NavigateUserService } from '../../../services/navigate-user-service/navigate-user.service'
 import _ from 'lodash'
+import Cookies from 'universal-cookie'
 
 const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
   const history = useHistory()
+  const cookies = new Cookies();
+  const userRole = cookies.get("userRole");
+  const userInfo = cookies.get("userInfo");
 
   const [viewProfile, setViewprofile] = useState(false)
   const [viewNotification, setViewNotification] = useState(false)
@@ -146,7 +150,7 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
                   ImageUrl.UserImg
                 }
               />
-              <h6>{AuthService?.userInfo?.value?.name}</h6>
+              <h6>{userInfo?.name}</h6>
             </button>
             <div
               className={classes['profile-details'] + ' ' + 'dropdown-menu'}
@@ -196,7 +200,7 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
                   index: number
                 ) => {
                   const accessRoleExist = menuItem?.accessRole.filter(
-                    (item) => item == AuthService?.currentRole?.value
+                    (item) => item == userRole
                   )
 
                   if (

@@ -38,6 +38,7 @@ export const LayoutRouterConfig: React.FC = () => {
         {routes.map((item: any, index: any) => {
           return item.isProtected ? (
             <ProtectedRoute
+              key={index}
               path={item.path}
               component={item.component}
               exact={item.exact}

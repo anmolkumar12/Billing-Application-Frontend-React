@@ -43,7 +43,7 @@ export class CurrencyMasterService {
       const body = {
         currencyId: data.id,
         isActive: !data.isActive,
-        updatedBy: AuthService?.userInfo?.value?.userId,
+        updatedBy: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(

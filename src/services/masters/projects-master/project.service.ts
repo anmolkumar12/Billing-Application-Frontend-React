@@ -43,7 +43,7 @@ export class ProjectMasterService {
       const body = {
         projectId: data.id,
         isActive: !data.isActive,
-        updatedBy: AuthService?.userInfo?.value?.userId,
+        updatedBy: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(

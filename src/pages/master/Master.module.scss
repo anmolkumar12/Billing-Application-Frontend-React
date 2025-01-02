@@ -1,3 +1,26 @@
+.main-tab-screen {
+  height: 100%;
+
+  .panel-tabs {
+    height: calc(100% - 60px);
+    overflow: scroll;
+  }
+}
+.addition-field-header {
+  background-color: #f2ebeb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px 5px 5px;
+  margin: 10px 0px;
+  border-radius: 4px;
+
+  .addition-field-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
 .aggregator-dashboard {
     padding: 0px 5px;
   }
@@ -25,7 +48,12 @@
     margin: 0.75rem 0 1.5rem;
     border-radius: 10px;
   }
-  
+  .empty-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
   .upload-file input[type='file'] {
     outline: none;
     // width: 100%;

@@ -2,20 +2,20 @@ import { APIURLS } from '../../../constants/ApiUrls'
 import { AuthService } from '../../auth-service/auth.service'
 import { HTTPService } from '../../http-service/http-service'
 
-export class AccountsMasterService {
-  getAccountsMaster = async () => {
+export class AccountTypeMasterService {
+  getAccountTypeMaster = async () => {
     try {
-      const response = await HTTPService.postRequest(APIURLS.GET_ACCOUNTS_MASTER)
+      const response = await HTTPService.postRequest(APIURLS.GET_ACCOUNT_TYPE_MASTER)
       return response?.data
     } catch (err) {
       return {}
     }
   }
 
-  createAccountsMaster = async (formData: any) => {
+  createAccountTypeMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.CREATE_ACCOUNTS_MASTER,
+        APIURLS.CREATE_ACCOUNT_TYPE_MASTER,
         formData
       )
 
@@ -25,10 +25,10 @@ export class AccountsMasterService {
     }
   }
 
-  updateAccountsMaster = async (formData: any) => {
+  updateAccountTypeMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.UPDATE_ACCOUNTS_MASTER,
+        APIURLS.UPDATE_ACCOUNT_TYPE_MASTER,
         formData
       )
 
@@ -38,16 +38,16 @@ export class AccountsMasterService {
     }
   }
 
-  deactivateAccountsMaster = async (data: any) => {
+  deactivateAccountTypeMaster = async (data: any) => {
     try {
       const body = {
-        accountId: data.id,
+        accountTypeId: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(
-        APIURLS.TOGGLE_ACCOUNTS_STATUS,
+        APIURLS.TOGGLE_ACCOUNT_TYPE_STATUS,
         body
       )
       return response?.data

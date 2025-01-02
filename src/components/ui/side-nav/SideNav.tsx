@@ -13,6 +13,7 @@ import { UtilityService } from "../../../services/utility-service/utility.servic
 import { HTTP_RESPONSE } from "../../../enums/http-responses.enum";
 import * as _ from "lodash";
 import { access } from "fs";
+import Cookies from "universal-cookie";
 
 const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
   const [displayLogoutPanel, setDisplayLogoutPanel] = useState(false);
@@ -20,6 +21,8 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
   const [isCollapseSideMenu, setIsCollapseSideMenu] = useState(false);
   const menu = userMenu;
   const history = useHistory();
+  const cookies = new Cookies();
+  const userRole = cookies.get("userRole");
   const logOut = () => {
     AuthService.logOut()
       .then((response: any) => {
@@ -91,11 +94,11 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
                 index: number
               ) => {
                 const accessRoleExist = menuItem?.accessRole.filter(
-                  (item) => item == AuthService?.currentRole?.value
+                  (item) => item == userRole
                 );
                 if (
                   accessRoleExist.length &&
-                  menuItem.systemRole == AuthService?.currentRole?.value
+                  menuItem.systemRole == userRole
                 ) {
                   return (
                     // eslint-disable-next-line @typescript-eslint/no-unused-expressions

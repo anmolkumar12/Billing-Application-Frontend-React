@@ -21,7 +21,7 @@ import { Tooltip } from "primereact/tooltip";
 import { ToasterService } from "../../services/toaster-service/toaster-service";
 import { CONSTANTS } from "../../constants/Constants";
 import { ButtonComponent } from "../../components/ui/button/Button";
-import { FormComponent } from "../../components/ui/form/form";
+import FormComponent from "../../components/ui/form/form";
 import classes from "./Master.module.scss";
 import _ from "lodash";
 import { FormType } from "../../schemas/FormField";
@@ -30,12 +30,32 @@ import { FILE_TYPES } from "../../enums/file-types.enum";
 import { ImageUrl } from "../../utils/ImageUrl";
 import { Chip } from "primereact/chip";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
+import Cookies from "universal-cookie";
+import { TechnologyMasterService } from "../../services/masters/technology-master/technology.service";
+import CountryMaster from "./CountryMaster";
+import StateMaster from "./StateMaster";
+import RegionMaster from "./RegionMaster";
+import CompanyMaster from "./CompanyMaster";
+import CompanyAddressMaster from "./CompanyAddressMaster";
+import AccountTypeMaster from "./AccountTypeMaster";
+import AccountMaster from "./AccountMaster";
+import ProductionTypeMaster from "./ProductionTypeMaster";
+import IndustryMaster from "./IndustryMaster";
+import IndustryGroupMaster from "./IndustryGroupMaster";
+import IndustryHeadMaster from "./IndustryHeadMaster";
+import SalesMaster from "./SalesManagerMaster";
+import AccountManagerMaster from "./AccountManagerMaster";
+import TechGroupMaster from "./TechGroupMaster";
+import TechSubGroupMaster from "./TechSubGroupMaster";
+import TechMaster from "./TechMaster";
 
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
+  const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
   const [currencyMaster, setCurrencyMaster] = useState([]);
   const [industryMaster, setIndustryMaster] = useState<any>([]);
   const [accountsMaster, setAccountsMaster] = useState<any>([]);
+  const [technologyMaster, setTechnologyMaster] = useState([]);
   const [productsMaster, setProductsMaster] = useState([]);
   const [projectsMaster, setProjectsMaster] = useState([]);
   const [taxMaster, setTaxMaster] = useState([]);
@@ -53,8 +73,10 @@ const Master: React.FC = () => {
   const [storeFormPopup, setFormPopup] = useState(false);
   const [openClientForm, setOpenClientForm] = useState(false);
   const [attachments, setAttachments]: any = useState([]);
+  const cookies = new Cookies();
+  const userInfo = cookies.get("userInfo");
 
-  const loggedInUserId = AuthService?.userInfo?.value?.userId;
+  const loggedInUserId = userInfo?.userId;
 
   let patchData: any;
 
@@ -62,6 +84,7 @@ const Master: React.FC = () => {
   const currencyService = new CurrencyMasterService();
   const industryService = new IndustryMasterService();
   const accountsService = new AccountsMasterService();
+  const technologyService = new TechnologyMasterService();
   const productService = new ProductMasterService();
   const projectService = new ProjectMasterService();
   const taxService = new TaxMasterService();
@@ -70,75 +93,96 @@ const Master: React.FC = () => {
   const clientService = new ClientMasterService();
 
   useEffect(() => {
+    let companies: any = [];
+    let companyAddresses: any = [];
+    let countries: any = [];
+    let states: any = [];
+    let clients: any = [];
     const fetchData = async () => {
-      setFormPopup(false);
-      // setStateData({});
-      // closeFormPopup();
       switch (activeIndex) {
         case 0:
-          await getCompanyMaster();
+          countries = await getCountryMaster();
+          // companies = await getCompanyMaster();
           break;
         case 1:
-          await getCurrencyMaster();
+          companyAddresses = await getCompanyLocationMaster();
+          companies = await getCompanyMaster();
+          countries = await getCountryMaster();
+          states = await getStateMaster();
+          await formatCompanyDetails(companies);
+          await formatCountry_ClientDetails(countries);
+          await formatState_ClientDetails(states);
           break;
         case 2:
-          await getAccountsMaster();
-          await getCompanyMaster();
-          await formatCompanyDetails();
+          await getCurrencyMaster();
           break;
         case 3:
-          await getIndustryMaster();
+          await getAccountsMaster();
+          companies = await getCompanyMaster();
+          await formatCompanyDetails(companies);
           break;
         case 4:
-          await getProductMaster();
+          await getIndustryMaster();
           break;
         case 5:
-          await getProjectMaster();
+          await getTechnologyMaster();
           break;
         case 6:
-          await getTaxMaster();
+          await getProductMaster();
           break;
         case 7:
-          await getCountryMaster();
+          await getProjectMaster();
           break;
         case 8:
-          await getStateMaster();
-          await getCountryMaster();
-          await formatCountry_StateDetails();
+          await getTaxMaster();
           break;
         case 9:
+          // countries = await getCountryMaster();
+          break;
+        case 10:
+          await getStateMaster();
+          countries = await getCountryMaster();
+          await formatCountry_StateDetails(countries);
+          break;
+        case 11:
           setOpenClientForm(false);
           setActiveClientIndex(0);
-          await getClientMaster();
+          clients = await getClientMaster();
           await getIndustryMaster();
           await getAccountsMaster();
           await formatIndustry_ClientDetails();
           await formatAccount_ClientDetails();
           break;
-        case 10:
+        case 12:
           await getClientBillToMaster();
-          await getClientMaster();
-          await getCountryMaster();
-          await getStateMaster();
-          await formatCountry_ClientDetails();
-          await formatState_ClientDetails();
-          await formatClient_BillDetails();
+          clients = await getClientMaster();
+          countries = await getCountryMaster();
+          states = await getStateMaster();
+          await formatCountry_ClientDetails(countries);
+          await formatState_ClientDetails(states);
+          await formatClient_BillDetails(clients);
           break;
-        case 11:
+        case 13:
           await getClientShipToMaster();
-          await getClientMaster();
-          await getCountryMaster();
-          await getStateMaster();
-          await formatCountry_Client_ShipDetails();
-          await formatState_Client_ShipDetails();
-          await formatClient_ShipDetails();
+          clients = await getClientMaster();
+          countries = await getCountryMaster();
+          states = await getStateMaster();
+          await formatCountry_Client_ShipDetails(countries);
+          await formatState_Client_ShipDetails(states);
+          await formatClient_ShipDetails(clients);
           break;
         default:
           break;
       }
     };
-    fetchData();
-  }, [activeIndex]);
+    if (
+      storeFormPopup == false &&
+      openClientForm == false &&
+      showConfirmDialogue == false
+    ) {
+      // fetchData();
+    }
+  }, [activeIndex, storeFormPopup, openClientForm, showConfirmDialogue]);
 
   const onTabChange = (e: any) => {
     setActiveIndex(e.index);
@@ -148,13 +192,22 @@ const Master: React.FC = () => {
     setActiveClientIndex(e.index);
   };
 
-  const formatCompanyDetails = async () => {
-    const companyList = companyMaster.map(
-      (company: any) => company?.companyName
-    );
-    accountFieldsStructure.companyName.options = companyList;
-    await setAccountFieldsStructure(accountFieldsStructure);
-    await accountsFormHandler(accountFieldsStructure);
+  const formatCompanyDetails = async (companies: any = companyMaster) => {
+    const companyList = companies?.map((company: any) => company?.companyName);
+    switch (activeIndex) {
+      case 1:
+        companyLocationFieldsStructure.companyName.options = companyList;
+        await setCompanyLocationFieldsStructure(companyLocationFieldsStructure);
+        await companyLocationFormHandler(companyLocationFieldsStructure);
+        break;
+      case 3:
+        accountFieldsStructure.companyName.options = companyList;
+        await setAccountFieldsStructure(accountFieldsStructure);
+        await accountsFormHandler(accountFieldsStructure);
+        break;
+      default:
+        break;
+    }
   };
 
   const formatIndustry_ClientDetails = async () => {
@@ -166,24 +219,46 @@ const Master: React.FC = () => {
     await clientFormHandler(clientFieldsStructure);
   };
 
-  const formatCountry_ClientDetails = async () => {
-    const countrylist = countryMaster.map((country: any) => country?.name);
-
-    clientBillFieldsStructure.country_name.options = countrylist;
-    await setClientBillFieldsStructure(clientBillFieldsStructure);
-    await clientBillFormHandler(clientBillFieldsStructure);
+  const formatCountry_ClientDetails = async (
+    countries: any = countryMaster
+  ) => {
+    const countrylist = countries.map((country: any) => country?.name);
+    switch (activeIndex) {
+      case 1:
+        companyLocationFieldsStructure.country_name.options = countrylist;
+        await setCompanyLocationFieldsStructure(companyLocationFieldsStructure);
+        await companyLocationFormHandler(companyLocationFieldsStructure);
+        break;
+      case 12:
+        clientBillFieldsStructure.country_name.options = countrylist;
+        await setClientBillFieldsStructure(clientBillFieldsStructure);
+        await clientBillFormHandler(clientBillFieldsStructure);
+        break;
+      default:
+        break;
+    }
   };
 
-  const formatState_ClientDetails = async () => {
-    const statelist = stateMaster.map((state: any) => state.state_name);
-
-    clientBillFieldsStructure.state_name.options = statelist;
-    await setClientBillFieldsStructure(clientBillFieldsStructure);
-    await clientBillFormHandler(clientBillFieldsStructure);
+  const formatState_ClientDetails = async (states: any = stateMaster) => {
+    const statelist = states.map((state: any) => state.state_name);
+    switch (activeIndex) {
+      case 1:
+        companyLocationFieldsStructure.state_name.options = statelist;
+        await setCompanyLocationFieldsStructure(companyLocationFieldsStructure);
+        await companyLocationFormHandler(companyLocationFieldsStructure);
+        break;
+      case 12:
+        clientBillFieldsStructure.state_name.options = statelist;
+        await setClientBillFieldsStructure(clientBillFieldsStructure);
+        await clientBillFormHandler(clientBillFieldsStructure);
+        break;
+      default:
+        break;
+    }
   };
 
-  const formatCountry_StateDetails = async () => {
-    const countrylist = countryMaster.map((country: any) => country?.name);
+  const formatCountry_StateDetails = async (countries: any = countryMaster) => {
+    const countrylist = countries.map((country: any) => country?.name);
     statesFieldsStructure.country_name.options = countrylist;
     await setStatesFieldsStructure(statesFieldsStructure);
     await statesFormHandler(statesFieldsStructure);
@@ -194,36 +269,37 @@ const Master: React.FC = () => {
       (account: any) => account?.account_no
     );
 
-    clientFieldsStructure.polestar_bank_account_number.options =
-      accountslist;
+    clientFieldsStructure.polestar_bank_account_number.options = accountslist;
     await setClientFieldsStructure(clientFieldsStructure);
     await clientFormHandler(clientFieldsStructure);
   };
 
-  const formatCountry_Client_ShipDetails = async () => {
-    const countrylist = countryMaster.map((country: any) => country?.name);
+  const formatCountry_Client_ShipDetails = async (
+    countries: any = countryMaster
+  ) => {
+    const countrylist = countries.map((country: any) => country?.name);
     clientShipFieldsStructure.client_ship_to_country_name.options = countrylist;
     await setClientShipFieldsStructure(clientShipFieldsStructure);
     await clientShipFormHandler(clientShipFieldsStructure);
   };
 
-  const formatState_Client_ShipDetails = async () => {
-    const statelist = stateMaster.map((state: any) => state?.state_name);
+  const formatState_Client_ShipDetails = async (states: any = stateMaster) => {
+    const statelist = states.map((state: any) => state?.state_name);
     clientShipFieldsStructure.client_ship_to_state_name.options = statelist;
     await setClientShipFieldsStructure(clientShipFieldsStructure);
     await clientShipFormHandler(clientShipFieldsStructure);
   };
 
-  const formatClient_BillDetails = async () => {
-    const clientlist = clientMaster.map((client: any) => client?.name);
+  const formatClient_BillDetails = async (clients: any = clientMaster) => {
+    const clientlist = clients.map((client: any) => client?.name);
 
     clientBillFieldsStructure.client_name.options = clientlist;
     await setClientBillFieldsStructure(clientBillFieldsStructure);
     await clientBillFormHandler(clientBillFieldsStructure);
   };
 
-  const formatClient_ShipDetails = async () => {
-    const clientlist = clientMaster.map((client: any) => client?.name);
+  const formatClient_ShipDetails = async (clients: any = clientMaster) => {
+    const clientlist = clients.map((client: any) => client?.name);
 
     clientShipFieldsStructure.client_name.options = clientlist;
     await setClientShipFieldsStructure(clientShipFieldsStructure);
@@ -235,6 +311,20 @@ const Master: React.FC = () => {
     try {
       const response = await companyService.getCompanyMaster();
       setCompanyMaster(response?.companies);
+      return response?.companies;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const getCompanyLocationMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await companyService.getCompanyLocationMaster();
+      setCompanyLocationMaster(response?.addresses);
+      return response?.addresses;
     } catch (error) {
       console.error(error);
     } finally {
@@ -247,6 +337,7 @@ const Master: React.FC = () => {
     try {
       const response = await currencyService.getCurrencyMaster();
       setCurrencyMaster(response?.currencies);
+      return response?.currencies;
     } catch (error) {
       console.error(error);
     } finally {
@@ -259,6 +350,7 @@ const Master: React.FC = () => {
     try {
       const response = await industryService.getIndustryMaster();
       setIndustryMaster(response?.industries);
+      return response?.industries;
     } catch (error) {
       console.error(error);
     } finally {
@@ -271,6 +363,20 @@ const Master: React.FC = () => {
     try {
       const response = await accountsService.getAccountsMaster();
       setAccountsMaster(response?.accounts);
+      return response?.accounts;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const getTechnologyMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await technologyService.getTechnologyMaster();
+      setTechnologyMaster(response?.technologies);
+      return response?.technologies;
     } catch (error) {
       console.error(error);
     } finally {
@@ -283,6 +389,7 @@ const Master: React.FC = () => {
     try {
       const response = await productService.getProductMaster();
       setProductsMaster(response?.products);
+      return response?.products;
     } catch (error) {
       console.error(error);
     } finally {
@@ -295,6 +402,7 @@ const Master: React.FC = () => {
     try {
       const response = await projectService.getProjectMaster();
       setProjectsMaster(response?.projects);
+      return response?.projects;
     } catch (error) {
       console.error(error);
     } finally {
@@ -307,6 +415,7 @@ const Master: React.FC = () => {
     try {
       const response = await taxService.getTaxMaster();
       setTaxMaster(response?.taxes);
+      return response?.taxes;
     } catch (error) {
       console.error(error);
     } finally {
@@ -319,6 +428,7 @@ const Master: React.FC = () => {
     try {
       const response = await countryService.getCountryMaster();
       setCountryMaster(response?.countries);
+      return response?.countries;
     } catch (error) {
       console.error(error);
     } finally {
@@ -331,6 +441,7 @@ const Master: React.FC = () => {
     try {
       const response = await stateService.getStateMaster();
       setStateMaster(response?.states);
+      return response?.states;
     } catch (error) {
       console.error(error);
     } finally {
@@ -343,6 +454,7 @@ const Master: React.FC = () => {
     try {
       const response = await clientService.getClientMaster();
       setClientMaster(response?.clients);
+      return response?.clients;
     } catch (error) {
       console.error(error);
     } finally {
@@ -355,6 +467,7 @@ const Master: React.FC = () => {
     try {
       const response = await clientService.getClientBillToMaster();
       setClientBillToMaster(response?.billingInfo);
+      return response?.billingInfo;
     } catch (error) {
       console.error(error);
     } finally {
@@ -367,6 +480,7 @@ const Master: React.FC = () => {
     try {
       const response = await clientService.getClientShipToMaster();
       setClientShipToMaster(response?.shippingInfo);
+      return response?.shippingInfo;
     } catch (error) {
       console.error(error);
     } finally {
@@ -377,15 +491,36 @@ const Master: React.FC = () => {
   const deactivateCompanyMaster = () => {
     setLoader(true);
     companyService
-      .deactivateCompanyMaster(patchData)
+      .deactivateCompanyMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Company record deactivated successfully",
+          `Company record ${
+            patchData?.isactive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getCompanyMaster();
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
+
+  const deactivateCompanyLocationMaster = () => {
+    setLoader(true);
+    companyService
+      .deactivateCompanyLocationMaster({ ...patchData, loggedInUserId })
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          `Company record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
+          CONSTANTS.SUCCESS
+        );
       })
       .catch((error) => {
         setLoader(false);
@@ -396,15 +531,16 @@ const Master: React.FC = () => {
   const deactivateCurrencyMaster = () => {
     setLoader(true);
     currencyService
-      .deactivateCurrencyMaster(patchData)
+      .deactivateCurrencyMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Currency record deactivated successfully",
+          `Currency record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getCurrencyMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -415,15 +551,16 @@ const Master: React.FC = () => {
   const deactivateIndustryMaster = () => {
     setLoader(true);
     industryService
-      .deactivateIndustryMaster(patchData)
+      .deactivateIndustryMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Industry record deactivated successfully",
+          `Industry record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getIndustryMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -434,15 +571,36 @@ const Master: React.FC = () => {
   const deactivateAccountsMaster = () => {
     setLoader(true);
     accountsService
-      .deactivateAccountsMaster(patchData)
+      .deactivateAccountsMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Accounts record deactivated successfully",
+          `Accounts record ${
+            patchData?.is_active ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getAccountsMaster();
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
+
+  const deactivateTechnologyMaster = () => {
+    setLoader(true);
+    technologyService
+      .deactivateTechnologyMaster({ ...patchData, loggedInUserId })
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          `Technology record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
+          CONSTANTS.SUCCESS
+        );
       })
       .catch((error) => {
         setLoader(false);
@@ -453,15 +611,16 @@ const Master: React.FC = () => {
   const deactivateProductMaster = () => {
     setLoader(true);
     productService
-      .deactivateProductMaster(patchData)
+      .deactivateProductMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Product record deactivated successfully",
+          `Product record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getProductMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -472,15 +631,16 @@ const Master: React.FC = () => {
   const deactivateProjectMaster = () => {
     setLoader(true);
     projectService
-      .deactivateProjectMaster(patchData)
+      .deactivateProjectMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Project record deactivated successfully",
+          `Project record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getProjectMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -491,15 +651,36 @@ const Master: React.FC = () => {
   const deactivateTaxMaster = () => {
     setLoader(true);
     taxService
-      .deactivateTaxMaster(patchData)
+      .deactivateTaxMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Tax record deactivated successfully",
+          `Tax record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getTaxMaster();
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
+
+  const deactivateCountryMaster = () => {
+    setLoader(true);
+    countryService
+      .deactivateCountryMaster({ ...patchData, loggedInUserId })
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          `States record ${
+            patchData?.isactive ? "deactivated" : "activated"
+          } successfully`,
+          CONSTANTS.SUCCESS
+        );
       })
       .catch((error) => {
         setLoader(false);
@@ -510,15 +691,16 @@ const Master: React.FC = () => {
   const deactivateStatesMaster = () => {
     setLoader(true);
     stateService
-      .deactivateStateMaster(patchData)
+      .deactivateStateMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "States record deactivated successfully",
+          `States record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getStateMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -529,15 +711,16 @@ const Master: React.FC = () => {
   const deactivateClientMaster = () => {
     setLoader(true);
     clientService
-      .deactivateClientMaster(patchData)
+      .deactivateClientMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Client record deactivated successfully",
+          `Client record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getClientMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -548,15 +731,16 @@ const Master: React.FC = () => {
   const deactivateClientBillToMaster = () => {
     setLoader(true);
     clientService
-      .deactivateClientBillToMaster(patchData)
+      .deactivateClientBillToMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Client Bill To record deactivated successfully",
+          `Client Bill To record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getClientBillToMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -567,15 +751,16 @@ const Master: React.FC = () => {
   const deactivateClientShipToMaster = () => {
     setLoader(true);
     clientService
-      .deactivateClientShipToMaster(patchData)
+      .deactivateClientShipToMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          "Client Ship To record deactivated successfully",
+          `Client Ship To record ${
+            patchData?.isactive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
-        getClientShipToMaster();
       })
       .catch((error) => {
         setLoader(false);
@@ -583,11 +768,13 @@ const Master: React.FC = () => {
       });
   };
 
-  const openSaveForm = () => {
+  const openSaveForm = async () => {
     setFormPopup(true);
   };
 
-  const openClientFormButton = () => {
+  const openClientFormButton = async () => {
+    await formatIndustry_ClientDetails();
+    await formatAccount_ClientDetails();
     setOpenClientForm(true);
   };
 
@@ -665,284 +852,49 @@ const Master: React.FC = () => {
   const confirmDelete = () => {
     switch (activeIndex) {
       case 0:
-        deactivateCompanyMaster();
+        // deactivateCompanyMaster();
+        deactivateCountryMaster();
         break;
       case 1:
-        deactivateCurrencyMaster();
+        deactivateCompanyLocationMaster();
         break;
       case 2:
-        deactivateAccountsMaster();
+        deactivateCurrencyMaster();
         break;
       case 3:
-        deactivateIndustryMaster();
+        deactivateAccountsMaster();
         break;
       case 4:
-        deactivateProductMaster();
+        deactivateIndustryMaster();
         break;
       case 5:
-        deactivateProjectMaster();
+        deactivateTechnologyMaster();
         break;
       case 6:
-        deactivateTaxMaster();
+        deactivateProductMaster();
+        break;
+      case 7:
+        deactivateProjectMaster();
         break;
       case 8:
-        deactivateStatesMaster();
-        break;
-      case 9:
-        deactivateClientMaster();
+        deactivateTaxMaster();
         break;
       case 10:
-        deactivateClientBillToMaster();
+        deactivateStatesMaster();
         break;
       case 11:
+        deactivateClientMaster();
+        break;
+      case 12:
+        deactivateClientBillToMaster();
+        break;
+      case 13:
         deactivateClientShipToMaster();
         break;
       default:
         break;
     }
   };
-
-  const CompanyTableColumns = [
-    {
-      label: "Action",
-      fieldName: "action",
-      textAlign: "left",
-      frozen: false,
-      sort: false,
-      filter: false,
-      body: (rowData: any) => (
-        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
-          <span
-            className="pi pi-pencil"
-            style={{ cursor: "pointer" }}
-            title="Update"
-            onClick={() => onUpdate(rowData)}
-          ></span>
-          <span
-            className={`pi pi-${rowData.isactive ? "check-circle" : "ban"}`}
-            style={{ cursor: "pointer" }}
-            title={rowData.isactive ? "Deactivate" : "Activate"}
-            onClick={() => onDelete(rowData)}
-          ></span>
-        </div>
-      ),
-    },
-    {
-      label: "Company",
-      fieldName: "companyName",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "companyName",
-      changeFilter: true,
-      placeholder: "Name",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.companyName}
-          >
-            {rowData.companyName}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Website",
-      fieldName: "Website",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.Website}
-          >
-            {rowData.Website}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "CINNO",
-      fieldName: "CINNO",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.CINNO}
-          >
-            {rowData.CINNO}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "IECode",
-      fieldName: "IECode",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.IECode}
-          >
-            {rowData.IECode}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "PAN",
-      fieldName: "PAN",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.PAN}
-          >
-            {rowData.PAN}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "GST",
-      fieldName: "gst_number",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.gst_number}
-          >
-            {rowData.gst_number}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Address",
-      fieldName: "address",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address}
-          >
-            {rowData.address}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Email",
-      fieldName: "Email",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.Email}
-          >
-            {rowData.Email}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Description",
-      fieldName: "description",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.description}
-          >
-            {rowData.description}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Status",
-      fieldName: "isactive",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span style={{ color: rowData?.isactive == 1 ? "green" : "red" }}>
-            {rowData?.isactive == 1 ? "Active" : "Inactive"}
-          </span>
-        </div>
-      ),
-    },
-  ];
 
   const CurrencyMasterColumns = [
     {
@@ -961,7 +913,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -982,7 +934,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.currencyName}
+            // data-pr-tooltip={rowData.currencyName}
           >
             {rowData.currencyName}
           </span>
@@ -1006,7 +958,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.currencyDescription}
+            // data-pr-tooltip={rowData.currencyDescription}
           >
             {rowData.currencyDescription}
           </span>
@@ -1034,7 +986,7 @@ const Master: React.FC = () => {
     },
   ];
 
-  const IndustryMasterColumns = [
+  const TechnologyMasterColumns = [
     {
       label: "Action",
       fieldName: "action",
@@ -1051,7 +1003,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -1060,45 +1012,21 @@ const Master: React.FC = () => {
       ),
     },
     {
-      label: "Industry",
-      fieldName: "industryName",
+      label: "Technology",
+      fieldName: "technologyName",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "industryName",
+      fieldValue: "technologyName",
       changeFilter: true,
       placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.industryName}
+            // data-pr-tooltip={rowData.productName}
           >
-            {rowData.industryName}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Industry Head",
-      fieldName: "industryHead",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "industryHead",
-      changeFilter: true,
-      placeholder: "Industry Head",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.industryHead}
-          >
-            {rowData.industryHead}
+            {rowData.technologyName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -1120,7 +1048,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.description}
+            // data-pr-tooltip={rowData.productDescription}
           >
             {rowData.description}
           </span>
@@ -1148,250 +1076,6 @@ const Master: React.FC = () => {
     },
   ];
 
-  const AccountsMasterColumns = [
-    {
-      label: "Action",
-      fieldName: "action",
-      textAlign: "left",
-      frozen: false,
-      sort: false,
-      filter: false,
-      body: (rowData: any) => (
-        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
-          <span
-            className="pi pi-pencil"
-            style={{ cursor: "pointer" }}
-            title="Update"
-            onClick={() => onUpdate(rowData)}
-          ></span>
-          <span
-            className={`pi pi-${rowData.is_active ? "check-circle" : "ban"}`}
-            style={{ cursor: "pointer" }}
-            title={rowData.is_active ? "Deactivate" : "Activate"}
-            onClick={() => onDelete(rowData)}
-          ></span>
-        </div>
-      ),
-    },
-    {
-      label: "Company",
-      fieldName: "company_name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "company_name",
-      changeFilter: true,
-      placeholder: "Company",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.company_name}
-          >
-            {rowData.company_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Account Type",
-      fieldName: "account_type",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "account_type",
-      changeFilter: true,
-      placeholder: "Account Type",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.account_type}
-          >
-            {rowData.account_type}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Bank",
-      fieldName: "bank_name",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.bank_name}
-          >
-            {rowData.bank_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Bank Address",
-      fieldName: "bank_address",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.bank_address}
-          >
-            {rowData.bank_address}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Account Number",
-      fieldName: "account_no",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.account_no}
-          >
-            {rowData.account_no}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "IFSC Code",
-      fieldName: "ifsc_code",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.ifsc_code}
-          >
-            {rowData.ifsc_code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "MICR Code",
-      fieldName: "micr_code",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.micr_code}
-          >
-            {rowData.micr_code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Swift Code",
-      fieldName: "routing_no_swift_code",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.routing_no_swift_code}
-          >
-            {rowData.routing_no_swift_code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Bank Code",
-      fieldName: "bank_code",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.bank_code}
-          >
-            {rowData.bank_code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Status",
-      fieldName: "is_active",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span style={{ color: rowData?.is_active == 1 ? "green" : "red" }}>
-            {rowData?.is_active == 1 ? "Active" : "Inactive"}
-          </span>
-        </div>
-      ),
-    },
-  ];
-
   const ProductsMasterColumns = [
     {
       label: "Action",
@@ -1409,7 +1093,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -1430,7 +1114,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.productName}
+            // data-pr-tooltip={rowData.productName}
           >
             {rowData.productName}
           </span>
@@ -1454,7 +1138,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.productDescription}
+            // data-pr-tooltip={rowData.productDescription}
           >
             {rowData.productDescription}
           </span>
@@ -1499,7 +1183,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -1520,7 +1204,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.projectName}
+            // data-pr-tooltip={rowData.projectName}
           >
             {rowData.projectName}
           </span>
@@ -1544,7 +1228,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.projectDescription}
+            // data-pr-tooltip={rowData.projectDescription}
           >
             {rowData.projectDescription}
           </span>
@@ -1589,7 +1273,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -1610,7 +1294,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.taxType}
+            // data-pr-tooltip={rowData.taxType}
           >
             {rowData.taxType}
           </span>
@@ -1634,7 +1318,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.taxPercentage}
+            // data-pr-tooltip={rowData.taxPercentage}
           >
             {rowData.taxPercentage}
           </span>
@@ -1658,7 +1342,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.effectiveDate}
+            // data-pr-tooltip={rowData.effectiveDate}
           >
             {rowData.effectiveDate}
           </span>
@@ -1686,243 +1370,6 @@ const Master: React.FC = () => {
     },
   ];
 
-  const CountryMasterColumns = [
-    {
-      label: "Country",
-      fieldName: "name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "name",
-      changeFilter: true,
-      placeholder: "Country",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.name}
-          >
-            {rowData.name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Language",
-      fieldName: "language",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "language",
-      changeFilter: true,
-      placeholder: "Language",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.language}
-          >
-            {rowData.language}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Country Code",
-      fieldName: "code",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "code",
-      changeFilter: true,
-      placeholder: "Country Code",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.code}
-          >
-            {rowData.code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Phone Code",
-      fieldName: "phone_code",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "phone_code",
-      changeFilter: true,
-      placeholder: "Phone Code",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.phone_code}
-          >
-            {rowData.phone_code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Currency",
-      fieldName: "currency",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "currency",
-      changeFilter: true,
-      placeholder: "Currency",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.currency}
-          >
-            {rowData.currency}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-  ];
-
-  const StateMasterColumns = [
-    {
-      label: "Action",
-      fieldName: "action",
-      textAlign: "left",
-      frozen: false,
-      sort: false,
-      filter: false,
-      body: (rowData: any) => (
-        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
-          <span
-            className="pi pi-pencil"
-            style={{ cursor: "pointer" }}
-            title="Update"
-            onClick={() => onUpdate(rowData)}
-          ></span>
-          <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
-            style={{ cursor: "pointer" }}
-            title={rowData.isActive ? "Deactivate" : "Activate"}
-            onClick={() => onDelete(rowData)}
-          ></span>
-        </div>
-      ),
-    },
-    {
-      label: "State",
-      fieldName: "state_name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "state_name",
-      changeFilter: true,
-      placeholder: "State",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.state_name}
-          >
-            {rowData.state_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "State Code",
-      fieldName: "state_code",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "state_code",
-      changeFilter: true,
-      placeholder: "State Code",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.state_code}
-          >
-            {rowData.state_code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Country",
-      fieldName: "country_name",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "country_name",
-      changeFilter: true,
-      placeholder: "Country",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.country_name}
-          >
-            {rowData.country_name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Status",
-      fieldName: "isActive",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span style={{ color: rowData?.isActive === 1 ? "green" : "red" }}>
-            {rowData?.isActive === 1 ? "Active" : "Inactive"}
-          </span>
-        </div>
-      ),
-    },
-  ];
-
   const ClientMasterColumns = [
     {
       label: "Action",
@@ -1940,7 +1387,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -1961,7 +1408,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.industry_name}
+            // data-pr-tooltip={rowData.industry_name}
           >
             {rowData.industry_name}
           </span>
@@ -1985,7 +1432,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.name}
+            // data-pr-tooltip={rowData.name}
           >
             {rowData.name}
           </span>
@@ -2009,7 +1456,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.alias}
+            // data-pr-tooltip={rowData.alias}
           >
             {rowData.alias}
           </span>
@@ -2033,7 +1480,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.pan_no}
+            // data-pr-tooltip={rowData.pan_no}
           >
             {rowData.pan_no}
           </span>
@@ -2057,7 +1504,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.polestar_bank_account_number}
+            // data-pr-tooltip={rowData.polestar_bank_account_number}
           >
             {rowData.polestar_bank_account_number}
           </span>
@@ -2081,7 +1528,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.salutation}
+            // data-pr-tooltip={rowData.salutation}
           >
             {rowData.salutation}
           </span>
@@ -2105,7 +1552,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.first_name}
+            // data-pr-tooltip={rowData.first_name}
           >
             {rowData.first_name}
           </span>
@@ -2129,7 +1576,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.last_name}
+            // data-pr-tooltip={rowData.last_name}
           >
             {rowData.last_name}
           </span>
@@ -2153,7 +1600,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.email}
+            // data-pr-tooltip={rowData.email}
           >
             {rowData.email}
           </span>
@@ -2177,7 +1624,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.phone}
+            // data-pr-tooltip={rowData.phone}
           >
             {rowData.phone}
           </span>
@@ -2201,7 +1648,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.msa_flag}
+            // data-pr-tooltip={rowData.msa_flag}
           >
             <span>{rowData?.msa_flag === 1 ? "Yes" : "No"}</span>
           </span>
@@ -2225,7 +1672,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.gstn}
+            // data-pr-tooltip={rowData.gstn}
           >
             {rowData.gstn}
           </span>
@@ -2249,7 +1696,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.msa_start_date}
+            // data-pr-tooltip={rowData.msa_start_date}
           >
             {rowData.msa_start_date}
           </span>
@@ -2273,7 +1720,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.msa_end_date}
+            // data-pr-tooltip={rowData.msa_end_date}
           >
             {rowData.msa_end_date}
           </span>
@@ -2297,7 +1744,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.non_solicitation_clause}
+            // data-pr-tooltip={rowData.non_solicitation_clause}
           >
             <span>{rowData?.non_solicitation_clause === 1 ? "Yes" : "No"}</span>
           </span>
@@ -2321,7 +1768,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.use_logo_permission}
+            // data-pr-tooltip={rowData.use_logo_permission}
           >
             <span>{rowData?.use_logo_permission === 1 ? "Yes" : "No"}</span>
           </span>
@@ -2345,7 +1792,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_category}
+            // data-pr-tooltip={rowData.client_category}
           >
             {rowData.client_category}
           </span>
@@ -2369,7 +1816,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.servicing_type}
+            // data-pr-tooltip={rowData.servicing_type}
           >
             {rowData.servicing_type}
           </span>
@@ -2393,7 +1840,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.missing_msa_deadline}
+            // data-pr-tooltip={rowData.missing_msa_deadline}
           >
             <span>{rowData?.missing_msa_deadline === 1 ? "Yes" : "No"}</span>
           </span>
@@ -2417,7 +1864,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.is_msa_missing}
+            // data-pr-tooltip={rowData.is_msa_missing}
           >
             <span>{rowData?.is_msa_missing === 1 ? "Yes" : "No"}</span>
           </span>
@@ -2462,7 +1909,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -2483,7 +1930,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_name}
+            // data-pr-tooltip={rowData.client_name}
           >
             {rowData.client_name}
           </span>
@@ -2507,7 +1954,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address1}
+            // data-pr-tooltip={rowData.address1}
           >
             {rowData.address1}
           </span>
@@ -2531,7 +1978,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address2}
+            // data-pr-tooltip={rowData.address2}
           >
             {rowData.address2}
           </span>
@@ -2555,7 +2002,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address3}
+            // data-pr-tooltip={rowData.address3}
           >
             {rowData.address3}
           </span>
@@ -2579,7 +2026,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.pin}
+            // data-pr-tooltip={rowData.pin}
           >
             {rowData.pin}
           </span>
@@ -2603,7 +2050,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.country_name}
+            // data-pr-tooltip={rowData.country_name}
           >
             {rowData.country_name}
           </span>
@@ -2627,7 +2074,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.state_name}
+            // data-pr-tooltip={rowData.state_name}
           >
             {rowData.state_name}
           </span>
@@ -2672,7 +2119,7 @@ const Master: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -2693,7 +2140,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_name}
+            // data-pr-tooltip={rowData.client_name}
           >
             {rowData.client_name}
           </span>
@@ -2717,7 +2164,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_address1}
+            // data-pr-tooltip={rowData.client_ship_to_address1}
           >
             {rowData.client_ship_to_address1}
           </span>
@@ -2741,7 +2188,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_address2}
+            // data-pr-tooltip={rowData.client_ship_to_address2}
           >
             {rowData.client_ship_to_address2}
           </span>
@@ -2765,7 +2212,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_address3}
+            // data-pr-tooltip={rowData.client_ship_to_address3}
           >
             {rowData.client_ship_to_address3}
           </span>
@@ -2789,7 +2236,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_pin}
+            // data-pr-tooltip={rowData.client_ship_to_pin}
           >
             {rowData.client_ship_to_pin}
           </span>
@@ -2813,7 +2260,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.country_name}
+            // data-pr-tooltip={rowData.country_name}
           >
             {rowData.country_name}
           </span>
@@ -2837,7 +2284,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.state_name}
+            // data-pr-tooltip={rowData.state_name}
           >
             {rowData.state_name}
           </span>
@@ -2861,7 +2308,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.client_ship_to_gstn}
+            // data-pr-tooltip={rowData.client_ship_to_gstn}
           >
             {rowData.client_ship_to_gstn}
           </span>
@@ -2889,13 +2336,18 @@ const Master: React.FC = () => {
     },
   ];
 
-  const onDelete = (data: unknown) => {
+  const onDelete = (data: any) => {
     patchData = data;
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to activate/deactivate this record`,
+      message: `Are you sure you want to ${
+        !(data?.isactive || data?.is_active || data?.isActive)
+          ? "activate"
+          : "deactivate"
+      } this record?`,
       acceptFunction: confirmDelete,
+      rejectFunction: onPopUpClose,
     });
     setShowConfirmDialogue(true);
   };
@@ -2906,37 +2358,44 @@ const Master: React.FC = () => {
     setStateData(data);
     switch (activeIndex) {
       case 0:
-        updateCompanyMaster(data);
+        updateCountryMaster(data);
+        // updateCompanyMaster(data);
         break;
       case 1:
-        updateCurrencyMaster(data);
+        updateCompanyLocationMaster(data);
         break;
       case 2:
-        updateAccountsMaster(data);
+        updateCurrencyMaster(data);
         break;
       case 3:
-        updateIndustryMaster(data);
+        updateAccountsMaster(data);
         break;
       case 4:
-        updateProductMaster(data);
+        updateIndustryMaster(data);
         break;
       case 5:
-        updateProjectMaster(data);
+        updateTechnologyMaster(data);
         break;
       case 6:
-        updateTaxMaster(data);
+        updateProductMaster(data);
+        break;
+      case 7:
+        updateProjectMaster(data);
         break;
       case 8:
+        updateTaxMaster(data);
+        break;
+      case 10:
         updateStateMaster(data);
         break;
-      case 9:
+      case 11:
         updateClientMaster(data);
         setOpenClientForm(true);
         break;
-      case 10:
+      case 12:
         updateClientBillToMaster(data);
         break;
-      case 11:
+      case 13:
         updateClientShipToMaster(data);
         break;
       default:
@@ -2947,6 +2406,91 @@ const Master: React.FC = () => {
 
   const onPopUpClose = (e?: any) => {
     setShowConfirmDialogue(false);
+  };
+
+  const CountryFormFields = {
+    name: {
+      inputType: "inputtext",
+      label: "Name",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    code: {
+      inputType: "inputtext",
+      label: "Code",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    language: {
+      inputType: "inputtext",
+      label: "Language",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    phoneCode: {
+      inputType: "inputtext",
+      label: "Phone Code",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+  };
+
+  const updateCountryMaster = (data: any) => {
+    try {
+      CountryFormFields.name.value = data?.name;
+      CountryFormFields.code.value = data?.code;
+      CountryFormFields.language.value = data?.language;
+      CountryFormFields.phoneCode.value = data?.phoneCode;
+      setCountryForm(_.cloneDeep(CountryFormFields));
+      const addressDetails = JSON.parse(data?.addressAdditionalFields);
+      const addressForm = Object.keys(addressDetails)?.reduce(
+        (acc: any, item: any, index: any) => {
+          acc[index] = {
+            inputType: "inputtext",
+            label: `Option ${index + 1}`,
+            value: addressDetails[`key${index + 1}`],
+            validation: {
+              required: false,
+            },
+            fieldWidth: "col-md-4",
+          };
+          return acc;
+        },
+        {}
+      );
+      setCountryAddressForm(addressForm);
+      const bankDetails = JSON.parse(data?.bankAccAdditionalFields);
+      const bankForm = Object.keys(bankDetails)?.reduce(
+        (acc: any, item: any, index: any) => {
+          acc[index] = {
+            inputType: "inputtext",
+            label: `Option ${index + 1}`,
+            value: bankDetails[`key${index + 1}`],
+            validation: {
+              required: false,
+            },
+            fieldWidth: "col-md-4",
+          };
+          return acc;
+        },
+        {}
+      );
+      setCountryBankForm(bankForm);
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   const CompanyFormFields = {
@@ -2986,33 +2530,6 @@ const Master: React.FC = () => {
       },
       fieldWidth: "col-md-6",
     },
-    PAN: {
-      inputType: "inputtext",
-      label: "PAN",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    },
-    gst_number: {
-      inputType: "inputtext",
-      label: "GST",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    },
-    address: {
-      inputType: "inputtext",
-      label: "Address",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    },
     Email: {
       inputType: "inputtext",
       label: "Email",
@@ -3040,17 +2557,123 @@ const Master: React.FC = () => {
       CompanyFormFields.Website.value = data?.Website;
       CompanyFormFields.CINNO.value = data?.CINNO;
       CompanyFormFields.IECode.value = data?.IECode;
-      CompanyFormFields.PAN.value = data?.PAN;
       CompanyFormFields.Email.value = data?.Email;
       CompanyFormFields.description.value =
         data?.description != null ? data?.description : "";
-      CompanyFormFields.gst_number.value = data?.gst_number;
-      CompanyFormFields.address.value = data?.address;
       setCompanyForm(_.cloneDeep(CompanyFormFields));
     } catch (error) {
       console.log("error", error);
     }
   };
+
+  const CompanyLocationFormFields = {
+    companyName: {
+      inputType: "singleSelect",
+      label: "Company",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    country_name: {
+      inputType: "singleSelect",
+      label: "Country",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    state_name: {
+      inputType: "singleSelect",
+      label: "State",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    address1: {
+      inputType: "inputtext",
+      label: "Address 1",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    address2: {
+      inputType: "inputtext",
+      label: "Address 2",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
+    address3: {
+      inputType: "inputtext",
+      label: "Address 3",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
+    pin: {
+      inputType: "inputtext",
+      label: "PIN",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
+    PAN: {
+      inputType: "inputtext",
+      label: "PAN",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    GST: {
+      inputType: "inputtext",
+      label: "GST",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+  };
+
+  const updateCompanyLocationMaster = async (data: any) => {
+    try {
+      companyLocationFieldsStructure.companyName.value = data?.company;
+      companyLocationFieldsStructure.country_name.value = data?.country;
+      companyLocationFieldsStructure.state_name.value = data?.state;
+      companyLocationFieldsStructure.address1.value = data?.address1;
+      companyLocationFieldsStructure.address2.value = data?.address2;
+      companyLocationFieldsStructure.address3.value = data?.address3;
+      companyLocationFieldsStructure.pin.value = data?.pin;
+      companyLocationFieldsStructure.PAN.value = data?.PAN;
+      companyLocationFieldsStructure.GST.value = data?.GST;
+      setCompanyLocationForm(_.cloneDeep(companyLocationFieldsStructure));
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const [
+    companyLocationFieldsStructure,
+    setCompanyLocationFieldsStructure,
+  ]: any = useState(CompanyLocationFormFields);
 
   const CurrencyFormFields = {
     currencyName: {
@@ -3107,7 +2730,7 @@ const Master: React.FC = () => {
     },
     bank_name: {
       inputType: "inputtext",
-      label: "Bank",
+      label: "Bank Name",
       value: null,
       validation: {
         required: true,
@@ -3238,6 +2861,38 @@ const Master: React.FC = () => {
     }
   };
 
+  const TechnologyFormFields = {
+    technologyName: {
+      inputType: "inputtext",
+      label: "Technology Name",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-12",
+    },
+    description: {
+      inputType: "inputtextarea",
+      label: "Description",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-12",
+      rows: 3,
+    },
+  };
+
+  const updateTechnologyMaster = (data: any) => {
+    try {
+      TechnologyFormFields.technologyName.value = data?.technologyName;
+      TechnologyFormFields.description.value = data?.description;
+      setTechnologyForm(_.cloneDeep(TechnologyFormFields));
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const ProductFormFields = {
     productName: {
       inputType: "inputtext",
@@ -3353,7 +3008,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     state_name: {
       inputType: "inputtext",
@@ -3362,7 +3017,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     state_code: {
       inputType: "inputtext",
@@ -3371,7 +3026,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
   };
 
@@ -3399,7 +3054,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     name: {
       inputType: "inputtext",
@@ -3408,7 +3063,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     alias: {
       inputType: "inputtext",
@@ -3417,7 +3072,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     pan_no: {
       inputType: "inputtext",
@@ -3426,7 +3081,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     polestar_bank_account_number: {
       inputType: "singleSelect",
@@ -3436,7 +3091,7 @@ const Master: React.FC = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     gstn: {
       inputType: "inputtext",
@@ -3445,7 +3100,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     servicing_type: {
       inputType: "singleSelect",
@@ -3455,7 +3110,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     client_category: {
       inputType: "inputtext",
@@ -3464,7 +3119,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     msa_start_date: {
       inputType: "singleDatePicker",
@@ -3473,7 +3128,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     msa_end_date: {
       inputType: "singleDatePicker",
@@ -3482,7 +3137,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4 col-offset-right-8",
     },
     is_msa_missing: {
       inputType: "inputSwitch",
@@ -3491,7 +3146,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-3",
     },
     msa_flag: {
       inputType: "inputSwitch",
@@ -3500,7 +3155,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-3",
     },
     non_solicitation_clause: {
       inputType: "inputSwitch",
@@ -3509,7 +3164,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-3",
     },
     use_logo_permission: {
       inputType: "inputSwitch",
@@ -3518,7 +3173,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-3",
     },
   };
 
@@ -3536,7 +3191,9 @@ const Master: React.FC = () => {
       clientFieldsStructure.msa_end_date.value = parseDateString(
         data?.msa_end_date
       );
-      clientFieldsStructure.is_msa_missing.value = data?.is_msa_missing ? true : false;
+      clientFieldsStructure.is_msa_missing.value = data?.is_msa_missing
+        ? true
+        : false;
       clientFieldsStructure.msa_flag.value = data?.msa_flag ? true : false;
       clientFieldsStructure.non_solicitation_clause.value =
         data?.non_solicitation_clause ? true : false;
@@ -3818,8 +3475,20 @@ const Master: React.FC = () => {
     return `${year}/${month}/${day}`;
   };
 
+  const [CountryForm, setCountryForm] = useState<any>(
+    _.cloneDeep(CountryFormFields)
+  );
+
+  const [CountryAddressForm, setCountryAddressForm] = useState<any>({});
+
+  const [CountryBankForm, setCountryBankForm] = useState<any>({});
+
   const [CompanyForm, setCompanyForm] = useState<any>(
     _.cloneDeep(CompanyFormFields)
+  );
+
+  const [CompanyLocationForm, setCompanyLocationForm] = useState<any>(
+    _.cloneDeep(companyLocationFieldsStructure)
   );
 
   const [CurrencyForm, setCurrencyForm] = useState<any>(
@@ -3832,6 +3501,10 @@ const Master: React.FC = () => {
 
   const [IndustryForm, setIndustryForm] = useState<any>(
     _.cloneDeep(IndustryFormFields)
+  );
+
+  const [TechnologyForm, setTechnologyForm] = useState<any>(
+    _.cloneDeep(TechnologyFormFields)
   );
 
   const [ProductForm, setProductForm] = useState<any>(
@@ -3866,25 +3539,37 @@ const Master: React.FC = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setStateData({});
     setOpenClientForm(false);
+    setCountryForm(_.cloneDeep(CountryFormFields));
+    setCountryAddressForm({});
+    setCountryBankForm({});
     setCompanyForm(_.cloneDeep(CompanyFormFields));
+    setCompanyLocationFieldsStructure(_.cloneDeep(CompanyLocationFormFields));
+    setCompanyLocationForm(_.cloneDeep(CompanyLocationFormFields));
     setCurrencyForm(_.cloneDeep(CurrencyFormFields));
+    setAccountFieldsStructure(_.cloneDeep(AccountsFormFields));
     setAccountForm(_.cloneDeep(AccountsFormFields));
     setIndustryForm(_.cloneDeep(IndustryFormFields));
+    setTechnologyForm(_.cloneDeep(TechnologyFormFields));
     setProductForm(_.cloneDeep(ProductFormFields));
     setProjectForm(_.cloneDeep(ProjectFormFields));
     setTaxForm(_.cloneDeep(TaxFormFields));
+    setStatesFieldsStructure(_.cloneDeep(StatesFormFields));
     setStatesForm(_.cloneDeep(StatesFormFields));
+    setClientFieldsStructure(_.cloneDeep(ClientFormFields));
     setClientForm(_.cloneDeep(ClientFormFields));
+    setClientBillFieldsStructure(_.cloneDeep(ClientBillFormFields));
     setClientBillForm(_.cloneDeep(ClientBillFormFields));
+    setClientShipFieldsStructure(_.cloneDeep(ClientShipFormFields));
     setClientShipForm(_.cloneDeep(ClientShipFormFields));
     setClientContactForm(_.cloneDeep(ClientContactFormFields));
     // setCountryForm(_.cloneDeep(CountryFormFields))
     setAttachments([]);
   };
 
-  const companyFormHandler = async (form: FormType) => {
-    setCompanyForm(form);
+  const companyLocationFormHandler = async (form: FormType) => {
+    setCompanyLocationForm(form);
   };
 
   const currencyFormHandler = async (form: FormType) => {
@@ -3893,10 +3578,6 @@ const Master: React.FC = () => {
 
   const accountsFormHandler = async (form: FormType) => {
     setAccountForm(form);
-  };
-
-  const industryFormHandler = async (form: FormType) => {
-    setIndustryForm(form);
   };
 
   const productFormHandler = async (form: FormType) => {
@@ -3931,92 +3612,6 @@ const Master: React.FC = () => {
     setClientContactForm(form);
   };
 
-  const createNewCompany = (event: FormEvent) => {
-    event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
-
-    _.each(CompanyForm, (item: any) => {
-      if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
-      }
-    });
-
-    setIsFormValid(companyValidityFlag);
-
-    if (companyValidityFlag) {
-      const formData: any = new FormData();
-
-      const obj = {
-        companyName: CompanyForm?.companyName?.value,
-        Website: CompanyForm?.Website?.value,
-        CINNO: CompanyForm?.CINNO?.value,
-        IECode: CompanyForm?.IECode?.value,
-        PAN: CompanyForm?.PAN?.value,
-        Email: CompanyForm?.Email?.value,
-        description: CompanyForm?.description?.value,
-        gst_number: CompanyForm?.gst_number?.value,
-        address: CompanyForm?.address?.value,
-        isactive: 1,
-        updatedBy: loggedInUserId,
-      };
-
-      Object.entries(obj).forEach(([key, value]: any) => {
-        formData.set(key, value);
-      });
-
-      if (attachments?.length) {
-        formData.set("file", attachments[0]);
-      }
-
-      if (!stateData?.id) {
-        companyService
-          .createCompanyMaster(formData)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              getCompanyMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      } else {
-        const formData: any = new FormData();
-        const updatePayload = { ...obj, companyId: stateData?.id };
-
-        Object.entries(updatePayload).forEach(([key, value]: any) => {
-          formData.set(key, value);
-        });
-
-        if (attachments?.length) {
-          formData.set("file", attachments[0]);
-        }
-
-        companyService
-          .updateCompanyMaster(formData)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-              setStateData({});
-              closeFormPopup();
-              getCompanyMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      }
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-    }
-  };
-
   const createNewCurrency = (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
@@ -4047,7 +3642,6 @@ const Master: React.FC = () => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
-              getCurrencyMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4064,140 +3658,6 @@ const Master: React.FC = () => {
             if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
-              getCurrencyMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      }
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-    }
-  };
-
-  const createNewAccount = (event: FormEvent) => {
-    event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
-
-    _.each(AccountForm, (item: any) => {
-      if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
-      }
-    });
-
-    const companyId =
-      companyMaster.find(
-        (company: any) => company.companyName === AccountForm.companyName.value
-      )?.id ?? null;
-
-    setIsFormValid(companyValidityFlag);
-
-    if (companyValidityFlag) {
-      const obj = {
-        companyId: companyId,
-        accountType: AccountForm?.account_type?.value,
-        bankName: AccountForm?.bank_name?.value,
-        bankAddress: AccountForm?.bank_address?.value,
-        accountNo: AccountForm?.account_no?.value,
-        ifscCode: AccountForm?.ifsc_code?.value,
-        micrCode: AccountForm?.micr_code?.value,
-        routingNoSwiftCode: AccountForm?.routing_no_swift_code?.value,
-        bankCode: AccountForm?.bank_code?.value,
-        isActive: 1,
-        updatedBy: loggedInUserId,
-      };
-
-      if (!stateData?.id) {
-        accountsService
-          .createAccountsMaster(obj)
-          .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              getAccountsMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      } else {
-        const updatePayload = { ...obj, accountId: stateData?.id };
-
-        accountsService
-          .updateAccountsMaster(updatePayload)
-          .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({});
-              closeFormPopup();
-              getAccountsMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      }
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-    }
-  };
-
-  const createNewIndustry = (event: FormEvent) => {
-    event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
-
-    _.each(IndustryForm, (item: any) => {
-      if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
-      }
-    });
-
-    setIsFormValid(companyValidityFlag);
-
-    if (companyValidityFlag) {
-      const obj = {
-        industryName: IndustryForm?.industryName?.value,
-        description: IndustryForm?.description?.value,
-        industryHead: IndustryForm?.industryHead?.value,
-        isActive: 1,
-        updatedBy: loggedInUserId,
-      };
-
-      if (!stateData?.id) {
-        industryService
-          .createIndustryMaster(obj)
-          .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              getIndustryMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      } else {
-        const updatePayload = { ...obj, industryId: stateData?.id };
-
-        industryService
-          .updateIndustryMaster(updatePayload)
-          .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
-              setStateData({});
-              closeFormPopup();
-              getIndustryMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4240,7 +3700,6 @@ const Master: React.FC = () => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
-              getProductMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4257,7 +3716,6 @@ const Master: React.FC = () => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
-              getProductMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4300,7 +3758,6 @@ const Master: React.FC = () => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
-              getProjectMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4317,7 +3774,6 @@ const Master: React.FC = () => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
-              getProjectMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4361,7 +3817,6 @@ const Master: React.FC = () => {
             if (response?.statusCode == HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
-              getTaxMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4378,73 +3833,6 @@ const Master: React.FC = () => {
             if (response?.statusCode == HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
-              getTaxMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      }
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-    }
-  };
-
-  const createNewState = (event: FormEvent) => {
-    event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
-
-    _.each(StatesForm, (item: any) => {
-      if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
-      }
-    });
-
-    setIsFormValid(companyValidityFlag);
-
-    const countryId =
-      countryMaster.find(
-        (country: any) => country.name === StatesForm.country_name.value
-      )?.id ?? null;
-
-    if (companyValidityFlag) {
-      const obj = {
-        stateName: StatesForm?.state_name?.value,
-        stateCode: StatesForm?.state_code?.value,
-        countryId: countryId,
-        isactive: 1,
-        updatedBy: loggedInUserId,
-      };
-
-      if (!stateData?.state_id) {
-        stateService
-          .createStateMaster(obj)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              getStateMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      } else {
-        const updatePayload = { ...obj, stateId: stateData?.state_id };
-
-        stateService
-          .updateStateMaster(updatePayload)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-              setStateData({});
-              closeFormPopup();
-              getStateMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4482,8 +3870,7 @@ const Master: React.FC = () => {
       const polestar_bank_account_id =
         accountsMaster.find(
           (account: any) =>
-            account.account_no ===
-          ClientForm.polestar_bank_account_number.value
+            account.account_no === ClientForm.polestar_bank_account_number.value
         )?.account_id ?? null;
 
       const formData: any = new FormData();
@@ -4530,7 +3917,6 @@ const Master: React.FC = () => {
             if (response?.statusCode === HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
-              getClientMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4557,7 +3943,6 @@ const Master: React.FC = () => {
             if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
-              getClientMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4619,7 +4004,6 @@ const Master: React.FC = () => {
             if (response?.statusCode === HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
-              getClientBillToMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4636,7 +4020,6 @@ const Master: React.FC = () => {
             if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
-              getClientBillToMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4648,7 +4031,7 @@ const Master: React.FC = () => {
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const createClientShipInfo = async (event: FormEvent) => {
     event.preventDefault();
@@ -4672,12 +4055,14 @@ const Master: React.FC = () => {
 
       const countryId =
         countryMaster.find(
-          (country: any) => country.name === ClientShipForm.client_ship_to_country_name.value
+          (country: any) =>
+            country.name === ClientShipForm.client_ship_to_country_name.value
         )?.id ?? null;
 
       const stateId =
         stateMaster.find(
-          (state: any) => state.state_name === ClientShipForm.client_ship_to_state_name.value
+          (state: any) =>
+            state.state_name === ClientShipForm.client_ship_to_state_name.value
         )?.state_id ?? null;
 
       const obj = {
@@ -4699,7 +4084,6 @@ const Master: React.FC = () => {
             if (response?.statusCode === HTTP_RESPONSE.CREATED) {
               setStateData({});
               closeFormPopup();
-              getClientShipToMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4716,7 +4100,6 @@ const Master: React.FC = () => {
             if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
               setStateData({});
               closeFormPopup();
-              getClientShipToMaster();
               ToasterService.show(response?.message, CONSTANTS.SUCCESS);
             }
           })
@@ -4728,7 +4111,7 @@ const Master: React.FC = () => {
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
-  }
+  };
 
   const moveNextClientForm = (event: FormEvent) => {
     event.preventDefault();
@@ -4758,141 +4141,59 @@ const Master: React.FC = () => {
     <Loader />
   ) : (
     <>
-      <TabView activeIndex={activeIndex} onTabChange={onTabChange}>
+      <TabView
+        activeIndex={activeIndex}
+        onTabChange={onTabChange}
+        className={classes["main-tab-screen"]}
+        panelContainerClassName={classes["panel-tabs"]}
+      >
+        <TabPanel header="Country">
+          <CountryMaster />
+        </TabPanel>
+        <TabPanel header="States">
+          <StateMaster />
+        </TabPanel>
+        <TabPanel header="Regions">
+          <RegionMaster />
+        </TabPanel>
         <TabPanel header="Company">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              marginBottom: "0.5em",
-            }}
-          >
-            <ButtonComponent
-              label="Add New Company"
-              icon="pi pi-check"
-              iconPos="right"
-              submitEvent={openSaveForm}
-            />
-          </div>
-          <p className="m-0">
-            <DataTableBasicDemo
-              data={companyMaster}
-              column={CompanyTableColumns}
-              showGridlines={true}
-              resizableColumns={true}
-              rows={20}
-              paginator={true}
-              sortable={true}
-              headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
-              downloadedfileName={"Brandwise_Denomination_table"}
-            />
-            {showConfirmDialogue ? (
-              <ConfirmDialogue
-                actionPopupToggle={actionPopupToggle}
-                onCloseFunction={onPopUpClose}
-                loading={false}
-              />
-            ) : null}
-          </p>
-          {storeFormPopup ? (
-            <div className="popup-overlay md-popup-overlay">
-              <div className="popup-body md-popup-body stretchLeft">
-                <div className="popup-header">
-                  <div
-                    className="popup-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Company</h4>
-                  </div>
-                  <div
-                    className="popup-right-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    &times;
-                  </div>
-                </div>
-                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                  <FormComponent
-                    form={_.cloneDeep(CompanyForm)}
-                    formUpdateEvent={companyFormHandler}
-                    isFormValidFlag={isFormValid}
-                  ></FormComponent>
-                  {/* attachment */}
-                  <div className={classes["upload-wrapper"]}>
-                    <div className="row">
-                      <div className="col-md-12">
-                        <div className={classes["upload-file-section"]}>
-                          <div className={classes["upload-file"]}>
-                            {attachments.length > 0 ? (
-                              <div className={classes["image-preview"]}>
-                                <img
-                                  src={attachments[0].preview}
-                                  alt="Preview"
-                                />
-                                <div className={classes["chip-tm"]}>
-                                  {attachments.map(
-                                    (
-                                      item: { name: string | undefined },
-                                      index: React.Key | null | undefined
-                                    ) => (
-                                      <Chip
-                                        label={item.name}
-                                        removable
-                                        onRemove={() => removeFileHandler()}
-                                        key={index}
-                                      />
-                                    )
-                                  )}
-                                </div>
-                              </div>
-                            ) : (
-                              <div>
-                                <input
-                                  type="file"
-                                  onClick={(event: any) => {
-                                    event.target.value = null;
-                                  }}
-                                  onChange={(e) =>
-                                    selectAttachment(e.target.files)
-                                  }
-                                  className={classes["upload"]}
-                                  style={{ width: "unset" }}
-                                />
-                                <img
-                                  src={ImageUrl.FolderIconImage}
-                                  alt="Folder Icon"
-                                />
-                                <p>
-                                  Drag files here <span> or browse</span> <br />
-                                  <u>Support PNG</u>
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* attachment */}
-                </div>
-
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Submit"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={createNewCompany}
-                  />
-                </div>
-              </div>
-            </div>
-          ) : null}
+          <CompanyMaster />
+        </TabPanel>
+        <TabPanel header="Company Location">
+          <CompanyAddressMaster />
+        </TabPanel>
+        <TabPanel header="Account Type">
+          <AccountTypeMaster />
+        </TabPanel>
+        <TabPanel header="Accounts">
+          <AccountMaster />
+        </TabPanel>
+        <TabPanel header="Production Type">
+          <ProductionTypeMaster />
+        </TabPanel>
+        <TabPanel header="Industry">
+          <IndustryMaster />
+        </TabPanel>
+        <TabPanel header="Industry Group">
+          <IndustryGroupMaster />
+        </TabPanel>
+        <TabPanel header="Industry Head">
+          <IndustryHeadMaster />
+        </TabPanel>
+        <TabPanel header="Sales Manager">
+          <SalesMaster />
+        </TabPanel>
+        <TabPanel header="Account Manager">
+          <AccountManagerMaster />
+        </TabPanel>
+        <TabPanel header="Technology Group">
+          <TechGroupMaster />
+        </TabPanel>
+        <TabPanel header="Technology SubGroup">
+          <TechSubGroupMaster />
+        </TabPanel>
+        <TabPanel header="Technology">
+          <TechMaster />
         </TabPanel>
         <TabPanel header="Currency">
           <div
@@ -4919,7 +4220,7 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
+              scrollHeight={"calc(100vh - 200px)"}
               downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
@@ -4971,160 +4272,6 @@ const Master: React.FC = () => {
             </div>
           ) : null}
         </TabPanel>
-        <TabPanel header="Accounts">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              marginBottom: "0.5em",
-            }}
-          >
-            <ButtonComponent
-              label="Add New Account"
-              icon="pi pi-check"
-              iconPos="right"
-              submitEvent={openSaveForm}
-            />
-          </div>
-          <p className="m-0">
-            <DataTableBasicDemo
-              data={accountsMaster}
-              column={AccountsMasterColumns}
-              showGridlines={true}
-              resizableColumns={true}
-              rows={20}
-              paginator={true}
-              sortable={true}
-              headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
-              downloadedfileName={"Brandwise_Denomination_table"}
-            />
-            {showConfirmDialogue ? (
-              <ConfirmDialogue
-                actionPopupToggle={actionPopupToggle}
-                onCloseFunction={onPopUpClose}
-              />
-            ) : null}
-          </p>
-          {storeFormPopup ? (
-            <div className="popup-overlay md-popup-overlay">
-              <div className="popup-body md-popup-body stretchLeft">
-                <div className="popup-header">
-                  <div
-                    className="popup-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Account</h4>
-                  </div>
-                  <div
-                    className="popup-right-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    &times;
-                  </div>
-                </div>
-                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                  <FormComponent
-                    form={_.cloneDeep(AccountForm)}
-                    formUpdateEvent={accountsFormHandler}
-                    isFormValidFlag={isFormValid}
-                  />
-                </div>
-
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Submit"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={createNewAccount}
-                  />
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </TabPanel>
-        <TabPanel header="Industry">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              marginBottom: "0.5em",
-            }}
-          >
-            <ButtonComponent
-              label="Add New Industry"
-              icon="pi pi-check"
-              iconPos="right"
-              submitEvent={openSaveForm}
-            />
-          </div>
-          <p className="m-0">
-            <DataTableBasicDemo
-              data={industryMaster}
-              column={IndustryMasterColumns}
-              showGridlines={true}
-              resizableColumns={true}
-              rows={20}
-              paginator={true}
-              sortable={true}
-              headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
-              downloadedfileName={"Brandwise_Denomination_table"}
-            />
-            {showConfirmDialogue ? (
-              <ConfirmDialogue
-                actionPopupToggle={actionPopupToggle}
-                onCloseFunction={onPopUpClose}
-              />
-            ) : null}
-          </p>
-          {storeFormPopup ? (
-            <div className="popup-overlay md-popup-overlay">
-              <div className="popup-body md-popup-body stretchLeft">
-                <div className="popup-header">
-                  <div
-                    className="popup-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Industry</h4>
-                  </div>
-                  <div
-                    className="popup-right-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    &times;
-                  </div>
-                </div>
-                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                  <FormComponent
-                    form={_.cloneDeep(IndustryForm)}
-                    formUpdateEvent={industryFormHandler}
-                    isFormValidFlag={isFormValid}
-                  ></FormComponent>
-                </div>
-
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Submit"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={createNewIndustry}
-                  />
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </TabPanel>
         <TabPanel header="Product">
           <div
             style={{
@@ -5150,7 +4297,7 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
+              scrollHeight={"calc(100vh - 200px)"}
               downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
@@ -5227,7 +4374,7 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
+              scrollHeight={"calc(100vh - 200px)"}
               downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
@@ -5304,7 +4451,7 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
+              scrollHeight={"calc(100vh - 200px)"}
               downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
@@ -5350,105 +4497,6 @@ const Master: React.FC = () => {
                     icon="pi pi-check"
                     iconPos="right"
                     submitEvent={createNewTax}
-                  />
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </TabPanel>
-        <TabPanel header="Country">
-          <p className="m-0">
-            <DataTableBasicDemo
-              data={countryMaster}
-              column={CountryMasterColumns}
-              showGridlines={true}
-              resizableColumns={true}
-              rows={20}
-              paginator={true}
-              sortable={true}
-              headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
-              downloadedfileName={"Brandwise_Denomination_table"}
-            />
-            {showConfirmDialogue ? (
-              <ConfirmDialogue
-                actionPopupToggle={actionPopupToggle}
-                onCloseFunction={onPopUpClose}
-              />
-            ) : null}
-          </p>
-        </TabPanel>
-        <TabPanel header="States">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              marginBottom: "0.5em",
-            }}
-          >
-            <ButtonComponent
-              label="Add New State"
-              icon="pi pi-check"
-              iconPos="right"
-              submitEvent={openSaveForm}
-            />
-          </div>
-          <p className="m-0">
-            <DataTableBasicDemo
-              data={stateMaster}
-              column={StateMasterColumns}
-              showGridlines={true}
-              resizableColumns={true}
-              rows={20}
-              paginator={true}
-              sortable={true}
-              headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
-              downloadedfileName={"Brandwise_Denomination_table"}
-            />
-            {showConfirmDialogue ? (
-              <ConfirmDialogue
-                actionPopupToggle={actionPopupToggle}
-                onCloseFunction={onPopUpClose}
-              />
-            ) : null}
-          </p>
-          {storeFormPopup ? (
-            <div className="popup-overlay md-popup-overlay">
-              <div className="popup-body md-popup-body stretchLeft">
-                <div className="popup-header ">
-                  <div
-                    className="popup-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New State</h4>
-                  </div>
-                  <div
-                    className="popup-right-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    &times;
-                  </div>
-                </div>
-                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                  <FormComponent
-                    form={_.cloneDeep(StatesForm)}
-                    formUpdateEvent={statesFormHandler}
-                    isFormValidFlag={isFormValid}
-                  ></FormComponent>
-                </div>
-
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Submit"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={createNewState}
                   />
                 </div>
               </div>
@@ -5608,7 +4656,7 @@ const Master: React.FC = () => {
                   paginator={true}
                   sortable={true}
                   headerRequired={true}
-                  scrollHeight={"calc(100vh - 80px)"}
+                  scrollHeight={"calc(100vh - 200px)"}
                   downloadedfileName={"Brandwise_Denomination_table"}
                 />
                 {showConfirmDialogue ? (
@@ -5646,7 +4694,7 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
+              scrollHeight={"calc(100vh - 200px)"}
               downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (
@@ -5723,7 +4771,7 @@ const Master: React.FC = () => {
               paginator={true}
               sortable={true}
               headerRequired={true}
-              scrollHeight={"calc(100vh - 80px)"}
+              scrollHeight={"calc(100vh - 200px)"}
               downloadedfileName={"Brandwise_Denomination_table"}
             />
             {showConfirmDialogue ? (

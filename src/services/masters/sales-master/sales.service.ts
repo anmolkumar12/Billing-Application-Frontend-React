@@ -2,10 +2,10 @@ import { APIURLS } from "../../../constants/ApiUrls";
 import { AuthService } from "../../auth-service/auth.service";
 import { HTTPService } from "../../http-service/http-service";
 
-export class StateMasterService {
-  getStateMaster = async (countryId?: any) => {
+export class SalesMasterService {
+  getSalesMaster = async (countryId?: any) => {
     try {
-      const response = await HTTPService.postRequest(APIURLS.GET_STATE_MASTER, {
+      const response = await HTTPService.postRequest(APIURLS.GET_SALES_MASTER, {
         countryId: countryId ? countryId : null,
       });
       return response?.data;
@@ -14,10 +14,10 @@ export class StateMasterService {
     }
   };
 
-  createStateMaster = async (formData: any) => {
+  createSalesMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.CREATE_STATE_MASTER,
+        APIURLS.CREATE_SALES_MASTER,
         formData
       );
 
@@ -27,10 +27,10 @@ export class StateMasterService {
     }
   };
 
-  updateStateMaster = async (formData: any) => {
+  updateSalesMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.UPDATE_STATE_MASTER,
+        APIURLS.UPDATE_SALES_MASTER,
         formData
       );
 
@@ -40,16 +40,16 @@ export class StateMasterService {
     }
   };
 
-  deactivateStateMaster = async (data: any) => {
+  deactivateSalesMaster = async (data: any) => {
     try {
       const body = {
-        stateId: data.id,
-        isActive: !data.isactive,
+        salesManagerId: data.id,
+        isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
       };
 
       const response = await HTTPService.postRequest(
-        APIURLS.TOGGLE_STATE_STATUS,
+        APIURLS.TOGGLE_SALES_STATUS,
         body
       );
       return response?.data;

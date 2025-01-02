@@ -10,9 +10,12 @@ import { TokenService } from '../../services/token-service/token-service'
 import { ErrorMessageComponent } from '../../components/error-message/ErrorMessage'
 import { CONSTANTS } from '../../constants/Constants'
 import { HTTP_RESPONSE } from '../../enums/http-responses.enum'
+import Cookies from 'universal-cookie'
 
 const ChangePassword: React.FC = () => {
   const history = useHistory()
+  const cookies = new Cookies();
+  const userInfo = cookies.get("userInfo");
   const [readOnly, setReadOnly] = useState(true)
   const [isResetFormValid, setIsResetFormValid] = useState(true)
   const [showLoader, setShowLoader] = useState(false)
@@ -111,7 +114,7 @@ const ChangePassword: React.FC = () => {
     event?.preventDefault()
     if (checkFormValidity()) {
       const formData: { [key: string]: any } = {}      
-      formData.email = AuthService?.userInfo?.value?.email
+      formData.email = userInfo?.email
       formData.newPassword = resetFormState.resetForm.newPassword.value
       formData.currentPassword = resetFormState.resetForm.oldPassword.value
       setShowLoader(true)

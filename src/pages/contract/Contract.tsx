@@ -13,11 +13,12 @@ import { Tooltip } from "primereact/tooltip";
 import { ToasterService } from "../../services/toaster-service/toaster-service";
 import { CONSTANTS } from "../../constants/Constants";
 import { ButtonComponent } from "../../components/ui/button/Button";
-import { FormComponent } from "../../components/ui/form/form";
+import FormComponent from "../../components/ui/form/form";
 import classes from "./Contract.module.scss";
 import _ from "lodash";
 import { FormType } from "../../schemas/FormField";
 import { AuthService } from "../../services/auth-service/auth.service";
+import Cookies from "universal-cookie";
 
 const Contract: React.FC = () => {
   const [contractMaster, setContractMaster] = useState<any>([]);
@@ -26,8 +27,10 @@ const Contract: React.FC = () => {
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const cookies = new Cookies();
+  const userInfo = cookies.get("userInfo");
 
-  const loggedInUserId = AuthService?.userInfo?.value?.userId;
+  const loggedInUserId = userInfo?.userId;
 
   let patchData: any;
 
@@ -128,7 +131,7 @@ const Contract: React.FC = () => {
   const deactivateContractMaster = () => {
     setLoader(true);
     contractService
-      .deactivateContractMaster(patchData)
+      .deactivateContractMaster({...patchData, loggedInUserId})
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
@@ -178,21 +181,21 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "Company",
-      fieldName: "companyName",
+      label: "Client",
+      fieldName: "client",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "companyName",
+      fieldValue: "client",
       changeFilter: true,
       placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.companyName}
+            // data-pr-tooltip={rowData.companyName}
           >
-            {rowData.companyName}
+            {rowData.client}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -202,8 +205,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "Website",
-      fieldName: "Website",
+      label: "Client Bill To",
+      fieldName: "clientBillTo",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -212,9 +215,9 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.Website}
+            // data-pr-tooltip={rowData.Website}
           >
-            {rowData.Website}
+            {rowData.clientBillTo}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -224,8 +227,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "CINNO",
-      fieldName: "CINNO",
+      label: "Client Shipping Address",
+      fieldName: "clientShipAdd",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -234,9 +237,9 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.CINNO}
+            // data-pr-tooltip={rowData.CINNO}
           >
-            {rowData.CINNO}
+            {rowData.clientShipAdd}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -246,8 +249,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "IECode",
-      fieldName: "IECode",
+      label: "Contact",
+      fieldName: "contact",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -256,9 +259,9 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.IECode}
+            // data-pr-tooltip={rowData.IECode}
           >
-            {rowData.IECode}
+            {rowData.contact}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -268,8 +271,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "PAN",
-      fieldName: "PAN",
+      label: "Bill From",
+      fieldName: "billFrom",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -278,9 +281,9 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.PAN}
+            // data-pr-tooltip={rowData.PAN}
           >
-            {rowData.PAN}
+            {rowData.billFrom}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -290,8 +293,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "GST",
-      fieldName: "gst_number",
+      label: "Technology",
+      fieldName: "technology",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -300,9 +303,9 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.gst_number}
+            // data-pr-tooltip={rowData.gst_number}
           >
-            {rowData.gst_number}
+            {rowData.technology}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -312,8 +315,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "Address",
-      fieldName: "address",
+      label: "Start Date",
+      fieldName: "startDate",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -322,9 +325,9 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.address}
+            // data-pr-tooltip={rowData.address}
           >
-            {rowData.address}
+            {rowData.startDate}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -334,8 +337,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "Email",
-      fieldName: "Email",
+      label: "End Date",
+      fieldName: "endDate",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -344,9 +347,9 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.Email}
+            // data-pr-tooltip={rowData.Email}
           >
-            {rowData.Email}
+            {rowData.endDate}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -356,8 +359,8 @@ const Contract: React.FC = () => {
       ),
     },
     {
-      label: "Description",
-      fieldName: "description",
+      label: "Name",
+      fieldName: "name",
       textAlign: "left",
       frozen: false,
       sort: true,
@@ -366,9 +369,141 @@ const Contract: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            data-pr-tooltip={rowData.description}
+            // data-pr-tooltip={rowData.description}
           >
-            {rowData.description}
+            {rowData.name}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Code",
+      fieldName: "code",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {rowData.code}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Tax Code",
+      fieldName: "taxCode",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {rowData.taxCode}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Project Manager",
+      fieldName: "projectManager",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {rowData.projectManager}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Credit Period",
+      fieldName: "creditPeriod",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {rowData.creditPeriod}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Document Type",
+      fieldName: "docType",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {rowData.docType}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "PO Amount",
+      fieldName: "poAmt",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {rowData.poAmt}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -418,87 +553,159 @@ const Contract: React.FC = () => {
   };
 
   const ContractFormFields = {
-    companyName: {
-      inputType: "inputtext",
-      label: "Company Name",
+    client_name: {
+      inputType: "singleSelect",
+      label: "Client",
+      options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
-    Website: {
-      inputType: "inputtext",
-      label: "Website",
+    client_bill_to: {
+      inputType: "singleSelect",
+      label: "Client Bill To",
+      options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
-    CINNO: {
-      inputType: "inputtext",
-      label: "CINNO",
+    client_ship_address: {
+      inputType: "singleSelect",
+      label: "Client Shipping Address",
+      options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
-    IECode: {
-      inputType: "inputtext",
-      label: "IECode",
+    client_contact: {
+      inputType: "singleSelect",
+      label: "Contact",
+      options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
-    PAN: {
-      inputType: "inputtext",
-      label: "PAN",
+    bill_from: {
+      inputType: "singleSelect",
+      label: "Bill From",
+      options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
-    gst_number: {
-      inputType: "inputtext",
-      label: "GST",
+    technology: {
+      inputType: "singleSelect",
+      label: "Technology",
+      options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
-    address: {
-      inputType: "inputtext",
-      label: "Address",
+    contract_type: {
+      inputType: "singleSelect",
+      label: "Contract Type",
+      options: [],
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
-    Email: {
-      inputType: "inputtext",
-      label: "Email",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    },
-    description: {
-      inputType: "inputtextarea",
-      label: "Description",
+    start_date: {
+      inputType: "singleDatePicker",
+      label: "Start Date",
       value: null,
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-12",
-      rows: 3,
+      fieldWidth: "col-md-4",
+    },
+    end_date: {
+      inputType: "singleDatePicker",
+      label: "End Date",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
+    name: {
+      inputType: "inputtext",
+      label: "Name",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    code: {
+      inputType: "inputtext",
+      label: "Code",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
+    tax_code: {
+      inputType: "singleSelect",
+      label: "Tax Code",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    project_manager: {
+      inputType: "singleSelect",
+      label: "Project Manager",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    credit_period: {
+      inputType: "inputtext",
+      label: "Credit Period (No. of Days)",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
+    doc_type: {
+      inputType: "singleSelect",
+      label: "Document Type",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    po_amt: {
+      inputType: "inputtext",
+      label: "PO Amount",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
     },
   };
 

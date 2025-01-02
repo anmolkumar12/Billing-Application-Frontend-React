@@ -113,7 +113,7 @@ export class ClientMasterService {
       const body = {
         clientId: data.id,
         isActive: !data.isActive,
-        updatedBy: AuthService?.userInfo?.value?.userId,
+        updatedBy: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(
@@ -131,7 +131,7 @@ export class ClientMasterService {
       const body = {
         billingId: data.id,
         isActive: !data.isActive,
-        updatedBy: AuthService?.userInfo?.value?.userId,
+        updatedBy: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(
@@ -149,7 +149,7 @@ export class ClientMasterService {
       const body = {
         shippingId: data.id,
         isActive: !data.isActive,
-        updatedBy: AuthService?.userInfo?.value?.userId,
+        updatedBy: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(

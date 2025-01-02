@@ -2,10 +2,10 @@ import { APIURLS } from "../../../constants/ApiUrls";
 import { AuthService } from "../../auth-service/auth.service";
 import { HTTPService } from "../../http-service/http-service";
 
-export class StateMasterService {
-  getStateMaster = async (countryId?: any) => {
+export class RegionMasterService {
+  getRegionMaster = async (countryId?: any) => {
     try {
-      const response = await HTTPService.postRequest(APIURLS.GET_STATE_MASTER, {
+      const response = await HTTPService.postRequest(APIURLS.GET_REGION_MASTER, {
         countryId: countryId ? countryId : null,
       });
       return response?.data;
@@ -14,10 +14,10 @@ export class StateMasterService {
     }
   };
 
-  createStateMaster = async (formData: any) => {
+  createRegionMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.CREATE_STATE_MASTER,
+        APIURLS.CREATE_REGION_MASTER,
         formData
       );
 
@@ -27,10 +27,10 @@ export class StateMasterService {
     }
   };
 
-  updateStateMaster = async (formData: any) => {
+  updateRegionMaster = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.UPDATE_STATE_MASTER,
+        APIURLS.UPDATE_REGION_MASTER,
         formData
       );
 
@@ -40,7 +40,7 @@ export class StateMasterService {
     }
   };
 
-  deactivateStateMaster = async (data: any) => {
+  deactivateRegionMaster = async (data: any) => {
     try {
       const body = {
         stateId: data.id,
@@ -49,7 +49,7 @@ export class StateMasterService {
       };
 
       const response = await HTTPService.postRequest(
-        APIURLS.TOGGLE_STATE_STATUS,
+        APIURLS.TOGGLE_REGION_STATUS,
         body
       );
       return response?.data;

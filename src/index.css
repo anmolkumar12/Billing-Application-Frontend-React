@@ -98,6 +98,9 @@ code {
 .pb-0 {
   padding-bottom: 0;
 }
+.col-offset-right-8 {
+  margin-right: 66.66666667%;
+}
 .ellipsis-text {
   white-space: nowrap;
   overflow: hidden;
@@ -268,10 +271,8 @@ code {
 }
 
 .md-popup-body .popup-right-close {
-  display: inline-block;
-  position: relative;
-  top: -7px;
-  left: 10px;
+  display: flex;
+  width: 20px;
 }
 
 .popup-lower-btn {
@@ -443,6 +444,10 @@ button:focus:not(:focus-visible) {
 .p-inputtext {
   font-size: 13px !important;
   font-weight: 400 !important;
+}
+
+.p-tabview-panels {
+  padding: 10px !important;
 }
 
 /*********************************** Action Pencil *************************************/

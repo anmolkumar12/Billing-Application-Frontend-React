@@ -43,7 +43,7 @@ export class ContractMasterService {
       const body = {
         ContractId: data.id,
         isActive: !data.isactive,
-        updatedBy: AuthService?.userInfo?.value?.userId,
+        updatedBy: data?.loggedInUserId,
       }
       const response = await HTTPService.postRequest(
         APIURLS.TOGGLE_CONTRACT_STATUS,
