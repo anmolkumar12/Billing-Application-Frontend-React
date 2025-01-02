@@ -198,7 +198,7 @@ const CountryMaster = () => {
       ),
     },
     {
-      label: "Addition Back Details",
+      label: "Additional Bank Details",
       fieldName: "bankAccAdditionalFields",
       textAlign: "left",
       sort: true,

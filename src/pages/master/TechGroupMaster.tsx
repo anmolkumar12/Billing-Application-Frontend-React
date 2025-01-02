@@ -84,7 +84,7 @@ const TechGroupMaster = () => {
       ),
     },
     {
-      label: "Technology Group Name",
+      label: "Technology Group",
       fieldName: "name",
       textAlign: "left",
       sort: true,

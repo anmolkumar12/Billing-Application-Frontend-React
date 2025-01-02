@@ -161,7 +161,7 @@ const RegionMaster = () => {
       ),
     },
     {
-      label: "State Names",
+      label: "States",
       fieldName: "stateNames",
       textAlign: "left",
       sort: true,

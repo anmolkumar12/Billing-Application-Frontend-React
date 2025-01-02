@@ -4189,7 +4189,7 @@ const Master: React.FC = () => {
         <TabPanel header="Technology Group">
           <TechGroupMaster />
         </TabPanel>
-        <TabPanel header="Technology SubGroup">
+        <TabPanel header="Technology Sub-Group">
           <TechSubGroupMaster />
         </TabPanel>
         <TabPanel header="Technology">

@@ -95,7 +95,7 @@ const AccountTypeMaster = () => {
       ),
     },
     {
-      label: "Account Type Name",
+      label: "Account Type",
       fieldName: "accountTypeName",
       textAlign: "left",
       sort: true,

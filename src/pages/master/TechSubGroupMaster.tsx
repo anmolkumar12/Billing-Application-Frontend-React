@@ -93,7 +93,7 @@ const TechSubGroupMaster = () => {
       ),
     },
     {
-      label: "Technology SubGroup Name",
+      label: "Technology Sub-Group",
       fieldName: "name",
       textAlign: "left",
       sort: true,
@@ -373,7 +373,7 @@ const TechSubGroupMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Technology SubGroup"
+          label="Add New Technology Sub-Group"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}

@@ -105,7 +105,7 @@ const TechMaster = () => {
       ),
     },
     {
-      label: "Technology Name",
+      label: "Technology",
       fieldName: "techName",
       textAlign: "left",
       sort: true,
@@ -120,6 +120,30 @@ const TechMaster = () => {
             // data-pr-tooltip={rowData.techName}
           >
             {rowData.techName}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Technology Sub-Group",
+      fieldName: "techSubgroupNames",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "techSubgroupNames",
+      changeFilter: true,
+      placeholder: "Technology SubGroup Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.techSubgroupNames}
+          >
+            {rowData.techSubgroupNames}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -152,30 +176,7 @@ const TechMaster = () => {
         </div>
       ),
     },
-    {
-      label: "Technology SubGroup Name",
-      fieldName: "techSubgroupNames",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "techSubgroupNames",
-      changeFilter: true,
-      placeholder: "Technology SubGroup Name",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techSubgroupNames}
-          >
-            {rowData.techSubgroupNames}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
+   
     {
       label: "Description",
       fieldName: "description",
