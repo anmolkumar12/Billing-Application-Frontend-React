@@ -4195,6 +4195,15 @@ const Master: React.FC = () => {
         <TabPanel header="Technology">
           <TechMaster />
         </TabPanel>
+        <TabPanel header="OEM">
+          <TechMaster />
+        </TabPanel>
+        <TabPanel header="Polestar Product Sales">
+          <TechMaster />
+        </TabPanel>
+        <TabPanel header="Project Service">
+          <TechMaster />
+        </TabPanel>
         <TabPanel header="Currency">
           <div
             style={{
