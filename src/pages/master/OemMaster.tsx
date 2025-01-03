@@ -15,46 +15,55 @@ import { Loader } from "../../components/ui/loader/Loader";
 import { TechnologyMasterService } from "../../services/masters/technology-master/technology.service";
 
 const TechMaster = () => {
-  const TechFormFields = {
-    techName: {
+  const OemFormFields = {
+    oemName: {
       inputType: "inputtext",
-      label: "Technology Name",
+      label: "OEM Name",
       value: null,
       validation: {
         required: true,
       },
       fieldWidth: "col-md-4",
     },
-    group_name: {
-      inputType: "singleSelect",
-      label: "Technology Group",
-      options: [],
+    productName: {
+      inputType: "inputtext",
+      label: "Product Name",
       value: null,
       validation: {
         required: true,
       },
       fieldWidth: "col-md-4",
     },
-    subGroup_name: {
-      inputType: "singleSelect",
-      label: "Technology SubGroup",
-      options: [],
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-4",
-    },
-    description: {
-      inputType: "inputtextarea",
-      label: "Description",
-      value: null,
-      validation: {
-        required: false,
-      },
-      fieldWidth: "col-md-12",
-      rows: 3,
-    },
+    // group_name: {
+    //   inputType: "singleSelect",
+    //   label: "Technology Group",
+    //   options: [],
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-4",
+    // },
+    // subGroup_name: {
+    //   inputType: "singleSelect",
+    //   label: "Technology SubGroup",
+    //   options: [],
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-4",
+    // },
+    // description: {
+    //   inputType: "inputtextarea",
+    //   label: "Description",
+    //   value: null,
+    //   validation: {
+    //     required: false,
+    //   },
+    //   fieldWidth: "col-md-12",
+    //   rows: 3,
+    // },
   };
   const [techMaster, setTechMaster] = useState<any>([]);
   const [techSubGroupMaster, setTechSubGroupMaster] = useState<any>([]);
@@ -66,7 +75,7 @@ const TechMaster = () => {
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
   const [techFieldsStructure, setTechFieldsStructure] = useState<any>(
-    _.cloneDeep(TechFormFields)
+    _.cloneDeep(OemFormFields)
   );
   const [TechForm, setTechForm] = useState<any>(
     _.cloneDeep(techFieldsStructure)
@@ -79,7 +88,7 @@ const TechMaster = () => {
   let patchData: any;
   const technologyService = new TechnologyMasterService();
 
-  const TechMasterColumns = [
+  const oemMasterColumns = [
     {
       label: "Action",
       fieldName: "action",
@@ -105,21 +114,21 @@ const TechMaster = () => {
       ),
     },
     {
-      label: "Technology Name",
-      fieldName: "techName",
+      label: "Oem Name",
+      fieldName: "oemName",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "techName",
+      fieldValue: "oemName",
       changeFilter: true,
-      placeholder: "Technology Name",
+      placeholder: "OEM Name",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.techName}
           >
-            {rowData.techName}
+            {rowData.oemName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -129,21 +138,21 @@ const TechMaster = () => {
       ),
     },
     {
-      label: "Technology Group",
-      fieldName: "techGroupNames",
+      label: "Product Names",
+      fieldName: "productName",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "techGroupNames",
+      fieldValue: "productName",
       changeFilter: true,
-      placeholder: "Technology Group",
+      placeholder: "Product Names",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techGroupNames}
+            // data-pr-tooltip={rowData.productName}
           >
-            {rowData.techGroupNames}
+            {rowData.productName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -152,56 +161,7 @@ const TechMaster = () => {
         </div>
       ),
     },
-    {
-      label: "Technology SubGroup Name",
-      fieldName: "techSubgroupNames",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "techSubgroupNames",
-      changeFilter: true,
-      placeholder: "Technology SubGroup Name",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techSubgroupNames}
-          >
-            {rowData.techSubgroupNames}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Description",
-      fieldName: "description",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.description != null &&
-            rowData.description != "null" &&
-            rowData.description != ""
-              ? rowData.description
-              : "NA"}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
+   
     {
       label: "Status",
       fieldName: "isActive",
@@ -231,63 +191,27 @@ const TechMaster = () => {
   }, [storeFormPopup, showConfirmDialogue]);
 
   const getTechMaster = async () => {
-    setLoader(true);
-    try {
-      const response = await technologyService.getTechnologyMaster();
-      setTechMaster(response?.subgroups);
-      return response?.subgroups;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoader(false);
-    }
+   
   };
 
   const getTechSubGroupMaster = async (techGroupId: any) => {
     // setLoader(true);
-    try {
-      const response = await technologyService.getTechnologySubGroupMaster(
-        techGroupId
-      );
-      setTechSubGroupMaster(response?.subgroups);
-      await formatSubGroupDetails(response?.subgroups, techGroupId);
-      return response?.subgroups;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      //   setLoader(false);
-    }
+ 
   };
 
   const getTechGroupMaster = async () => {
-    setLoader(true);
-    try {
-      const response = await technologyService.getTechnologyGroupMaster();
-      setTechGroupMaster(response?.groups);
-      return response?.groups;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoader(false);
-    }
+   
   };
 
   const formatSubGroupDetails = async (
     techSubGroups: any = techSubGroupMaster,
     techGroupId: any
   ) => {
-    const subGrouplist = techSubGroups
-      ?.filter((item: any) => item?.techGroupIds == techGroupId)
-      ?.map((subGroup: any) => subGroup?.name);
-    techFieldsStructure.subGroup_name.options = subGrouplist;
-    setTechFieldsStructure(techFieldsStructure);
+    
   };
 
   const formatGroupDetails = async (techGroups: any = techGroupMaster) => {
-    const grouplist = techGroups.map((group: any) => group?.name);
-    techFieldsStructure.group_name.options = grouplist;
-    setTechFieldsStructure(techFieldsStructure);
-    await techFormHandler(techFieldsStructure);
+  
   };
 
   const openSaveForm = async () => {
@@ -295,33 +219,11 @@ const TechMaster = () => {
   };
 
   const modifyFormTechGroup = async (selectGroup: any) => {
-    const groups = techGroupMaster?.find(
-      (group: any) => group?.name === selectGroup
-    );
-    if (groups) {
-      const subGroups = await getTechSubGroupMaster(groups?.id);
-      const subGroupList = subGroups
-        ?.filter((item: any) => item?.techGroupIds == groups?.id)
-        .map((subGroup: any) => subGroup?.name);
-      return subGroupList;
-    }
-    return [];
+   
   };
 
   const techFormHandler = async (form: FormType) => {
-    const updatedForm = {...form}
-    const techGroupAreUnequal =
-      updatedForm?.group_name?.value !== TechForm?.group_name?.value;
-    console.log("here techGroupAreUnequal", techGroupAreUnequal);
-
-    if (techGroupAreUnequal) {
-      const subGroupList = await modifyFormTechGroup(updatedForm?.group_name?.value);
-      if (subGroupList) {
-        updatedForm.subGroup_name.options = subGroupList;
-        updatedForm.subGroup_name.value = null;
-      }
-    }
-    setTechForm(updatedForm);
+    
   };
 
   const onUpdate = async (data: any) => {
@@ -336,87 +238,12 @@ const TechMaster = () => {
   };
 
   const updateTechMaster = (data: any, subGroupList: any) => {
-    try {
-      console.log("here data", data);
-      console.log("here subGroupList", subGroupList);
-
-      techFieldsStructure.techName.value = data?.techName;
-      techFieldsStructure.group_name.value = data?.techGroupNames;
-      techFieldsStructure.subGroup_name.options = subGroupList;
-      techFieldsStructure.subGroup_name.value = data?.techSubgroupNames;
-      techFieldsStructure.description.value =
-        data?.description != null && data?.description != "null"
-          ? data?.description
-          : "";
-      setTechForm(_.cloneDeep(techFieldsStructure));
-    } catch (error) {
-      console.log("error", error);
-    }
+    
   };
 
   const createNewTech = (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
-
-    _.each(TechForm, (item: any) => {
-      if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
-      }
-    });
-
-    setIsFormValid(companyValidityFlag);
-
-    if (companyValidityFlag) {
-      const techGroup = techGroupMaster?.find(
-        (group: any) => group?.name == TechForm?.group_name?.value
-      );
-      const techSubGroup = techSubGroupMaster?.find(
-        (subGroup: any) => subGroup?.name == TechForm?.subGroup_name?.value
-      );
-      const obj = {
-        techName: TechForm?.techName?.value,
-        techGroupIds: techGroup?.id || null,
-        techSubgroupIds: techSubGroup?.id || null,
-        description: TechForm?.description?.value,
-        isActive: 1,
-        updatedBy: loggedInUserId,
-      };
-
-      if (!stateData?.id) {
-        technologyService
-          .createTechnologyMaster(obj)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      } else {
-        const updatePayload = { ...obj, id: stateData?.id };
-        technologyService
-          .updateTechnologyMaster(updatePayload)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-              setStateData({});
-              closeFormPopup();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      }
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-    }
+    
   };
 
   const onDelete = (data: any) => {
@@ -458,8 +285,8 @@ const TechMaster = () => {
   const closeFormPopup = () => {
     setFormPopup(false);
     setStateData({});
-    setTechFieldsStructure(_.cloneDeep(TechFormFields));
-    setTechForm(_.cloneDeep(TechFormFields));
+    setTechFieldsStructure(_.cloneDeep(OemFormFields));
+    setTechForm(_.cloneDeep(OemFormFields));
   };
   return loader ? (
     <Loader />
@@ -473,7 +300,7 @@ const TechMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Technology"
+          label="Add New OEM"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}
@@ -482,7 +309,7 @@ const TechMaster = () => {
       <p className="m-0">
         <DataTableBasicDemo
           data={techMaster}
-          column={TechMasterColumns}
+          column={oemMasterColumns}
           showGridlines={true}
           resizableColumns={true}
           rows={20}
@@ -510,7 +337,7 @@ const TechMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Technology</h4>
+                <h4 className="popup-heading">Add New OEM</h4>
               </div>
               <div
                 className="popup-right-close"

@@ -48,6 +48,9 @@ import AccountManagerMaster from "./AccountManagerMaster";
 import TechGroupMaster from "./TechGroupMaster";
 import TechSubGroupMaster from "./TechSubGroupMaster";
 import TechMaster from "./TechMaster";
+import OemMaster from "./OemMaster";
+import PolestarProductSalesMaster from "./PolestarProductSalesMaster";
+import ProjectServiceMaster from "./ProjectServiceMaster";
 
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -4196,14 +4199,14 @@ const Master: React.FC = () => {
           <TechMaster />
         </TabPanel>
         <TabPanel header="OEM">
-          <TechMaster />
+          <OemMaster/>
         </TabPanel>
         <TabPanel header="Polestar Product Sales">
-          <TechMaster />
+          <PolestarProductSalesMaster />
         </TabPanel>
-        <TabPanel header="Project Service">
-          <TechMaster />
-        </TabPanel>
+        {/* <TabPanel header="Project Service">
+          <ProjectServiceMaster />
+        </TabPanel> */}
         <TabPanel header="Currency">
           <div
             style={{
