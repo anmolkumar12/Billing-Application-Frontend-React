@@ -449,7 +449,7 @@ const IndustryHeadMaster = () => {
     const countrylist = countries.map((country: any) => country?.name);
     industryHeadFieldsStructure.country_name.options = countrylist;
     setIndustryHeadFieldsStructure(industryHeadFieldsStructure);
-    await industryHeadFormHandler(industryHeadFieldsStructure);
+    await industryHeadFormHandler(industryHeadFieldsStructure); 
   };
 
   const formatRegionDetails = async (regions: any = regionMaster) => {
@@ -527,6 +527,7 @@ const IndustryHeadMaster = () => {
   };
 
   const industryHeadFormHandler = async (form: FormType) => {
+    console.log('form------->',form);
     if (form?.isRegionWise?.value != IndustryHeadForm?.isRegionWise?.value) {
       form.country_name.value = null;
     }
@@ -540,13 +541,16 @@ const IndustryHeadMaster = () => {
       if (form.state_name.validation) {
         form.state_name.validation.required = false;
       }
+      console.log('IndustryHeadForm?.country_name?.value----------->',IndustryHeadForm?.country_name?.value)
       const countryAreUnequal =
         JSON.stringify(form?.country_name?.value) !==
         JSON.stringify(IndustryHeadForm?.country_name?.value);
+        console.log('form.country_name.value--------->',form.country_name.value)
       if (countryAreUnequal && form.country_name.value != null) {
         const [regionCodesList, regionList]: any = await modifyFormRegionWise(
           form?.country_name?.value
         );
+        console.log('regionCodesList-->',regionCodesList)
         form.region_code.options = regionCodesList;
         form.region_code.value = null;
       }

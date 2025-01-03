@@ -205,7 +205,7 @@ const CountryMaster = () => {
       filter: true,
       fieldValue: "bankAccAdditionalFields",
       changeFilter: true,
-      placeholder: "Addition Back Details",
+      placeholder: "Additional Bank Details",
       body: (rowData: any) => (
         <div>
           <span
@@ -345,7 +345,7 @@ const CountryMaster = () => {
       CountryFormFields.language.value = data?.language;
       CountryFormFields.phoneCode.value = data?.phoneCode;
       setCountryForm(_.cloneDeep(CountryFormFields));
-      const addressDetails = JSON.parse(data?.addressAdditionalFields);
+      const addressDetails = JSON.parse(data?.addressAdditionalFields || "");
       const addressForm = Object.keys(addressDetails)?.reduce(
         (acc: any, item: any, index: any) => {
           acc[index] = {
@@ -362,7 +362,7 @@ const CountryMaster = () => {
         {}
       );
       setCountryAddressForm(addressForm);
-      const bankDetails = JSON.parse(data?.bankAccAdditionalFields);
+      const bankDetails = JSON.parse(data?.bankAccAdditionalFields || "");
       const bankForm = Object.keys(bankDetails)?.reduce(
         (acc: any, item: any, index: any) => {
           acc[index] = {
@@ -379,7 +379,7 @@ const CountryMaster = () => {
         {}
       );
       setCountryBankForm(bankForm);
-      const companyDetails = JSON.parse(data?.companyAccAdditionalFields);
+      const companyDetails = JSON.parse(data?.companyAddtionalFields || "");
       const companyForm = Object.keys(companyDetails)?.reduce(
         (acc: any, item: any, index: any) => {
           acc[index] = {
@@ -395,6 +395,7 @@ const CountryMaster = () => {
         },
         {}
       );
+      console.log('companyform------>',companyForm);
       setCountryCompanyForm(companyForm);
     } catch (error) {
       console.log("error", error);

@@ -100,6 +100,8 @@ const CompanyMaster = () => {
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [attachments, setAttachments]: any = useState([]);
   const [digitalSign, setDigitalSign]: any = useState([]);
+  const [logoUrl,setLogoUrl] = useState('');
+  const [signatureUrl,setSignatureUrl] = useState('');
   const [stateData, setStateData] = useState<any>();
   const [companyFieldStructure, setCompanyFieldStructure] = useState<any>(
     _.cloneDeep(CompanyFormFields)
@@ -484,6 +486,8 @@ const CompanyMaster = () => {
             );
           } else {
             setAttachments((prevVals: any) => [...prevVals, eventList]);
+            const fileURL = URL.createObjectURL(eventList);
+            setLogoUrl(fileURL)
           }
         } else {
           ToasterService.show(
@@ -513,6 +517,8 @@ const CompanyMaster = () => {
             );
           } else {
             setDigitalSign((prevVals: any) => [...prevVals, eventList]);
+            const fileURL = URL.createObjectURL(eventList);
+            setSignatureUrl(fileURL);
           }
         } else {
           ToasterService.show(
@@ -527,18 +533,22 @@ const CompanyMaster = () => {
 
   const removeFileHandler = () => {
     setAttachments([]);
+    setLogoUrl('');
   };
 
   const removeSignHandler = () => {
-    setAttachments([]);
+    setDigitalSign([]);
+    setSignatureUrl('');
   };
 
   const onUpdate = (data: any) => {
     setStateData(data);
     updateCompanyMaster(data);
+    setLogoUrl(data?.logopath?`${process.env.REACT_APP_API_BASEURL}/${data?.logopath}`:'');
+    setSignatureUrl(data?.digitalSignPath?`${process.env.REACT_APP_API_BASEURL}/${data?.digitalSignPath}`:'');
     setFormPopup(true);
   };
-
+    
   const onPopUpClose = (e?: any) => {
     setShowConfirmDialogue(false);
   };
@@ -757,7 +767,12 @@ const CompanyMaster = () => {
     setParentForm(_.cloneDeep(ParentFormFields));
     setAdditionalDetailsForm({});
     setAttachments([]);
+    setDigitalSign([]);
+  
+   
   };
+  console.log('signas',signatureUrl);
+  
   return loader ? (
     <Loader />
   ) : (
@@ -846,10 +861,11 @@ const CompanyMaster = () => {
                   <div className="col-md-12">
                     <div className={classes["upload-file-section"]}>
                       <div className={classes["upload-file"]}>
-                        {attachments.length > 0 ? (
+                        {logoUrl  ? (
                           <div className={classes["image-preview"]}>
-                            <img src={attachments[0].preview} alt="Preview" />
-                            <div className={classes["chip-tm"]}>
+                            <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeFileHandler} style={{ color: 'red',fontSize: '1rem' }}></i></div>
+                            <img src={logoUrl} style={{width:'200px',height:'130px'}}  alt="Preview" />
+                            {/* <div className={classes["chip-tm"]}>
                               {attachments.map(
                                 (
                                   item: { name: string | undefined },
@@ -863,7 +879,7 @@ const CompanyMaster = () => {
                                   />
                                 )
                               )}
-                            </div>
+                            </div> */}
                           </div>
                         ) : (
                           <div className={classes["empty-upload"]}>
@@ -898,13 +914,15 @@ const CompanyMaster = () => {
                   >
                     <h5 className="popup-heading">Digital Signature</h5>
                   </div>
+                  
                   <div className="col-md-12">
                     <div className={classes["upload-file-section"]}>
                       <div className={classes["upload-file"]}>
-                        {digitalSign.length > 0 ? (
-                          <div className={classes["image-preview"]}>
-                            <img src={digitalSign[0].preview} alt="Preview" />
-                            <div className={classes["chip-tm"]}>
+                        {signatureUrl ? (
+                          <div  className={classes["image-preview"]}>
+                          <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeSignHandler} style={{ color: 'red',fontSize: '1rem' }}></i></div>
+                            <img src={signatureUrl} style={{width:'200px',height:'130px'}}  alt="Preview" />
+                            {/* <div className={classes["chip-tm"]}>
                               {digitalSign.map(
                                 (
                                   item: { name: string | undefined },
@@ -918,7 +936,7 @@ const CompanyMaster = () => {
                                   />
                                 )
                               )}
-                            </div>
+                            </div> */}
                           </div>
                         ) : (
                           <div className={classes["empty-upload"]}>

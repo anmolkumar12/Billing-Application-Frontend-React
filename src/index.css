@@ -611,3 +611,7 @@ button:focus:not(:focus-visible) {
 .rechargeRequestTable table tbody tr td:first-child {
   max-width: 110px !important;
 }
+.icon-ui677{
+  text-align: end;
+  cursor: pointer;
+}
