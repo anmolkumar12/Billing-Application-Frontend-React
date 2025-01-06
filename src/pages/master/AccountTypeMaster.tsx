@@ -29,7 +29,7 @@ const AccountTypeMaster = () => {
     },
     accountTypeName: {
       inputType: "inputtext",
-      label: "Account Type",
+      label: "Bank Account Type",
       value: null,
       validation: {
         required: true,
@@ -95,7 +95,7 @@ const AccountTypeMaster = () => {
       ),
     },
     {
-      label: "Account Type",
+      label: "Bank Account Type",
       fieldName: "accountTypeName",
       textAlign: "left",
       sort: true,
@@ -321,7 +321,7 @@ const AccountTypeMaster = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Account Type record ${
+          `Bank Account Type ${
             patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
@@ -351,7 +351,7 @@ const AccountTypeMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Account Type"
+          label="Add New Bank Account Type"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}

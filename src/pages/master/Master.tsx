@@ -2723,7 +2723,7 @@ const Master: React.FC = () => {
     },
     account_type: {
       inputType: "singleSelect",
-      label: "Account Type",
+      label: "Bank Account Type",
       options: ["Savings", "Current"],
       value: null,
       validation: {
@@ -4165,10 +4165,10 @@ const Master: React.FC = () => {
         <TabPanel header="Company Location">
           <CompanyAddressMaster />
         </TabPanel>
-        <TabPanel header="Account Type">
+        <TabPanel header="Bank Account Type">
           <AccountTypeMaster />
         </TabPanel>
-        <TabPanel header="Accounts">
+        <TabPanel header="Bank Accounts">
           <AccountMaster />
         </TabPanel>
         <TabPanel header="Production Type">
