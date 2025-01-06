@@ -24,16 +24,25 @@ const SalesMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     code: {
       inputType: "inputtext",
-      label: "Sales Manager Code",
+      label: "Sales Manager Ecode",
       value: null,
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
+    },
+    sales_manager_email: {
+      inputType: "inputtext",
+      label: "Sales Manager Email",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
     },
     industryHeadNames: {
       inputType: "multiSelect",
@@ -138,14 +147,14 @@ const SalesMaster = () => {
       ),
     },
     {
-      label: "Sales Manager Code",
+      label: "Sales Manager Ecode",
       fieldName: "code",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "code",
       changeFilter: true,
-      placeholder: "Sales Manager Code",
+      placeholder: "Sales Manager Ecode",
       body: (rowData: any) => (
         <div>
           <span
@@ -153,6 +162,30 @@ const SalesMaster = () => {
             // data-pr-tooltip={rowData.code}
           >
             {rowData.code}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Sales Manager Email",
+      fieldName: "sales_manager_email",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "sales_manager_email",
+      changeFilter: true,
+      placeholder: "Sales Manager Email",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.code}
+          >
+            {rowData.sales_manager_email}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -341,6 +374,7 @@ const SalesMaster = () => {
     try {
       salesFieldsStructure.name.value = data?.name;
       salesFieldsStructure.code.value = data?.code;
+      salesFieldsStructure.sales_manager_email.value = data?.sales_manager_email;
       salesFieldsStructure.industryHeadNames.value =
         data?.industryHeadNames?.split(",");
       salesFieldsStructure.description.value =
@@ -384,6 +418,7 @@ const SalesMaster = () => {
       const obj = {
         name: SalesForm?.name?.value,
         code: SalesForm?.code?.value,
+        sales_manager_email:SalesForm.sales_manager_email.value,
         fromDate: formatDate(SalesForm?.from_date?.value),
         description: SalesForm?.description?.value,
         industryHeadIds: industryHeadIds,

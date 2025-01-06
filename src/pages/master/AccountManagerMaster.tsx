@@ -28,7 +28,16 @@ const AccountManagerMaster = () => {
     },
     code: {
       inputType: "inputtext",
-      label: "Account Manager Code",
+      label: "Account Manager Ecode",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    account_manager_email: {
+      inputType: "inputtext",
+      label: "Account Manager Email",
       value: null,
       validation: {
         required: true,
@@ -138,14 +147,14 @@ const AccountManagerMaster = () => {
       ),
     },
     {
-      label: "Account Manager Code",
+      label: "Account Manager Ecode",
       fieldName: "code",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "code",
       changeFilter: true,
-      placeholder: "Account Manager Code",
+      placeholder: "Account Manager Ecode",
       body: (rowData: any) => (
         <div>
           <span
@@ -153,6 +162,30 @@ const AccountManagerMaster = () => {
             // data-pr-tooltip={rowData.code}
           >
             {rowData.code}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Account Manager Email",
+      fieldName: "account_manager_email",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "account_manager_email",
+      changeFilter: true,
+      placeholder: "Account Manager Email",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.code}
+          >
+            {rowData.account_manager_email}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -254,7 +287,7 @@ const AccountManagerMaster = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getAccountMaster();
+       await getAccountMaster();
       const industries = await getIndustryHeadMaster();
       await formatIndustryHeadDetails(industries);
     };
@@ -335,6 +368,7 @@ const AccountManagerMaster = () => {
     try {
       accountFieldsStructure.name.value = data?.name;
       accountFieldsStructure.code.value = data?.code;
+      accountFieldsStructure.account_manager_email.value = data?.account_manager_email;
       accountFieldsStructure.industryHeadNames.value =
         data?.industryHeadNames?.split(",");
       accountFieldsStructure.description.value =
@@ -378,10 +412,11 @@ const AccountManagerMaster = () => {
       const obj = {
         name: AccountForm?.name?.value,
         code: AccountForm?.code?.value,
+        account_manager_email:AccountForm?.account_manager_email.value,
         fromDate: formatDate(AccountForm?.from_date?.value),
         description: AccountForm?.description?.value,
         industryHeadIds: industryHeadIds,
-        isActive: 1,
+        isActive: 1,  
         updatedBy: loggedInUserId,
       };
 

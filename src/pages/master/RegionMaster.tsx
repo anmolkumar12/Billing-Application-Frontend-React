@@ -26,8 +26,35 @@ const RegionMaster = () => {
       validation: {
         required: true,
       },
+      fieldWidth: "col-md-3",
+    },
+    regionHeadName: {
+      inputType: "inputtext",
+      label: "Region Head Name",
+      value: null,
+      validation: {
+        required: true,
+      },
       fieldWidth: "col-md-4",
     },
+    regionHeadEcode: {
+      inputType: "inputtext",
+      label: "Region Head Ecode",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
+    regionHeadEmail: {
+      inputType: "inputtext",
+      label: "Region Head Email",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    }
   };
   const StateSelectionFormFields = {
     name: {
@@ -384,7 +411,12 @@ const RegionMaster = () => {
     stateList: any
   ) => {
     try {
+      console.log('data-->',data)
       regionFieldsStructure.country_name.value = data?.countryName;
+      regionFieldsStructure.regionHeadName.value = data?.regionHeadName;
+      regionFieldsStructure.regionHeadEcode.value = data?.regionHeadEcode;
+      regionFieldsStructure.regionHeadEmail.value = data?.regionHeadEmail;
+
       setRegionForm(_.cloneDeep(regionFieldsStructure));
       const stateForm: any = [];
       stateSelectionData?.forEach((item: any, index: any) => {
@@ -504,6 +536,9 @@ const RegionMaster = () => {
           regionName: region?.name?.value,
           regionCode: region?.code?.value,
           countryId: countryId,
+          regionHeadName:RegionForm?.regionHeadName?.value,
+          regionHeadEcode:RegionForm?.regionHeadEcode?.value,
+          regionHeadEmail:RegionForm?.regionHeadEmail?.value,
           stateIds: ids,
           isActive: 1,
           updatedBy: loggedInUserId,
