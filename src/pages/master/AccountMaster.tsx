@@ -42,7 +42,7 @@ const AccountMaster = () => {
     },
     account_type: {
       inputType: "singleSelect",
-      label: "Account Type",
+      label: "Bank Account Type",
       options: [],
       value: null,
       validation: {
@@ -188,14 +188,14 @@ const AccountMaster = () => {
       ),
     },
     {
-      label: "Account Type",
+      label: "Bank Account Type",
       fieldName: "accountTypeName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "accountTypeName",
       changeFilter: true,
-      placeholder: "Account Type",
+      placeholder: "Bank Account Type",
       body: (rowData: any) => (
         <div>
           <span
