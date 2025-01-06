@@ -382,7 +382,7 @@ const TechMaster = () => {
         techSubgroupIds: techSubGroup?.id || null,
         description: TechForm?.description?.value,
         isActive: 1,
-        updatedBy: loggedInUserId,
+        updatedBy: loggedInUserId,  
       };
 
       if (!stateData?.id) {

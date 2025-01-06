@@ -17,10 +17,12 @@ import { CountryMasterService } from "../../services/masters/country-master/coun
 import { StateMasterService } from "../../services/masters/state-master/state.service";
 
 const CompanyAddressMaster = () => {
+  const [stateData, setStateData] = useState<any>();
   const CompanyLocationFormFields = {
     companyName: {
       inputType: "singleSelect",
       label: "Company",
+      disable:false,
       options: [],
       value: null,
       validation: {
@@ -86,7 +88,7 @@ const CompanyAddressMaster = () => {
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-  const [stateData, setStateData] = useState<any>();
+
   const [companyLocationFieldStructure, setCompanyLocationFieldStructure] =
     useState<any>(_.cloneDeep(CompanyLocationFormFields));
   const [CompanyLocationForm, setCompanyLocationForm] = useState<any>(
@@ -458,6 +460,7 @@ const CompanyAddressMaster = () => {
   const updateCompanyLocationMaster = async (data: any, stateNames: any[]) => {
     try {
       companyLocationFieldStructure.companyName.value = data?.companyName;
+      companyLocationFieldStructure.companyName.disable = true;
       companyLocationFieldStructure.country_name.value = data?.countryName;
       companyLocationFieldStructure.state_name.options = stateNames;
       companyLocationFieldStructure.state_name.value = data?.stateName;

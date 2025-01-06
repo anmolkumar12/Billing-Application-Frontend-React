@@ -13,8 +13,9 @@ import { FormType } from "../../schemas/FormField";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
 import { TechnologyMasterService } from "../../services/masters/technology-master/technology.service";
+import OemMasterService from "../../services/masters/oem-master/oemMaster.service";
 
-const TechMaster = () => {
+const OemMaster = () => {
   const OemFormFields = {
     oemName: {
       inputType: "inputtext",
@@ -34,16 +35,16 @@ const TechMaster = () => {
       },
       fieldWidth: "col-md-4",
     },
-    // group_name: {
-    //   inputType: "singleSelect",
-    //   label: "Technology Group",
-    //   options: [],
-    //   value: null,
-    //   validation: {
-    //     required: true,
-    //   },
-    //   fieldWidth: "col-md-4",
-    // },
+    type: {
+      inputType: "singleSelect",
+      label: "Type",
+      options: ['License','AMC'],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
     // subGroup_name: {
     //   inputType: "singleSelect",
     //   label: "Technology SubGroup",
@@ -65,28 +66,26 @@ const TechMaster = () => {
     //   rows: 3,
     // },
   };
-  const [techMaster, setTechMaster] = useState<any>([]);
-  const [techSubGroupMaster, setTechSubGroupMaster] = useState<any>([]);
-  const [techGroupMaster, setTechGroupMaster] = useState<any>([]);
+  const [OemMaster, setOemMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
+  const [rowData,setRowData] = useState<any>(null);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-  const [stateData, setStateData] = useState<any>();
-  const [techFieldsStructure, setTechFieldsStructure] = useState<any>(
+  const [oemFieldsStructure, setOemFieldStructure] = useState<any>(
     _.cloneDeep(OemFormFields)
   );
-  const [TechForm, setTechForm] = useState<any>(
-    _.cloneDeep(techFieldsStructure)
+  const [oemForm, setOemForm] = useState<any>(
+    _.cloneDeep(oemFieldsStructure)
   );
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
 
   const loggedInUserId = userInfo?.userId;
-  let patchData: any;
-  const technologyService = new TechnologyMasterService();
+  
+  const oemMasterService = new OemMasterService();
 
   const oemMasterColumns = [
     {
@@ -180,74 +179,76 @@ const TechMaster = () => {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      await getTechMaster();
-      const techGroups = await getTechGroupMaster();
-      await formatGroupDetails(techGroups);
-    };
-    if (storeFormPopup == false && showConfirmDialogue == false) {
-      fetchData();
-    }
-  }, [storeFormPopup, showConfirmDialogue]);
+   getOemMaster();
+  }, []);
 
-  const getTechMaster = async () => {
-   
+  const getOemMaster = async () => {
+   try {
+    const response = await oemMasterService.getOemMasterData();
+    if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+      setOemMaster(response.oems);
+     }
+   } catch (error:any) {
+    ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
+   }
   };
 
-  const getTechSubGroupMaster = async (techGroupId: any) => {
-    // setLoader(true);
- 
-  };
-
-  const getTechGroupMaster = async () => {
-   
-  };
-
-  const formatSubGroupDetails = async (
-    techSubGroups: any = techSubGroupMaster,
-    techGroupId: any
-  ) => {
-    
-  };
-
-  const formatGroupDetails = async (techGroups: any = techGroupMaster) => {
-  
-  };
 
   const openSaveForm = async () => {
     setFormPopup(true);
+    setRowData(null);
   };
 
-  const modifyFormTechGroup = async (selectGroup: any) => {
-   
-  };
 
-  const techFormHandler = async (form: FormType) => {
-    
+
+  const oemFormHandler = async (form: FormType) => {
+    const updatedForm = {...form}
+    setOemForm(updatedForm);
   };
 
   const onUpdate = async (data: any) => {
-    setStateData(data);
-    const subGroupList = await modifyFormTechGroup(data?.techGroupNames);
-    updateTechMaster(data, subGroupList);
-    setFormPopup(true);
+      setRowData(data);
+      oemFieldsStructure.oemName.value = data?.oemName;
+      oemFieldsStructure.productName.value = data?.productName;
+      oemFieldsStructure.type.value = data.type || "";
+      setOemForm(_.cloneDeep(oemFieldsStructure));
+      setFormPopup(true);
   };
 
   const onPopUpClose = (e?: any) => {
     setShowConfirmDialogue(false);
   };
 
-  const updateTechMaster = (data: any, subGroupList: any) => {
+  const updateOemMaster = async (event: FormEvent) => {
     
   };
 
-  const createNewTech = (event: FormEvent) => {
+  const createNewOem = async (event: FormEvent) => {
     event.preventDefault();
-    
+    const obj:any = {
+      oemName: oemForm?.oemName?.value,
+      productName: oemForm?.productName?.value,
+      type:oemForm?.type.value,
+      isActive: 1,
+      updatedBy: loggedInUserId,  
+    };
+    if( rowData && rowData?.id){
+      obj['id'] = rowData.id
+    }
+    try {
+      const response = await oemMasterService.createOemMasterData(obj);
+       if (response?.statusCode === HTTP_RESPONSE.CREATED ||response?.statusCode === HTTP_RESPONSE.SUCCESS ) {
+                    closeFormPopup();
+                    getOemMaster();
+                    ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+           }
+               
+    } catch (error:any) {
+      ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
+    } 
   };
 
   const onDelete = (data: any) => {
-    patchData = data;
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
@@ -256,22 +257,23 @@ const TechMaster = () => {
           ? "activate"
           : "deactivate"
       } this record?`,
-      acceptFunction: confirmDelete,
+      acceptFunction: () => confirmDelete(data),
       rejectFunction: onPopUpClose,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (rowData:any) => {
     setLoader(true);
-    technologyService
-      .deactivateTechnologyMaster({ ...patchData, loggedInUserId })
+    oemMasterService
+      .activateDeactivateOemMaster({ id:rowData.id,isActive:rowData.isActive == 0?1:0 ,loggedInUserId:loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
+        getOemMaster();
         ToasterService.show(
-          `Technology record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Oem record ${
+            rowData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -284,9 +286,9 @@ const TechMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
-    setStateData({});
-    setTechFieldsStructure(_.cloneDeep(OemFormFields));
-    setTechForm(_.cloneDeep(OemFormFields));
+    setRowData(null);
+    setOemFieldStructure(_.cloneDeep(OemFormFields));
+    setOemForm(_.cloneDeep(OemFormFields));
   };
   return loader ? (
     <Loader />
@@ -308,7 +310,7 @@ const TechMaster = () => {
       </div>
       <p className="m-0">
         <DataTableBasicDemo
-          data={techMaster}
+          data={OemMaster}
           column={oemMasterColumns}
           showGridlines={true}
           resizableColumns={true}
@@ -337,7 +339,7 @@ const TechMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New OEM</h4>
+                <h4 className="popup-heading">{rowData?`Update`:`Add New`} OEM</h4>
               </div>
               <div
                 className="popup-right-close"
@@ -350,8 +352,8 @@ const TechMaster = () => {
             </div>
             <div className="popup-content" style={{ padding: "1rem 2rem" }}>
               <FormComponent
-                form={techFieldsStructure}
-                formUpdateEvent={techFormHandler}
+                form={oemFieldsStructure}
+                formUpdateEvent={oemFormHandler}
                 isFormValidFlag={isFormValid}
               ></FormComponent>
             </div>
@@ -361,7 +363,7 @@ const TechMaster = () => {
                 label="Submit"
                 icon="pi pi-check"
                 iconPos="right"
-                submitEvent={createNewTech}
+                submitEvent={createNewOem}
               />
             </div>
           </div>
@@ -371,4 +373,4 @@ const TechMaster = () => {
   );
 };
 
-export default TechMaster;
+export default OemMaster;

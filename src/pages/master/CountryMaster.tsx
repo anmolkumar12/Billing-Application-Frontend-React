@@ -39,7 +39,7 @@ const CountryMaster = () => {
       label: "Language",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -48,7 +48,7 @@ const CountryMaster = () => {
       label: "Phone Code",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },

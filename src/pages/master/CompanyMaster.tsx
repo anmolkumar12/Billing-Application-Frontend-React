@@ -19,6 +19,7 @@ import { ImageUrl } from "../../utils/ImageUrl";
 import { CountryMasterService } from "../../services/masters/country-master/country.service";
 
 const CompanyMaster = () => {
+  const [stateData, setStateData] = useState<any>();
   const CompanyFormFields: FormType = {
     companyName: {
       inputType: "inputtext",
@@ -72,9 +73,10 @@ const CompanyMaster = () => {
     parent_comp: {
       inputType: "singleSelect",
       label: "Parent Company",
-      disable: false,
+
       options: [],
       value: null,
+      disable:stateData?.id?true:false,
       validation: {
         required: true,
       },
@@ -102,7 +104,7 @@ const CompanyMaster = () => {
   const [digitalSign, setDigitalSign]: any = useState([]);
   const [logoUrl,setLogoUrl] = useState('');
   const [signatureUrl,setSignatureUrl] = useState('');
-  const [stateData, setStateData] = useState<any>();
+ 
   const [companyFieldStructure, setCompanyFieldStructure] = useState<any>(
     _.cloneDeep(CompanyFormFields)
   );

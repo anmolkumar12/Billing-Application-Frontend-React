@@ -426,24 +426,42 @@ const AccountMaster = () => {
   };
 
   const accountFormHandler = async (form: FormType) => {
-    if (form?.companyName?.value != AccountForm?.companyName?.value) {
+    // Clone the form to ensure immutability
+    const updatedForm = _.cloneDeep(form);
+  
+    console.log("we are there", updatedForm);
+  
+    console.log(
+      "Company Name --->",
+      updatedForm?.companyName?.value,
+      AccountForm?.companyName?.value
+    );
+  
+    if (updatedForm?.companyName?.value !== AccountForm?.companyName?.value) {
       const selectedCompany = companyMaster?.find(
-        (item: any) => item?.companyName == form?.companyName?.value
+        (item: any) =>
+          item?.companyName === updatedForm?.companyName?.value
       );
+  
       const selectedCountry = countryMaster?.find(
-        (item: any) => item?.name == selectedCompany?.countryName
+        (item: any) => item?.name === selectedCompany?.countryName
       );
+  
       if (selectedCountry) {
-        form.country_name.value = selectedCompany?.countryName;
+        updatedForm.country_name.value = selectedCompany?.countryName;
+  
         const accountTypes = accountTypeMaster
           ?.filter(
-            (type: any) => type?.countryName == selectedCompany?.countryName
+            (type: any) => type?.countryName === selectedCompany?.countryName
           )
           ?.map((item: any) => item?.accountTypeName);
-        form.account_type.options = accountTypes;
+  
+        updatedForm.account_type.options = accountTypes;
+  
         const addressDetails = JSON.parse(
           selectedCountry?.bankAccAdditionalFields
         );
+  
         const detailsForm = Object.keys(addressDetails)?.reduce(
           (acc: any, item: any, index: any) => {
             acc[index] = {
@@ -459,11 +477,15 @@ const AccountMaster = () => {
           },
           {}
         );
+  
         setAdditionalDetailsForm(detailsForm);
       }
     }
-    setAccountForm(form);
+  
+    // Update the state with the cloned and modified form
+    setAccountForm(updatedForm);
   };
+  
 
   const additionalDetailsFormHandler = async (form: FormType) => {
     setAdditionalDetailsForm(form);

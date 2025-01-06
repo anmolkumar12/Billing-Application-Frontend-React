@@ -29,6 +29,7 @@ export const APIURLS = {
   GET_CLIENT_MASTER: '/api/masters/clientsList',
   GET_CLIENT_BILL_TO_MASTER: '/api/masters/getClientBillingInfo',
   GET_CLIENT_SHIP_TO_MASTER: '/api/masters/getClientShippingInfo',
+  GET_OEM_MASTER: '/api/masters/getOEMs',
   GET_CONTRACT_MASTER: '/api/masters/',
   TOGGLE_COUNTRY: '/api/masters/activateDeactivateCountry',
   TOGGLE_STATE_STATUS: '/api/masters/activateDeactivateState',
@@ -66,6 +67,7 @@ export const APIURLS = {
   CREATE_INDUSTRY_GROUP_MASTER: '/api/masters/createGroupIndustry',
   CREATE_INDUSTRY_HEAD_MASTER: '/api/masters/createIndustryHead',
   CREATE_SALES_MASTER: '/api/masters/createSalesManager',
+  CREATE_OEM_MASTER: '/api/masters/createOEM',
   CREATE_ACCOUNT_MANAGER_MASTER: '/api/masters/createAccountManager',
   CREATE_TECHNOLOGY_GROUP_MASTER: '/api/masters/createTechnologyGroup',
   CREATE_TECHNOLOGY_SUBGROUP_MASTER: '/api/masters/createTechnologySubgroup',
@@ -101,7 +103,12 @@ export const APIURLS = {
   UPDATE_CLIENT_MASTER: '/api/masters/updateClientDetails',
   UPDATE_CLIENT_BILL_TO_MASTER: '/api/masters/updateClientBillingInfo',
   UPDATE_CLIENT_SHIP_TO_MASTER: '/api/masters/updateClientShippingInfo',
+  UPDATE_OEM_MASTER: '/api/masters/updateOEM',
   UPDATE_CONTRACT_MASTER: '/api/masters/',
+
+  // Activate DEACTIVAE
+  TOGGLE_OEM_STATUS:'/api/masters/activateDeactivateOEM',
+
   LOGOUT: 'logout',
   LOGOUT_ALL: 'logout/all',
   COUNTRY: 'masters/countries',
@@ -174,4 +181,5 @@ export const APIURLS = {
   VIEW_COMPANY_LOGO: 'aggregatorUser/logo',
   PENDING_INVOICES: 'vegaPro/wallet/pendingInvoice',
   DEACTIVATE_CLIENTS: 'vegaPro/aggregator/deactivateClient',
+ 
 }
