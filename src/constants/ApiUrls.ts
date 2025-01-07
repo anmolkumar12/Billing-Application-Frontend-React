@@ -30,6 +30,17 @@ export const APIURLS = {
   GET_CLIENT_BILL_TO_MASTER: '/api/masters/getClientBillingInfo',
   GET_CLIENT_SHIP_TO_MASTER: '/api/masters/getClientShippingInfo',
   GET_OEM_MASTER: '/api/masters/getOEMs',
+  // POLESTAR PRODUCT 
+  GET_POLESTAR_PRODUCT_MASTER:'/api/masters/getPoleStarProducts',
+  CREATE_POLESTAR_PRODUCT_MASTER:'/api/masters/createPoleStarProduct',
+  UPDATE_POLESTAR_PRODUCT_MASTER:'/api/masters/updatePoleStarProduct',
+  TOGGLE_POLESTAR_PRODUCT_MASTER_STATUS:'/api/masters/activateDeactivatePoleStarProduct',
+  // PROJECT SERVICE
+  GET_PROJECT_SERVICE_MASTER:'/api/masters/getProjectService',
+  CREATE_PROJECT_SERVICE_MASTER:'/api/masters/createProjectService',
+  UPDATE_PROJECT_SERVICE_MASTER:'/api/masters/updateProjectService',
+  TOGGLE_PROJECT_SERVICE_MASTER_STATUS:'/api/masters/activateDeactivateProjectService',
+
   GET_CONTRACT_MASTER: '/api/masters/',
   TOGGLE_COUNTRY: '/api/masters/activateDeactivateCountry',
   TOGGLE_STATE_STATUS: '/api/masters/activateDeactivateState',

@@ -219,9 +219,7 @@ const OemMaster = () => {
     setShowConfirmDialogue(false);
   };
 
-  const updateOemMaster = async (event: FormEvent) => {
-    
-  };
+
 
   const createNewOem = async (event: FormEvent) => {
     event.preventDefault();

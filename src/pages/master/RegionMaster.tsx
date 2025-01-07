@@ -54,7 +54,17 @@ const RegionMaster = () => {
         required: true,
       },
       fieldWidth: "col-md-4",
+    },
+    fromDate: {
+      inputType: "singleDatePicker",
+      label: "From Date",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
     }
+    
   };
   const [statesList,setStatesList] = useState<any>([]);
   const StateSelectionFormFields = {
@@ -252,6 +262,30 @@ const RegionMaster = () => {
             // data-pr-tooltip={rowData.regionHeadEmail}
           >
             {rowData.regionHeadEmail}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "From Date",
+      fieldName: "fromDate",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "fromDate",
+      changeFilter: true,
+      placeholder: "From Date",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.fromDate}
+          >
+            {rowData.fromDate}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -491,6 +525,7 @@ const RegionMaster = () => {
       regionFieldsStructure.regionHeadName.value = data?.regionHeadName;
       regionFieldsStructure.regionHeadEcode.value = data?.regionHeadEcode;
       regionFieldsStructure.regionHeadEmail.value = data?.regionHeadEmail;
+      regionFieldsStructure.fromDate.value = data?.fromDate;
 
       setRegionForm(_.cloneDeep(regionFieldsStructure));
       const stateForm: any = [];
@@ -561,6 +596,7 @@ const RegionMaster = () => {
         companyValidityFlag = companyValidityFlag && item.valid;
       }
     });
+    console.log('companyValidityForm------> first',companyValidityFlag);
 
     if (StateSelectionForm?.length > 0) {
       console.log("here StateSelectionForm", StateSelectionForm);
@@ -588,6 +624,7 @@ const RegionMaster = () => {
       ToasterService.show("Assign Region to all States", CONSTANTS.ERROR);
       return;
     }
+    console.log('companyValidityForm------>',companyValidityFlag);
 
     setIsFormValid(companyValidityFlag);
 
@@ -614,6 +651,7 @@ const RegionMaster = () => {
           regionHeadName:RegionForm?.regionHeadName?.value,
           regionHeadEcode:RegionForm?.regionHeadEcode?.value,
           regionHeadEmail:RegionForm?.regionHeadEmail?.value,
+          fromDate:new Date(RegionForm?.fromDate?.value),
           stateIds: ids,
           isActive: 1,
           updatedBy: loggedInUserId,

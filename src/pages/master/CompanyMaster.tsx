@@ -853,8 +853,10 @@ const CompanyMaster = () => {
                 isFormValidFlag={isFormValid}
               ></FormComponent>
               {/* attachment */}
+              <div className="row">
+              <div className="col-md-6">
               <div className={classes["upload-wrapper"]}>
-                <div className="row">
+                <div className="row pd-10">
                   <div
                     className={`col-md-12 ${classes["addition-field-header"]}`}
                   >
@@ -909,8 +911,10 @@ const CompanyMaster = () => {
                   </div>
                 </div>
               </div>
+              </div>
+              <div className="col-md-6">
               <div className={classes["upload-wrapper"]}>
-                <div className="row">
+                <div className="row pd-10">
                   <div
                     className={`col-md-12 ${classes["addition-field-header"]}`}
                   >
@@ -967,6 +971,8 @@ const CompanyMaster = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+              </div>
               </div>
               {/* attachment */}
             </div>

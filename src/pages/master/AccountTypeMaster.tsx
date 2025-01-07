@@ -388,7 +388,7 @@ const AccountTypeMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New State</h4>
+                <h4 className="popup-heading">Add New Account Type</h4>
               </div>
               <div
                 className="popup-right-close"

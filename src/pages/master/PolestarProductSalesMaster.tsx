@@ -12,7 +12,8 @@ import { CONSTANTS } from "../../constants/Constants";
 import { FormType } from "../../schemas/FormField";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
-import { TechnologyMasterService } from "../../services/masters/technology-master/technology.service";
+
+import PolestarProductMasterService from "../../services/masters/polestar-product-master/polestarProductMaster.service";
 
 const PolestarProductSalesMaster = () => {
   const formObj = {
@@ -39,22 +40,21 @@ const PolestarProductSalesMaster = () => {
   const [PolestarProductSalesMaster, setPolestarProductSalesMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [rowData,setRowData] = useState<any>({});
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-  const [techFieldsStructure, setTechFieldsStructure] = useState<any>(
+  const [formObjState, setFormObjState] = useState<any>(
     _.cloneDeep(formObj)
   );
-  const [TechForm, setTechForm] = useState<any>(
-    _.cloneDeep(techFieldsStructure)
-  );
+
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
 
   const loggedInUserId = userInfo?.userId;
   let patchData: any;
-  const technologyService = new TechnologyMasterService();
+  const polestarProductService = new PolestarProductMasterService();
 
   const polestarProductSalesColumns = [
     {
@@ -152,23 +152,34 @@ const PolestarProductSalesMaster = () => {
   }, []);
 
   const getPolestarProductSalesMaster = async () => {
+    try {
+      const response = await polestarProductService.getPolestarProductMasterData();
+       if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+                    closeFormPopup();
+                    setPolestarProductSalesMaster(response.products);
+                    // ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+           }
+               
+    } catch (error:any) {
+      ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
+    }
    
   };
 
- 
-
   const openSaveForm = async () => {
-    setFormPopup(true);
+    setRowData(null);
+    setFormPopup(true);  
   };
 
 
 
   const polestarProductHandler = async (form: FormType) => {
     const updatedForm = {...form}
-    setPolestarProductSalesMaster(updatedForm);
+    setFormObjState(updatedForm);
   };
 
   const onUpdate = async (data: any) => {
+    setRowData(data);
     updatePolestarProductSalesMaster(data);
     setFormPopup(true);
   };
@@ -178,16 +189,39 @@ const PolestarProductSalesMaster = () => {
   };
 
   const updatePolestarProductSalesMaster = (data: any) => {
+    formObjState.productName.value = data.productName;
+    formObjState.description.value = data.description;
     
   };
 
-  const createNewTech = (event: FormEvent) => {
+  const createNewRecord = async (event: FormEvent) => {
     event.preventDefault();
+        const obj:any = {
+          productName: formObjState?.productName?.value,
+          description:formObjState?.description.value,
+          isActive: 1,
+          updatedBy: loggedInUserId,  
+        };
+        if( rowData && rowData?.id){
+          obj['id'] = rowData.id
+        }
+        try {
+          const response = await polestarProductService.createPolestarProductMasterData(obj);
+           if (response?.statusCode === HTTP_RESPONSE.CREATED ||response?.statusCode === HTTP_RESPONSE.SUCCESS ) {
+                        closeFormPopup();
+                        getPolestarProductSalesMaster();
+                        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+               }
+                   
+        } catch (error:any) {
+          ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
+        }
+    
     
   };
 
   const onDelete = (data: any) => {
-    patchData = data;
+    
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
@@ -196,22 +230,23 @@ const PolestarProductSalesMaster = () => {
           ? "activate"
           : "deactivate"
       } this record?`,
-      acceptFunction: confirmDelete,
+      acceptFunction: () => confirmDelete(data),
       rejectFunction: onPopUpClose,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (data:any) => {
     setLoader(true);
-    technologyService
-      .deactivateTechnologyMaster({ ...patchData, loggedInUserId })
+    polestarProductService
+      .activateDeactivatePolestarProductMaster( { id:data.id,isActive:data.isActive == 0?1:0 ,loggedInUserId:loggedInUserId })
       .then(() => {
         setLoader(false);
+        getPolestarProductSalesMaster();
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Technology record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Polestar product record ${
+            data?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -224,8 +259,7 @@ const PolestarProductSalesMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
-    setTechFieldsStructure(_.cloneDeep(formObj));
-    setTechForm(_.cloneDeep(formObj));
+    setFormObjState(_.cloneDeep(formObj));
   };
   return loader ? (
     <Loader />
@@ -276,7 +310,7 @@ const PolestarProductSalesMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Product</h4>
+                <h4 className="popup-heading">{rowData?'Update':`Add New`} Product</h4>
               </div>
               <div
                 className="popup-right-close"
@@ -289,7 +323,7 @@ const PolestarProductSalesMaster = () => {
             </div>
             <div className="popup-content" style={{ padding: "1rem 2rem" }}>
               <FormComponent
-                form={techFieldsStructure}
+                form={_.cloneDeep(formObjState)}
                 formUpdateEvent={polestarProductHandler}
                 isFormValidFlag={isFormValid}
               ></FormComponent>
@@ -300,7 +334,7 @@ const PolestarProductSalesMaster = () => {
                 label="Submit"
                 icon="pi pi-check"
                 iconPos="right"
-                submitEvent={createNewTech}
+                submitEvent={createNewRecord}
               />
             </div>
           </div>

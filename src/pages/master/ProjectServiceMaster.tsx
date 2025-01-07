@@ -12,33 +12,14 @@ import { CONSTANTS } from "../../constants/Constants";
 import { FormType } from "../../schemas/FormField";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
-import { TechnologyMasterService } from "../../services/masters/technology-master/technology.service";
 
-const TechMaster = () => {
-  const TechFormFields = {
-    techName: {
+import ProjectServiceMasterService from "../../services/masters/project-service-master/projectServiceMaster.service";
+
+const ProjectServiceMaster = () => {
+  const formObj = {
+    name: {
       inputType: "inputtext",
-      label: "Technology Name",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-4",
-    },
-    group_name: {
-      inputType: "singleSelect",
-      label: "Technology Group",
-      options: [],
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-4",
-    },
-    subGroup_name: {
-      inputType: "singleSelect",
-      label: "Technology SubGroup",
-      options: [],
+      label: "Name",
       value: null,
       validation: {
         required: true,
@@ -46,40 +27,34 @@ const TechMaster = () => {
       fieldWidth: "col-md-4",
     },
     description: {
-      inputType: "inputtextarea",
+      inputType: "inputtext",
       label: "Description",
       value: null,
       validation: {
-        required: false,
+        required: true,
       },
-      fieldWidth: "col-md-12",
-      rows: 3,
-    },
+      fieldWidth: "col-md-4",
+    }
   };
-  const [techMaster, setTechMaster] = useState<any>([]);
-  const [techSubGroupMaster, setTechSubGroupMaster] = useState<any>([]);
-  const [techGroupMaster, setTechGroupMaster] = useState<any>([]);
+
+  const [projectServiceMaster, setProjectServiceMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [rowData, setRowData] = useState<any>({});
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-  const [stateData, setStateData] = useState<any>();
-  const [techFieldsStructure, setTechFieldsStructure] = useState<any>(
-    _.cloneDeep(TechFormFields)
-  );
-  const [TechForm, setTechForm] = useState<any>(
-    _.cloneDeep(techFieldsStructure)
+  const [formObjState, setFormObjState] = useState<any>(
+    _.cloneDeep(formObj)
   );
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
 
   const loggedInUserId = userInfo?.userId;
-  let patchData: any;
-  const technologyService = new TechnologyMasterService();
+  const projectService = new ProjectServiceMasterService();
 
-  const TechMasterColumns = [
+  const projectServiceColumns = [
     {
       label: "Action",
       fieldName: "action",
@@ -105,74 +80,20 @@ const TechMaster = () => {
       ),
     },
     {
-      label: "Technology Name",
-      fieldName: "techName",
+      label: "Name",
+      fieldName: "name",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "techName",
+      fieldValue: "name",
       changeFilter: true,
-      placeholder: "Technology Name",
+      placeholder: "Name",
       body: (rowData: any) => (
         <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techName}
-          >
-            {rowData.techName}
+          <span id={`nameTooltip-${rowData.id}`}>
+            {rowData.name}
           </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Technology Group",
-      fieldName: "techGroupNames",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "techGroupNames",
-      changeFilter: true,
-      placeholder: "Technology Group",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techGroupNames}
-          >
-            {rowData.techGroupNames}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Technology SubGroup Name",
-      fieldName: "techSubgroupNames",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "techSubgroupNames",
-      changeFilter: true,
-      placeholder: "Technology SubGroup Name",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techSubgroupNames}
-          >
-            {rowData.techSubgroupNames}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
+          <Tooltip target={`#nameTooltip-${rowData.id}`} position="top" />
         </div>
       ),
     },
@@ -180,25 +101,17 @@ const TechMaster = () => {
       label: "Description",
       fieldName: "description",
       textAlign: "left",
-      frozen: false,
       sort: true,
       filter: true,
+      fieldValue: "description",
+      changeFilter: true,
+      placeholder: "Description",
       body: (rowData: any) => (
         <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.description != null &&
-            rowData.description != "null" &&
-            rowData.description != ""
-              ? rowData.description
-              : "NA"}
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {rowData.description}
           </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
       ),
     },
@@ -220,114 +133,34 @@ const TechMaster = () => {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      await getTechMaster();
-      const techGroups = await getTechGroupMaster();
-      await formatGroupDetails(techGroups);
-    };
-    if (storeFormPopup == false && showConfirmDialogue == false) {
-      fetchData();
-    }
-  }, [storeFormPopup, showConfirmDialogue]);
+    getProjectServiceMaster();
+  }, []);
 
-  const getTechMaster = async () => {
-    setLoader(true);
+  const getProjectServiceMaster = async () => {
     try {
-      const response = await technologyService.getTechnologyMaster();
-      setTechMaster(response?.subgroups);
-      return response?.subgroups;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoader(false);
+      const response = await projectService.getProjectServiceMasterData();
+      if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+        closeFormPopup();
+        setProjectServiceMaster(response.records);
+      }
+    } catch (error: any) {
+      ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
     }
-  };
-
-  const getTechSubGroupMaster = async (techGroupId: any) => {
-    // setLoader(true);
-    try {
-      const response = await technologyService.getTechnologySubGroupMaster(
-        techGroupId
-      );
-      setTechSubGroupMaster(response?.subgroups);
-      await formatSubGroupDetails(response?.subgroups, techGroupId);
-      return response?.subgroups;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      //   setLoader(false);
-    }
-  };
-
-  const getTechGroupMaster = async () => {
-    setLoader(true);
-    try {
-      const response = await technologyService.getTechnologyGroupMaster();
-      setTechGroupMaster(response?.groups);
-      return response?.groups;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoader(false);
-    }
-  };
-
-  const formatSubGroupDetails = async (
-    techSubGroups: any = techSubGroupMaster,
-    techGroupId: any
-  ) => {
-    const subGrouplist = techSubGroups
-      ?.filter((item: any) => item?.techGroupIds == techGroupId)
-      ?.map((subGroup: any) => subGroup?.name);
-    techFieldsStructure.subGroup_name.options = subGrouplist;
-    setTechFieldsStructure(techFieldsStructure);
-  };
-
-  const formatGroupDetails = async (techGroups: any = techGroupMaster) => {
-    const grouplist = techGroups.map((group: any) => group?.name);
-    techFieldsStructure.group_name.options = grouplist;
-    setTechFieldsStructure(techFieldsStructure);
-    await techFormHandler(techFieldsStructure);
   };
 
   const openSaveForm = async () => {
+    setRowData(null);
     setFormPopup(true);
   };
 
-  const modifyFormTechGroup = async (selectGroup: any) => {
-    const groups = techGroupMaster?.find(
-      (group: any) => group?.name === selectGroup
-    );
-    if (groups) {
-      const subGroups = await getTechSubGroupMaster(groups?.id);
-      const subGroupList = subGroups
-        ?.filter((item: any) => item?.techGroupIds == groups?.id)
-        .map((subGroup: any) => subGroup?.name);
-      return subGroupList;
-    }
-    return [];
-  };
-
-  const techFormHandler = async (form: FormType) => {
-    const updatedForm = {...form}
-    const techGroupAreUnequal =
-      updatedForm?.group_name?.value !== TechForm?.group_name?.value;
-    console.log("here techGroupAreUnequal", techGroupAreUnequal);
-
-    if (techGroupAreUnequal) {
-      const subGroupList = await modifyFormTechGroup(updatedForm?.group_name?.value);
-      if (subGroupList) {
-        updatedForm.subGroup_name.options = subGroupList;
-        updatedForm.subGroup_name.value = null;
-      }
-    }
-    setTechForm(updatedForm);
+  const projectServiceHandler = async (form: FormType) => {
+    const updatedForm = { ...form };
+    setFormObjState(updatedForm);
   };
 
   const onUpdate = async (data: any) => {
-    setStateData(data);
-    const subGroupList = await modifyFormTechGroup(data?.techGroupNames);
-    updateTechMaster(data, subGroupList);
+    setRowData(data);
+    updateProjectServiceMaster(data);
     setFormPopup(true);
   };
 
@@ -335,92 +168,35 @@ const TechMaster = () => {
     setShowConfirmDialogue(false);
   };
 
-  const updateTechMaster = (data: any, subGroupList: any) => {
-    try {
-      console.log("here data", data);
-      console.log("here subGroupList", subGroupList);
-
-      techFieldsStructure.techName.value = data?.techName;
-      techFieldsStructure.group_name.value = data?.techGroupNames;
-      techFieldsStructure.subGroup_name.options = subGroupList;
-      techFieldsStructure.subGroup_name.value = data?.techSubgroupNames;
-      techFieldsStructure.description.value =
-        data?.description != null && data?.description != "null"
-          ? data?.description
-          : "";
-      setTechForm(_.cloneDeep(techFieldsStructure));
-    } catch (error) {
-      console.log("error", error);
-    }
+  const updateProjectServiceMaster = (data: any) => {
+    formObjState.name.value = data.name;
+    formObjState.description.value = data.description;
   };
 
-  const createNewTech = (event: FormEvent) => {
+  const createNewRecord = async (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
-
-    _.each(TechForm, (item: any) => {
-      if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+    const obj: any = {
+      name: formObjState?.name?.value,
+      description: formObjState?.description.value,
+      isActive: 1,
+      updatedBy: loggedInUserId,
+    };
+    if (rowData && rowData?.id) {
+      obj['id'] = rowData.id;
+    }
+    try {
+      const response = await projectService.createProjectServiceMasterData(obj);
+      if (response?.statusCode === HTTP_RESPONSE.CREATED || response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+        closeFormPopup();
+        getProjectServiceMaster();
+        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
       }
-    });
-
-    setIsFormValid(companyValidityFlag);
-
-    if (companyValidityFlag) {
-      const techGroup = techGroupMaster?.find(
-        (group: any) => group?.name == TechForm?.group_name?.value
-      );
-      const techSubGroup = techSubGroupMaster?.find(
-        (subGroup: any) => subGroup?.name == TechForm?.subGroup_name?.value
-      );
-      const obj = {
-        techName: TechForm?.techName?.value,
-        techGroupIds: techGroup?.id || null,
-        techSubgroupIds: techSubGroup?.id || null,
-        description: TechForm?.description?.value,
-        isActive: 1,
-        updatedBy: loggedInUserId,
-      };
-
-      if (!stateData?.id) {
-        technologyService
-          .createTechnologyMaster(obj)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      } else {
-        const updatePayload = { ...obj, id: stateData?.id };
-        technologyService
-          .updateTechnologyMaster(updatePayload)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-              setStateData({});
-              closeFormPopup();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      }
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    } catch (error: any) {
+      ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
     }
   };
 
   const onDelete = (data: any) => {
-    patchData = data;
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
@@ -429,23 +205,22 @@ const TechMaster = () => {
           ? "activate"
           : "deactivate"
       } this record?`,
-      acceptFunction: confirmDelete,
+      acceptFunction: () => confirmDelete(data),
       rejectFunction: onPopUpClose,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (data: any) => {
     setLoader(true);
-    technologyService
-      .deactivateTechnologyMaster({ ...patchData, loggedInUserId })
+    projectService
+      .activateDeactivateProjectServiceMaster({ id: data.id, isActive: data.isActive == 0 ? 1 : 0, loggedInUserId: loggedInUserId })
       .then(() => {
         setLoader(false);
+        getProjectServiceMaster();
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Technology record ${
-            patchData?.isActive ? "deactivated" : "activated"
-          } successfully`,
+          `Project service record ${data?.isActive ? "deactivated" : "activated"} successfully`,
           CONSTANTS.SUCCESS
         );
       })
@@ -457,12 +232,12 @@ const TechMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
-    setStateData({});
-    setTechFieldsStructure(_.cloneDeep(TechFormFields));
-    setTechForm(_.cloneDeep(TechFormFields));
+    setFormObjState(_.cloneDeep(formObj));
   };
+
   return loader ? (
     <Loader />
+
   ) : (
     <>
       <div
@@ -473,7 +248,7 @@ const TechMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Technology"
+          label="Add New Project Service"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}
@@ -481,8 +256,8 @@ const TechMaster = () => {
       </div>
       <p className="m-0">
         <DataTableBasicDemo
-          data={techMaster}
-          column={TechMasterColumns}
+          data={projectServiceMaster}
+          column={projectServiceColumns}
           showGridlines={true}
           resizableColumns={true}
           rows={20}
@@ -510,7 +285,7 @@ const TechMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Technology</h4>
+                <h4 className="popup-heading">{rowData?'Update':`Add New`} Product</h4>
               </div>
               <div
                 className="popup-right-close"
@@ -523,8 +298,8 @@ const TechMaster = () => {
             </div>
             <div className="popup-content" style={{ padding: "1rem 2rem" }}>
               <FormComponent
-                form={techFieldsStructure}
-                formUpdateEvent={techFormHandler}
+                form={_.cloneDeep(formObjState)}
+                formUpdateEvent={projectServiceHandler}
                 isFormValidFlag={isFormValid}
               ></FormComponent>
             </div>
@@ -534,7 +309,7 @@ const TechMaster = () => {
                 label="Submit"
                 icon="pi pi-check"
                 iconPos="right"
-                submitEvent={createNewTech}
+                submitEvent={createNewRecord}
               />
             </div>
           </div>
@@ -544,4 +319,4 @@ const TechMaster = () => {
   );
 };
 
-export default TechMaster;
+export default ProjectServiceMaster;
