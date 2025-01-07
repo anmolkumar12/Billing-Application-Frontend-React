@@ -28,7 +28,7 @@ const CompanyMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     country_name: {
       inputType: "singleSelect",
@@ -38,7 +38,7 @@ const CompanyMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     Website: {
       inputType: "inputtext",
@@ -47,7 +47,7 @@ const CompanyMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     Email: {
       inputType: "inputtext",
@@ -56,7 +56,7 @@ const CompanyMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
   };
 

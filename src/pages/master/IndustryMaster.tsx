@@ -18,7 +18,7 @@ const IndustryMaster = () => {
   const IndustryFormFields = {
     industryName: {
       inputType: "inputtext",
-      label: "Industry Name",
+      label: "Sub-Industry Name",
       value: null,
       validation: {
         required: true,
@@ -84,8 +84,8 @@ const IndustryMaster = () => {
       ),
     },
     {
-      label: "Industry Name",
-      fieldName: "industryName",
+      label: "Sub-Industry",
+      fieldName: "Sub-Industry",
       textAlign: "left",
       sort: true,
       filter: true,
@@ -344,7 +344,7 @@ const IndustryMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Industry"
+          label="Add New Sub-Industry"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}
@@ -381,7 +381,7 @@ const IndustryMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Industry</h4>
+                <h4 className="popup-heading">Add New Sub-Industry</h4>
               </div>
               <div
                 className="popup-right-close"

@@ -4171,10 +4171,10 @@ const Master: React.FC = () => {
         <TabPanel header="Bank Accounts">
           <AccountMaster />
         </TabPanel>
-        <TabPanel header="Production Type">
+        {/* <TabPanel header="Production Type">
           <ProductionTypeMaster />
-        </TabPanel>
-        <TabPanel header="Industry">
+        </TabPanel> */}
+        <TabPanel header="Sub-Industry">
           <IndustryMaster />
         </TabPanel>
         <TabPanel header="Industry Group">
