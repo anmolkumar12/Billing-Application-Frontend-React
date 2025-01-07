@@ -398,7 +398,8 @@ const CompanyAddressMaster = () => {
     setFormPopup(true);
   };
 
-  const companyLocationFormHandler = async (form: FormType) => {
+  const companyLocationFormHandler = async (currentForm: FormType) => {
+       const form = _.cloneDeep(currentForm);
     if (form?.companyName?.value != CompanyLocationForm?.companyName?.value) {
       const selectedCompany = companyMaster?.find(
         (item: any) => item?.companyName == form?.companyName?.value

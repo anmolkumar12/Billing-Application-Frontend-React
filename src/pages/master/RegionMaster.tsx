@@ -56,6 +56,7 @@ const RegionMaster = () => {
       fieldWidth: "col-md-4",
     }
   };
+  const [statesList,setStatesList] = useState<any>([]);
   const StateSelectionFormFields = {
     name: {
       inputType: "inputtext",
@@ -79,7 +80,7 @@ const RegionMaster = () => {
     state_name: {
       inputType: "multiSelect",
       label: "State",
-      options: [],
+      options: statesList,
       value: null,
       validation: {
         required: true,
@@ -179,6 +180,78 @@ const RegionMaster = () => {
             // data-pr-tooltip={rowData.regionCode}
           >
             {rowData.regionCode}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Region Head Name",
+      fieldName: "regionHeadName",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "regionHeadName",
+      changeFilter: true,
+      placeholder: "Region Head Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.regionHeadName}
+          >
+            {rowData.regionHeadName}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Region Head Ecode",
+      fieldName: "regionHeadEcode",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "regionHeadEcode",
+      changeFilter: true,
+      placeholder: "Region Head Ecode",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.regionHeadEcode}
+          >
+            {rowData.regionHeadEcode}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Region Head Email",
+      fieldName: "regionHeadEmail",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "regionHeadEmail",
+      changeFilter: true,
+      placeholder: "Region Head Email",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.regionHeadEmail}
+          >
+            {rowData.regionHeadEmail}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -321,10 +394,12 @@ const RegionMaster = () => {
     const statelist = states.map((state: any) => state?.stateName);
     stateSelectionFieldsStructure.state_name.options = statelist;
     await setStateSelectionFieldsStructure(stateSelectionFieldsStructure);
+    setStatesList(statelist);
     return statelist;
   };
 
-  const regionFormHandler = async (form: FormType) => {
+  const regionFormHandler = async (currentForm: FormType) => {
+    const form = _.cloneDeep(currentForm);
     setRegionForm(form);
     if (RegionForm?.country_name?.value != form?.country_name?.value) {
       await getStateByCountry(form?.country_name?.value);

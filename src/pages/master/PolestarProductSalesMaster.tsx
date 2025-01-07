@@ -15,8 +15,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 import { TechnologyMasterService } from "../../services/masters/technology-master/technology.service";
 
 const PolestarProductSalesMaster = () => {
-  const OemFormFields = {
-
+  const formObj = {
     productName: {
       inputType: "inputtext",
       label: "Product Name",
@@ -38,16 +37,13 @@ const PolestarProductSalesMaster = () => {
   
   };
   const [PolestarProductSalesMaster, setPolestarProductSalesMaster] = useState<any>([]);
-  const [techSubGroupMaster, setTechSubGroupMaster] = useState<any>([]);
-  const [techGroupMaster, setTechGroupMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-  const [stateData, setStateData] = useState<any>();
   const [techFieldsStructure, setTechFieldsStructure] = useState<any>(
-    _.cloneDeep(OemFormFields)
+    _.cloneDeep(formObj)
   );
   const [TechForm, setTechForm] = useState<any>(
     _.cloneDeep(techFieldsStructure)
@@ -152,56 +148,28 @@ const PolestarProductSalesMaster = () => {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      await getPolestarProductSalesMaster();
-      const techGroups = await getTechGroupMaster();
-      await formatGroupDetails(techGroups);
-    };
-    if (storeFormPopup == false && showConfirmDialogue == false) {
-      fetchData();
-    }
-  }, [storeFormPopup, showConfirmDialogue]);
+       getPolestarProductSalesMaster();  
+  }, []);
 
   const getPolestarProductSalesMaster = async () => {
    
   };
 
-  const getTechSubGroupMaster = async (techGroupId: any) => {
-    // setLoader(true);
  
-  };
-
-  const getTechGroupMaster = async () => {
-   
-  };
-
-  const formatSubGroupDetails = async (
-    techSubGroups: any = techSubGroupMaster,
-    techGroupId: any
-  ) => {
-    
-  };
-
-  const formatGroupDetails = async (techGroups: any = techGroupMaster) => {
-  
-  };
 
   const openSaveForm = async () => {
     setFormPopup(true);
   };
 
-  const modifyFormTechGroup = async (selectGroup: any) => {
-   
-  };
+
 
   const techFormHandler = async (form: FormType) => {
     
   };
 
   const onUpdate = async (data: any) => {
-    setStateData(data);
-    const subGroupList = await modifyFormTechGroup(data?.techGroupNames);
-    updatePolestarProductSalesMaster(data, subGroupList);
+
+    updatePolestarProductSalesMaster(data);
     setFormPopup(true);
   };
 
@@ -209,7 +177,7 @@ const PolestarProductSalesMaster = () => {
     setShowConfirmDialogue(false);
   };
 
-  const updatePolestarProductSalesMaster = (data: any, subGroupList: any) => {
+  const updatePolestarProductSalesMaster = (data: any) => {
     
   };
 
@@ -256,9 +224,8 @@ const PolestarProductSalesMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
-    setStateData({});
-    setTechFieldsStructure(_.cloneDeep(OemFormFields));
-    setTechForm(_.cloneDeep(OemFormFields));
+    setTechFieldsStructure(_.cloneDeep(formObj));
+    setTechForm(_.cloneDeep(formObj));
   };
   return loader ? (
     <Loader />
