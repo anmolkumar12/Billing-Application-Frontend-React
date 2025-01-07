@@ -25,9 +25,9 @@ const IndustryMaster = () => {
       },
       fieldWidth: "col-md-6",
     },
-    productionType: {
-      inputType: "multiSelect",
-      label: "Production Type",
+    subIndustryCategory : {
+      inputType: "inputtext",
+      label: "Sub-Industry Category",
       value: null,
       options: [],
       validation: {
@@ -40,6 +40,7 @@ const IndustryMaster = () => {
   const [industryMaster, setIndustryMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -108,21 +109,21 @@ const IndustryMaster = () => {
       ),
     },
     {
-      label: "Production Type Names",
-      fieldName: "productionTypeNames",
+      label: "Sub Industry Categories",
+      fieldName: "subIndustryCategory ",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "productionTypeNames",
+      fieldValue: "subIndustryCategory ",
       changeFilter: true,
       placeholder: "Industry",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.productionTypeNames}
+            // data-pr-tooltip={rowData.subIndustryCategory }
           >
-            {rowData.productionTypeNames}
+            {rowData.subIndustryCategory }
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -188,15 +189,16 @@ const IndustryMaster = () => {
   const formatProductionTypeDetails = async (
     productionTypes: any = productionTypeMaster
   ) => {
-    const typesList = productionTypes.map(
-      (types: any) => types?.productionTypeName
-    );
-    industryFieldsStructure.productionType.options = typesList;
+    // const typesList = productionTypes.map(
+    //   (types: any) => types?.productionTypeName
+    // );
+    // industryFieldsStructure.productionType.options = typesList;
     await setIndustryFieldsStructure(industryFieldsStructure);
     await industryFormHandler(industryFieldsStructure);
   };
 
   const openSaveForm = async () => {
+    setEditing(false);
     setFormPopup(true);
   };
 
@@ -205,6 +207,8 @@ const IndustryMaster = () => {
   };
 
   const onUpdate = (data: any) => {
+    console.log('here i ma')
+    setEditing(true);
     setStateData(data);
     updateIndustryMaster(data);
     setFormPopup(true);
@@ -217,7 +221,7 @@ const IndustryMaster = () => {
   const updateIndustryMaster = (data: any) => {
     try {
       industryFieldsStructure.industryName.value = data?.industryName;
-      industryFieldsStructure.productionType.value = data?.productionTypeNames?.split(",");
+      industryFieldsStructure.subIndustryCategory.value = data?.subIndustryCategory;
       setIndustryForm(_.cloneDeep(industryFieldsStructure));
     } catch (error) {
       console.log("error", error);
@@ -239,18 +243,18 @@ const IndustryMaster = () => {
     setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
-      let productionTypeIds = "";
-      IndustryForm?.productionType?.value?.forEach((item: any) => {
-        const id =
-          productionTypeMaster?.find((types: any) => types?.productionTypeName == item)?.id ??
-          null;
-        if (id != null) {
-          productionTypeIds = productionTypeIds != "" ? productionTypeIds + "," + id : id;
-        }
-      });
+      // let productionTypeIds = "";
+      // IndustryForm?.productionType?.value?.forEach((item: any) => {
+      //   const id =
+      //     productionTypeMaster?.find((types: any) => types?.productionTypeName == item)?.id ??
+      //     null;
+      //   if (id != null) {
+      //     productionTypeIds = productionTypeIds != "" ? productionTypeIds + "," + id : id;
+      //   }
+      // });
       const obj = {
         industryName: IndustryForm?.industryName?.value,
-        productionTypeIds: productionTypeIds,
+        subIndustryCategory: IndustryForm?.subIndustryCategory?.value,
         isActive: 1,
         updatedBy: loggedInUserId,
       };
@@ -381,7 +385,7 @@ const IndustryMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Sub-Industry</h4>
+                <h4 className="popup-heading">{!editing ? `Add New`:`Edit`} Sub-Industry</h4>
               </div>
               <div
                 className="popup-right-close"
