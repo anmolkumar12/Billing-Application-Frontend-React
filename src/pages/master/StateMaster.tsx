@@ -25,7 +25,7 @@ const StateMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     stateName: {
       inputType: "inputtext",
@@ -34,7 +34,7 @@ const StateMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     stateCode: {
       inputType: "inputtext",
@@ -43,7 +43,7 @@ const StateMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     gstCode: {
       inputType: "inputtext",
@@ -52,7 +52,7 @@ const StateMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
   };
   const [countryMaster, setCountryMaster] = useState<any>([]);
