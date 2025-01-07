@@ -163,12 +163,12 @@ const PolestarProductSalesMaster = () => {
 
 
 
-  const techFormHandler = async (form: FormType) => {
-    
+  const polestarProductHandler = async (form: FormType) => {
+    const updatedForm = {...form}
+    setPolestarProductSalesMaster(updatedForm);
   };
 
   const onUpdate = async (data: any) => {
-
     updatePolestarProductSalesMaster(data);
     setFormPopup(true);
   };
@@ -290,7 +290,7 @@ const PolestarProductSalesMaster = () => {
             <div className="popup-content" style={{ padding: "1rem 2rem" }}>
               <FormComponent
                 form={techFieldsStructure}
-                formUpdateEvent={techFormHandler}
+                formUpdateEvent={polestarProductHandler}
                 isFormValidFlag={isFormValid}
               ></FormComponent>
             </div>
