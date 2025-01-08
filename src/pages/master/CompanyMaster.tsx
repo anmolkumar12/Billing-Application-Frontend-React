@@ -589,7 +589,7 @@ const CompanyMaster = () => {
   const onPopUpClose = (e?: any) => {
     setShowConfirmDialogue(false);
   };
-  
+
   const updateCompanyMaster = (data: any) => {
     try {
       const companyNamesList = companyMaster
@@ -625,8 +625,6 @@ const CompanyMaster = () => {
           ? data?.description
           : "";
       if (data?.independent == 1) {
-        console.log("here data", data);
-
         parentFieldStructure.independent.value = true;
         parentFieldStructure.parent_comp.value = null;
         parentFieldStructure.parent_comp.disable = true;

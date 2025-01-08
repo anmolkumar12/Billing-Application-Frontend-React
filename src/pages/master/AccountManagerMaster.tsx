@@ -15,6 +15,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import moment from "moment";
+import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 
 const AccountManagerMaster = () => {
   const AccountFormFields = {
@@ -39,6 +40,17 @@ const AccountManagerMaster = () => {
     account_manager_email: {
       inputType: "inputtext",
       label: "Account Manager Email",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    companyName: {
+      inputType: "singleSelect",
+      label: "Company",
+      disable: false,
+      options: [],
       value: null,
       validation: {
         required: true,
@@ -93,6 +105,8 @@ const AccountManagerMaster = () => {
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
+  const [companyMaster, setCompanyMaster] = useState<any>([]);
+  const companyService = new CompanyMasterService();
 
   const loggedInUserId = userInfo?.userId;
   let patchData: any;
@@ -137,7 +151,7 @@ const AccountManagerMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.name}
+          // data-pr-tooltip={rowData.name}
           >
             {rowData.name}
           </span>
@@ -161,7 +175,7 @@ const AccountManagerMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.code}
+          // data-pr-tooltip={rowData.code}
           >
             {rowData.code}
           </span>
@@ -185,9 +199,33 @@ const AccountManagerMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.code}
+          // data-pr-tooltip={rowData.code}
           >
             {rowData.account_manager_email}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Company",
+      fieldName: "companyName",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "companyName",
+      changeFilter: true,
+      placeholder: "Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+          // data-pr-tooltip={rowData.companyName}
+          >
+            {rowData.companyName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -209,7 +247,7 @@ const AccountManagerMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.industryHeadNames}
+          // data-pr-tooltip={rowData.industryHeadNames}
           >
             {rowData.industryHeadNames}
           </span>
@@ -231,11 +269,11 @@ const AccountManagerMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
+          // data-pr-tooltip={rowData.description}
           >
             {rowData.description != null &&
-            rowData.description != "null" &&
-            rowData.description != ""
+              rowData.description != "null" &&
+              rowData.description != ""
               ? rowData.description
               : "NA"}
           </span>
@@ -259,7 +297,7 @@ const AccountManagerMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.fromDate}
+          // data-pr-tooltip={rowData.fromDate}
           >
             {/* {rowData.fromDate} */}
             {moment(rowData.fromDate).format("YYYY-MM-DD")}
@@ -290,14 +328,35 @@ const AccountManagerMaster = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-       await getAccountMaster();
+      await getAccountMaster();
       const industries = await getIndustryHeadMaster();
       await formatIndustryHeadDetails(industries);
+      const companies = await getCompanyMaster();
+      await formatCompanyDetails(companies);
     };
     if (storeFormPopup == false && showConfirmDialogue == false) {
       fetchData();
     }
+
   }, [storeFormPopup, showConfirmDialogue]);
+
+  const getCompanyMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await companyService.getCompanyMaster();
+      setCompanyMaster(response?.companies);
+      return response?.companies;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const formatCompanyDetails = async (companies: any = companyMaster) => {
+    const companyList = companies.map((company: any) => company?.companyName);
+    accountFieldsStructure.companyName.options = companyList;
+  };
 
   const getAccountMaster = async () => {
     setLoader(true);
@@ -344,8 +403,18 @@ const AccountManagerMaster = () => {
     return `${year}/${month}/${day}`;
   };
 
+  // const parseDateString = (dateString: any) => {
+  //   const [year, month, day] = dateString?.split("/")?.map(Number);
+  //   return new Date(year, month - 1, day);
+  // };.
+
   const parseDateString = (dateString: any) => {
-    const [year, month, day] = dateString?.split("/")?.map(Number);
+    if (!dateString) return new Date();
+    const date: any = new Date(dateString);
+    if (isNaN(date)) return new Date();
+    const year = date.getFullYear();
+    const month: any = String(date.getMonth() + 1).padStart(2, "0");
+    const day: any = String(date.getDate()).padStart(2, "0");
     return new Date(year, month - 1, day);
   };
 
@@ -380,6 +449,8 @@ const AccountManagerMaster = () => {
           ? data?.description
           : "";
       accountFieldsStructure.from_date.value = parseDateString(data?.fromDate);
+      // accountFieldsStructure.fromDate.value = parseDateString(data?.fromDate);
+      accountFieldsStructure.companyName.value = data?.companyName;
       setAccountForm(_.cloneDeep(accountFieldsStructure));
     } catch (error) {
       console.log("error", error);
@@ -413,15 +484,22 @@ const AccountManagerMaster = () => {
         }
       });
 
+      const companyId =
+        companyMaster.find(
+          (company: any) =>
+            company.companyName === AccountForm.companyName.value
+        )?.id ?? null;
+
       const obj = {
         name: AccountForm?.name?.value,
         code: AccountForm?.code?.value,
-        account_manager_email:AccountForm?.account_manager_email.value,
+        account_manager_email: AccountForm?.account_manager_email.value,
         fromDate: formatDate(AccountForm?.from_date?.value),
         description: AccountForm?.description?.value,
         industryHeadIds: industryHeadIds,
-        isActive: 1,  
+        isActive: 1,
         updatedBy: loggedInUserId,
+        companyId: companyId,
       };
 
       if (!stateData?.id) {
@@ -464,11 +542,10 @@ const AccountManagerMaster = () => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to ${
-        !(data?.isactive || data?.is_active || data?.isActive)
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
           ? "activate"
           : "deactivate"
-      } this record?`,
+        } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
     });
@@ -483,8 +560,7 @@ const AccountManagerMaster = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Account Manager record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Account Manager record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );

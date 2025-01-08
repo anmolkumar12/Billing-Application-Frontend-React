@@ -15,6 +15,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
 import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
 import moment from "moment";
+import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 
 const SalesMaster = () => {
   const SalesFormFields = {
@@ -45,6 +46,17 @@ const SalesMaster = () => {
       },
       fieldWidth: "col-md-4",
     },
+    companyName: {
+      inputType: "singleSelect",
+      label: "Company",
+      disable: false,
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
     industryHeadNames: {
       inputType: "multiSelect",
       label: "Industry Head",
@@ -53,7 +65,7 @@ const SalesMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     from_date: {
       inputType: "singleDatePicker",
@@ -62,7 +74,7 @@ const SalesMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     description: {
       inputType: "inputtextarea",
@@ -98,6 +110,9 @@ const SalesMaster = () => {
   let patchData: any;
   const industryService = new IndustryMasterService();
   const salesService = new SalesMasterService();
+  const [companyMaster, setCompanyMaster] = useState<any>([]);
+  const companyService = new CompanyMasterService();
+
 
   const SalesMasterColumns = [
     {
@@ -137,7 +152,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.name}
+          // data-pr-tooltip={rowData.name}
           >
             {rowData.name}
           </span>
@@ -161,7 +176,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.code}
+          // data-pr-tooltip={rowData.code}
           >
             {rowData.code}
           </span>
@@ -185,9 +200,33 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.code}
+          // data-pr-tooltip={rowData.code}
           >
             {rowData.sales_manager_email}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Company",
+      fieldName: "companyName",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "companyName",
+      changeFilter: true,
+      placeholder: "Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+          // data-pr-tooltip={rowData.companyName}
+          >
+            {rowData.companyName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -209,7 +248,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.industryHeadNames}
+          // data-pr-tooltip={rowData.industryHeadNames}
           >
             {rowData.industryHeadNames}
           </span>
@@ -231,11 +270,11 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
+          // data-pr-tooltip={rowData.description}
           >
             {rowData.description != null &&
-            rowData.description != "null" &&
-            rowData.description != ""
+              rowData.description != "null" &&
+              rowData.description != ""
               ? rowData.description
               : "NA"}
           </span>
@@ -259,7 +298,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.fromDate}
+          // data-pr-tooltip={rowData.fromDate}
           >
             {/* {rowData.fromDate} */}
             {moment(rowData.fromDate).format("YYYY-MM-DD")}
@@ -293,11 +332,31 @@ const SalesMaster = () => {
       await getSalesMaster();
       const industries = await getIndustryHeadMaster();
       await formatIndustryHeadDetails(industries);
+      const companies = await getCompanyMaster();
+      await formatCompanyDetails(companies);
     };
     if (storeFormPopup == false && showConfirmDialogue == false) {
       fetchData();
     }
   }, [storeFormPopup, showConfirmDialogue]);
+
+  const getCompanyMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await companyService.getCompanyMaster();
+      setCompanyMaster(response?.companies);
+      return response?.companies;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const formatCompanyDetails = async (companies: any = companyMaster) => {
+    const companyList = companies.map((company: any) => company?.companyName);
+    salesFieldsStructure.companyName.options = companyList;
+  };
 
   const getSalesMaster = async () => {
     setLoader(true);
@@ -386,6 +445,8 @@ const SalesMaster = () => {
           ? data?.description
           : "";
       salesFieldsStructure.from_date.value = parseDateString(data?.fromDate);
+      salesFieldsStructure.companyName.value = data?.companyName;
+
       setSalesForm(_.cloneDeep(salesFieldsStructure));
     } catch (error) {
       console.log("error", error);
@@ -396,6 +457,7 @@ const SalesMaster = () => {
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
+    console.log('jjjjjjjjjjjj', SalesForm);
 
     _.each(SalesForm, (item: any) => {
       if (item?.validation?.required) {
@@ -419,17 +481,23 @@ const SalesMaster = () => {
         }
       });
 
+      const companyId =
+        companyMaster.find(
+          (company: any) =>
+            company.companyName === SalesForm.companyName.value
+        )?.id ?? null;
 
 
       const obj = {
         name: SalesForm?.name?.value,
         code: SalesForm?.code?.value,
-        sales_manager_email:SalesForm.sales_manager_email.value,
+        sales_manager_email: SalesForm.sales_manager_email.value,
         fromDate: formatDate(SalesForm?.from_date?.value),
         description: SalesForm?.description?.value,
         industryHeadIds: industryHeadIds,
         isActive: 1,
         updatedBy: loggedInUserId,
+        companyId: companyId,
       };
 
       if (!stateData?.id) {
@@ -472,11 +540,10 @@ const SalesMaster = () => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to ${
-        !(data?.isactive || data?.is_active || data?.isActive)
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
           ? "activate"
           : "deactivate"
-      } this record?`,
+        } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
     });
@@ -491,8 +558,7 @@ const SalesMaster = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Sales Manager record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Sales Manager record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
