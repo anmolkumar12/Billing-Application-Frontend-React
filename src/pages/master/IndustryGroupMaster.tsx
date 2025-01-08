@@ -40,6 +40,7 @@ const IndustryGroupMaster = () => {
   const [industryGroupMaster, setIndustryGroupMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditIndustryGroup, setIsEditIndustryGroup] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -205,6 +206,7 @@ const IndustryGroupMaster = () => {
     setStateData(data);
     updateIndustryGroupMaster(data);
     setFormPopup(true);
+    setIsEditIndustryGroup(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -327,6 +329,7 @@ const IndustryGroupMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditIndustryGroup(false);
     setStateData({});
     setIndustryGroupFieldsStructure(_.cloneDeep(IndustryGroupFormFields));
     setIndustryGroupForm(_.cloneDeep(IndustryGroupFormFields));
@@ -380,7 +383,7 @@ const IndustryGroupMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Industry Group</h4>
+                <h4 className="popup-heading">{isEditIndustryGroup ? 'Update' : 'Add New'} Industry Group</h4>
               </div>
               <div
                 className="popup-right-close"

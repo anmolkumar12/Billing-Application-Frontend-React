@@ -385,7 +385,7 @@ const IndustryMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">{!editing ? `Add New`:`Edit`} Sub-Industry</h4>
+                <h4 className="popup-heading">{!editing ? `Add New`:`Update`} Sub-Industry</h4>
               </div>
               <div
                 className="popup-right-close"

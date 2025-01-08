@@ -15,6 +15,7 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { StateMasterService } from "../../services/masters/state-master/state.service";
 import { Loader } from "../../components/ui/loader/Loader";
 import { RegionMasterService } from "../../services/masters/region-master/region.service";
+import moment from "moment";
 
 const RegionMaster = () => {
   const RegionFormFields = {
@@ -103,6 +104,7 @@ const RegionMaster = () => {
   const [regionMaster, setRegionMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditRegion, setIsEditRegion] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -285,7 +287,8 @@ const RegionMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.fromDate}
           >
-            {rowData.fromDate}
+            {/* {rowData.fromDate} */}
+            {moment(rowData?.fromDate).format('YYYY-MM-DD')}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -504,10 +507,13 @@ const RegionMaster = () => {
     const allRegionRows = regionMaster?.filter(
       (item: any) => item?.countryName == data?.countryName
     );
+    console.log('rrrrrrrrrrrr',regionMaster, allRegionRows, data);
     const stateList = await getStateByCountry(data?.countryName);
+    
     setStateData(allRegionRows);
     updateStateMaster(data, allRegionRows, stateList);
     setFormPopup(true);
+    setIsEditRegion(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -525,7 +531,8 @@ const RegionMaster = () => {
       regionFieldsStructure.regionHeadName.value = data?.regionHeadName;
       regionFieldsStructure.regionHeadEcode.value = data?.regionHeadEcode;
       regionFieldsStructure.regionHeadEmail.value = data?.regionHeadEmail;
-      regionFieldsStructure.fromDate.value = data?.fromDate;
+      // regionFieldsStructure.fromDate.value = data?.fromDate;
+      regionFieldsStructure.fromDate.value = parseDateString(data?.fromDate);
 
       setRegionForm(_.cloneDeep(regionFieldsStructure));
       const stateForm: any = [];
@@ -587,16 +594,36 @@ const RegionMaster = () => {
     });
   };
 
+  const formatDate = (dateString: any) => {
+    const date: any = new Date(dateString);
+    if (isNaN(date)) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
+  };
+
+  const parseDateString = (dateString: any) => {
+    if (!dateString) return new Date();
+    const date: any = new Date(dateString);
+    if (isNaN(date)) return new Date();
+    const year = date.getFullYear();
+    const month: any = String(date.getMonth() + 1).padStart(2, "0");
+    const day: any = String(date.getDate()).padStart(2, "0");
+    return new Date(year, month - 1, day);
+  };
+
   const createNewRegion = (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
 
     _.each(RegionForm, (item: any) => {
       if (item?.validation?.required) {
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
-    console.log('companyValidityForm------> first',companyValidityFlag);
+    console.log('companyValidityForm------> first',companyValidityFlag, RegionForm);
+    console.log('companyValidityForm------> seconddd', StateSelectionForm);
 
     if (StateSelectionForm?.length > 0) {
       console.log("here StateSelectionForm", StateSelectionForm);
@@ -607,8 +634,8 @@ const RegionMaster = () => {
         .flat()
         .filter(Boolean);
       const remainingStates = stateMaster?.length - selectedStates?.length;
-      console.log("here remainingStates", remainingStates);
-
+      console.log("here remainingStates", remainingStates, StateSelectionForm);
+      
       if (remainingStates > 0) {
         ToasterService.show("Assign Region to all States", CONSTANTS.ERROR);
         return;
@@ -620,6 +647,7 @@ const RegionMaster = () => {
           }
         });
       });
+      console.log("here StateSelectionForm", StateSelectionForm);
     } else {
       ToasterService.show("Assign Region to all States", CONSTANTS.ERROR);
       return;
@@ -651,13 +679,15 @@ const RegionMaster = () => {
           regionHeadName:RegionForm?.regionHeadName?.value,
           regionHeadEcode:RegionForm?.regionHeadEcode?.value,
           regionHeadEmail:RegionForm?.regionHeadEmail?.value,
-          fromDate:new Date(RegionForm?.fromDate?.value),
+          // fromDate:new Date(RegionForm?.fromDate?.value),
+          fromDate: formatDate(RegionForm?.fromDate?.value),
           stateIds: ids,
           isActive: 1,
           updatedBy: loggedInUserId,
         };
-
-        if (!stateData[index]?.id) {
+        console.log('jjjjjjjjjjjjjjjjjjjj', stateData);
+        
+        if (!stateData?.length && !stateData[index]?.id) {
           regionService
             .createRegionMaster(obj)
             .then((response: any) => {
@@ -732,6 +762,7 @@ const RegionMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditRegion(false);
     setStateData({});
     setRegionFieldsStructure(_.cloneDeep(RegionFormFields));
     setStateSelectionFieldsStructure(_.cloneDeep(StateSelectionFormFields));
@@ -787,7 +818,7 @@ const RegionMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Region</h4>
+                <h4 className="popup-heading">{isEditRegion ? 'Update' : 'Add New'} Region</h4>
               </div>
               <div
                 className="popup-right-close"

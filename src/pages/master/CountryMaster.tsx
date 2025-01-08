@@ -60,6 +60,7 @@ const CountryMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [isEditCountry, setIsEditCountry] = useState<boolean>(false);
   const [CountryForm, setCountryForm] = useState<any>(
     _.cloneDeep(CountryFormFields)
   );
@@ -332,6 +333,7 @@ const CountryMaster = () => {
     setStateData(data);
     updateCountryMaster(data);
     setFormPopup(true);
+    setIsEditCountry(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -581,6 +583,7 @@ const CountryMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditCountry(false);
     setStateData({});
     setCountryForm(_.cloneDeep(CountryFormFields));
     setCountryAddressForm({});
@@ -636,7 +639,7 @@ const CountryMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Country</h4>
+                <h4 className="popup-heading">{isEditCountry ? 'Update' : 'Add New'} Country</h4>
               </div>
               <div
                 className="popup-right-close"

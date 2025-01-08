@@ -93,6 +93,7 @@ const AccountMaster = () => {
   const [accountMaster, setAccountMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditAccount, setIsEditAccount] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -498,6 +499,7 @@ const AccountMaster = () => {
       ?.map((item: any) => item?.accountTypeName);
     updateStateMaster(data, accountTypes);
     setFormPopup(true);
+    setIsEditAccount(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -683,6 +685,7 @@ const AccountMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditAccount(false);
     setStateData({});
     setAccountFieldsStructure(_.cloneDeep(AccountFormFields));
     setAccountForm(_.cloneDeep(AccountFormFields));
@@ -737,7 +740,7 @@ const AccountMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Account</h4>
+                <h4 className="popup-heading">{isEditAccount ? 'Update' : 'Add New'} Account</h4>
               </div>
               <div
                 className="popup-right-close"
