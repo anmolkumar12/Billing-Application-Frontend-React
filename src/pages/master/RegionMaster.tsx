@@ -27,35 +27,35 @@ const RegionMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-3",
+      fieldWidth: "col-md-6",
     },
-    regionHeadName: {
-      inputType: "inputtext",
-      label: "Region Head Name",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-4",
-    },
-    regionHeadEcode: {
-      inputType: "inputtext",
-      label: "Region Head Ecode",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-4",
-    },
-    regionHeadEmail: {
-      inputType: "inputtext",
-      label: "Region Head Email",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-4",
-    },
+    // regionHeadName: {
+    //   inputType: "inputtext",
+    //   label: "Region Head Name",
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-4",
+    // },
+    // regionHeadEcode: {
+    //   inputType: "inputtext",
+    //   label: "Region Head Ecode",
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-4",
+    // },
+    // regionHeadEmail: {
+    //   inputType: "inputtext",
+    //   label: "Region Head Email",
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-4",
+    // },
     fromDate: {
       inputType: "singleDatePicker",
       label: "From Date",
@@ -63,7 +63,7 @@ const RegionMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     }
     
   };
@@ -200,78 +200,78 @@ const RegionMaster = () => {
         </div>
       ),
     },
-    {
-      label: "Region Head Name",
-      fieldName: "regionHeadName",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "regionHeadName",
-      changeFilter: true,
-      placeholder: "Region Head Name",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.regionHeadName}
-          >
-            {rowData.regionHeadName}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Region Head Ecode",
-      fieldName: "regionHeadEcode",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "regionHeadEcode",
-      changeFilter: true,
-      placeholder: "Region Head Ecode",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.regionHeadEcode}
-          >
-            {rowData.regionHeadEcode}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Region Head Email",
-      fieldName: "regionHeadEmail",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "regionHeadEmail",
-      changeFilter: true,
-      placeholder: "Region Head Email",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.regionHeadEmail}
-          >
-            {rowData.regionHeadEmail}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
+    // {
+    //   label: "Region Head Name",
+    //   fieldName: "regionHeadName",
+    //   textAlign: "left",
+    //   sort: true,
+    //   filter: true,
+    //   fieldValue: "regionHeadName",
+    //   changeFilter: true,
+    //   placeholder: "Region Head Name",
+    //   body: (rowData: any) => (
+    //     <div>
+    //       <span
+    //         id={`companyNameTooltip-${rowData.id}`}
+    //         // data-pr-tooltip={rowData.regionHeadName}
+    //       >
+    //         {rowData.regionHeadName}
+    //       </span>
+    //       <Tooltip
+    //         target={`#companyNameTooltip-${rowData.id}`}
+    //         position="top"
+    //       />
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   label: "Region Head Ecode",
+    //   fieldName: "regionHeadEcode",
+    //   textAlign: "left",
+    //   sort: true,
+    //   filter: true,
+    //   fieldValue: "regionHeadEcode",
+    //   changeFilter: true,
+    //   placeholder: "Region Head Ecode",
+    //   body: (rowData: any) => (
+    //     <div>
+    //       <span
+    //         id={`companyNameTooltip-${rowData.id}`}
+    //         // data-pr-tooltip={rowData.regionHeadEcode}
+    //       >
+    //         {rowData.regionHeadEcode}
+    //       </span>
+    //       <Tooltip
+    //         target={`#companyNameTooltip-${rowData.id}`}
+    //         position="top"
+    //       />
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   label: "Region Head Email",
+    //   fieldName: "regionHeadEmail",
+    //   textAlign: "left",
+    //   sort: true,
+    //   filter: true,
+    //   fieldValue: "regionHeadEmail",
+    //   changeFilter: true,
+    //   placeholder: "Region Head Email",
+    //   body: (rowData: any) => (
+    //     <div>
+    //       <span
+    //         id={`companyNameTooltip-${rowData.id}`}
+    //         // data-pr-tooltip={rowData.regionHeadEmail}
+    //       >
+    //         {rowData.regionHeadEmail}
+    //       </span>
+    //       <Tooltip
+    //         target={`#companyNameTooltip-${rowData.id}`}
+    //         position="top"
+    //       />
+    //     </div>
+    //   ),
+    // },
     {
       label: "From Date",
       fieldName: "fromDate",
@@ -528,9 +528,9 @@ const RegionMaster = () => {
     try {
       console.log('data-->',data)
       regionFieldsStructure.country_name.value = data?.countryName;
-      regionFieldsStructure.regionHeadName.value = data?.regionHeadName;
-      regionFieldsStructure.regionHeadEcode.value = data?.regionHeadEcode;
-      regionFieldsStructure.regionHeadEmail.value = data?.regionHeadEmail;
+      // regionFieldsStructure.regionHeadName.value = data?.regionHeadName;
+      // regionFieldsStructure.regionHeadEcode.value = data?.regionHeadEcode;
+      // regionFieldsStructure.regionHeadEmail.value = data?.regionHeadEmail;
       // regionFieldsStructure.fromDate.value = data?.fromDate;
       regionFieldsStructure.fromDate.value = parseDateString(data?.fromDate);
 
@@ -676,9 +676,9 @@ const RegionMaster = () => {
           regionName: region?.name?.value,
           regionCode: region?.code?.value,
           countryId: countryId,
-          regionHeadName:RegionForm?.regionHeadName?.value,
-          regionHeadEcode:RegionForm?.regionHeadEcode?.value,
-          regionHeadEmail:RegionForm?.regionHeadEmail?.value,
+          // regionHeadName:RegionForm?.regionHeadName?.value,
+          // regionHeadEcode:RegionForm?.regionHeadEcode?.value,
+          // regionHeadEmail:RegionForm?.regionHeadEmail?.value,
           // fromDate:new Date(RegionForm?.fromDate?.value),
           fromDate: formatDate(RegionForm?.fromDate?.value),
           stateIds: ids,
@@ -687,11 +687,13 @@ const RegionMaster = () => {
         };
         console.log('jjjjjjjjjjjjjjjjjjjj', stateData);
         
-        if (!stateData?.length && !stateData[index]?.id) {
+        if (stateData?.length && stateData[index]?.id) {
+          const updatePayload = { ...obj, regionId: stateData[index]?.id };
+
           regionService
-            .createRegionMaster(obj)
+            .updateRegionMaster(updatePayload)
             .then((response: any) => {
-              if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+              if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
                 setStateData({});
                 closeFormPopup();
                 ToasterService.show(response?.message, CONSTANTS.SUCCESS);
@@ -702,12 +704,10 @@ const RegionMaster = () => {
               ToasterService.show(error, CONSTANTS.ERROR);
             });
         } else {
-          const updatePayload = { ...obj, regionId: stateData[index]?.id };
-
           regionService
-            .updateRegionMaster(updatePayload)
+            .createRegionMaster(obj)
             .then((response: any) => {
-              if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+              if (response?.statusCode === HTTP_RESPONSE.CREATED) {
                 setStateData({});
                 closeFormPopup();
                 ToasterService.show(response?.message, CONSTANTS.SUCCESS);

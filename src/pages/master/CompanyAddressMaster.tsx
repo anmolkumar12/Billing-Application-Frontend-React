@@ -506,10 +506,11 @@ const CompanyAddressMaster = () => {
   const createNewCompanyLocation = (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
-
+    console.log('CompanyLocationForm', CompanyLocationForm);
+    
     _.each(CompanyLocationForm, (item: any) => {
       if (item?.validation?.required) {
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
 

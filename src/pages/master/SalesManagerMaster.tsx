@@ -15,6 +15,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
 import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
 import moment from "moment";
+import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 
 const SalesMaster = () => {
   const SalesFormFields = {
@@ -45,6 +46,17 @@ const SalesMaster = () => {
       },
       fieldWidth: "col-md-4",
     },
+    companyName: {
+      inputType: "singleSelect",
+      label: "Company",
+      disable:false,
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
     industryHeadNames: {
       inputType: "multiSelect",
       label: "Industry Head",
@@ -53,7 +65,7 @@ const SalesMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     from_date: {
       inputType: "singleDatePicker",
@@ -62,7 +74,7 @@ const SalesMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     description: {
       inputType: "inputtextarea",
@@ -98,6 +110,9 @@ const SalesMaster = () => {
   let patchData: any;
   const industryService = new IndustryMasterService();
   const salesService = new SalesMasterService();
+  const [companyMaster, setCompanyMaster] = useState<any>([]);
+  const companyService = new CompanyMasterService();
+  
 
   const SalesMasterColumns = [
     {
@@ -196,6 +211,30 @@ const SalesMaster = () => {
         </div>
       ),
     },
+        {
+          label: "Company",
+          fieldName: "companyName",
+          textAlign: "left",
+          sort: true,
+          filter: true,
+          fieldValue: "companyName",
+          changeFilter: true,
+          placeholder: "Name",
+          body: (rowData: any) => (
+            <div>
+              <span
+                id={`companyNameTooltip-${rowData.id}`}
+                // data-pr-tooltip={rowData.companyName}
+              >
+                {rowData.companyName}
+              </span>
+              <Tooltip
+                target={`#companyNameTooltip-${rowData.id}`}
+                position="top"
+              />
+            </div>
+          ),
+        },
     {
       label: "Industry Head Names",
       fieldName: "industryHeadNames",
@@ -293,11 +332,31 @@ const SalesMaster = () => {
       await getSalesMaster();
       const industries = await getIndustryHeadMaster();
       await formatIndustryHeadDetails(industries);
+      const companies = await getCompanyMaster();
+      await formatCompanyDetails(companies);
     };
     if (storeFormPopup == false && showConfirmDialogue == false) {
       fetchData();
     }
   }, [storeFormPopup, showConfirmDialogue]);
+
+  const getCompanyMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await companyService.getCompanyMaster();
+      setCompanyMaster(response?.companies);
+      return response?.companies;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const formatCompanyDetails = async (companies: any = companyMaster) => {
+    const companyList = companies.map((company: any) => company?.companyName);
+    salesFieldsStructure.companyName.options = companyList;
+  };
 
   const getSalesMaster = async () => {
     setLoader(true);
@@ -386,6 +445,8 @@ const SalesMaster = () => {
           ? data?.description
           : "";
       salesFieldsStructure.from_date.value = parseDateString(data?.fromDate);
+      salesFieldsStructure.companyName.value = data?.companyName;
+
       setSalesForm(_.cloneDeep(salesFieldsStructure));
     } catch (error) {
       console.log("error", error);
@@ -396,7 +457,8 @@ const SalesMaster = () => {
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
-
+    console.log('jjjjjjjjjjjj', SalesForm);
+    
     _.each(SalesForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
@@ -419,6 +481,11 @@ const SalesMaster = () => {
         }
       });
 
+      const companyId =
+      companyMaster.find(
+        (company: any) =>
+          company.companyName === SalesForm.companyName.value
+      )?.id ?? null;
 
 
       const obj = {
@@ -430,6 +497,7 @@ const SalesMaster = () => {
         industryHeadIds: industryHeadIds,
         isActive: 1,
         updatedBy: loggedInUserId,
+        companyId: companyId,
       };
 
       if (!stateData?.id) {

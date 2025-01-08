@@ -118,7 +118,7 @@ const TechMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techName}
+          // data-pr-tooltip={rowData.techName}
           >
             {rowData.techName}
           </span>
@@ -142,7 +142,7 @@ const TechMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techSubgroupNames}
+          // data-pr-tooltip={rowData.techSubgroupNames}
           >
             {rowData.techSubgroupNames}
           </span>
@@ -166,7 +166,7 @@ const TechMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.techGroupNames}
+          // data-pr-tooltip={rowData.techGroupNames}
           >
             {rowData.techGroupNames}
           </span>
@@ -177,7 +177,7 @@ const TechMaster = () => {
         </div>
       ),
     },
-   
+
     {
       label: "Description",
       fieldName: "description",
@@ -189,11 +189,11 @@ const TechMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
+          // data-pr-tooltip={rowData.description}
           >
             {rowData.description != null &&
-            rowData.description != "null" &&
-            rowData.description != ""
+              rowData.description != "null" &&
+              rowData.description != ""
               ? rowData.description
               : "NA"}
           </span>
@@ -311,19 +311,22 @@ const TechMaster = () => {
   };
 
   const techFormHandler = async (form: FormType) => {
-    const updatedForm = {...form}
+    const updatedForm = { ...form }
     const techGroupAreUnequal =
       updatedForm?.group_name?.value !== TechForm?.group_name?.value;
-    console.log("here techGroupAreUnequal", techGroupAreUnequal);
 
-    if (techGroupAreUnequal) {
-      const subGroupList = await modifyFormTechGroup(updatedForm?.group_name?.value);
-      if (subGroupList) {
-        updatedForm.subGroup_name.options = subGroupList;
-        updatedForm.subGroup_name.value = null;
-      }
+    // if (techGroupAreUnequal) {
+    const subGroupList = await modifyFormTechGroup(updatedForm?.group_name?.value);
+    if (subGroupList) {
+      updatedForm.subGroup_name.options = subGroupList;
+      // updatedForm.subGroup_name.value = null;
     }
-    setTechForm(updatedForm);
+    // }
+    // setTechForm(updatedForm);
+    // Only update the state if the form has truly changed
+    if (!_.isEqual(form, TechForm)) {
+      setTechForm({ ...form });
+    }
   };
 
   const onUpdate = async (data: any) => {
@@ -384,7 +387,7 @@ const TechMaster = () => {
         techSubgroupIds: techSubGroup?.id || null,
         description: TechForm?.description?.value,
         isActive: 1,
-        updatedBy: loggedInUserId,  
+        updatedBy: loggedInUserId,
       };
 
       if (!stateData?.id) {
@@ -427,11 +430,10 @@ const TechMaster = () => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to ${
-        !(data?.isactive || data?.is_active || data?.isActive)
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
           ? "activate"
           : "deactivate"
-      } this record?`,
+        } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
     });
@@ -446,8 +448,7 @@ const TechMaster = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Technology record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Technology record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
