@@ -51,15 +51,15 @@ const CompanyAddressMaster = () => {
       },
       fieldWidth: "col-md-4",
     },
-    companyCode: {
-      inputType: "inputtext",
-      label: "Company Code",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-4",
-    },
+    // companyCode: {
+    //   inputType: "inputtext",
+    //   label: "Company Code",
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-4",
+    // },
     address1: {
       inputType: "inputtext",
       label: "Address 1",
@@ -477,7 +477,7 @@ const CompanyAddressMaster = () => {
       companyLocationFieldStructure.state_name.options = stateNames;
       companyLocationFieldStructure.state_name.value = data?.stateName;
       companyLocationFieldStructure.address1.value = data?.address1;
-      companyLocationFieldStructure.companyCode.value = data?.companyCode;
+      // companyLocationFieldStructure.companyCode.value = data?.companyCode;
       companyLocationFieldStructure.address2.value = data?.address2;
       companyLocationFieldStructure.address3.value = data?.address3;
       setCompanyLocationForm(_.cloneDeep(companyLocationFieldStructure));
@@ -552,7 +552,7 @@ const CompanyAddressMaster = () => {
         address1: CompanyLocationForm?.address1?.value,
         address2: CompanyLocationForm?.address2?.value,
         address3: CompanyLocationForm?.address3?.value,
-        companyCode: CompanyLocationForm?.companyCode?.value,
+        // companyCode: CompanyLocationForm?.companyCode?.value,
         additionalAddressDetails: addressData,
         isActive: 1,
         updatedBy: loggedInUserId,
