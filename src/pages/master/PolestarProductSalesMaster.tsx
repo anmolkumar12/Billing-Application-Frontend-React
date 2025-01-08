@@ -24,16 +24,16 @@ const PolestarProductSalesMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     description: {
       inputType: "inputtext",
       label: "Description",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     }
   
   };

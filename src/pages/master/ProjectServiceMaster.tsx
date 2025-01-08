@@ -24,16 +24,16 @@ const ProjectServiceMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     },
     description: {
       inputType: "inputtext",
       label: "Description",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-6",
     }
   };
 
@@ -248,7 +248,7 @@ const ProjectServiceMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Project Service"
+          label="Add New Project/Service Master"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}
@@ -285,7 +285,7 @@ const ProjectServiceMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">{rowData?'Update':`Add New`} Product</h4>
+                <h4 className="popup-heading">{rowData?'Update':`Add New`} Project/Service Master</h4>
               </div>
               <div
                 className="popup-right-close"

@@ -14,6 +14,7 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
 import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
+import moment from "moment";
 
 const AccountManagerMaster = () => {
   const AccountFormFields = {
@@ -78,6 +79,7 @@ const AccountManagerMaster = () => {
   const [accountMaster, setAccountMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditAccManager, setIsEditAccManager] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -259,7 +261,8 @@ const AccountManagerMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.fromDate}
           >
-            {rowData.fromDate}
+            {/* {rowData.fromDate} */}
+            {moment(rowData.fromDate).format("YYYY-MM-DD")}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -358,6 +361,7 @@ const AccountManagerMaster = () => {
     setStateData(data);
     updateAccountMaster(data);
     setFormPopup(true);
+    setIsEditAccManager(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -493,6 +497,7 @@ const AccountManagerMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditAccManager(false);
     setStateData({});
     setAccountFieldsStructure(_.cloneDeep(AccountFormFields));
     setAccountForm(_.cloneDeep(AccountFormFields));
@@ -546,7 +551,7 @@ const AccountManagerMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Account Manager</h4>
+                <h4 className="popup-heading">{isEditAccManager ? 'Update' : 'Add New'} Account Manager</h4>
               </div>
               <div
                 className="popup-right-close"

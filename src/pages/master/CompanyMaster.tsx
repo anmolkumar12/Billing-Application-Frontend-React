@@ -47,7 +47,7 @@ const CompanyMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     Email: {
       inputType: "inputtext",
@@ -56,7 +56,16 @@ const CompanyMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
+    },
+    companyCode: {
+      inputType: "inputtext",
+      label: "Company Code",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
     },
   };
 
@@ -97,6 +106,7 @@ const CompanyMaster = () => {
   const [countryMaster, setCountryMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditCompany, setIsEditCompany] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -169,6 +179,30 @@ const CompanyMaster = () => {
             // data-pr-tooltip={rowData.companyName}
           >
             {rowData.companyName}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Company Code",
+      fieldName: "companyCode",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "companyCode",
+      changeFilter: true,
+      placeholder: "Code",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.companyName}
+          >
+            {rowData.companyCode || 'N/A'}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -549,6 +583,7 @@ const CompanyMaster = () => {
     setLogoUrl(data?.logopath?`${process.env.REACT_APP_API_BASEURL}/${data?.logopath}`:'');
     setSignatureUrl(data?.digitalSignPath?`${process.env.REACT_APP_API_BASEURL}/${data?.digitalSignPath}`:'');
     setFormPopup(true);
+    setIsEditCompany(true)
   };
     
   const onPopUpClose = (e?: any) => {
@@ -562,6 +597,7 @@ const CompanyMaster = () => {
       companyFieldStructure.companyName.value = data?.companyName;
       companyFieldStructure.country_name.value = data?.countryName;
       companyFieldStructure.Email.value = data?.Email;
+      companyFieldStructure.companyCode.value = data?.companyCode;
       companyFieldStructure.Website.value = data?.Website;
       setCompanyForm(_.cloneDeep(companyFieldStructure));
       if (data?.companyAddtionalFields) {
@@ -654,6 +690,7 @@ const CompanyMaster = () => {
         companyName: CompanyForm?.companyName?.value,
         countryId: countryId,
         Email: CompanyForm?.Email?.value,
+        companyCode: CompanyForm?.companyCode?.value,
         Website: CompanyForm?.Website?.value,
         independent: ParentForm?.independent?.value == true ? 1 : 0,
         parentCompanyId: parentCompanyId ? parentCompanyId : 0,
@@ -762,6 +799,7 @@ const CompanyMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditCompany(false);
     setStateData({});
     setCompanyFieldStructure(_.cloneDeep(CompanyFormFields));
     setCompanyForm(_.cloneDeep(CompanyFormFields));
@@ -825,7 +863,7 @@ const CompanyMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Company</h4>
+                <h4 className="popup-heading">{isEditCompany ? 'Update' : 'Add New'} Company</h4>
               </div>
               <div
                 className="popup-right-close"

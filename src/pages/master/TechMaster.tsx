@@ -61,6 +61,7 @@ const TechMaster = () => {
   const [techGroupMaster, setTechGroupMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditTechnology, setIsEditTechnology] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -330,6 +331,7 @@ const TechMaster = () => {
     const subGroupList = await modifyFormTechGroup(data?.techGroupNames);
     updateTechMaster(data, subGroupList);
     setFormPopup(true);
+    setIsEditTechnology(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -458,6 +460,7 @@ const TechMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditTechnology(false);
     setStateData({});
     setTechFieldsStructure(_.cloneDeep(TechFormFields));
     setTechForm(_.cloneDeep(TechFormFields));
@@ -511,7 +514,7 @@ const TechMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Technology</h4>
+                <h4 className="popup-heading">{isEditTechnology ? 'Update' : 'Add New'} Technology</h4>
               </div>
               <div
                 className="popup-right-close"

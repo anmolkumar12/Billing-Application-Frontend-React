@@ -16,6 +16,7 @@ import { IndustryMasterService } from "../../services/masters/industry-master/in
 import { CountryMasterService } from "../../services/masters/country-master/country.service";
 import { StateMasterService } from "../../services/masters/state-master/state.service";
 import { RegionMasterService } from "../../services/masters/region-master/region.service";
+import moment from "moment";
 
 const IndustryHeadMaster = () => {
   const IndustryHeadFormFields: FormType = {
@@ -104,6 +105,7 @@ const IndustryHeadMaster = () => {
   const [stateMaster, setStateMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditIndustryHead, setIsEditIndustryHead] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -310,7 +312,7 @@ const IndustryHeadMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.startDate}
           >
-            {rowData.startDate}
+            {rowData.viewStartDate}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -334,7 +336,7 @@ const IndustryHeadMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.endDate}
           >
-            {rowData.endDate}
+            {rowData.viewEndDate}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -377,6 +379,10 @@ const IndustryHeadMaster = () => {
     setLoader(true);
     try {
       const response = await industryService.getIndustryHeadMaster();
+      response.industryHeads?.forEach((el: any) => {
+        el.viewStartDate = moment(el?.startDate).format("YYYY-MM-DD")
+        el.viewEndDate = moment(el?.endDate).format("YYYY-MM-DD")
+      })
       setIndustryHeadMaster(response?.industryHeads);
       return response?.industryHeads;
     } catch (error) {
@@ -599,6 +605,7 @@ const IndustryHeadMaster = () => {
     }
     updateIndustryHeadMaster(data, regionCodeList, regionNamesList, stateList);
     setFormPopup(true);
+    setIsEditIndustryHead(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -793,6 +800,7 @@ const IndustryHeadMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditIndustryHead(false);
     setStateData({});
     setIndustryHeadFieldsStructure(_.cloneDeep(IndustryHeadFormFields));
     setIndustryHeadForm(_.cloneDeep(IndustryHeadFormFields));
@@ -846,7 +854,7 @@ const IndustryHeadMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Industry Head</h4>
+                <h4 className="popup-heading">{isEditIndustryHead ? 'Update' : 'Add New'} Industry Head</h4>
               </div>
               <div
                 className="popup-right-close"

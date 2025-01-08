@@ -51,6 +51,7 @@ const AccountTypeMaster = () => {
   const [accountTypeMaster, setAccountTypeMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditBankAccType, setIsEditBankAccType] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -215,6 +216,7 @@ const AccountTypeMaster = () => {
     setStateData(data);
     updateAccountTypeMaster(data);
     setFormPopup(true);
+    setIsEditBankAccType(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -335,6 +337,7 @@ const AccountTypeMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditBankAccType(false);
     setStateData({});
     setAccountTypeFieldsStructure(_.cloneDeep(AccountTypeFormFields));
     setAccountTypeForm(_.cloneDeep(AccountTypeFormFields));
@@ -388,7 +391,7 @@ const AccountTypeMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Account Type</h4>
+                <h4 className="popup-heading">{isEditBankAccType ? 'Update' : 'Add New'} Account Type</h4>
               </div>
               <div
                 className="popup-right-close"

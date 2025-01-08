@@ -94,6 +94,7 @@ const CompanyAddressMaster = () => {
   const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditCompanyLocation, setIsEditCompanyLocation] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -461,6 +462,7 @@ const CompanyAddressMaster = () => {
     const stateNames = stateList?.map((state: any) => state.stateName);
     updateCompanyLocationMaster(data, stateNames);
     setFormPopup(true);
+    setIsEditCompanyLocation(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -629,6 +631,7 @@ const CompanyAddressMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditCompanyLocation(false);
     setStateData({});
     setCompanyLocationFieldStructure(_.cloneDeep(CompanyLocationFormFields));
     setCompanyLocationForm(_.cloneDeep(CompanyLocationFormFields));
@@ -684,7 +687,7 @@ const CompanyAddressMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Company Location</h4>
+                <h4 className="popup-heading">{isEditCompanyLocation ? 'Update' : 'Add New'} Company Location</h4>
               </div>
               <div
                 className="popup-right-close"

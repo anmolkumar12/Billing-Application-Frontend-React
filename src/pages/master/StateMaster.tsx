@@ -59,6 +59,7 @@ const StateMaster = () => {
   const [stateMaster, setStateMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditState, setIsEditState] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -271,8 +272,9 @@ const StateMaster = () => {
     setStateData(data);
     updateStateMaster(data);
     setFormPopup(true);
+    setIsEditState(true);
   };
-
+  
   const onPopUpClose = (e?: any) => {
     setShowConfirmDialogue(false);
   };
@@ -393,6 +395,7 @@ const StateMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditState(false);
     setStateData({});
     setStatesFieldsStructure(_.cloneDeep(StatesFormFields));
     setStatesForm(_.cloneDeep(StatesFormFields));
@@ -446,7 +449,7 @@ const StateMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New State</h4>
+                <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} State</h4>
               </div>
               <div
                 className="popup-right-close"

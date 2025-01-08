@@ -14,6 +14,7 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
 import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
 import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
+import moment from "moment";
 
 const SalesMaster = () => {
   const SalesFormFields = {
@@ -78,6 +79,7 @@ const SalesMaster = () => {
   const [salesMaster, setSalesMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [isEditSalesManager, setIsEditSalesManager] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
@@ -259,7 +261,8 @@ const SalesMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.fromDate}
           >
-            {rowData.fromDate}
+            {/* {rowData.fromDate} */}
+            {moment(rowData.fromDate).format("YYYY-MM-DD")}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -364,6 +367,7 @@ const SalesMaster = () => {
     setStateData(data);
     updateSalesMaster(data);
     setFormPopup(true);
+    setIsEditSalesManager(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -501,6 +505,7 @@ const SalesMaster = () => {
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditSalesManager(false);
     setStateData({});
     setSalesFieldsStructure(_.cloneDeep(SalesFormFields));
     setSalesForm(_.cloneDeep(SalesFormFields));
@@ -554,7 +559,7 @@ const SalesMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New Sales Manager</h4>
+                <h4 className="popup-heading">{isEditSalesManager ? 'Update' : 'Add New'} Sales Manager</h4>
               </div>
               <div
                 className="popup-right-close"
