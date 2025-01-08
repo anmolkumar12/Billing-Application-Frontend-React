@@ -49,7 +49,7 @@ const SalesMaster = () => {
     companyName: {
       inputType: "singleSelect",
       label: "Company",
-      disable:false,
+      disable: false,
       options: [],
       value: null,
       validation: {
@@ -112,7 +112,7 @@ const SalesMaster = () => {
   const salesService = new SalesMasterService();
   const [companyMaster, setCompanyMaster] = useState<any>([]);
   const companyService = new CompanyMasterService();
-  
+
 
   const SalesMasterColumns = [
     {
@@ -152,7 +152,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.name}
+          // data-pr-tooltip={rowData.name}
           >
             {rowData.name}
           </span>
@@ -176,7 +176,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.code}
+          // data-pr-tooltip={rowData.code}
           >
             {rowData.code}
           </span>
@@ -200,7 +200,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.code}
+          // data-pr-tooltip={rowData.code}
           >
             {rowData.sales_manager_email}
           </span>
@@ -211,30 +211,30 @@ const SalesMaster = () => {
         </div>
       ),
     },
-        {
-          label: "Company",
-          fieldName: "companyName",
-          textAlign: "left",
-          sort: true,
-          filter: true,
-          fieldValue: "companyName",
-          changeFilter: true,
-          placeholder: "Name",
-          body: (rowData: any) => (
-            <div>
-              <span
-                id={`companyNameTooltip-${rowData.id}`}
-                // data-pr-tooltip={rowData.companyName}
-              >
-                {rowData.companyName}
-              </span>
-              <Tooltip
-                target={`#companyNameTooltip-${rowData.id}`}
-                position="top"
-              />
-            </div>
-          ),
-        },
+    {
+      label: "Company",
+      fieldName: "companyName",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "companyName",
+      changeFilter: true,
+      placeholder: "Name",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+          // data-pr-tooltip={rowData.companyName}
+          >
+            {rowData.companyName}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
     {
       label: "Industry Head Names",
       fieldName: "industryHeadNames",
@@ -248,7 +248,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.industryHeadNames}
+          // data-pr-tooltip={rowData.industryHeadNames}
           >
             {rowData.industryHeadNames}
           </span>
@@ -270,11 +270,11 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
+          // data-pr-tooltip={rowData.description}
           >
             {rowData.description != null &&
-            rowData.description != "null" &&
-            rowData.description != ""
+              rowData.description != "null" &&
+              rowData.description != ""
               ? rowData.description
               : "NA"}
           </span>
@@ -298,7 +298,7 @@ const SalesMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.fromDate}
+          // data-pr-tooltip={rowData.fromDate}
           >
             {/* {rowData.fromDate} */}
             {moment(rowData.fromDate).format("YYYY-MM-DD")}
@@ -458,7 +458,7 @@ const SalesMaster = () => {
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
     console.log('jjjjjjjjjjjj', SalesForm);
-    
+
     _.each(SalesForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
@@ -482,16 +482,16 @@ const SalesMaster = () => {
       });
 
       const companyId =
-      companyMaster.find(
-        (company: any) =>
-          company.companyName === SalesForm.companyName.value
-      )?.id ?? null;
+        companyMaster.find(
+          (company: any) =>
+            company.companyName === SalesForm.companyName.value
+        )?.id ?? null;
 
 
       const obj = {
         name: SalesForm?.name?.value,
         code: SalesForm?.code?.value,
-        sales_manager_email:SalesForm.sales_manager_email.value,
+        sales_manager_email: SalesForm.sales_manager_email.value,
         fromDate: formatDate(SalesForm?.from_date?.value),
         description: SalesForm?.description?.value,
         industryHeadIds: industryHeadIds,
@@ -540,11 +540,10 @@ const SalesMaster = () => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to ${
-        !(data?.isactive || data?.is_active || data?.isActive)
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
           ? "activate"
           : "deactivate"
-      } this record?`,
+        } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
     });
@@ -559,8 +558,7 @@ const SalesMaster = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Sales Manager record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Sales Manager record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
