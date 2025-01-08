@@ -589,6 +589,7 @@ const CompanyMaster = () => {
   const onPopUpClose = (e?: any) => {
     setShowConfirmDialogue(false);
   };
+  
   const updateCompanyMaster = (data: any) => {
     try {
       const companyNamesList = companyMaster
