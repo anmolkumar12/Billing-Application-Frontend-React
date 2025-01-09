@@ -29,20 +29,14 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
   const [selectedMenu, setselectedMenu] = useState('')
   const menu = mobileMenu
   const logOut = () => {
-    AuthService.logOut()
-      .then((response: any) => {
-        if (response?.statusCode == HTTP_RESPONSE.REQUEST_SUCCESS) {
-          ToasterService.show(response.message, CONSTANTS.SUCCESS)
           localStorage.clear()
           TokenService().clearAllToken()
           AuthService.userInfo.next({})
-          history.push(ROUTE_CONSTANTS.LOGIN)
+          setTimeout(() => {
+            history.push(ROUTE_CONSTANTS.LOGIN);
+            ToasterService.show('Logout Successfully', CONSTANTS.SUCCESS)
+          }, 500);
         }
-      })
-      .catch((err: any) => {
-        ToasterService.show(err, CONSTANTS.ERROR)
-      })
-  }
 
   const getModuleName = () => {
     const path =

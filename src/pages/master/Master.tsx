@@ -52,6 +52,7 @@ import OemMaster from "./OemMaster";
 import PolestarProductSalesMaster from "./PolestarProductSalesMaster";
 import ProjectServiceMaster from "./ProjectServiceMaster";
 import RegionHeadMaster from "./RegionHeadMaster";
+import FinancialYearMaster from "./FinancialYearMaster";
 
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -4151,6 +4152,9 @@ const Master: React.FC = () => {
         className={classes["main-tab-screen"]}
         panelContainerClassName={classes["panel-tabs"]}
       >
+        <TabPanel header="Financial Year">
+          <FinancialYearMaster />
+        </TabPanel>
         <TabPanel header="Country">
           <CountryMaster />
         </TabPanel>

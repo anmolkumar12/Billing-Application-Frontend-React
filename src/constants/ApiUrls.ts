@@ -4,7 +4,7 @@ export const APIURLS = {
   FORGET_PASSWORD: '/resetPassword', // send email when forget password
   RESET_PASSWORD: '/resetPassword/resetPassword',
   REFRESH_TOKEN: 'refreshToken', //get token from refresh token
-  VERIFY_TOKEN: 'vt', // verify token on refresh
+  VERIFY_TOKEN: '/api/auth/validatetoken', // verify token on refresh
   GOOGLE_LOGIN: 'passport/auth/google/callback',
   GET_COUNTRY_MASTER: '/api/masters/getCountriesList',
   GET_STATE_MASTER: '/api/masters/getStatesList',
@@ -40,6 +40,12 @@ export const APIURLS = {
   CREATE_PROJECT_SERVICE_MASTER:'/api/masters/createProjectService',
   UPDATE_PROJECT_SERVICE_MASTER:'/api/masters/updateProjectService',
   TOGGLE_PROJECT_SERVICE_MASTER_STATUS:'/api/masters/activateDeactivateProjectService',
+
+  // FINANCIAL YEAR
+  GET_FINANCIAL_YEAR_MASTER: '/api/masters/getAllFinancialYearsHandler',
+  CREATE_FINANCIAL_YEAR_MASTER: '/api/masters/createFinancialYear',
+  UPDATE_FINANCIAL_YEAR_MASTER: '/api/masters/updateFinancialYearHandler',
+  TOGGLE_FINANCIAL_YEAR_MASTER_STATUS: '/api/masters/activateDeactivateFinancialYear',
 
   GET_CONTRACT_MASTER: '/api/masters/',
   TOGGLE_COUNTRY: '/api/masters/activateDeactivateCountry',
