@@ -1,0 +1,628 @@
+        <TabPanel header="Currency">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add New Currency"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={currencyMaster}
+              column={CurrencyMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 200px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add New Currency</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(CurrencyForm)}
+                    formUpdateEvent={currencyFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createNewCurrency}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </TabPanel>
+        <TabPanel header="Product">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add New Product"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={productsMaster}
+              column={ProductsMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 200px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header ">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add New Product</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(ProductForm)}
+                    formUpdateEvent={productFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createNewProduct}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </TabPanel>
+        <TabPanel header="Project">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add New Project"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={projectsMaster}
+              column={ProjectsMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 200px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header ">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add New Project</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(ProjectForm)}
+                    formUpdateEvent={projectFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createNewProject}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </TabPanel>
+        <TabPanel header="Tax">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add New Tax"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={taxMaster}
+              column={TaxMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 200px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header ">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add New Tax</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(TaxForm)}
+                    formUpdateEvent={taxFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createNewTax}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </TabPanel>
+        <TabPanel header="Client">
+          {openClientForm ? (
+            <TabView
+              activeIndex={activeClientIndex}
+              onTabChange={onClientTabChange}
+            >
+              <TabPanel header="Client">
+                <div className={classes["form-container"]}>
+                  <div className={classes["form-content"]}>
+                    <FormComponent
+                      form={_.cloneDeep(ClientForm)}
+                      formUpdateEvent={clientFormHandler}
+                      isFormValidFlag={isFormValid}
+                    ></FormComponent>
+                    {/* attachment */}
+                    <div className={classes["upload-wrapper"]}>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <div className={classes["upload-file-section"]}>
+                            <div className={classes["upload-file"]}>
+                              {attachments.length > 0 ? (
+                                <div className={classes["image-preview"]}>
+                                  <img
+                                    src={attachments[0].preview}
+                                    alt="Preview"
+                                  />
+                                  <div className={classes["chip-tm"]}>
+                                    {attachments.map(
+                                      (
+                                        item: { name: string | undefined },
+                                        index: React.Key | null | undefined
+                                      ) => (
+                                        <Chip
+                                          label={item.name}
+                                          removable
+                                          onRemove={() => removeFileHandler()}
+                                          key={index}
+                                        />
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <input
+                                    type="file"
+                                    onClick={(event: any) => {
+                                      event.target.value = null;
+                                    }}
+                                    onChange={(e) =>
+                                      selectAttachment(e.target.files)
+                                    }
+                                    className={classes["upload"]}
+                                  />
+                                  <img
+                                    src={ImageUrl.FolderIconImage}
+                                    alt="Folder Icon"
+                                  />
+                                  <p>
+                                    Drag files here <span> or browse</span>{" "}
+                                    <br />
+                                    <u>Support PNG</u>
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* attachment */}
+                  </div>
+                </div>
+                <div className={classes["popup-lower-btn"]}>
+                  <ButtonComponent
+                    label="Cancel"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    type="default"
+                    submitEvent={closeClientForm}
+                  />
+                  <ButtonComponent
+                    label="Next"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={moveNextClientForm}
+                  />
+                </div>
+              </TabPanel>
+              <TabPanel header="Contact">
+                <div className={classes["form-container"]}>
+                  <div className={classes["form-content"]}>
+                    <FormComponent
+                      form={_.cloneDeep(ClientContactForm)}
+                      formUpdateEvent={clientContactFormHandler}
+                      isFormValidFlag={isFormValid}
+                    ></FormComponent>
+                  </div>
+                </div>
+                <div className={classes["popup-lower"]}>
+                  <div className={classes["popup-lower-left-btn"]}>
+                    <ButtonComponent
+                      label="Back"
+                      icon="pi pi-check"
+                      iconPos="left"
+                      type="default"
+                      submitEvent={backToPreviousForm}
+                    />
+                  </div>
+                  <div className={classes["popup-lower-right-btn"]}>
+                    <ButtonComponent
+                      label="Cancel"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      type="default"
+                      submitEvent={closeFormPopup}
+                    />
+                    <ButtonComponent
+                      label="Submit Form"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      submitEvent={createClientForm}
+                    />
+                  </div>
+                </div>
+              </TabPanel>
+            </TabView>
+          ) : (
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  marginBottom: "0.5em",
+                }}
+              >
+                <ButtonComponent
+                  label="New Client"
+                  icon="pi pi-check"
+                  iconPos="right"
+                  submitEvent={openClientFormButton}
+                />
+              </div>
+              <p className="m-0">
+                <DataTableBasicDemo
+                  data={clientMaster}
+                  column={ClientMasterColumns}
+                  showGridlines={true}
+                  resizableColumns={true}
+                  rows={20}
+                  paginator={true}
+                  sortable={true}
+                  headerRequired={true}
+                  scrollHeight={"calc(100vh - 200px)"}
+                  downloadedfileName={"Brandwise_Denomination_table"}
+                />
+                {showConfirmDialogue ? (
+                  <ConfirmDialogue
+                    actionPopupToggle={actionPopupToggle}
+                    onCloseFunction={onPopUpClose}
+                  />
+                ) : null}
+              </p>
+            </>
+          )}
+        </TabPanel>
+        <TabPanel header="Client Bill To">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add Client Bill Info"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={clientBillToMaster}
+              column={ClientBillToMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 200px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add Client Bill Info</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(ClientBillForm)}
+                    formUpdateEvent={clientBillFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createClientBillInfo}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </TabPanel>
+        <TabPanel header="Client Ship To">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginBottom: "0.5em",
+            }}
+          >
+            <ButtonComponent
+              label="Add Client Ship Info"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={openSaveForm}
+            />
+          </div>
+          <p className="m-0">
+            <DataTableBasicDemo
+              data={clientShipToMaster}
+              column={ClientShipToMasterColumns}
+              showGridlines={true}
+              resizableColumns={true}
+              rows={20}
+              paginator={true}
+              sortable={true}
+              headerRequired={true}
+              scrollHeight={"calc(100vh - 200px)"}
+              downloadedfileName={"Brandwise_Denomination_table"}
+            />
+            {showConfirmDialogue ? (
+              <ConfirmDialogue
+                actionPopupToggle={actionPopupToggle}
+                onCloseFunction={onPopUpClose}
+              />
+            ) : null}
+          </p>
+          {storeFormPopup ? (
+            <div className="popup-overlay md-popup-overlay">
+              <div className="popup-body md-popup-body stretchLeft">
+                <div className="popup-header">
+                  <div
+                    className="popup-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                    <h4 className="popup-heading">Add Client Shipping Info</h4>
+                  </div>
+                  <div
+                    className="popup-right-close"
+                    onClick={() => {
+                      closeFormPopup();
+                    }}
+                  >
+                    &times;
+                  </div>
+                </div>
+                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                  <FormComponent
+                    form={_.cloneDeep(ClientShipForm)}
+                    formUpdateEvent={clientShipFormHandler}
+                    isFormValidFlag={isFormValid}
+                  ></FormComponent>
+                </div>
+
+                <div className="popup-lower-btn">
+                  <ButtonComponent
+                    label="Submit"
+                    icon="pi pi-check"
+                    iconPos="right"
+                    submitEvent={createClientShipInfo}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </TabPanel>
