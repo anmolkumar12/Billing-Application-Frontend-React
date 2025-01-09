@@ -192,5 +192,9 @@ export const APIURLS = {
   VIEW_COMPANY_LOGO: 'aggregatorUser/logo',
   PENDING_INVOICES: 'vegaPro/wallet/pendingInvoice',
   DEACTIVATE_CLIENTS: 'vegaPro/aggregator/deactivateClient',
+  GET_REGION_HEAD_MASTER: '/api/masters/getRegionHeadsList',
+  CREATE_REGION_HEAD_MASTER: '/api/masters/addRegionHead',
+  UPDATE_REGION_HEAD_MASTER: '/api/masters/updateRegionHead',
+  TOGGLE_REGION_HEAD_STATUS: '/api/masters/activateDeactivateRegionHead',
  
 }

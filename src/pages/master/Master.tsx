@@ -51,6 +51,7 @@ import TechMaster from "./TechMaster";
 import OemMaster from "./OemMaster";
 import PolestarProductSalesMaster from "./PolestarProductSalesMaster";
 import ProjectServiceMaster from "./ProjectServiceMaster";
+import RegionHeadMaster from "./RegionHeadMaster";
 
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -4158,6 +4159,9 @@ const Master: React.FC = () => {
         </TabPanel>
         <TabPanel header="Regions">
           <RegionMaster />
+        </TabPanel>
+        <TabPanel header="Region Head">
+          <RegionHeadMaster />
         </TabPanel>
         <TabPanel header="Company">
           <CompanyMaster />
