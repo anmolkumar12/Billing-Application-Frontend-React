@@ -6,6 +6,7 @@ import { NavigateUserService } from '../../services/navigate-user-service/naviga
 import { ToasterService } from '../../services/toaster-service/toaster-service'
 import { TokenService } from '../../services/token-service/token-service'
 import { Loader } from '../ui/loader/Loader'
+import { AuthService } from '../../services/auth-service/auth.service'
 
 export const ProtectedRoute: React.FC<{
   component: React.FC
@@ -15,13 +16,16 @@ export const ProtectedRoute: React.FC<{
   const isMountRef = useRef(false)
   const history = useHistory()
   useEffect(() => {
-    isMountRef.current = true
-    if (TokenService().getAccessToken()) {
-      history.push(new NavigateUserService().getRoute())
-    } else {
-      history.push(ROUTE_CONSTANTS.LOGIN)
-      ToasterService.show('Authorization Failure', CONSTANTS.ERROR)
-    }
+    isMountRef.current = true;
+    AuthService.validateToken().then((response)=>{
+      if(response.tokenIsValid){
+        history.push(new NavigateUserService().getRoute());
+      }
+      else {
+        history.push(ROUTE_CONSTANTS.LOGIN);
+        ToasterService.show('Authorization Failure', CONSTANTS.ERROR)
+      }
+    })
     return () => {
       isMountRef.current = false
     }
