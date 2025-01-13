@@ -92,4 +92,16 @@ export class UtilityService {
     ]
     return colors[index % 6]
   }
+   getYearRange = () => {
+    const currentYear = new Date().getFullYear();
+    const startYear = currentYear - 15;
+    const endYear = currentYear + 15;
+    const yearRange = [];
+    
+    for (let year = startYear; year <= endYear; year++) {
+      yearRange.push(year.toString());
+    }
+    
+    return yearRange;
+  };
 }

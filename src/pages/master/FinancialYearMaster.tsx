@@ -14,8 +14,10 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
 
 import FinancialYearMasterService from "../../services/masters/financial-year-master/financialYearMaster.service";
+import { UtilityService } from "../../services/utility-service/utility.service";
 
 const FinancialYearMaster = () => {
+    const [yearsRange,setYearsRange] = useState<any>(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033', '2034', '2035', '2036', '2037', '2038', '2039', '2040']) 
   const formObj = {
     financialYearName: {
       inputType: "inputtext",
@@ -27,22 +29,24 @@ const FinancialYearMaster = () => {
       fieldWidth: "col-md-6",
     },
     startYear: {
-      inputType: "inputtext",
-      label: "Start Year",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
+        inputType: "singleDatePicker",
+        label: "Start Time",
+        value: null,
+        validation: {
+          required: true,
+        },
+        fieldWidth: "col-md-6",
+      
     },
     endYear: {
-      inputType: "inputtext",
-      label: "End Year",
+        inputType: "singleDatePicker",
+      label: "End Time",
       value: null,
       validation: {
         required: true,
       },
       fieldWidth: "col-md-6",
+    
     },
     // description: {
     //   inputType: "inputtext",
@@ -156,7 +160,7 @@ const FinancialYearMaster = () => {
     },
    
     {
-        label: "Start Year",
+        label: "Start Time",
         fieldName: "startYear",
         textAlign: "left",
         sort: true,
@@ -177,7 +181,7 @@ const FinancialYearMaster = () => {
         ),
     },
     {
-        label: "End Year",
+        label: "End Time",
         fieldName: "endYear",
         textAlign: "left",
         sort: true,
@@ -245,6 +249,14 @@ const FinancialYearMaster = () => {
     updateFinancialYearMaster(data);
     setFormPopup(true);
   };
+  const getRequiredFormat = (dateString:string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB",{
+        day:"2-digit",
+        month:"short",
+        year:"numeric"
+    })
+  }
 
   const updateFinancialYearMaster = (data: any) => {
     console.log('data there --->',data)
@@ -258,8 +270,8 @@ const FinancialYearMaster = () => {
     event.preventDefault();
     const obj: any = {
       financialYearName: formObjState?.financialYearName?.value,
-      startYear: formObjState?.startYear?.value,
-      endYear: formObjState?.endYear?.value,
+      startYear: getRequiredFormat(formObjState?.startYear?.value),
+      endYear: getRequiredFormat(formObjState?.endYear?.value),
     //   description: formObjState?.description?.value,
       isActive: 1,
       updatedBy: loggedInUserId,
@@ -267,6 +279,7 @@ const FinancialYearMaster = () => {
     if (rowData && rowData?.id) {
       obj["id"] = rowData.id;
     }
+    console.log('object----->',obj);
     try {
       const response =
         await financialYearService.createFinancialYearMasterData(obj);
@@ -300,7 +313,7 @@ const FinancialYearMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Financial Year Master"
+          label="Add New Financial Year"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}
@@ -338,7 +351,7 @@ const FinancialYearMaster = () => {
               >
                 <i className="pi pi-angle-left"></i>
                 <h4 className="popup-heading">
-                  {rowData ? "Update" : "Add New"} Financial Year Master
+                  {rowData ? "Update" : "Add New"} Financial Year
                 </h4>
               </div>
               <div

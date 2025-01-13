@@ -2,7 +2,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import "primeicons/primeicons.css";
 import { CompanyMasterService } from "../../services/masters/company-master/company.service";
-import { CurrencyMasterService } from "../../services/masters/currency-master/currency.service";
+
 import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
 import { ProductMasterService } from "../../services/masters/product-master/product.service";
@@ -52,6 +52,7 @@ import OemMaster from "./OemMaster";
 import PolestarProductSalesMaster from "./PolestarProductSalesMaster";
 import ProjectServiceMaster from "./ProjectServiceMaster";
 import FinancialYearMaster from "./FinancialYearMaster";
+import CurrencyMaster from "./CurrencyMaster";
 
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -85,7 +86,7 @@ const Master: React.FC = () => {
   let patchData: any;
 
   const companyService = new CompanyMasterService();
-  const currencyService = new CurrencyMasterService();
+ ;
   const industryService = new IndustryMasterService();
   const accountsService = new AccountsMasterService();
   const technologyService = new TechnologyMasterService();
@@ -116,9 +117,6 @@ const Master: React.FC = () => {
           await formatCompanyDetails(companies);
           await formatCountry_ClientDetails(countries);
           await formatState_ClientDetails(states);
-          break;
-        case 2:
-          await getCurrencyMaster();
           break;
         case 3:
           await getAccountsMaster();
@@ -336,18 +334,7 @@ const Master: React.FC = () => {
     }
   };
 
-  const getCurrencyMaster = async () => {
-    setLoader(true);
-    try {
-      const response = await currencyService.getCurrencyMaster();
-      setCurrencyMaster(response?.currencies);
-      return response?.currencies;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoader(false);
-    }
-  };
+
 
   const getIndustryMaster = async () => {
     setLoader(true);
@@ -532,25 +519,7 @@ const Master: React.FC = () => {
       });
   };
 
-  const deactivateCurrencyMaster = () => {
-    setLoader(true);
-    currencyService
-      .deactivateCurrencyMaster({ ...patchData, loggedInUserId })
-      .then(() => {
-        setLoader(false);
-        setShowConfirmDialogue(false);
-        ToasterService.show(
-          `Currency record ${
-            patchData?.isActive ? "deactivated" : "activated"
-          } successfully`,
-          CONSTANTS.SUCCESS
-        );
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
-  };
+
 
   const deactivateIndustryMaster = () => {
     setLoader(true);
@@ -586,7 +555,7 @@ const Master: React.FC = () => {
           CONSTANTS.SUCCESS
         );
       })
-      .catch((error) => {
+      .catch((error:any) => {
         setLoader(false);
         return false;
       });
@@ -862,9 +831,7 @@ const Master: React.FC = () => {
       case 1:
         deactivateCompanyLocationMaster();
         break;
-      case 2:
-        deactivateCurrencyMaster();
-        break;
+
       case 3:
         deactivateAccountsMaster();
         break;
@@ -3616,64 +3583,7 @@ const Master: React.FC = () => {
     setClientContactForm(form);
   };
 
-  const createNewCurrency = (event: FormEvent) => {
-    event.preventDefault();
-    let companyValidityFlag = true;
-    const companyFormValid: boolean[] = [];
 
-    _.each(CurrencyForm, (item: any) => {
-      if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
-      }
-    });
-
-    setIsFormValid(companyValidityFlag);
-
-    if (companyValidityFlag) {
-      const obj = {
-        currencyName: CurrencyForm?.currencyName?.value,
-        currencyDescription: CurrencyForm?.currencyDescription?.value,
-        exchangeRate: CurrencyForm?.exchangeRate?.value,
-        isActive: 1,
-        updatedBy: loggedInUserId,
-      };
-
-      if (!stateData?.id) {
-        currencyService
-          .createCurrencyMaster(obj)
-          .then((response: any) => {
-            if (response?.statusCode == HTTP_RESPONSE.CREATED) {
-              setStateData({});
-              closeFormPopup();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      } else {
-        const updatePayload = { ...obj, currencyId: stateData?.id };
-
-        currencyService
-          .updateCurrencyMaster(updatePayload)
-          .then((response: any) => {
-            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-              setStateData({});
-              closeFormPopup();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-            }
-          })
-          .catch((error: any) => {
-            setStateData({});
-            ToasterService.show(error, CONSTANTS.ERROR);
-          });
-      }
-    } else {
-      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-    }
-  };
 
   const createNewProduct = (event: FormEvent) => {
     event.preventDefault();
@@ -4212,81 +4122,7 @@ const Master: React.FC = () => {
           <ProjectServiceMaster />
         </TabPanel>
         <TabPanel header="Currency">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              marginBottom: "0.5em",
-            }}
-          >
-            <ButtonComponent
-              label="Add New Currency"
-              icon="pi pi-check"
-              iconPos="right"
-              submitEvent={openSaveForm}
-            />
-          </div>
-          <p className="m-0">
-            <DataTableBasicDemo
-              data={currencyMaster}
-              column={CurrencyMasterColumns}
-              showGridlines={true}
-              resizableColumns={true}
-              rows={20}
-              paginator={true}
-              sortable={true}
-              headerRequired={true}
-              scrollHeight={"calc(100vh - 200px)"}
-              downloadedfileName={"Brandwise_Denomination_table"}
-            />
-            {showConfirmDialogue ? (
-              <ConfirmDialogue
-                actionPopupToggle={actionPopupToggle}
-                onCloseFunction={onPopUpClose}
-              />
-            ) : null}
-          </p>
-          {storeFormPopup ? (
-            <div className="popup-overlay md-popup-overlay">
-              <div className="popup-body md-popup-body stretchLeft">
-                <div className="popup-header">
-                  <div
-                    className="popup-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    <i className="pi pi-angle-left"></i>
-                    <h4 className="popup-heading">Add New Currency</h4>
-                  </div>
-                  <div
-                    className="popup-right-close"
-                    onClick={() => {
-                      closeFormPopup();
-                    }}
-                  >
-                    &times;
-                  </div>
-                </div>
-                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                  <FormComponent
-                    form={_.cloneDeep(CurrencyForm)}
-                    formUpdateEvent={currencyFormHandler}
-                    isFormValidFlag={isFormValid}
-                  ></FormComponent>
-                </div>
-
-                <div className="popup-lower-btn">
-                  <ButtonComponent
-                    label="Submit"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={createNewCurrency}
-                  />
-                </div>
-              </div>
-            </div>
-          ) : null}
+          <CurrencyMaster />
         </TabPanel>
         <TabPanel header="Product">
           <div
