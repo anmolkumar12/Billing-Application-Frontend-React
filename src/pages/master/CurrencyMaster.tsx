@@ -12,6 +12,7 @@ import { CONSTANTS } from "../../constants/Constants";
 import { FormType } from "../../schemas/FormField";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
+import moment from "moment";
 
 import CurrencyMasterService from "../../services/masters/currency-master/currency.service";
 
@@ -43,8 +44,11 @@ const CurrencyMaster = () => {
   const [rowData, setRowData] = useState<any>({});
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
+  const [currencyHistoryPopup, setCurrencyHistoryPopup] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [formObjState, setFormObjState] = useState<any>(_.cloneDeep(formObj));
+
+  const [currencyHistoryData, setCurrencyHistoryData] = useState<any>([]);
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
@@ -52,120 +56,209 @@ const CurrencyMaster = () => {
   const loggedInUserId = userInfo?.userId;
   const currencyService = new CurrencyMasterService();
 
-  const getExchangeRateValueWithOneUnit = (data:any) => {
-    return data.exchangeRate?`${(1/data.exchangeRate).toFixed(4)}`:'NA'
-  }
+  const showThisCurrencyCodeHistory = async (currencyCode: any) => {
+    setCurrencyHistoryPopup(true);
+    try {
+      const response = await currencyService.getCurrencyHistoryData({
+        currencyCode: currencyCode,
+      });
+      setCurrencyHistoryData(Array.isArray(response) ? response : []);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const getExchangeRateValueWithOneUnit = (data: any) => {
+    return data.exchangeRate ? (
+      <span
+        // className="clickable-span"
+        // onClick={() => showThisCurrencyCodeHistory(data.currencyCode)}
+      >
+        {(1 / data.exchangeRate).toFixed(4)}
+      </span>
+    ) : (
+      "NA"
+    );
+  };
 
   const currencyMasterColumns = [
+    // {
+    //   label: "Action",
+    //   fieldName: "action",
+    //   textAlign: "left",
+    //   body: (rowData: any) => (
+    //     <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
+    //       <span
+    //         className="pi pi-pencil"
+    //         style={{ cursor: "pointer" }}
+    //         title="Update"
+    //         onClick={() => onUpdate(rowData)}
+    //       ></span>
+    //       <span
+    //         className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
+    //         style={{ cursor: "pointer" }}
+    //         title={rowData.isActive ? "Deactivate" : "Activate"}
+    //         onClick={() => onDelete(rowData)}
+    //       ></span>
+    //     </div>
+    //   ),
+    // },
     {
-      label: "Action",
-      fieldName: "action",
+      label: "Currency Code",
+      fieldName: "currencyCode",
       textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "currencyCode",
+      changeFilter: true,
+      placeholder: "Currency Code",
       body: (rowData: any) => (
-        <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
+        <div>
           <span
-            className="pi pi-pencil"
-            style={{ cursor: "pointer" }}
-            title="Update"
-            onClick={() => onUpdate(rowData)}
-          ></span>
-          <span
-            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
-            style={{ cursor: "pointer" }}
-            title={rowData.isActive ? "Deactivate" : "Activate"}
-            onClick={() => onDelete(rowData)}
-          ></span>
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.techName}
+          >
+            {rowData.currencyCode}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
         </div>
       ),
     },
+    // {
+    //   label: "Description",
+    //   fieldName: "description",
+    //   textAlign: "left",
+    //   sort: true,
+    //   filter: true,
+    //   fieldValue: "description",
+    //   changeFilter: true,
+    //   placeholder: "Description",
+    //   body: (rowData: any) => (
+    //     <div>
+    //       <span
+    //         id={`companyNameTooltip-${rowData.id}`}
+    //         // data-pr-tooltip={rowData.description}
+    //       >
+    //         {rowData.description}
+    //       </span>
+    //       <Tooltip
+    //         target={`#companyNameTooltip-${rowData.id}`}
+    //         position="top"
+    //       />
+    //     </div>
+    //   ),
+    // },
     {
-         label: "Currency Code",
-         fieldName: "currencyCode",
-         textAlign: "left",
-         sort: true,
-         filter: true,
-         fieldValue: "currencyCode",
-         changeFilter: true,
-         placeholder: "Currency Code",
-         body: (rowData: any) => (
-           <div>
-             <span
-               id={`companyNameTooltip-${rowData.id}`}
-               // data-pr-tooltip={rowData.techName}
-             >
-               {rowData.currencyCode}
-             </span>
-             <Tooltip
-               target={`#companyNameTooltip-${rowData.id}`}
-               position="top"
-             />
-           </div>
-         ),
-       },
-       {
-         label: "Description",
-         fieldName: "description",
-         textAlign: "left",
-         sort: true,
-         filter: true,
-         fieldValue: "description",
-         changeFilter: true,
-         placeholder: "Description",
-         body: (rowData: any) => (
-           <div>
-             <span
-               id={`companyNameTooltip-${rowData.id}`}
-               // data-pr-tooltip={rowData.description}
-             >
-               {rowData.description}
-             </span>
-             <Tooltip
-               target={`#companyNameTooltip-${rowData.id}`}
-               position="top"
-             />
-           </div>
-         ),
-       },
-       {
-        label: "Exchange Rate In INR",
-        fieldName: "exchangeRate",
-        textAlign: "left",
-        sort: true,
-        filter: true,
-        fieldValue: "exchangeRate",
-        changeFilter: true,
-        placeholder: "Exchange Rate In Rs",
-        body: (rowData: any) => (
-          <div>
-            <span
-              id={`companyNameTooltip-${rowData.id}`}
-              // data-pr-tooltip={rowData.description}
-            >
-              {getExchangeRateValueWithOneUnit(rowData)}
-            </span>
-            <Tooltip
-              target={`#companyNameTooltip-${rowData.id}`}
-              position="top"
-            />
-          </div>
-        ),
-      },
-      
-       {
-         label: "Status",
-         fieldName: "isActive",
-         textAlign: "left",
-         frozen: false,
-         sort: true,
-         filter: true,
-         body: (rowData: any) => (
-           <div>
-             <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
-               {rowData?.isActive == 1 ? "Active" : "Inactive"}
-             </span>
-           </div>
-         ),
-       },
+      label: "Exchange Rate In INR",
+      fieldName: "exchangeRate",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "exchangeRate",
+      changeFilter: true,
+      placeholder: "Exchange Rate In Rs",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {getExchangeRateValueWithOneUnit(rowData)}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+
+    {
+      label: "Date",
+      fieldName: "isActive",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span>
+          {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
+        </div>
+      ),
+    },
+  ];
+
+  const currencyHistoryColumns = [
+    {
+      label: "Currency Code",
+      fieldName: "currencyCode",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "currencyCode",
+      changeFilter: true,
+      placeholder: "Currency Code",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.techName}
+          >
+            {rowData.currencyCode}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+
+    {
+      label: "Exchange Rate In INR",
+      fieldName: "exchangeRate",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "exchangeRate",
+      changeFilter: true,
+      placeholder: "Exchange Rate In Rs",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.description}
+          >
+            {getExchangeRateValueWithOneUnit(rowData)}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+
+    {
+      label: "Date",
+      fieldName: "isActive",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span>
+           {rowData.updated_at}
+          </span>
+        </div>
+      ),
+    },
   ];
 
   useEffect(() => {
@@ -222,7 +315,10 @@ const CurrencyMaster = () => {
     }
     try {
       const response = await currencyService.createCurrencyMasterData(obj);
-      if (response?.statusCode === HTTP_RESPONSE.CREATED || response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+      if (
+        response?.statusCode === HTTP_RESPONSE.CREATED ||
+        response?.statusCode === HTTP_RESPONSE.SUCCESS
+      ) {
         closeFormPopup();
         getCurrencyMaster();
         ToasterService.show(response?.message, CONSTANTS.SUCCESS);
@@ -257,7 +353,9 @@ const CurrencyMaster = () => {
         getCurrencyMaster();
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Currency record ${data.isActive ? "deactivated" : "activated"} successfully`,
+          `Currency record ${
+            data.isActive ? "deactivated" : "activated"
+          } successfully`,
           CONSTANTS.SUCCESS
         );
       })
@@ -275,9 +373,19 @@ const CurrencyMaster = () => {
     <Loader />
   ) : (
     <>
-      <div style={{ display: "flex", justifyContent: "end", marginBottom: "0.5em" }}>
-        <ButtonComponent label="Add New Currency" icon="pi pi-plus" submitEvent={openSaveForm} />
-      </div>
+      {/* <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          marginBottom: "0.5em",
+        }}
+      >
+        <ButtonComponent
+          label="Add New Currency"
+          icon="pi pi-plus"
+          submitEvent={openSaveForm}
+        />
+      </div> */}
       <p className="m-0">
         <DataTableBasicDemo
           data={currencyMaster}
@@ -290,17 +398,34 @@ const CurrencyMaster = () => {
           headerRequired
         />
         {showConfirmDialogue && (
-          <ConfirmDialogue actionPopupToggle={actionPopupToggle} onCloseFunction={onPopUpClose} />
+          <ConfirmDialogue
+            actionPopupToggle={actionPopupToggle}
+            onCloseFunction={onPopUpClose}
+          />
         )}
       </p>
       {storeFormPopup && (
         <div className="popup-overlay md-popup-overlay">
           <div className="popup-body md-popup-body">
+
             <div className="popup-header">
-              <h4>{rowData ? "Update" : "Add New"} Currency</h4>
-              <span className="popup-close" onClick={closeFormPopup}>
+              <div
+                className="popup-close"
+                onClick={() => {
+                  closeFormPopup();
+                }}
+              >
+                <i className="pi pi-angle-left"></i>
+                <h4 className="popup-heading">{rowData ? "Update" : "Add New"} Currency</h4>
+              </div>
+              <div
+                className="popup-right-close"
+                onClick={() => {
+                  closeFormPopup();
+                }}
+              >
                 &times;
-              </span>
+              </div>
             </div>
             <div className="popup-content">
               <FormComponent
@@ -310,7 +435,41 @@ const CurrencyMaster = () => {
               />
             </div>
             <div className="popup-lower-btn">
-              <ButtonComponent label="Submit" icon="pi pi-check" submitEvent={createNewRecord} />
+              <ButtonComponent
+                label="Submit"
+                icon="pi pi-check"
+                submitEvent={createNewRecord}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {currencyHistoryPopup && (
+        <div className="popup-overlay md-popup-overlay">
+          <div className="popup-body md-popup-body">
+            <div className="popup-header">
+              <h4 className="popup-heading"> Exchange Rate History</h4>
+              <span
+                className="popup-close"
+                onClick={() => setCurrencyHistoryPopup(false)}
+              >
+                &times;
+              </span>
+            </div>
+            <div className="popup-content">
+              <p className="m-0">
+                <DataTableBasicDemo
+                  data={currencyHistoryData}
+                  column={currencyHistoryColumns}
+                  showGridlines
+                  resizableColumns
+                  rows={20}
+                  paginator
+                  sortable
+                  headerRequired
+                />
+              </p>
             </div>
           </div>
         </div>

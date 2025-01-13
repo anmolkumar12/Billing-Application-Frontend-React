@@ -52,6 +52,7 @@ export const APIURLS = {
   CREATE_CURRENCY_MASTER: '/api/masters/createCurrency',
   UPDATE_CURRENCY_MASTER: '/api/masters/updateCurrency',
   TOGGLE_CURRENCY_STATUS: '/api/masters/activateOrDeactivateCurrency',
+  CURRENCY_HISTORY_DATA: '/api/masters/currencyHistory',
 
 
   GET_CONTRACT_MASTER: '/api/masters/',

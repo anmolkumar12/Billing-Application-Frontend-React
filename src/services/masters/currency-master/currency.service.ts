@@ -55,4 +55,14 @@ export default class CurrencyMasterService {
       return {};
     }
   };
+
+  getCurrencyHistoryData = async (data:any) => {
+    try {
+      const response = await HTTPService.postRequest(APIURLS.CURRENCY_HISTORY_DATA,data);
+      return response?.data;
+    } catch (error) {
+      return {};
+    }
+
+  }
 }
