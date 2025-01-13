@@ -22,7 +22,7 @@ export const APIURLS = {
   GET_TECHNOLOGY_GROUP_MASTER: '/api/masters/getTechnologyGroups',
   GET_TECHNOLOGY_SUBGROUP_MASTER: '/api/masters/getTechnologySubgroups',
   GET_TECHNOLOGY_MASTER: '/api/masters/getTechnologyNames',
-  GET_CURRENCY_MASTER: '/api/masters/currencyList',
+
   GET_PRODUCT_MASTER: '/api/masters/productList',
   GET_PROJECT_MASTER: '/api/masters/projectList',
   GET_TAX_MASTER: '/api/masters/taxTypeList',
@@ -47,6 +47,13 @@ export const APIURLS = {
   UPDATE_FINANCIAL_YEAR_MASTER: '/api/masters/updateFinancialYearHandler',
   TOGGLE_FINANCIAL_YEAR_MASTER_STATUS: '/api/masters/activateDeactivateFinancialYear',
 
+  // CURRENCY
+  GET_CURRENCY_MASTER: '/api/masters/getCurrency',
+  CREATE_CURRENCY_MASTER: '/api/masters/createCurrency',
+  UPDATE_CURRENCY_MASTER: '/api/masters/updateCurrency',
+  TOGGLE_CURRENCY_STATUS: '/api/masters/activateOrDeactivateCurrency',
+
+
   GET_CONTRACT_MASTER: '/api/masters/',
   TOGGLE_COUNTRY: '/api/masters/activateDeactivateCountry',
   TOGGLE_STATE_STATUS: '/api/masters/activateDeactivateState',
@@ -64,7 +71,7 @@ export const APIURLS = {
   TOGGLE_TECHNOLOGY_GROUP_STATUS: '/api/masters/activateDeactivateTechnologyGroup',
   TOGGLE_TECHNOLOGY_SUBGROUP_STATUS: '/api/masters/activateDeactivateTechnologySubgroup',
   TOGGLE_TECHNOLOGY_STATUS: '/api/masters/activateDeactivateTechnologyName',
-  TOGGLE_CURRENCY_STATUS: '/api/masters/toggleCurrencyActiveStatus',
+  
   TOGGLE_PRODUCT_STATUS: '/api/masters/toggleProductActiveStatus',
   TOGGLE_PROJECT_STATUS: '/api/masters/toggleProjectActiveStatus',
   TOGGLE_TAX_STATUS: '/api/masters/toggleTaxTypeActiveStatus',
@@ -89,7 +96,7 @@ export const APIURLS = {
   CREATE_TECHNOLOGY_GROUP_MASTER: '/api/masters/createTechnologyGroup',
   CREATE_TECHNOLOGY_SUBGROUP_MASTER: '/api/masters/createTechnologySubgroup',
   CREATE_TECHNOLOGY_MASTER: '/api/masters/createTechnologyName',
-  CREATE_CURRENCY_MASTER: '/api/masters/addCurrency',
+
   CREATE_PRODUCT_MASTER: '/api/masters/addProduct',
   CREATE_PROJECT_MASTER: '/api/masters/addProject',
   CREATE_TAX_MASTER: '/api/masters/addTaxType',
@@ -113,7 +120,7 @@ export const APIURLS = {
   UPDATE_TECHNOLOGY_GROUP_MASTER: '/api/masters/updateTechnologyGroup',
   UPDATE_TECHNOLOGY_SUBGROUP_MASTER: '/api/masters/updateTechnologySubgroup',
   UPDATE_TECHNOLOGY_MASTER: '/api/masters/updateTechnologyName',
-  UPDATE_CURRENCY_MASTER: '/api/masters/updateCurrency',
+
   UPDATE_PRODUCT_MASTER: '/api/masters/updateProduct',
   UPDATE_PROJECT_MASTER: '/api/masters/updateProject',
   UPDATE_TAX_MASTER: '/api/masters/updateTaxType',

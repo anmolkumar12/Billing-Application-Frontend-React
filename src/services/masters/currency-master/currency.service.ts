@@ -1,58 +1,58 @@
-import { APIURLS } from '../../../constants/ApiUrls'
-import { AuthService } from '../../auth-service/auth.service'
-import { HTTPService } from '../../http-service/http-service'
+import { APIURLS } from '../../../constants/ApiUrls';
+import { HTTPService } from '../../http-service/http-service';
 
-export class CurrencyMasterService {
-  getCurrencyMaster = async () => {
+export default class CurrencyMasterService {
+  /**
+   * Fetches currency master data
+   * @returns Currency master records
+   */
+  getCurrencyMasterData = async () => {
     try {
-      const response = await HTTPService.getRequest(APIURLS.GET_CURRENCY_MASTER)
-      return response?.data
+      const response = await HTTPService.postRequest(APIURLS.GET_CURRENCY_MASTER);
+      return response?.data;
     } catch (err) {
-      return {}
+      return {};
     }
-  }
+  };
 
-  createCurrencyMaster = async (formData: any) => {
+  /**
+   * Creates or updates a currency master record
+   * @param formData Form data for currency
+   * @returns Created or updated record
+   */
+  createCurrencyMasterData = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.CREATE_CURRENCY_MASTER,
+        formData?.id ? APIURLS.UPDATE_CURRENCY_MASTER : APIURLS.CREATE_CURRENCY_MASTER,
         formData
-      )
+      );
 
-      return response?.data
+      return response?.data;
     } catch (error) {
-      return error
+      return error;
     }
-  }
+  };
 
-  updateCurrencyMaster = async (formData: any) => {
-    try {
-      const response = await HTTPService.postRequest(
-        APIURLS.UPDATE_CURRENCY_MASTER,
-        formData
-      )
-
-      return response?.data
-    } catch (error) {
-      return error
-    }
-  }
-
-  deactivateCurrencyMaster = async (data: any) => {
+  /**
+   * Activates or deactivates a currency master record
+   * @param data Activation or deactivation details
+   * @returns Response data
+   */
+  activateDeactivateCurrencyMaster = async (data: any) => {
     try {
       const body = {
-        currencyId: data.id,
-        isActive: !data.isActive,
+        id: data.id,
+        isActive: data.isActive,
         updatedBy: data?.loggedInUserId,
-      }
+      };
 
       const response = await HTTPService.postRequest(
         APIURLS.TOGGLE_CURRENCY_STATUS,
         body
-      )
-      return response?.data
+      );
+      return response?.data;
     } catch (err) {
-      return err
+      return {};
     }
-  }
+  };
 }

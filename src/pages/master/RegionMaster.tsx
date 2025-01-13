@@ -680,7 +680,7 @@ const RegionMaster = () => {
           // regionHeadEcode:RegionForm?.regionHeadEcode?.value,
           // regionHeadEmail:RegionForm?.regionHeadEmail?.value,
           // fromDate:new Date(RegionForm?.fromDate?.value),
-          fromDate: formatDate(RegionForm?.fromDate?.value),
+          fromDate: formatDate(RegionForm?.fromDate?.value),  
           stateIds: ids,
           isActive: 1,
           updatedBy: loggedInUserId,
