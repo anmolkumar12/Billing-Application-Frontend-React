@@ -54,6 +54,12 @@ export const APIURLS = {
   TOGGLE_CURRENCY_STATUS: '/api/masters/activateOrDeactivateCurrency',
   CURRENCY_HISTORY_DATA: '/api/masters/currencyHistory',
 
+  // TAXES
+  GET_TAXES:'/api/masters/getTax',
+  CREATE_TAXES:'/api/masters/createTax',
+  UPDATE_TAXES:'/api/masters/updateTax',
+  TOGGLE_TAX_STATUS:'/api/masters/activateOrDeactivateTax',
+
 
   GET_CONTRACT_MASTER: '/api/masters/',
   TOGGLE_COUNTRY: '/api/masters/activateDeactivateCountry',
@@ -75,7 +81,7 @@ export const APIURLS = {
   
   TOGGLE_PRODUCT_STATUS: '/api/masters/toggleProductActiveStatus',
   TOGGLE_PROJECT_STATUS: '/api/masters/toggleProjectActiveStatus',
-  TOGGLE_TAX_STATUS: '/api/masters/toggleTaxTypeActiveStatus',
+  TOGGLE_TAX_TYPE_STATUS: '/api/masters/toggleTaxTypeActiveStatus',
   TOGGLE_CLIENT_STATUS: '/api/masters/toggleClientsActiveStatus',
   TOGGLE_CLIENT_BILL_TO_STATUS: '/api/masters/toggleClientBillingActiveStatus',
   TOGGLE_CLIENT_SHIP_TO_STATUS: '/api/masters/toggleClientShippingActiveStatus',

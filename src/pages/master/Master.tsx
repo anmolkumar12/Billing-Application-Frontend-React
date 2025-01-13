@@ -54,6 +54,7 @@ import ProjectServiceMaster from "./ProjectServiceMaster";
 import RegionHeadMaster from "./RegionHeadMaster";
 import FinancialYearMaster from "./FinancialYearMaster";
 import CurrencyMaster from "./CurrencyMaster";
+import TaxMaster from "./TaxMaster";
 
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -4122,10 +4123,13 @@ const Master: React.FC = () => {
         <TabPanel header="Project/Service Master ">
           <ProjectServiceMaster />
         </TabPanel>
+        <TabPanel header="Tax">
+          <TaxMaster />
+        </TabPanel>
         <TabPanel header="Currency">
           <CurrencyMaster />
         </TabPanel>
-        <TabPanel header="Product">
+        {/* <TabPanel header="Product">
           <div
             style={{
               display: "flex",
@@ -4371,7 +4375,7 @@ const Master: React.FC = () => {
                       isFormValidFlag={isFormValid}
                     ></FormComponent>
                     {/* attachment */}
-                    <div className={classes["upload-wrapper"]}>
+                    {/* <div className={classes["upload-wrapper"]}>
                       <div className="row">
                         <div className="col-md-12">
                           <div className={classes["upload-file-section"]}>
@@ -4425,11 +4429,11 @@ const Master: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     {/* attachment */}
-                  </div>
-                </div>
-                <div className={classes["popup-lower-btn"]}>
+                  {/* </div> */}
+                {/* </div> */}
+                {/* <div className={classes["popup-lower-btn"]}>
                   <ButtonComponent
                     label="Cancel"
                     icon="pi pi-check"
@@ -4521,8 +4525,8 @@ const Master: React.FC = () => {
               </p>
             </>
           )}
-        </TabPanel>
-        <TabPanel header="Client Bill To">
+        </TabPanel> */}
+        {/* <TabPanel header="Client Bill To">
           <div
             style={{
               display: "flex",
@@ -4675,7 +4679,7 @@ const Master: React.FC = () => {
               </div>
             </div>
           ) : null}
-        </TabPanel>
+        </TabPanel> */} 
       </TabView>
     </>
   );

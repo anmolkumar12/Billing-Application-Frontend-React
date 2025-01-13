@@ -3,19 +3,19 @@ import { AuthService } from '../../auth-service/auth.service'
 import { HTTPService } from '../../http-service/http-service'
 
 export class TaxMasterService {
-  getTaxMaster = async () => {
+  getTax = async () => {
     try {
-      const response = await HTTPService.getRequest(APIURLS.GET_TAX_MASTER)
+      const response = await HTTPService.getRequest(APIURLS.GET_TAXES)
       return response?.data
     } catch (err) {
       return {}
     }
   }
 
-  createTaxMaster = async (formData: any) => {
+  createTax = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.CREATE_TAX_MASTER,
+        formData?.id?APIURLS.UPDATE_TAXES:APIURLS.CREATE_TAXES,
         formData
       )
 
@@ -25,10 +25,10 @@ export class TaxMasterService {
     }
   }
 
-  updateTaxMaster = async (formData: any) => {
+  updateTax = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.UPDATE_TAX_MASTER,
+        APIURLS.UPDATE_TAXES,
         formData
       )
 
@@ -38,16 +38,16 @@ export class TaxMasterService {
     }
   }
 
-  deactivateTaxMaster = async (data: any) => {
+  activatedeactivateTax = async (data: any) => {
     try {
       const body = {
-        taxId: data.id,
-        isActive: !data.isActive,
+        id: data.id,
+        isActive: data.isActive,
         updatedBy: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(
-        APIURLS.TOGGLE_TAX_TYPE_STATUS,
+        APIURLS.TOGGLE_TAX_STATUS,
         body
       )
       return response?.data
