@@ -41,4 +41,5 @@ export const ROUTE_CONSTANTS = {
   AGGREGATOR_WALLETWISE_INFO: '/aggregator/wallet-wise-info',
   GENERATE_INVOICE: '/generateinvoice',
   MANAGE_STORE: '/managestore',
+  CLIENT: '/client',
 }

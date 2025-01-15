@@ -446,6 +446,8 @@ const RegionHeadMaster = () => {
       const selectedCountry = countryMaster?.find(
         (item: any) => item?.name == selectedCompany?.countryName
       );
+    console.log('form------->',selectedCompany, selectedCountry);
+
       if (selectedCountry) {
         form.country_name.value = selectedCompany?.countryName;
         const stateList = await getRegionMaster(selectedCountry?.id);
@@ -540,10 +542,16 @@ const RegionHeadMaster = () => {
   const createNewCompanyLocation = (event: FormEvent) => {
     event.preventDefault();
     let companyValidityFlag = true;
-
-    _.each(CompanyLocationForm, (item: any) => {
+    console.log('oooooooooooo->>>>>>>>>', CompanyLocationForm);
+    
+    _.each(CompanyLocationForm, (item: any, key:string) => {
       if (item?.validation?.required) {
-        companyValidityFlag = companyValidityFlag && item.value;
+        // companyValidityFlag = companyValidityFlag && item.value;
+        if (key === 'regionCode' && (!item.value || item.value.length === 0)) {
+          companyValidityFlag = false;
+        } else {
+          companyValidityFlag = companyValidityFlag && !!item.value;
+        }
       }
     });
 

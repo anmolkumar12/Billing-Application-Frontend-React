@@ -18,7 +18,8 @@ export class NavigateUserService {
         path === ROUTE_CONSTANTS.AGGREGATOR_ANALYTICS ||
         path === ROUTE_CONSTANTS.AGGREGATOR_CLENT_INFO ||
         path === ROUTE_CONSTANTS.AGGREGATOR_WALLET_INFO ||
-        path === ROUTE_CONSTANTS.GENERATE_INVOICE)
+        path === ROUTE_CONSTANTS.GENERATE_INVOICE ||
+        path === ROUTE_CONSTANTS.CLIENT)
     ) {
       return path
     } else {
