@@ -344,8 +344,9 @@ const SalesMaster = () => {
     setLoader(true);
     try {
       const response = await companyService.getCompanyMaster();
-      setCompanyMaster(response?.companies);
-      return response?.companies;
+      const temp = response?.companies?.filter((item: any) => item?.isactive || item?.isActive)
+      setCompanyMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -375,8 +376,9 @@ const SalesMaster = () => {
     setLoader(true);
     try {
       const response = await industryService.getIndustryHeadMaster();
-      setIndustryHeadMaster(response?.industryHeads);
-      return response?.industryHeads;
+      const temp = response?.industryHeads?.filter((item: any) => item?.isactive || item?.isActive)
+      setIndustryHeadMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {

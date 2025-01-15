@@ -244,6 +244,8 @@ const ClientMaster = () => {
     const [industryGroupMaster, setIndustryGroupMaster] = useState<any>([]);
     const [accountManagerMaster, setAccountManagerMaster] = useState<any>([]);
     const [accountsMaster, setAccountsMaster] = useState<any>([]);
+    const [clientMaster, setClientMaster] = useState<any>([]);
+
 
 
 
@@ -258,8 +260,6 @@ const ClientMaster = () => {
     const accountService = new AccountMasterService();
     const accountsService = new AccountsMasterService();
 
-
-
     const cookies = new Cookies();
     const userInfo = cookies.get("userInfo");
 
@@ -269,8 +269,7 @@ const ClientMaster = () => {
     const stateService = new StateMasterService();
     const industryService = new IndustryMasterService();
 
-
-    const StateMasterColumns = [
+    const clientMasterColumns = [
         {
             label: "Action",
             fieldName: "action",
@@ -296,121 +295,107 @@ const ClientMaster = () => {
             ),
         },
         {
-            label: "State",
-            fieldName: "stateName",
+            label: "Client Name",
+            fieldName: "client_name",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "stateName",
+            fieldValue: "client_name",
             changeFilter: true,
-            placeholder: "State",
+            placeholder: "Client Name",
             body: (rowData: any) => (
                 <div>
-                    <span
-                        id={`companyNameTooltip-${rowData.id}`}
-                    // data-pr-tooltip={rowData.state_name}
-                    >
-                        {rowData.stateName}
-                    </span>
-                    <Tooltip
-                        target={`#companyNameTooltip-${rowData.id}`}
-                        position="top"
-                    />
+                    <span id={`clientNameTooltip-${rowData.id}`}>{rowData.client_name}</span>
+                    <Tooltip target={`#clientNameTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
         },
         {
-            label: "State Code",
-            fieldName: "stateCode",
+            label: "Vega Client Name",
+            fieldName: "vega_client_name",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "stateCode",
+            fieldValue: "vega_client_name",
             changeFilter: true,
-            placeholder: "State Code",
+            placeholder: "Vega Client Name",
             body: (rowData: any) => (
                 <div>
-                    <span
-                        id={`companyNameTooltip-${rowData.id}`}
-                    // data-pr-tooltip={rowData.stateCode}
-                    >
-                        {rowData.stateCode}
-                    </span>
-                    <Tooltip
-                        target={`#companyNameTooltip-${rowData.id}`}
-                        position="top"
-                    />
+                    <span id={`vegaClientNameTooltip-${rowData.id}`}>{rowData.vega_client_name}</span>
+                    <Tooltip target={`#vegaClientNameTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
         },
         {
-            label: "GST Code",
-            fieldName: "gstCode",
+            label: "Client Type",
+            fieldName: "client_type",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "gstCode",
+            fieldValue: "client_type",
             changeFilter: true,
-            placeholder: "GST Code",
+            placeholder: "Client Type",
             body: (rowData: any) => (
                 <div>
-                    <span
-                        id={`companyNameTooltip-${rowData.id}`}
-                    // data-pr-tooltip={rowData.stateCode}
-                    >
-                        {rowData.gstCode}
-                    </span>
-                    <Tooltip
-                        target={`#companyNameTooltip-${rowData.id}`}
-                        position="top"
-                    />
+                    <span id={`clientTypeTooltip-${rowData.id}`}>{rowData.client_type}</span>
+                    <Tooltip target={`#clientTypeTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
         },
         {
-            label: "Country",
-            fieldName: "name",
+            label: "Credit Period (No. of Days)",
+            fieldName: "credit_period",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "name",
+            fieldValue: "credit_period",
+            changeFilter: true,
+            placeholder: "Credit Period",
+            body: (rowData: any) => (
+                <div>
+                    <span id={`creditPeriodTooltip-${rowData.id}`}>{rowData.credit_period}</span>
+                    <Tooltip target={`#creditPeriodTooltip-${rowData.id}`} position="top" />
+                </div>
+            ),
+        },
+        {
+            label: "Client Status",
+            fieldName: "client_status",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            fieldValue: "client_status",
+            changeFilter: true,
+            placeholder: "Client Status",
+            body: (rowData: any) => (
+                <div>
+                    <span id={`clientStatusTooltip-${rowData.id}`}>{rowData.client_status}</span>
+                    <Tooltip target={`#clientStatusTooltip-${rowData.id}`} position="top" />
+                </div>
+            ),
+        },
+        {
+            label: "Country (Base Location)",
+            fieldName: "country_name",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            fieldValue: "country_name",
             changeFilter: true,
             placeholder: "Country",
             body: (rowData: any) => (
                 <div>
-                    <span
-                        id={`companyNameTooltip-${rowData.id}`}
-                    // data-pr-tooltip={rowData.name}
-                    >
-                        {rowData.name}
-                    </span>
-                    <Tooltip
-                        target={`#companyNameTooltip-${rowData.id}`}
-                        position="top"
-                    />
+                    <span id={`countryTooltip-${rowData.id}`}>{rowData.country_name}</span>
+                    <Tooltip target={`#countryTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
-        },
-        {
-            label: "Status",
-            fieldName: "isactive",
-            textAlign: "left",
-            frozen: false,
-            sort: true,
-            filter: true,
-            body: (rowData: any) => (
-                <div>
-                    <span style={{ color: rowData?.isactive === 1 ? "green" : "red" }}>
-                        {rowData?.isactive === 1 ? "Active" : "Inactive"}
-                    </span>
-                </div>
-            ),
-        },
+        }
     ];
+
 
     useEffect(() => {
         const fetchData = async () => {
-            await getStateMaster();
+            // await getStateMaster();
             const countries = await getCountryMaster();
             await formatCountryDetails(countries);
             const companies = await getCompanyMaster();
@@ -423,7 +408,7 @@ const ClientMaster = () => {
             await formatAccountManagerMasterDetails(accountManagers);
             const accountMaster = await getAccountMaster();
             await formatAccountMasterDetails(accountMaster);
-            const industries = getIndustryMaster()
+            const industries = await getIndustryMaster()
             await formatIndustry_ClientDetails(industries);
 
         };
@@ -432,14 +417,28 @@ const ClientMaster = () => {
         }
     }, [clientFormPopup, showConfirmDialogue]);
 
+    const getClientMaster = async () => {
+        setLoader(true);
+        try {
+            const response = await clientService.getClientMaster();
+            setClientMaster(response?.clients);
+            return response?.clients;
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoader(false);
+        }
+    };
+
     const getIndustryMaster = async () => {
         setLoader(true);
         try {
             const response = await industryService.getIndustryMaster();
-            console.log('jjjjjjjjjjjjjj', response);
+            const temp = response?.industryMasters?.filter((item: any) => item?.isactive || item?.isActive)
+            console.log('qqqqqqqqqqqq', temp);
 
-            setIndustryMaster(response?.industryMasters);
-            return response?.industries;
+            setIndustryMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -451,8 +450,9 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await industryService.getIndustryHeadMaster();
-            setIndustryHeadMaster(response?.industryHeads);
-            return response?.industryHeads;
+            const temp = response?.industryHeads?.filter((item: any) => item?.isactive || item?.isActive)
+            setIndustryHeadMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -464,8 +464,9 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await stateService.getStateMaster();
-            setStateMaster(response?.states);
-            return response?.states;
+            const temp = response?.states?.filter((item: any) => item?.isactive || item?.isActive)
+            setStateMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -477,8 +478,9 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await countryService.getCountryMaster();
-            setCountryMaster(response?.countries);
-            return response?.countries;
+            const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive);
+            setCountryMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -490,8 +492,9 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await companyService.getCompanyMaster();
-            setCompanyMaster(response?.companies);
-            return response?.companies;
+            const temp = response?.companies?.filter((item: any) => item?.isactive || item?.isActive)
+            setCompanyMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -503,8 +506,9 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await industryService.getIndustryGroupMaster();
-            setIndustryGroupMaster(response?.groupIndustries);
-            return response?.groupIndustries;
+            const temp = response?.groupIndustries?.filter((item: any) => item?.isactive || item?.isActive)
+            setIndustryGroupMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -516,8 +520,9 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await accountService.getAccountMaster();
-            setAccountManagerMaster(response?.accountManagers);
-            return response?.accountManagers;
+            const temp = response?.accountManagers?.filter((item: any) => item?.isactive || item?.isActive)
+            setAccountManagerMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -529,8 +534,9 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await accountsService.getAccountsMaster();
-            setAccountsMaster(response?.companyAccounts);
-            return response?.companyAccounts;
+            const temp = response?.companyAccounts?.filter((item: any) => item?.isactive || item?.isActive)
+            setAccountsMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -584,8 +590,6 @@ const ClientMaster = () => {
     const formatAccountMasterDetails = async (
         industries: any = accountsMaster
     ) => {
-        console.log('ppppppppppp', industries);
-        
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.bankName
         );
@@ -594,7 +598,7 @@ const ClientMaster = () => {
     };
 
     const formatIndustry_ClientDetails = async (industries: any = industryMaster) => {
-        const industryList = industryMaster.map(
+        const industryList = industries.map(
             (industry: any) => industry?.industryName
         );
         clientFormFieldsStructure.industry_name.options = industryList;
@@ -1031,18 +1035,18 @@ const ClientMaster = () => {
                 />
             </div>
             <p className="m-0">
-                {/* <DataTableBasicDemo
-          data={stateMaster}
-          column={StateMasterColumns}
-          showGridlines={true}
-          resizableColumns={true}
-          rows={20}
-          paginator={true}
-          sortable={true}
-          headerRequired={true}
-          scrollHeight={"calc(100vh - 200px)"}
-          downloadedfileName={"Brandwise_Denomination_table"}
-        /> */}
+                <DataTableBasicDemo
+                    data={clientMaster}
+                    column={clientMasterColumns}
+                    showGridlines={true}
+                    resizableColumns={true}
+                    rows={20}
+                    paginator={true}
+                    sortable={true}
+                    headerRequired={true}
+                    scrollHeight={"calc(100vh - 200px)"}
+                    downloadedfileName={"Brandwise_Denomination_table"}
+                />
                 {showConfirmDialogue ? (
                     <ConfirmDialogue
                         actionPopupToggle={actionPopupToggle}

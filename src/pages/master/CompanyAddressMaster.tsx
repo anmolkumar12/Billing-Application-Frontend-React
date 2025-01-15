@@ -336,8 +336,9 @@ const CompanyAddressMaster = () => {
     setLoader(true);
     try {
       const response = await companyService.getCompanyMaster();
-      setCompanyMaster(response?.companies);
-      return response?.companies;
+      const temp = response?.companies?.filter((item: any) => item?.isactive || item?.isActive)
+      setCompanyMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -362,8 +363,9 @@ const CompanyAddressMaster = () => {
     setLoader(true);
     try {
       const response = await countryService.getCountryMaster();
-      setCountryMaster(response?.countries);
-      return response?.countries;
+      const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive)
+      setCountryMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -375,9 +377,10 @@ const CompanyAddressMaster = () => {
     // setLoader(true);
     try {
       const response = await stateService.getStateMaster(countryId);
-      setStateMaster(response?.states);
-      await formatStateDetails(response?.states);
-      return response?.states;
+      const temp = response?.states?.filter((item: any) => item?.isactive || item?.isActive)
+      setStateMaster(temp);
+      await formatStateDetails(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {

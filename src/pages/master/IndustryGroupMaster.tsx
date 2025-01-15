@@ -176,8 +176,9 @@ const IndustryGroupMaster = () => {
     setLoader(true);
     try {
       const response = await industryService.getIndustryMaster();
-      setIndustryMaster(response?.industryMasters);
-      return response?.industryMasters;
+      const temp = response?.industryMasters?.filter((item: any) => item?.isactive || item?.isActive)
+      setIndustryMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {

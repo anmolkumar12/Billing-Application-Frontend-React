@@ -17,6 +17,7 @@ import { CountryMasterService } from "../../services/masters/country-master/coun
 import { StateMasterService } from "../../services/masters/state-master/state.service";
 import { RegionMasterService } from "../../services/masters/region-master/region.service";
 import moment from "moment";
+import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 
 const IndustryHeadMaster = () => {
   const IndustryHeadFormFields: FormType = {
@@ -48,8 +49,19 @@ const IndustryHeadMaster = () => {
       },
       fieldWidth: "col-md-4",
     },
+    companyName: {
+      inputType: "singleSelect",
+      label: "Company",
+      disable:false,
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-4",
+    },
     country_name: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Country",
       options: [],
       value: null,
@@ -115,6 +127,9 @@ const IndustryHeadMaster = () => {
   const [IndustryHeadForm, setIndustryHeadForm] = useState<any>(
     _.cloneDeep(industryHeadFieldsStructure)
   );
+  const [companyMaster, setCompanyMaster] = useState<any>([]);
+  const companyService = new CompanyMasterService();
+
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
@@ -367,6 +382,8 @@ const IndustryHeadMaster = () => {
       await getIndustryHeadMaster();
       const industries = await getIndustryMaster();
       const countries = await getCountryMaster();
+      const companies = await getCompanyMaster();
+      await formatCompanyDetails(companies);
       await formatIndustryDetails(industries);
       await formatCountryDetails(countries);
     };
@@ -374,6 +391,20 @@ const IndustryHeadMaster = () => {
       fetchData();
     }
   }, [storeFormPopup, showConfirmDialogue]);
+
+  const getCompanyMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await companyService.getCompanyMaster();
+      const temp = response?.companies?.filter((item: any) => item?.isactive || item?.isActive)
+      setCompanyMaster(temp);
+      return temp;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const getIndustryHeadMaster = async () => {
     setLoader(true);
@@ -396,8 +427,9 @@ const IndustryHeadMaster = () => {
     setLoader(true);
     try {
       const response = await industryService.getIndustryMaster();
-      setIndustryMaster(response?.industryMasters);
-      return response?.industryMasters;
+      const temp = response?.industryMasters?.filter((item: any) => item?.isactive || item?.isActive)
+      setIndustryMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -409,8 +441,9 @@ const IndustryHeadMaster = () => {
     setLoader(true);
     try {
       const response = await countryService.getCountryMaster();
-      setCountryMaster(response?.countries);
-      return response?.countries;
+      const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive)
+      setCountryMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -422,7 +455,9 @@ const IndustryHeadMaster = () => {
     // setLoader(true);
     try {
       const response = await regionService.getRegionMaster(countryId);
-      return response?.regions;
+      const temp = response?.regions?.filter((item: any) => item?.isactive || item?.isActive)
+      setRegionMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -434,12 +469,20 @@ const IndustryHeadMaster = () => {
     // setLoader(true);
     try {
       const response = await stateService.getStateMaster(countryId);
-      return response?.states;
+      const temp = response?.states?.filter((item: any) => item?.isactive || item?.isActive)
+      setStateMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
       //   setLoader(false);
     }
+  };
+
+  const formatCompanyDetails = async (companies: any = companyMaster) => {
+    const companyList = companies.map((company: any) => company?.companyName);    
+    industryHeadFieldsStructure.companyName.options = companyList;
+    setIndustryHeadFieldsStructure(industryHeadFieldsStructure);
   };
 
   const formatIndustryDetails = async (industries: any = industryMaster) => {
@@ -534,9 +577,36 @@ const IndustryHeadMaster = () => {
 
   const industryHeadFormHandler = async (form: FormType) => {
     console.log('form------->',form);
-    if (form?.isRegionWise?.value != IndustryHeadForm?.isRegionWise?.value) {
-      form.country_name.value = null;
+    // if (form?.isRegionWise?.value != IndustryHeadForm?.isRegionWise?.value) {
+    //   form.country_name.value = null;
+    // }
+
+    const selectedCompany = companyMaster?.find(
+      (item: any) => item?.companyName == form?.companyName?.value
+    );
+    const selectedCountry = countryMaster?.find(
+      (item: any) => item?.name == selectedCompany?.countryName
+    );
+    
+    if (selectedCountry) {
+      form.country_name.value = selectedCompany?.countryName;
+      const regionList = await getRegionMaster(selectedCountry?.id);
+      const stateList = await getStateMaster(selectedCountry?.id);
+        if (stateList) {
+          const stateNames = stateList?.map((state: any) => state.stateName);
+          form.state_name.options = stateNames || [];
+          // form.state_name.value = null;
+        }
+        if (regionList) {
+          const regionNames = regionList?.map((state: any) => state.regionCode);
+          form.region_code.options = regionNames || [];
+        // form.state_name.value = null;
+      }
+    console.log('form------->',form);
+
     }
+
+
     if (form?.isRegionWise?.value == true) {
       form.region_code.disable = false;
       if (form.region_code.validation) {
@@ -548,18 +618,18 @@ const IndustryHeadMaster = () => {
         form.state_name.validation.required = false;
       }
       console.log('IndustryHeadForm?.country_name?.value----------->',IndustryHeadForm?.country_name?.value)
-      const countryAreUnequal =
-        JSON.stringify(form?.country_name?.value) !==
-        JSON.stringify(IndustryHeadForm?.country_name?.value);
-        console.log('form.country_name.value--------->',form.country_name.value)
-      if (countryAreUnequal && form.country_name.value != null) {
-        const [regionCodesList, regionList]: any = await modifyFormRegionWise(
-          form?.country_name?.value
-        );
-        console.log('regionCodesList-->',regionCodesList)
-        form.region_code.options = regionCodesList;
-        form.region_code.value = null;
-      }
+      // const countryAreUnequal =
+      //   JSON.stringify(form?.country_name?.value) !==
+      //   JSON.stringify(IndustryHeadForm?.country_name?.value);
+      //   console.log('form.country_name.value--------->',form.country_name.value)
+      // if (countryAreUnequal && form.country_name.value != null) {
+      //   const [regionCodesList, regionList]: any = await modifyFormRegionWise(
+      //     form?.country_name?.value
+      //   );
+      //   console.log('regionCodesList-->',regionCodesList)
+      //   form.region_code.options = regionCodesList;
+      //   form.region_code.value = null;
+      // }
     } else {
       form.state_name.disable = false;
       if (form.state_name.validation) {
@@ -570,16 +640,16 @@ const IndustryHeadMaster = () => {
       if (form.region_code.validation) {
         form.region_code.validation.required = false;
       }
-      const countryAreUnequal =
-        JSON.stringify(form?.country_name?.value) !==
-        JSON.stringify(IndustryHeadForm?.country_name?.value);
-      if (countryAreUnequal && form.country_name.value != null) {
-        const stateNamesList: any = await modifyFormStateWise(
-          form?.country_name?.value
-        );
-        form.state_name.options = stateNamesList;
-        form.state_name.value = null;
-      }
+      // const countryAreUnequal =
+      //   JSON.stringify(form?.country_name?.value) !==
+      //   JSON.stringify(IndustryHeadForm?.country_name?.value);
+      // if (countryAreUnequal && form.country_name.value != null) {
+      //   const stateNamesList: any = await modifyFormStateWise(
+      //     form?.country_name?.value
+      //   );
+      //   form.state_name.options = stateNamesList;
+      //   form.state_name.value = null;
+      // }
     }
     setIndustryHeadForm(form);
   };
@@ -618,7 +688,10 @@ const IndustryHeadMaster = () => {
     regionNamesList: any,
     stateList: any
   ) => {
+    console.log('llllllllllllllll', data);
+    
     try {
+      industryHeadFieldsStructure.companyName.value = data?.companyName;
       industryHeadFieldsStructure.industryHeadName.value =
         data?.industryHeadName;
       industryHeadFieldsStructure.industryNames.value =
@@ -652,6 +725,8 @@ const IndustryHeadMaster = () => {
   };
 
   const createNewIndustryHead = (event: FormEvent) => {
+    console.log('IndustryHeadForm', IndustryHeadForm);
+    
     event.preventDefault();
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
@@ -686,15 +761,15 @@ const IndustryHeadMaster = () => {
           industryIds = industryIds != "" ? industryIds + "," + id : id;
         }
       });
-      let countryIds = "";
-      IndustryHeadForm?.country_name?.value?.forEach((item: any) => {
-        const id =
-          countryMaster?.find((country: any) => country?.name == item)?.id ??
-          null;
-        if (id != null) {
-          countryIds = countryIds != "" ? countryIds + "," + id : id;
-        }
-      });
+      // let countryIds = "";
+      // IndustryHeadForm?.country_name?.value?.forEach((item: any) => {
+      //   const id =
+      //     countryMaster?.find((country: any) => country?.name == item)?.id ??
+      //     null;
+      //   if (id != null) {
+      //     countryIds = countryIds != "" ? countryIds + "," + id : id;
+      //   }
+      // });
       let regionIds = "";
       IndustryHeadForm?.region_code?.value?.forEach((item: any) => {
         const id =
@@ -714,7 +789,35 @@ const IndustryHeadMaster = () => {
         }
       });
 
+      const companyIds =
+      companyMaster.find(
+        (company: any) =>
+          company.companyName === IndustryHeadForm.companyName.value
+      )?.id ?? null;
+      console.log('IndustryHeadForm',companyIds, companyMaster);
+
+    const countryIds =
+      countryMaster.find(
+        (country: any) =>
+          country.name === IndustryHeadForm.country_name.value
+      )?.id ?? null;
+
+    // const stateIds =
+      // stateMaster.find(
+      //   (state: any) =>
+      //     state.stateName === IndustryHeadForm.state_name.value?.includes(state?.stateName)
+      // )?.id ?? null;
+
+      // stateMaster
+      // .filter((state: any) => IndustryHeadForm?.state_name?.value?.includes(state?.regionCode))
+      // .map((state: any) => state?.id);
+
+      // const regionIds = regionMaster
+      // .filter((region: any) => IndustryHeadForm?.region_ode?.value?.includes(region?.regionCode))
+      // .map((region: any) => region?.id);
+
       const obj = {
+        companyId: companyIds,
         industryHeadName: IndustryHeadForm?.industryHeadName?.value,
         industryIds: industryIds,
         isRegionWise: IndustryHeadForm?.isRegionWise?.value == true ? 1 : 0,

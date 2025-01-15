@@ -265,8 +265,9 @@ const TechMaster = () => {
     setLoader(true);
     try {
       const response = await technologyService.getTechnologyGroupMaster();
-      setTechGroupMaster(response?.groups);
-      return response?.groups;
+      const temp = response?.groups?.filter((item: any) => item?.isactive || item?.isActive)
+      setTechGroupMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {

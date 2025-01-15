@@ -195,7 +195,8 @@ const TaxMaster = () => {
     try {
       const response = await countryService.getCountryMaster();
       console.log('countriesList------>',response?.countries);
-      const countryList = await response?.countries?.map((item:any) => {
+      const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive)
+      const countryList = await temp?.map((item:any) => {
         return {
            label:item.name,
            value:item.id.toString()

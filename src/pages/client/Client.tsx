@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TabView, TabPanel } from "primereact/tabview";
 import { Loader } from "../../components/ui/loader/Loader";
 import { Tooltip } from "primereact/tooltip";
@@ -14,6 +14,8 @@ function Client() {
     setActiveIndex(e.index);
   };
 
+    useEffect(() => { }, [activeIndex]);
+
   return loader ? (
     <Loader />
   ) : (
@@ -28,10 +30,10 @@ function Client() {
           <ClientMaster />
         </TabPanel>
         <TabPanel header="Client Contact">
-          <ClientMaster />
+          {/* <ClientMaster /> */}
         </TabPanel>
         <TabPanel header="Client Group">
-          <ClientMaster />
+          {/* <ClientMaster /> */}
         </TabPanel>
       </TabView>
     </>
