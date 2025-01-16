@@ -108,6 +108,39 @@ const AccountManagerMaster = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
   const companyService = new CompanyMasterService();
 
+
+  const [deactivatePopup, setDeactivatePopup] = useState(false);
+  const [rowData,setRowData] = useState<any>(null);
+
+
+  const deactivateFormObject:any = {
+    deactivationDate: {
+      inputType: "singleDatePicker",
+      label: "Select Deactivation Date",
+      value: null,
+      min:new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
+      max:new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
+  }
+
+  const [deactForm,setDeactivateForm] = useState<any>(_.cloneDeep(deactivateFormObject));
+
+  const onDeactivate = (rowData:any) => {
+    console.log('here we are')
+    setRowData(rowData);
+    if(rowData.isActive == 1){
+    setDeactivatePopup(true);
+    }
+    else{
+      onDelete(rowData);
+    }
+
+  }
+
   const loggedInUserId = userInfo?.userId;
   let patchData: any;
   const industryService = new IndustryMasterService();
@@ -133,7 +166,7 @@ const AccountManagerMaster = () => {
             className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
-            onClick={() => onDelete(rowData)}
+            onClick={() => onDeactivate(rowData)}
           ></span>
         </div>
       ),
@@ -310,6 +343,31 @@ const AccountManagerMaster = () => {
       ),
     },
     {
+      label: "To Date",
+      fieldName: "deactivationDate",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "deactivationDate",
+      changeFilter: true,
+      placeholder: "To Date",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+          // data-pr-tooltip={rowData.fromDate}
+          >
+            {rowData.deactivationDate}
+           
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
       label: "Status",
       fieldName: "isActive",
       textAlign: "left",
@@ -464,6 +522,9 @@ const AccountManagerMaster = () => {
   const accountFormHandler = async (form: FormType) => {
     setAccountForm(form);
   };
+  const deactivationFormHandler = async(form:FormType) => {
+    setDeactivateForm(form);
+  }
 
   const onUpdate = (data: any) => {
     setStateData(data);
@@ -472,7 +533,14 @@ const AccountManagerMaster = () => {
     setIsEditAccManager(true);
   };
 
+  const closeDeactivation = () => {
+    setRowData(null)
+    setDeactivatePopup(false);
+    setDeactivateForm(deactivateFormObject)
+  }
+
   const onPopUpClose = (e?: any) => {
+    closeDeactivation()
     setShowConfirmDialogue(false);
   };
 
@@ -594,15 +662,19 @@ const AccountManagerMaster = () => {
   const confirmDelete = () => {
     setLoader(true);
     accountService
-      .deactivateAccountMaster({ ...patchData, loggedInUserId })
-      .then(() => {
+      .deactivateAccountMaster({ ...patchData, loggedInUserId,deactivationDate:deactForm.deactivationDate.value })
+      .then((response) => {
         setLoader(false);
         setShowConfirmDialogue(false);
+       if(response.statusCode === 200){
+        closeDeactivation();
+    
         ToasterService.show(
           `Account Manager record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
+       }
       })
       .catch((error) => {
         setLoader(false);
@@ -696,6 +768,50 @@ const AccountManagerMaster = () => {
           </div>
         </div>
       ) : null}
+
+{deactivatePopup ? (
+      <div className="popup-overlay md-popup-overlay">
+        <div style={{maxWidth:'600px'}} className="popup-body md-popup-body stretchLeft">
+          <div className="popup-header">
+            <div
+              className="popup-close"
+              onClick={() => {
+   
+                closeDeactivation()
+              }}
+            >
+              <i className="pi pi-angle-left"></i>
+              <h4 className="popup-heading">Deactivate Sales Manager</h4>
+            </div>
+            <div
+              className="popup-right-close"
+              onClick={() => {
+                closeDeactivation()
+            
+              }}
+            >
+              &times;
+            </div>
+          </div>
+          <div className="popup-content" style={{ padding: "1rem 2rem",maxHeight:"calc(100vh - 528px)" }}>
+            <FormComponent
+              form={_.cloneDeep(deactForm)}
+              formUpdateEvent={deactivationFormHandler}
+              isFormValidFlag={isFormValid}
+            ></FormComponent>
+          </div>
+
+          <div className="popup-lower-btn">
+            <ButtonComponent
+              label="Submit"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={() =>onDelete(rowData)}
+            />
+          </div>
+        </div>
+      </div>
+    ) : null}
     </>
   );
 };
