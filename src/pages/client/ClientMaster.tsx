@@ -65,7 +65,7 @@ const ClientMaster = () => {
         },
         client_status: {
             inputType: "singleSelect",
-            label: "Client Type (Existing/New)",
+            label: "Client Status",
             options: ["Existing", "New"],
             value: null,
             validation: {
@@ -75,7 +75,7 @@ const ClientMaster = () => {
         },
         country_name: {
             inputType: "singleSelect",
-            label: "Country (Base Location)",
+            label: "Country",
             options: [],
             value: null,
             validation: {
@@ -94,8 +94,8 @@ const ClientMaster = () => {
             fieldWidth: "col-md-4",
         },
         account_name: {
-            inputType: "singleSelect",
-            label: "Account",
+            inputType: "multiSelect",
+            label: "Bank Name",
             options: [],
             value: [],
             validation: {
@@ -144,7 +144,7 @@ const ClientMaster = () => {
             fieldWidth: "col-md-4",
         },
         sales_person: {
-            inputType: "singleSelect",
+            inputType: "multiSelect",
             label: "Sales Person",
             options: [],
             value: [],
@@ -152,10 +152,9 @@ const ClientMaster = () => {
                 required: false,
             },
             fieldWidth: "col-md-4",
-            prefilled: true,
         },
         account_manager: {
-            inputType: "singleSelect",
+            inputType: "multiSelect",
             label: "Account Manager",
             options: [],
             value: [],
@@ -163,11 +162,10 @@ const ClientMaster = () => {
                 required: false,
             },
             fieldWidth: "col-md-4",
-            prefilled: true,
         },
         msa_start_date: {
             inputType: "singleDatePicker",
-            label: "MSA Start Dateee",
+            label: "MSA Start Date",
             value: null,
             disable: true,
             validation: {
@@ -227,11 +225,11 @@ const ClientMaster = () => {
     const [stateMaster, setStateMaster] = useState<any>([]);
     const [loader, setLoader] = useState(false);
     const [clientFormPopup, setClientFormPopup] = useState(false);
-    const [isEditState, setIsEditState] = useState<boolean>(false);
+    const [isEditClient, setIsEditClient] = useState<boolean>(false);
     const [isFormValid, setIsFormValid] = useState(true);
     const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
     const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-    const [stateData, setStateData] = useState<any>();
+    const [cliendData, setCliendData] = useState<any>();
     const [companyMaster, setCompanyMaster] = useState<any>([]);
     const [industryHeadMaster, setIndustryHeadMaster] = useState<any>([]);
     const [industryMaster, setIndustryMaster] = useState<any>([]);
@@ -245,9 +243,6 @@ const ClientMaster = () => {
     const [accountManagerMaster, setAccountManagerMaster] = useState<any>([]);
     const [accountsMaster, setAccountsMaster] = useState<any>([]);
     const [clientMaster, setClientMaster] = useState<any>([]);
-
-
-
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
         useState(clientFormFields);
@@ -300,14 +295,9 @@ const ClientMaster = () => {
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "client_name",
-            changeFilter: true,
             placeholder: "Client Name",
             body: (rowData: any) => (
-                <div>
-                    <span id={`clientNameTooltip-${rowData.id}`}>{rowData.client_name}</span>
-                    <Tooltip target={`#clientNameTooltip-${rowData.id}`} position="top" />
-                </div>
+                <TooltipWrapper id={`clientNameTooltip-${rowData.id}`} content={rowData.client_name} />
             ),
         },
         {
@@ -316,14 +306,9 @@ const ClientMaster = () => {
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "vega_client_name",
-            changeFilter: true,
             placeholder: "Vega Client Name",
             body: (rowData: any) => (
-                <div>
-                    <span id={`vegaClientNameTooltip-${rowData.id}`}>{rowData.vega_client_name}</span>
-                    <Tooltip target={`#vegaClientNameTooltip-${rowData.id}`} position="top" />
-                </div>
+                <TooltipWrapper id={`vegaClientNameTooltip-${rowData.id}`} content={rowData.vega_client_name} />
             ),
         },
         {
@@ -332,14 +317,9 @@ const ClientMaster = () => {
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "client_type",
-            changeFilter: true,
             placeholder: "Client Type",
             body: (rowData: any) => (
-                <div>
-                    <span id={`clientTypeTooltip-${rowData.id}`}>{rowData.client_type}</span>
-                    <Tooltip target={`#clientTypeTooltip-${rowData.id}`} position="top" />
-                </div>
+                <TooltipWrapper id={`clientTypeTooltip-${rowData.id}`} content={rowData.client_type} />
             ),
         },
         {
@@ -348,14 +328,9 @@ const ClientMaster = () => {
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "credit_period",
-            changeFilter: true,
             placeholder: "Credit Period",
             body: (rowData: any) => (
-                <div>
-                    <span id={`creditPeriodTooltip-${rowData.id}`}>{rowData.credit_period}</span>
-                    <Tooltip target={`#creditPeriodTooltip-${rowData.id}`} position="top" />
-                </div>
+                <TooltipWrapper id={`creditPeriodTooltip-${rowData.id}`} content={rowData.credit_period} />
             ),
         },
         {
@@ -364,14 +339,9 @@ const ClientMaster = () => {
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "client_status",
-            changeFilter: true,
             placeholder: "Client Status",
             body: (rowData: any) => (
-                <div>
-                    <span id={`clientStatusTooltip-${rowData.id}`}>{rowData.client_status}</span>
-                    <Tooltip target={`#clientStatusTooltip-${rowData.id}`} position="top" />
-                </div>
+                <TooltipWrapper id={`clientStatusTooltip-${rowData.id}`} content={rowData.client_status} />
             ),
         },
         {
@@ -380,21 +350,91 @@ const ClientMaster = () => {
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "country_name",
-            changeFilter: true,
             placeholder: "Country",
             body: (rowData: any) => (
-                <div>
-                    <span id={`countryTooltip-${rowData.id}`}>{rowData.country_name}</span>
-                    <Tooltip target={`#countryTooltip-${rowData.id}`} position="top" />
-                </div>
+                <TooltipWrapper id={`countryTooltip-${rowData.id}`} content={rowData.country_name} />
+            ),
+        },
+        // {
+        //     label: "Account Selection",
+        //     fieldName: "account_name",
+        //     textAlign: "left",
+        //     sort: true,
+        //     filter: true,
+        //     placeholder: "Account Selection",
+        //     body: (rowData: any) => (
+        //         <TooltipWrapper id={`accountSelectionTooltip-${rowData.id}`} content={rowData.account_name} />
+        //     ),
+        // },
+        {
+            label: "Industry Head Names",
+            fieldName: "industryHeadNames",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Industry Head Names",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`industryHeadTooltip-${rowData.id}`} content={rowData.industryHeadNames} />
+            ),
+        },
+        {
+            label: "Sales Person",
+            fieldName: "sales_person",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Sales Person",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`salesPersonTooltip-${rowData.id}`} content={rowData.sales_person} />
+            ),
+        },
+        {
+            label: "MSA Start Date",
+            fieldName: "msa_start_date",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "MSA Start Date",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`msaStartTooltip-${rowData.id}`} content={new Date(rowData.msa_start_date).toLocaleDateString()} />
+            ),
+        },
+        {
+            label: "MSA End Date",
+            fieldName: "msa_end_date",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "MSA End Date",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`msaEndTooltip-${rowData.id}`} content={new Date(rowData.msa_end_date).toLocaleDateString()} />
+            ),
+        },
+        {
+            label: "Updated At",
+            fieldName: "updated_at",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Updated At",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`updatedAtTooltip-${rowData.id}`} content={new Date(rowData.updated_at).toLocaleString()} />
             ),
         }
     ];
 
+    const TooltipWrapper = ({ id, content }: any) => (
+        <div>
+            <span id={id}>{content}</span>
+            <Tooltip target={`#${id}`} position="top" />
+        </div>
+    );
+
+
 
     useEffect(() => {
         const fetchData = async () => {
+            await getClientMaster();
             // await getStateMaster();
             const countries = await getCountryMaster();
             await formatCountryDetails(countries);
@@ -407,6 +447,8 @@ const ClientMaster = () => {
             const accountManagers = await getAccountManagerMaster();
             await formatAccountManagerMasterDetails(accountManagers);
             const accountMaster = await getAccountMaster();
+            console.log('aaaaaaaaaaaaaa', accountMaster);
+
             await formatAccountMasterDetails(accountMaster);
             const industries = await getIndustryMaster()
             await formatIndustry_ClientDetails(industries);
@@ -583,6 +625,8 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.name
         );
+        console.log('aaaaaaaaaaaa', industryHeadList);
+
         clientFormFieldsStructure.account_manager.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
@@ -593,6 +637,8 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.bankName
         );
+        console.log('aaaaaaaaaaaa', industryHeadList);
+        
         clientFormFieldsStructure.account_name.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
@@ -617,22 +663,47 @@ const ClientMaster = () => {
     };
 
     const onUpdate = (data: any) => {
-        setStateData(data);
-        updateStateMaster(data);
+        setCliendData(data);
+        updateClientaster(data);
         setClientFormPopup(true);
-        setIsEditState(true);
+        setIsEditClient(true);
     };
 
     const onPopUpClose = (e?: any) => {
         setShowConfirmDialogue(false);
     };
 
-    const updateStateMaster = (data: any) => {
+    const updateClientaster = (data: any) => {
+
         try {
-            clientFormFieldsStructure.country_name.value = data?.name;
-            clientFormFieldsStructure.stateName.value = data?.stateName;
-            clientFormFieldsStructure.stateCode.value = data?.stateCode;
-            clientFormFieldsStructure.gstCode.value = data?.gstCode;
+            clientFormFieldsStructure.client_name.value = data?.client_name;
+            clientFormFieldsStructure.vega_client_name.value = data?.vega_client_name;
+            clientFormFieldsStructure.client_type.value = data?.client_type;
+            clientFormFieldsStructure.credit_period.value = data?.credit_period;
+            clientFormFieldsStructure.client_status.value = data?.client_status;
+            clientFormFieldsStructure.country_name.value = data?.country_name;
+            clientFormFieldsStructure.companyName.value = data?.companyName?.split(',');
+            
+            clientFormFieldsStructure.account_name.value = data?.account_selection;
+            console.log('dataaaaaaaaaa---->>>',clientFormFieldsStructure,  data);
+            // clientFormFieldsStructure.industryId.value = data?.industryId;
+            // clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadNames;
+            // clientFormFieldsStructure.industry_group.value = data?.industry_group;
+            // clientFormFieldsStructure.industry_sub_group.value = data?.industry_sub_group;
+            // clientFormFieldsStructure.sales_person.value = data?.sales_person;
+            // clientFormFieldsStructure.account_manager.value = data?.account_manager;
+            clientFormFieldsStructure.msa_start_date.value = data?.msa_start_date;
+            clientFormFieldsStructure.msa_end_date.value = data?.msa_end_date;
+            clientFormFieldsStructure.is_msa_missing.value = data?.is_msa_missing ? 1 : 0;
+            clientFormFieldsStructure.nda_flag.value = data?.nda_flag ? 1 : 0;
+            clientFormFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause ? 1 : 0;
+            clientFormFieldsStructure.use_logo_permission.value = data?.use_logo_permission ? 1 : 0;
+            // clientFormFieldsStructure.msaFilePath.value = data?.msaFilePath;
+            // clientFormFieldsStructure.ndaFilePath.value = data?.ndaFilePath;
+            // clientFormFieldsStructure.updated_by.value = data?.updated_by;
+            // clientFormFieldsStructure.isActive.value = data?.isActive;
+            // clientFormFieldsStructure.updated_at.value = data?.updated_at;
+
 
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
         } catch (error) {
@@ -669,34 +740,34 @@ const ClientMaster = () => {
                 updatedBy: loggedInUserId,
             };
 
-            if (!stateData?.id) {
+            if (!cliendData?.id) {
                 stateService
                     .createStateMaster(obj)
                     .then((response: any) => {
                         if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-                            setStateData({});
+                            setCliendData({});
                             closeFormPopup();
                             ToasterService.show(response?.message, CONSTANTS.SUCCESS);
                         }
                     })
                     .catch((error: any) => {
-                        setStateData({});
+                        setCliendData({});
                         ToasterService.show(error, CONSTANTS.ERROR);
                     });
             } else {
-                const updatePayload = { ...obj, stateId: stateData?.id };
+                const updatePayload = { ...obj, stateId: cliendData?.id };
 
                 stateService
                     .updateStateMaster(updatePayload)
                     .then((response: any) => {
                         if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-                            setStateData({});
+                            setCliendData({});
                             closeFormPopup();
                             ToasterService.show(response?.message, CONSTANTS.SUCCESS);
                         }
                     })
                     .catch((error: any) => {
-                        setStateData({});
+                        setCliendData({});
                         ToasterService.show(error, CONSTANTS.ERROR);
                     });
             }
@@ -741,8 +812,8 @@ const ClientMaster = () => {
 
     const closeFormPopup = () => {
         setClientFormPopup(false);
-        setIsEditState(false);
-        setStateData({});
+        setIsEditClient(false);
+        setCliendData({});
         setClientFormFieldsStructure(_.cloneDeep(clientFormFields));
         setClientForm(_.cloneDeep(clientFormFields));
     };
@@ -835,6 +906,7 @@ const ClientMaster = () => {
 
     const clientFormHandler = async (currentForm: FormType) => {
         const form = _.cloneDeep(currentForm);
+
         // if (form?.companyName?.value != clientForm?.companyName?.value) {
         const selectedCompany = companyMaster?.find(
             (item: any) => item?.companyName == form?.companyName?.value
@@ -870,7 +942,7 @@ const ClientMaster = () => {
             form.msa_end_date.disable = true;
         }
 
-        console.log('isMSAChecked', form);
+        // console.log('isMSAChecked', form);
 
         //   if (selectedCountry) {
         //     form.country_name.value = selectedCompany?.countryName;
@@ -905,9 +977,9 @@ const ClientMaster = () => {
                     (industry: any) =>
                         industry.industryName === clientForm.industry_name.value
                 )?.id ?? null;
-            console.log('createClientForm : ', companyMaster, clientForm.companyName.value);
+            console.log('createClientForm : ', companyMaster);
 
-            // const companyId =
+            // const account_name =
             // companyMaster.find(
             //   (company: any) =>
             //     company.companyName === clientForm.companyName.value
@@ -935,12 +1007,12 @@ const ClientMaster = () => {
                 client_status: clientForm?.client_status?.value,
                 country_name: clientForm?.country_name?.value,
                 companyId: companyId,
-                account_selection: clientForm?.account_selection?.value,
+                account_name: clientForm?.account_name?.value,
                 industryId: industry_id,
                 industryHeadNames: clientForm?.industryHeadNames?.value,
                 industry_group: clientForm?.industry_group?.value,
                 industry_sub_group: clientForm?.industry_sub_group?.value,
-                sales_person: clientForm?.sales_person?.value,
+                sales_person: clientForm?.sales_person?.value || 'Heyyyy',
                 account_manager: clientForm?.account_manager?.value,
                 msa_start_date: formatDate(clientForm?.msa_start_date?.value),
                 msa_end_date: formatDate(clientForm?.msa_end_date?.value),
@@ -970,24 +1042,24 @@ const ClientMaster = () => {
             console.log('createClientForm : ', clientForm, obj);
 
 
-            if (!stateData?.id) {
+            if (!cliendData?.id) {
                 clientService
                     .createClientMaster(formData)
                     .then((response: any) => {
                         if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-                            setStateData({});
+                            setCliendData({});
                             closeFormPopup();
                             ToasterService.show(response?.message, CONSTANTS.SUCCESS);
                         }
                     })
                     .catch((error: any) => {
-                        setStateData({});
+                        setCliendData({});
                         ToasterService.show(error, CONSTANTS.ERROR);
                     });
             } else {
                 const formData: any = new FormData();
 
-                const updatePayload = { ...obj, id: stateData?.id };
+                const updatePayload = { ...obj, id: cliendData?.id };
 
                 Object.entries(updatePayload).forEach(([key, value]: any) => {
                     formData.set(key, value);
@@ -1001,13 +1073,13 @@ const ClientMaster = () => {
                     .updateClientMaster(formData)
                     .then((response: any) => {
                         if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-                            setStateData({});
+                            setCliendData({});
                             closeFormPopup();
                             ToasterService.show(response?.message, CONSTANTS.SUCCESS);
                         }
                     })
                     .catch((error: any) => {
-                        setStateData({});
+                        setCliendData({});
                         ToasterService.show(error, CONSTANTS.ERROR);
                     });
             }
@@ -1065,7 +1137,7 @@ const ClientMaster = () => {
                                 }}
                             >
                                 <i className="pi pi-angle-left"></i>
-                                <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} Client</h4>
+                                <h4 className="popup-heading">{isEditClient ? 'Update' : 'Add New'} Client</h4>
                             </div>
                             <div
                                 className="popup-right-close"
@@ -1086,7 +1158,7 @@ const ClientMaster = () => {
 
 
                             {/* attachment */}
-                            {/* {showNDAAttacment || showMSAAttacment ? <div className="row">
+                            {showNDAAttacment || showMSAAttacment ? <div className="row">
                                 {showMSAAttacment ? <div className="col-md-6">
                                     <div className={classes["upload-wrapper"]}>
                                         <div className="row pd-10">
@@ -1176,7 +1248,7 @@ const ClientMaster = () => {
                                         </div>
                                     </div>
                                 </div> : null}
-                            </div> : null} */}
+                            </div> : null}
                             {/* attachment */}
                         </div>
 

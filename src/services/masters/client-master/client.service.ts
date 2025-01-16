@@ -3,9 +3,9 @@ import { AuthService } from '../../auth-service/auth.service'
 import { HTTPService } from '../../http-service/http-service'
 
 export class ClientMasterService {
-  getClientMaster = async () => {
+  getClientMaster = async (clientId?: any) => {
     try {
-      const response = await HTTPService.getRequest(APIURLS.GET_CLIENT_MASTER)
+      const response = await HTTPService.postRequest(APIURLS.GET_CLIENT_MASTER, { clientId: clientId ? clientId : null })
       
       return response?.data
     } catch (err) {
