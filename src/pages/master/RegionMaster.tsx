@@ -360,6 +360,42 @@ const RegionMaster = () => {
         </div>
       ),
     },
+    {
+      label: "Created By",
+      fieldName: "updated_by",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_by",
+      changeFilter: true,
+      placeholder: "Created By",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {rowData?.updated_by}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
+    {
+      label: "Updated At",
+      fieldName: "updated_at",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_at",
+      changeFilter: true,
+      placeholder: "Description",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
   ];
 
   useEffect(() => {

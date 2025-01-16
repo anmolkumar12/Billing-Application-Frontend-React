@@ -15,6 +15,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 import { CountryMasterService } from "../../services/masters/country-master/country.service";
 import { StateMasterService } from "../../services/masters/state-master/state.service";
+import moment from "moment";
 
 const CompanyAddressMaster = () => {
   const [stateData, setStateData] = useState<any>();
@@ -314,6 +315,42 @@ const CompanyAddressMaster = () => {
           <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
             {rowData?.isActive == 1 ? "Active" : "Inactive"}
           </span>
+        </div>
+      ),
+    },
+    {
+      label: "Created By",
+      fieldName: "updated_by",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_by",
+      changeFilter: true,
+      placeholder: "Created By",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {rowData?.updated_by}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
+    {
+      label: "Updated At",
+      fieldName: "updated_at",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_at",
+      changeFilter: true,
+      placeholder: "Description",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
       ),
     },
