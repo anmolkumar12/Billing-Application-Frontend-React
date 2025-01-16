@@ -383,14 +383,14 @@ const AccountManagerMaster = () => {
       ),
     },
     {
-      label: "Created By",
+      label: "Updated By",
       fieldName: "updated_by",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "updated_by",
       changeFilter: true,
-      placeholder: "Created By",
+      placeholder: "Updated By",
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
