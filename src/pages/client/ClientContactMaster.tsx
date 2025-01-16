@@ -24,204 +24,68 @@ import { AccountMasterService } from "../../services/masters/account-manager-mas
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
 
 
-const ClientMaster = () => {
-    const clientFormFields = {
-        client_name: {
+const ClientContactMaster = () => {
+    const contactFormFields = {
+        client_selection: {
+            inputType: "singleSelect",
+            label: "Client Selection",
+            options: [],
+            value: null,
+            validation: {
+                required: true,
+            },
+            fieldWidth: "col-md-6",
+        },
+        salutation: {
+            inputType: "singleSelect",
+            label: "Salutation",
+            options: ["Mr.", "Ms.", "Mrs."],
+            value: null,
+            validation: {
+                required: false,
+            },
+            fieldWidth: "col-md-6",
+        },
+        first_name: {
             inputType: "inputtext",
-            label: "Client Name",
+            label: "First Name",
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
-            fieldWidth: "col-md-4",
+            fieldWidth: "col-md-6",
         },
-        vega_client_name: {
+        last_name: {
             inputType: "inputtext",
-            label: "Vega Client Name (Alias)",
+            label: "Last Name",
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
-            fieldWidth: "col-md-4",
+            fieldWidth: "col-md-6",
         },
-        client_type: {
-            inputType: "singleSelect",
-            label: "Client Type",
-            options: ["PVT", "LLP", "Public", "Proprietorship"],
-            value: null,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        credit_period: {
+        email: {
             inputType: "inputtext",
-            label: "Credit Period (No. of Days)",
+            label: "Email",
             value: null,
             validation: {
-                required: false,
+                required: true,
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             },
-            fieldWidth: "col-md-4",
+            fieldWidth: "col-md-6",
         },
-        client_status: {
-            inputType: "singleSelect",
-            label: "Client Type (Existing/New)",
-            options: ["Existing", "New"],
+        phone_number: {
+            inputType: "inputtext",
+            label: "Phone Number",
             value: null,
             validation: {
-                required: false,
+                required: true,
+                pattern: /^\d{10}$/,
             },
-            fieldWidth: "col-md-4",
-        },
-        country_name: {
-            inputType: "singleSelect",
-            label: "Country (Base Location)",
-            options: [],
-            value: null,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        companyName: {
-            inputType: "multiSelect",
-            label: "Company",
-            options: [],
-            value: [],
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        account_name: {
-            inputType: "singleSelect",
-            label: "Account",
-            options: [],
-            value: [],
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        industry_name: {
-            inputType: "singleSelect",
-            label: "Industry",
-            options: [],
-            value: null,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        industryHeadNames: {
-            inputType: "singleSelect",
-            label: "Industry Head",
-            options: [],
-            value: null,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        industry_group: {
-            inputType: "singleSelect",
-            label: "Industry Group",
-            options: [],
-            value: null,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        industry_sub_group: {
-            inputType: "singleSelect",
-            label: "Industry Sub Group",
-            options: [],
-            value: null,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        sales_person: {
-            inputType: "singleSelect",
-            label: "Sales Person",
-            options: [],
-            value: [],
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-            prefilled: true,
-        },
-        account_manager: {
-            inputType: "singleSelect",
-            label: "Account Manager",
-            options: [],
-            value: [],
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-            prefilled: true,
-        },
-        msa_start_date: {
-            inputType: "singleDatePicker",
-            label: "MSA Start Dateee",
-            value: null,
-            disable: true,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        msa_end_date: {
-            inputType: "singleDatePicker",
-            label: "MSA End Date",
-            value: null,
-            disable: true,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        is_msa_missing: {
-            inputType: "inputSwitch",
-            label: "MSA Missing?",
-            value: false,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        nda_flag: {
-            inputType: "inputSwitch",
-            label: "Is NDA",
-            value: false,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        non_solicitation_clause: {
-            inputType: "inputSwitch",
-            label: "Non Solicitation Clause",
-            value: false,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        use_logo_permission: {
-            inputType: "inputSwitch",
-            label: "Use Logo Permission",
-            value: false,
-            validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
+            fieldWidth: "col-md-6",
         },
     };
+    
 
     const [countryMaster, setCountryMaster] = useState<any>([]);
     const [stateMaster, setStateMaster] = useState<any>([]);
@@ -250,7 +114,7 @@ const ClientMaster = () => {
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
-        useState(clientFormFields);
+        useState(contactFormFields);
     const [clientForm, setClientForm] = useState<any>(
         _.cloneDeep(clientFormFieldsStructure)
     );
@@ -546,14 +410,14 @@ const ClientMaster = () => {
 
     const formatCountryDetails = async (countries: any = countryMaster) => {
         const countrylist = countries.map((country: any) => country?.name);
-        clientFormFieldsStructure.country_name.options = countrylist;
+        // clientFormFieldsStructure.country_name.options = countrylist;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
         await statesFormHandler(clientFormFieldsStructure);
     };
 
     const formatCompanyDetails = async (companies: any = companyMaster) => {
         const companyList = companies.map((company: any) => company?.companyName);
-        clientFormFieldsStructure.companyName.options = companyList;
+        // clientFormFieldsStructure.companyName.options = companyList;
         setClientFormFieldsStructure(clientFormFieldsStructure);
     };
 
@@ -563,7 +427,7 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.industryHeadName
         );
-        clientFormFieldsStructure.industryHeadNames.options = industryHeadList;
+        // clientFormFieldsStructure.industryHeadNames.options = industryHeadList;
         setClientFormFieldsStructure(clientFormFieldsStructure);
     };
 
@@ -573,7 +437,7 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.groupIndustryName
         );
-        clientFormFieldsStructure.industry_group.options = industryHeadList;
+        // clientFormFieldsStructure.industry_group.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
 
@@ -583,7 +447,7 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.name
         );
-        clientFormFieldsStructure.account_manager.options = industryHeadList;
+        // clientFormFieldsStructure.account_manager.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
 
@@ -593,7 +457,7 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.bankName
         );
-        clientFormFieldsStructure.account_name.options = industryHeadList;
+        // clientFormFieldsStructure.account_name.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
 
@@ -601,7 +465,7 @@ const ClientMaster = () => {
         const industryList = industries.map(
             (industry: any) => industry?.industryName
         );
-        clientFormFieldsStructure.industry_name.options = industryList;
+        // clientFormFieldsStructure.industry_name.options = industryList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
         // await clientFormHandler(clientFormFieldsStructure);
     };
@@ -743,8 +607,8 @@ const ClientMaster = () => {
         setClientFormPopup(false);
         setIsEditState(false);
         setStateData({});
-        setClientFormFieldsStructure(_.cloneDeep(clientFormFields));
-        setClientForm(_.cloneDeep(clientFormFields));
+        setClientFormFieldsStructure(_.cloneDeep(contactFormFields));
+        setClientForm(_.cloneDeep(contactFormFields));
     };
 
     const parseDateString = (dateString: any) => {
@@ -848,27 +712,27 @@ const ClientMaster = () => {
             setShowNDAAttacment(false);
         }
 
-        if (form?.is_msa_missing?.value == true) {
-            setShowMSAAttacment(true);
-            if (form.msa_start_date.validation) {
-                form.msa_start_date.validation.required = true;
-            }
-            if (form.msa_end_date.validation) {
-                form.msa_end_date.validation.required = true;
-            }
-            form.msa_start_date.disable = false;
-            form.msa_end_date.disable = false;
-        } else {
-            setShowMSAAttacment(false);
-            if (form.msa_start_date.validation) {
-                form.msa_start_date.validation.required = false;
-            }
-            if (form.msa_end_date.validation) {
-                form.msa_end_date.validation.required = false;
-            }
-            form.msa_start_date.disable = true;
-            form.msa_end_date.disable = true;
-        }
+        // if (form?.is_msa_missing?.value == true) {
+        //     setShowMSAAttacment(true);
+        //     if (form.msa_start_date.validation) {
+        //         form.msa_start_date.validation.required = true;
+        //     }
+        //     if (form.msa_end_date.validation) {
+        //         form.msa_end_date.validation.required = true;
+        //     }
+        //     form.msa_start_date.disable = false;
+        //     form.msa_end_date.disable = false;
+        // } else {
+        //     setShowMSAAttacment(false);
+        //     if (form.msa_start_date.validation) {
+        //         form.msa_start_date.validation.required = false;
+        //     }
+        //     if (form.msa_end_date.validation) {
+        //         form.msa_end_date.validation.required = false;
+        //     }
+        //     form.msa_start_date.disable = true;
+        //     form.msa_end_date.disable = true;
+        // }
 
         console.log('isMSAChecked', form);
 
@@ -959,11 +823,11 @@ const ClientMaster = () => {
 
 
             if (attachments?.length) {
-                formData.set("msaFile", attachments[0]);
+                formData.set("logo", attachments[0]);
             }
 
             if (digitalSign?.length) {
-                formData.set("ndaFile", digitalSign[0]);
+                formData.set("digitalSign", digitalSign[0]);
             }
             console.log("here formData", formData);
 
@@ -1086,7 +950,7 @@ const ClientMaster = () => {
 
 
                             {/* attachment */}
-                            {/* {showNDAAttacment || showMSAAttacment ? <div className="row">
+                            {showNDAAttacment || showMSAAttacment ? <div className="row">
                                 {showMSAAttacment ? <div className="col-md-6">
                                     <div className={classes["upload-wrapper"]}>
                                         <div className="row pd-10">
@@ -1176,7 +1040,7 @@ const ClientMaster = () => {
                                         </div>
                                     </div>
                                 </div> : null}
-                            </div> : null} */}
+                            </div> : null}
                             {/* attachment */}
                         </div>
 
@@ -1195,5 +1059,5 @@ const ClientMaster = () => {
     );
 };
 
-export default ClientMaster;
+export default ClientContactMaster;
 

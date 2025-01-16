@@ -4,6 +4,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 import { Tooltip } from "primereact/tooltip";
 import classes from "./Client.module.scss";
 import ClientMaster from './ClientMaster';
+import ClientContactMaster from './ClientContactMaster';
 
 function Client() {
 
@@ -30,7 +31,7 @@ function Client() {
           <ClientMaster />
         </TabPanel>
         <TabPanel header="Client Contact">
-          {/* <ClientMaster /> */}
+          <ClientContactMaster />
         </TabPanel>
         <TabPanel header="Client Group">
           {/* <ClientMaster /> */}
