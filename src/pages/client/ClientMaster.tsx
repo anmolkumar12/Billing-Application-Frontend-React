@@ -281,9 +281,9 @@ const ClientMaster = () => {
                         onClick={() => onUpdate(rowData)}
                     ></span>
                     <span
-                        className={`pi pi-${rowData.isactive ? "ban" : "check-circle"}`}
+                        className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
                         style={{ cursor: "pointer" }}
-                        title={rowData.isactive ? "Deactivate" : "Activate"}
+                        title={rowData.isActive ? "Deactivate" : "Activate"}
                         onClick={() => onDelete(rowData)}
                     ></span>
                 </div>
@@ -345,47 +345,80 @@ const ClientMaster = () => {
             ),
         },
         {
-            label: "Country (Base Location)",
-            fieldName: "country_name",
+            label: "Country",
+            fieldName: "countryName",
             textAlign: "left",
             sort: true,
             filter: true,
             placeholder: "Country",
             body: (rowData: any) => (
-                <TooltipWrapper id={`countryTooltip-${rowData.id}`} content={rowData.country_name} />
-            ),
-        },
-        // {
-        //     label: "Account Selection",
-        //     fieldName: "account_name",
-        //     textAlign: "left",
-        //     sort: true,
-        //     filter: true,
-        //     placeholder: "Account Selection",
-        //     body: (rowData: any) => (
-        //         <TooltipWrapper id={`accountSelectionTooltip-${rowData.id}`} content={rowData.account_name} />
-        //     ),
-        // },
-        {
-            label: "Industry Head Names",
-            fieldName: "industryHeadNames",
-            textAlign: "left",
-            sort: true,
-            filter: true,
-            placeholder: "Industry Head Names",
-            body: (rowData: any) => (
-                <TooltipWrapper id={`industryHeadTooltip-${rowData.id}`} content={rowData.industryHeadNames} />
+                <TooltipWrapper id={`countryTooltip-${rowData.id}`} content={rowData.countryName} />
             ),
         },
         {
-            label: "Sales Person",
-            fieldName: "sales_person",
+            label: "Company Name",
+            fieldName: "companyName",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Sales Person",
+            placeholder: "Company Name",
             body: (rowData: any) => (
-                <TooltipWrapper id={`salesPersonTooltip-${rowData.id}`} content={rowData.sales_person} />
+                <TooltipWrapper id={`companyNameTooltip-${rowData.id}`} content={rowData.companyName} />
+            ),
+        },
+        {
+            label: "Industry Name",
+            fieldName: "industryName",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Industry Name",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`industryNameTooltip-${rowData.id}`} content={rowData.industryName} />
+            ),
+        },
+        {
+            label: "Industry Head Name",
+            fieldName: "industryHeadName",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Industry Head Name",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`industryHeadTooltip-${rowData.id}`} content={rowData.industryHeadName} />
+            ),
+        },
+        {
+            label: "Industry Group Names",
+            fieldName: "industryGroupNames",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Industry Group Names",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`industryGroupTooltip-${rowData.id}`} content={rowData.industryGroupNames} />
+            ),
+        },
+        {
+            label: "Industry Subgroup Names",
+            fieldName: "industrySubGroupNames",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Industry Subgroup Names",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`industrySubgroupTooltip-${rowData.id}`} content={rowData.industrySubGroupNames} />
+            ),
+        },
+        {
+            label: "Account Manager Names",
+            fieldName: "accountManagerNames",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Account Manager Names",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`accountManagerTooltip-${rowData.id}`} content={rowData.accountManagerNames} />
             ),
         },
         {
@@ -411,6 +444,27 @@ const ClientMaster = () => {
             ),
         },
         {
+            label: "MSA File",
+            fieldName: "msaFilePath",
+            textAlign: "left",
+            sort: false,
+            filter: false,
+            placeholder: "MSA File",
+            body: (rowData: any) => (
+                <span onClick={() => downloadFile(rowData.msaFilePath)}>MSA</span>
+            ),
+        },
+        {
+            label: "NDA File",
+            fieldName: "ndaFilePath",
+            textAlign: "left",
+            sort: false,
+            filter: false,
+            placeholder: "NDA File",
+            body: (rowData: any) => (
+                <span onClick={() => downloadFile(rowData.msaFilePath)}>NDA</span>),
+        },
+        {
             label: "Updated At",
             fieldName: "updated_at",
             textAlign: "left",
@@ -423,6 +477,24 @@ const ClientMaster = () => {
         }
     ];
 
+    const downloadFile = (filePath: any) => {
+        const fileUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
+        // Create an anchor element and trigger the download
+        const link = document.createElement("a");
+        link.href = fileUrl;
+        link.download = filePath.split("/").pop(); // Extracts file name from the path
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+      
+      const viewMSAFile = (filePath: any) => {
+        const signatureUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
+        // Open the file in a new tab
+        window.open(signatureUrl, "_blank");
+    };
+
+      
     const TooltipWrapper = ({ id, content }: any) => (
         <div>
             <span id={id}>{content}</span>
@@ -444,6 +516,7 @@ const ClientMaster = () => {
             await formatIndustryHeadDetails(industryHead);
             const industryGroups = await getIndustryGroupMaster();
             await formatIndustryGroupDetails(industryGroups);
+            // await formatIndustrySubGroupDetails(industryGroups)
             const accountManagers = await getAccountManagerMaster();
             await formatAccountManagerMasterDetails(accountManagers);
             const accountMaster = await getAccountMaster();
@@ -452,7 +525,7 @@ const ClientMaster = () => {
             await formatAccountMasterDetails(accountMaster);
             const industries = await getIndustryMaster()
             await formatIndustry_ClientDetails(industries);
-
+            await formatIndustrySubGroupDetails(industries)
         };
         if (clientFormPopup == false && showConfirmDialogue == false) {
             fetchData();
@@ -477,8 +550,6 @@ const ClientMaster = () => {
         try {
             const response = await industryService.getIndustryMaster();
             const temp = response?.industryMasters?.filter((item: any) => item?.isactive || item?.isActive)
-            console.log('qqqqqqqqqqqq', temp);
-
             setIndustryMaster(temp);
             return temp;
         } catch (error) {
@@ -619,6 +690,18 @@ const ClientMaster = () => {
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
 
+    const formatIndustrySubGroupDetails = async (
+        industries: any = industryGroupMaster
+    ) => {
+        console.log('industryGroupMaster', industries);
+
+        const industryHeadList = industries.map(
+            (industryHead: any) => industryHead?.subIndustryCategory
+        );
+        clientFormFieldsStructure.industry_sub_group.options = industryHeadList;
+        await setClientFormFieldsStructure(clientFormFieldsStructure);
+    };
+
     const formatAccountManagerMasterDetails = async (
         industries: any = accountManagerMaster
     ) => {
@@ -638,7 +721,7 @@ const ClientMaster = () => {
             (industryHead: any) => industryHead?.bankName
         );
         console.log('aaaaaaaaaaaa', industryHeadList);
-        
+
         clientFormFieldsStructure.account_name.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
@@ -683,9 +766,9 @@ const ClientMaster = () => {
             clientFormFieldsStructure.client_status.value = data?.client_status;
             clientFormFieldsStructure.country_name.value = data?.country_name;
             clientFormFieldsStructure.companyName.value = data?.companyName?.split(',');
-            
+
             clientFormFieldsStructure.account_name.value = data?.account_selection;
-            console.log('dataaaaaaaaaa---->>>',clientFormFieldsStructure,  data);
+            console.log('dataaaaaaaaaa---->>>', clientFormFieldsStructure, data);
             // clientFormFieldsStructure.industryId.value = data?.industryId;
             // clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadNames;
             // clientFormFieldsStructure.industry_group.value = data?.industry_group;
@@ -853,7 +936,7 @@ const ClientMaster = () => {
                     }
                 } else {
                     ToasterService.show(
-                        `Invalid file format you can only attach the pdf here!`,
+                        `Invalid file format you can only attach the PNG here!`,
                         "error"
                     );
                     eventList = null;
@@ -884,7 +967,7 @@ const ClientMaster = () => {
                     }
                 } else {
                     ToasterService.show(
-                        `Invalid file format you can only attach the pdf here!`,
+                        `Invalid file format you can only attach the png here!`,
                         "error"
                     );
                     eventList = null;
@@ -977,13 +1060,13 @@ const ClientMaster = () => {
                     (industry: any) =>
                         industry.industryName === clientForm.industry_name.value
                 )?.id ?? null;
-            console.log('createClientForm : ', companyMaster);
+            console.log('createClientForm : ', industryMaster);
 
-            // const account_name =
-            // companyMaster.find(
-            //   (company: any) =>
-            //     company.companyName === clientForm.companyName.value
-            // )?.id ?? null;
+            const countryId =
+                countryMaster.find(
+                    (el: any) =>
+                        el.name === clientForm.country_name.value
+                )?.id ?? null;
 
             let companyId = "";
             clientForm?.companyName?.value?.forEach((item: any) => {
@@ -997,6 +1080,46 @@ const ClientMaster = () => {
                 }
             });
 
+            let bankId = clientForm?.account_name?.value
+                ?.map((item: any) =>
+                    accountsMaster?.find((com: any) => com?.bankName === item)?.id
+                )
+                .filter((id: any) => id !== undefined && id !== null)
+                .join(",");
+
+            const IndustryHeadId =
+                industryHeadMaster.find(
+                    (el: any) =>
+                        el.industryHeadName === clientForm.industryHeadNames.value
+                )?.id ?? null;
+
+            console.log('dddddddddddd', industryGroupMaster, clientForm);
+            const IndustryGroupId =
+                industryGroupMaster.find(
+                    (el: any) =>
+                        el.groupIndustryName === clientForm.industry_group.value
+                )?.id ?? null;
+
+
+            const IndustrySubGroupId =
+                industryMaster.find(
+                    (el: any) =>
+                        el.subIndustryCategory === clientForm.industry_sub_group.value
+                )?.id ?? null;
+
+            let accountManagerId = "";
+            clientForm?.account_manager?.value?.forEach((item: any) => {
+                const id =
+                    accountManagerMaster?.find(
+                        (com: any) => com?.name == item
+                    )?.id ?? null;
+                if (id != null) {
+                    accountManagerId =
+                        accountManagerId != "" ? accountManagerId + "," + id : id;
+                }
+            });
+
+
             const formData: any = new FormData();
 
             const obj = {
@@ -1005,21 +1128,21 @@ const ClientMaster = () => {
                 client_type: clientForm?.client_type?.value,
                 credit_period: clientForm?.credit_period?.value,
                 client_status: clientForm?.client_status?.value,
-                country_name: clientForm?.country_name?.value,
+                countryId: countryId,
                 companyId: companyId,
-                account_name: clientForm?.account_name?.value,
+                accountId: bankId,
                 industryId: industry_id,
-                industryHeadNames: clientForm?.industryHeadNames?.value,
-                industry_group: clientForm?.industry_group?.value,
-                industry_sub_group: clientForm?.industry_sub_group?.value,
-                sales_person: clientForm?.sales_person?.value || 'Heyyyy',
-                account_manager: clientForm?.account_manager?.value,
+                IndustryHeadId: IndustryHeadId,
+                IndustryGroupId: IndustryGroupId,
+                IndustrySubGroupId: IndustrySubGroupId,
+                salesMangerId: clientForm?.sales_person?.value,
+                accountManagerId: accountManagerId,
                 msa_start_date: formatDate(clientForm?.msa_start_date?.value),
                 msa_end_date: formatDate(clientForm?.msa_end_date?.value),
-                is_msa_missing: clientForm?.is_msa_missing?.value ? 1 : 0,
+                msa_flag: clientForm?.is_msa_missing?.value ? 1 : 0,
                 nda_flag: clientForm?.nda_flag?.value ? 1 : 0,
-                non_solicitation_clause: clientForm?.non_solicitation_clause?.value ? 1 : 0,
-                use_logo_permission: clientForm?.use_logo_permission?.value ? 1 : 0,
+                non_solicitation_clause_flag: clientForm?.non_solicitation_clause?.value ? 1 : 0,
+                use_logo_permission_flag: clientForm?.use_logo_permission?.value ? 1 : 0,
                 updated_by: loggedInUserId,
 
             };

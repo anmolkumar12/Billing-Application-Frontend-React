@@ -26,124 +26,107 @@ import { ClientContactMasterService } from "../../services/clients/client-contac
 
 
 const ClientBillToMaster = () => {
-    const ClientBillFormFields = {
-        client_name: {
-          inputType: "singleSelect",
-          label: "Client",
-          options: [],
-          value: null,
-          validation: {
-            required: true,
-          },
-          fieldWidth: "col-md-6",
-        },
-        address1: {
-          inputType: "inputtext",
-          label: "Address 1",
-          value: null,
-          validation: {
-            required: true,
-          },
-          fieldWidth: "col-md-6",
-        },
-        address2: {
-          inputType: "inputtext",
-          label: "Address 2",
-          value: null,
-          validation: {
-            required: false,
-          },
-          fieldWidth: "col-md-6",
-        },
-        address3: {
-          inputType: "inputtext",
-          label: "Address 3",
-          value: null,
-          validation: {
-            required: false,
-          },
-          fieldWidth: "col-md-6",
-        },
-        pin: {
-          inputType: "inputtext",
-          label: "PIN",
-          value: null,
-          validation: {
-            required: false,
-          },
-          fieldWidth: "col-md-6",
-        },
-        country_name: {
-          inputType: "singleSelect",
-          label: "Country",
-          options: [],
-          value: null,
-          validation: {
-            required: false,
-          },
-          fieldWidth: "col-md-6",
-        },
-        state_name: {
-          inputType: "singleSelect",
-          label: "State",
-          options: [],
-          value: null,
-          validation: {
-            required: false,
-          },
-          fieldWidth: "col-md-6",
-        },
-      };
+  const ClientBillFormFields = {
+    client_name: {
+      inputType: "singleSelect",
+      label: "Client",
+      options: [],
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    country_name: {
+      inputType: "singleSelect",
+      label: "Country",
+      options: [],
+      value: null,
+      disable: true,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
+    address1: {
+      inputType: "inputtext",
+      label: "Address 1",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    address2: {
+      inputType: "inputtext",
+      label: "Address 2",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
+    address3: {
+      inputType: "inputtext",
+      label: "Address 3",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
+  };
 
 
-    const [countryMaster, setCountryMaster] = useState<any>([]);
-    const [stateMaster, setStateMaster] = useState<any>([]);
-    const [loader, setLoader] = useState(false);
-    const [clientFormPopup, setClientFormPopup] = useState(false);
-    const [isEditState, setIsEditState] = useState<boolean>(false);
-    const [isFormValid, setIsFormValid] = useState(true);
-    const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
-    const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-    const [stateData, setStateData] = useState<any>();
-    const [companyMaster, setCompanyMaster] = useState<any>([]);
-    const [industryHeadMaster, setIndustryHeadMaster] = useState<any>([]);
-    const [industryMaster, setIndustryMaster] = useState<any>([]);
-    const [attachments, setAttachments]: any = useState([]);
-    const [digitalSign, setDigitalSign]: any = useState([]);
-    const [logoUrl, setLogoUrl] = useState('');
-    const [signatureUrl, setSignatureUrl] = useState('');
-    const [showNDAAttacment, setShowNDAAttacment] = useState(false);
-    const [showMSAAttacment, setShowMSAAttacment] = useState(false);
-    const [industryGroupMaster, setIndustryGroupMaster] = useState<any>([]);
-    const [accountManagerMaster, setAccountManagerMaster] = useState<any>([]);
-    const [accountsMaster, setAccountsMaster] = useState<any>([]);
-    const [clientMaster, setClientMaster] = useState<any>([]);
-    const [clientContactMaster, setClientContactMaster] = useState<any>([]);
+  const [countryMaster, setCountryMaster] = useState<any>([]);
+  const [stateMaster, setStateMaster] = useState<any>([]);
+  const [loader, setLoader] = useState(false);
+  const [clientFormPopup, setClientFormPopup] = useState(false);
+  const [isEditState, setIsEditState] = useState<boolean>(false);
+  const [isFormValid, setIsFormValid] = useState(true);
+  const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
+  const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
+  const [stateData, setStateData] = useState<any>();
+  const [companyMaster, setCompanyMaster] = useState<any>([]);
+  const [industryHeadMaster, setIndustryHeadMaster] = useState<any>([]);
+  const [industryMaster, setIndustryMaster] = useState<any>([]);
+  const [attachments, setAttachments]: any = useState([]);
+  const [digitalSign, setDigitalSign]: any = useState([]);
+  const [logoUrl, setLogoUrl] = useState('');
+  const [signatureUrl, setSignatureUrl] = useState('');
+  const [showNDAAttacment, setShowNDAAttacment] = useState(false);
+  const [showMSAAttacment, setShowMSAAttacment] = useState(false);
+  const [industryGroupMaster, setIndustryGroupMaster] = useState<any>([]);
+  const [accountManagerMaster, setAccountManagerMaster] = useState<any>([]);
+  const [accountsMaster, setAccountsMaster] = useState<any>([]);
+  const [clientMaster, setClientMaster] = useState<any>([]);
+  const [clientContactMaster, setClientContactMaster] = useState<any>([]);
 
-      const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
-    
+  const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
+  const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
+
 
 
   const [clientBillFieldsStructure, setClientBillFieldsStructure]: any =
     useState(ClientBillFormFields);
-      const [ClientBillForm, setClientBillForm] = useState<any>(
-        _.cloneDeep(clientBillFieldsStructure)
-      );
+  const [ClientBillForm, setClientBillForm] = useState<any>(
+    _.cloneDeep(clientBillFieldsStructure)
+  );
 
-    const companyService = new CompanyMasterService();
-    const clientContactService = new ClientContactMasterService();
-    const accountService = new AccountMasterService();
-    const accountsService = new AccountsMasterService();
+  const companyService = new CompanyMasterService();
+  const clientContactService = new ClientContactMasterService();
+  const accountService = new AccountMasterService();
+  const accountsService = new AccountsMasterService();
 
-    const cookies = new Cookies();
-    const userInfo = cookies.get("userInfo");
+  const cookies = new Cookies();
+  const userInfo = cookies.get("userInfo");
 
-    const loggedInUserId = userInfo?.userId;
-    let patchData: any;
-    const countryService = new CountryMasterService();
-    const stateService = new StateMasterService();
-    const industryService = new IndustryMasterService();
-    const clientService = new ClientMasterService();
+  const loggedInUserId = userInfo?.userId;
+  let patchData: any;
+  const countryService = new CountryMasterService();
+  const stateService = new StateMasterService();
+  const industryService = new IndustryMasterService();
+  const clientService = new ClientMasterService();
 
 
   const ClientBillToMasterColumns = [
@@ -184,7 +167,7 @@ const ClientBillToMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_name}
+          // data-pr-tooltip={rowData.client_name}
           >
             {rowData.client_name}
           </span>
@@ -208,7 +191,7 @@ const ClientBillToMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address1}
+          // data-pr-tooltip={rowData.address1}
           >
             {rowData.address1}
           </span>
@@ -232,7 +215,7 @@ const ClientBillToMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address2}
+          // data-pr-tooltip={rowData.address2}
           >
             {rowData.address2}
           </span>
@@ -256,7 +239,7 @@ const ClientBillToMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address3}
+          // data-pr-tooltip={rowData.address3}
           >
             {rowData.address3}
           </span>
@@ -268,45 +251,21 @@ const ClientBillToMaster = () => {
       ),
     },
     {
-      label: "PIN Number",
-      fieldName: "pin",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "pin",
-      changeFilter: true,
-      placeholder: "PIN Number",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.pin}
-          >
-            {rowData.pin}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
       label: "Country",
-      fieldName: "country_name",
+      fieldName: "countryName",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "country_name",
+      fieldValue: "countryName",
       changeFilter: true,
       placeholder: "Country",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.country_name}
+          // data-pr-tooltip={rowData.countryName}
           >
-            {rowData.country_name}
+            {rowData.countryName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -316,21 +275,21 @@ const ClientBillToMaster = () => {
       ),
     },
     {
-      label: "State",
-      fieldName: "state_name",
+      label: "Additional Address Details",
+      fieldName: "additionalAddressDetails",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "state_name",
+      fieldValue: "additionalAddressDetails",
       changeFilter: true,
-      placeholder: "State",
+      placeholder: "Additional Address Details",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.state_name}
+            // data-pr-tooltip={rowData.additionalAddressDetails}
           >
-            {rowData.state_name}
+            {rowData.additionalAddressDetails}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -355,75 +314,75 @@ const ClientBillToMaster = () => {
       ),
     },
   ];
-    
 
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await getClientBillToMaster();
-          const clients = await getClientMaster();
-          const countries = await getCountryMaster();
-          const states = await getStateMaster();
-          await formatCountry_ClientDetails(countries);
-          await formatState_ClientDetails(states);
-          await formatClient_BillDetails(clients);
-        };
-        if (clientFormPopup == false && showConfirmDialogue == false) {
-            fetchData();
-        }
-    }, [clientFormPopup, showConfirmDialogue]);
 
-    const getClientBillToMaster = async () => {
-        setLoader(true);
-        try {
-          const response = await clientService.getClientBillToMaster();
-          setClientBillToMaster(response?.billingInfo);
-          return response?.billingInfo;
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setLoader(false);
-        }
-      };
-      const getCountryMaster = async () => {
-        setLoader(true);
-        try {
-          const response = await countryService.getCountryMaster();
-          setCountryMaster(response?.countries);
-          return response?.countries;
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setLoader(false);
-        }
-      };
-      const getStateMaster = async () => {
-        setLoader(true);
-        try {
-          const response = await stateService.getStateMaster();
-          setStateMaster(response?.states);
-          return response?.states;
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setLoader(false);
-        }
-      };
-      
+  useEffect(() => {
+    const fetchData = async () => {
+      await getClientBillToMaster();
+      const clients = await getClientMaster();
+      const countries = await getCountryMaster();
+      const states = await getStateMaster();
+      await formatCountry_ClientDetails(countries);
+      await formatState_ClientDetails(states);
+      await formatClient_BillDetails(clients);
+    };
+    if (clientFormPopup == false && showConfirmDialogue == false) {
+      fetchData();
+    }
+  }, [clientFormPopup, showConfirmDialogue]);
+
+  const getClientBillToMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientBillToMaster();
+      setClientBillToMaster(response?.data);
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+  const getCountryMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await countryService.getCountryMaster();
+      setCountryMaster(response?.countries);
+      return response?.countries;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+  const getStateMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await stateService.getStateMaster();
+      setStateMaster(response?.states);
+      return response?.states;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const formatCountry_ClientDetails = async (
     countries: any = countryMaster
   ) => {
     const countrylist = countries.map((country: any) => country?.name);
     clientBillFieldsStructure.country_name.options = countrylist;
-        await setClientBillFieldsStructure(clientBillFieldsStructure);
-        await clientBillFormHandler(clientBillFieldsStructure);
+    await setClientBillFieldsStructure(clientBillFieldsStructure);
+    await clientBillFormHandler(clientBillFieldsStructure);
   };
 
   const formatState_ClientDetails = async (states: any = stateMaster) => {
     const statelist = states.map((state: any) => state.state_name);
-    clientBillFieldsStructure.state_name.options = statelist;
-        await setClientBillFieldsStructure(clientBillFieldsStructure);
-        await clientBillFormHandler(clientBillFieldsStructure);
+    // clientBillFieldsStructure.state_name.options = statelist;
+    await setClientBillFieldsStructure(clientBillFieldsStructure);
+    await clientBillFormHandler(clientBillFieldsStructure);
   };
 
   const formatClient_BillDetails = async (clients: any = clientMaster) => {
@@ -433,60 +392,103 @@ const ClientBillToMaster = () => {
     await clientBillFormHandler(clientBillFieldsStructure);
   };
 
-    const clientBillFormHandler = async (form: FormType) => {
-      setClientBillForm(form);
-    };
+  const clientBillFormHandler = async (form: FormType) => {
+    setClientBillForm(form);
+    // if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
+    const selectedClient = clientMaster?.find(
+      (item: any) => item?.client_name == form?.client_name?.value
+    );
+    const selectedCountry = countryMaster?.find(
+      (item: any) => item?.name == selectedClient?.countryName
+    );
+    if (selectedCountry) {
+      form.country_name.value = selectedClient?.countryName;
+      // const stateList = await getStateMaster(selectedCountry?.id);
+      // if (stateList) {
+      //   const stateNames = stateList?.map((state: any) => state.stateName);
+      //   form.state_name.options = stateNames || [];
+      //   form.state_name.value = null;
+      // }
 
-    const getClientContactMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await clientContactService.getClientContactMaster();
-            setClientContactMaster(response?.clientContacts);
-            return response?.clientContacts;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-    const getClientMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await clientService.getClientMaster();
-            setClientMaster(response?.clients);
-            return response?.clients;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
+      const addressDetails = JSON.parse(
+        selectedCountry?.addressAdditionalFields
+      );
+      const detailsForm = Object.keys(addressDetails)?.reduce(
+        (acc: any, item: any, index: any) => {
+          acc[index] = {
+            inputType: "inputtext",
+            label: addressDetails[item],
+            value: null,
+            validation: {
+              required: true,
+            },
+            fieldWidth: "col-md-4",
+          };
+          return acc;
+        },
+        {}
+      );
+      setAdditionalDetailsForm(detailsForm);
+    }
+    // }
 
-    // const formatClientDetails = async (clients: any = clientMaster) => {
-    //     const clientList = clients.map((item: any) => item?.client_name);
-    //     clientFormFieldsStructure.client_name.options = clientList;
-    //     await setClientFormFieldsStructure(clientFormFieldsStructure);
-    //     await clientContactFormHandler(clientFormFieldsStructure);
-    // };
+  };
 
-    // const clientContactFormHandler = async (form: FormType) => {
-    //     setClientForm(form);
-    // };
+  const additionalDetailsFormHandler = async (form: FormType) => {
+    setAdditionalDetailsForm(form);
+  };
 
-    const openSaveForm = async () => {
-        setClientFormPopup(true);
-    };
 
-    const onUpdate = (data: any) => {
-        setStateData(data);
-        updateClientBillToMaster(data);
-        setClientFormPopup(true);
-        setIsEditState(true);
-    };
+  const getClientContactMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientContactService.getClientContactMaster();
+      setClientContactMaster(response?.clientContacts);
+      return response?.clientContacts;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+  const getClientMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientMaster();
+      setClientMaster(response?.clients);
+      return response?.clients;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
-    const onPopUpClose = (e?: any) => {
-        setShowConfirmDialogue(false);
-    };
+  // const formatClientDetails = async (clients: any = clientMaster) => {
+  //     const clientList = clients.map((item: any) => item?.client_name);
+  //     clientFormFieldsStructure.client_name.options = clientList;
+  //     await setClientFormFieldsStructure(clientFormFieldsStructure);
+  //     await clientContactFormHandler(clientFormFieldsStructure);
+  // };
+
+  // const clientContactFormHandler = async (form: FormType) => {
+  //     setClientForm(form);
+  // };
+
+  const openSaveForm = async () => {
+    setClientFormPopup(true);
+  };
+
+  const onUpdate = (data: any) => {
+    setStateData(data);
+    updateClientBillToMaster(data);
+    setClientFormPopup(true);
+    setIsEditState(true);
+  };
+
+  const onPopUpClose = (e?: any) => {
+    setShowConfirmDialogue(false);
+  };
 
   const updateClientBillToMaster = async (data: any) => {
     try {
@@ -504,47 +506,49 @@ const ClientBillToMaster = () => {
     }
   };
 
-    const onDelete = (data: any) => {
-        patchData = data;
-        setActionPopupToggle({
-            displayToggle: false,
-            title: "Delete",
-            message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
-                ? "activate"
-                : "deactivate"
-                } this record?`,
-            acceptFunction: confirmDelete,
-            rejectFunction: onPopUpClose,
-        });
-        setShowConfirmDialogue(true);
-    };
+  const onDelete = (data: any) => {
+    patchData = data;
+    setActionPopupToggle({
+      displayToggle: false,
+      title: "Delete",
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
+        ? "activate"
+        : "deactivate"
+        } this record?`,
+      acceptFunction: confirmDelete,
+      rejectFunction: onPopUpClose,
+    });
+    setShowConfirmDialogue(true);
+  };
 
-    const confirmDelete = () => {
-        setLoader(true);
-        stateService
-            .deactivateStateMaster({ ...patchData, loggedInUserId })
-            .then(() => {
-                setLoader(false);
-                setShowConfirmDialogue(false);
-                ToasterService.show(
-                    `State record ${patchData?.isactive ? "deactivated" : "activated"
-                    } successfully`,
-                    CONSTANTS.SUCCESS
-                );
-            })
-            .catch((error) => {
-                setLoader(false);
-                return false;
-            });
-    };
+  const confirmDelete = () => {
+    setLoader(true);
+    stateService
+      .deactivateStateMaster({ ...patchData, loggedInUserId })
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          `State record ${patchData?.isactive ? "deactivated" : "activated"
+          } successfully`,
+          CONSTANTS.SUCCESS
+        );
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
 
-    const closeFormPopup = () => {
-        setClientFormPopup(false);
-        setIsEditState(false);
-        setStateData({});
-            setClientBillFieldsStructure(_.cloneDeep(ClientBillFormFields));
-            setClientBillForm(_.cloneDeep(ClientBillFormFields));
-    };
+  const closeFormPopup = () => {
+    setClientFormPopup(false);
+    setIsEditState(false);
+    setStateData({});
+    setClientBillFieldsStructure(_.cloneDeep(ClientBillFormFields));
+    setClientBillForm(_.cloneDeep(ClientBillFormFields));
+    setAdditionalDetailsForm({});
+
+  };
 
   const createClientBillInfo = async (event: FormEvent) => {
     event.preventDefault();
@@ -563,7 +567,7 @@ const ClientBillToMaster = () => {
     if (companyValidityFlag) {
       const clientId =
         clientMaster.find(
-          (client: any) => client.name === ClientBillForm.client_name.value
+          (client: any) => client.client_name === ClientBillForm.client_name.value
         )?.id ?? null;
 
       const countryId =
@@ -571,19 +575,29 @@ const ClientBillToMaster = () => {
           (country: any) => country.name === ClientBillForm.country_name.value
         )?.id ?? null;
 
-      const stateId =
-        stateMaster.find(
-          (state: any) => state.state_name === ClientBillForm.state_name.value
-        )?.state_id ?? null;
+      // const stateId =
+      //   stateMaster.find(
+      //     (state: any) => state.state_name === ClientBillForm.state_name.value
+      //   )?.state_id ?? null;
+
+      const addressData = Object.keys(AdditionalDetailsForm)?.reduce(
+        (acc: any, item: any, index: any) => {
+          if (AdditionalDetailsForm[index]?.value != null) {
+            acc[AdditionalDetailsForm[index]?.label] =
+              AdditionalDetailsForm[index]?.value;
+          }
+          return acc;
+        },
+        {}
+      );
 
       const obj = {
         clientId: clientId,
+        countryId: countryId,
         address1: ClientBillForm?.address1?.value,
         address2: ClientBillForm?.address2?.value,
         address3: ClientBillForm?.address3?.value,
-        pin: ClientBillForm?.pin?.value,
-        countryId: countryId,
-        stateId: stateId,
+        additionalAddressDetails: addressData,
         updatedBy: loggedInUserId,
       };
 
@@ -623,89 +637,92 @@ const ClientBillToMaster = () => {
     }
   };
 
-    return loader ? (
-        <Loader />
-    ) : (
-      <>
-      <div>Hiii</div></>
-        // <>
-        //     <div
-        //         style={{
-        //             display: "flex",
-        //             justifyContent: "end",
-        //             marginBottom: "0.5em",
-        //         }}
-        //     >
-        //         <ButtonComponent
-        //             label="Add New Client"
-        //             icon="pi pi-check"
-        //             iconPos="right"
-        //             submitEvent={openSaveForm}
-        //         />
-        //     </div>
-        //     <p className="m-0">
-        //         <DataTableBasicDemo
-        //              data={clientBillToMaster}
-        //              column={ClientBillToMasterColumns}
-        //             showGridlines={true}
-        //             resizableColumns={true}
-        //             rows={20}
-        //             paginator={true}
-        //             sortable={true}
-        //             headerRequired={true}
-        //             scrollHeight={"calc(100vh - 200px)"}
-        //             downloadedfileName={"Brandwise_Denomination_table"}
-        //         />
-        //         {showConfirmDialogue ? (
-        //             <ConfirmDialogue
-        //                 actionPopupToggle={actionPopupToggle}
-        //                 onCloseFunction={onPopUpClose}
-        //             />
-        //         ) : null}
-        //     </p>
-        //     {clientFormPopup ? (
-        //         <div className="popup-overlay md-popup-overlay">
-        //             <div className="popup-body md-popup-body stretchLeft">
-        //                 <div className="popup-header ">
-        //                     <div
-        //                         className="popup-close"
-        //                         onClick={() => {
-        //                             closeFormPopup();
-        //                         }}
-        //                     >
-        //                         <i className="pi pi-angle-left"></i>
-        //                         <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} Client</h4>
-        //                     </div>
-        //                     <div
-        //                         className="popup-right-close"
-        //                         onClick={() => {
-        //                             closeFormPopup();
-        //                         }}
-        //                     >
-        //                         &times;
-        //                     </div>
-        //                 </div>
-        //                 <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-        //                 <FormComponent
-        //             form={_.cloneDeep(ClientBillForm)}
-        //             formUpdateEvent={clientBillFormHandler}
-        //             isFormValidFlag={isFormValid}
-        //           ></FormComponent>
-        //                 </div>
+  return loader ? (
+    <Loader />
+  ) : (
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          marginBottom: "0.5em",
+        }}
+      >
+        <ButtonComponent
+          label="Add New Billing Info"
+          icon="pi pi-check"
+          iconPos="right"
+          submitEvent={openSaveForm}
+        />
+      </div>
+      <p className="m-0">
+        <DataTableBasicDemo
+          data={clientBillToMaster}
+          column={ClientBillToMasterColumns}
+          showGridlines={true}
+          resizableColumns={true}
+          rows={20}
+          paginator={true}
+          sortable={true}
+          headerRequired={true}
+          scrollHeight={"calc(100vh - 200px)"}
+          downloadedfileName={"Brandwise_Denomination_table"}
+        />
+        {showConfirmDialogue ? (
+          <ConfirmDialogue
+            actionPopupToggle={actionPopupToggle}
+            onCloseFunction={onPopUpClose}
+          />
+        ) : null}
+      </p>
+      {clientFormPopup ? (
+        <div className="popup-overlay md-popup-overlay">
+          <div className="popup-body md-popup-body stretchLeft">
+            <div className="popup-header ">
+              <div
+                className="popup-close"
+                onClick={() => {
+                  closeFormPopup();
+                }}
+              >
+                <i className="pi pi-angle-left"></i>
+                <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} Billing Info</h4>
+              </div>
+              <div
+                className="popup-right-close"
+                onClick={() => {
+                  closeFormPopup();
+                }}
+              >
+                &times;
+              </div>
+            </div>
+            <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+              <FormComponent
+                form={_.cloneDeep(ClientBillForm)}
+                formUpdateEvent={clientBillFormHandler}
+                isFormValidFlag={isFormValid}
+              ></FormComponent>
+              <FormComponent
+                form={_.cloneDeep(AdditionalDetailsForm)}
+                formUpdateEvent={additionalDetailsFormHandler}
+                isFormValidFlag={isFormValid}
+              ></FormComponent>
+            </div>
 
-        //                 <div className="popup-lower-btn">
-        //                     <ButtonComponent
-        //                         label="Submit"
-        //                         icon="pi pi-check"
-        //                         iconPos="right"
-        //                         submitEvent={createClientBillInfo}
-        //                     />
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     ) : null}
-        // </>
-    );
+            <div className="popup-lower-btn">
+              <ButtonComponent
+                label="Submit"
+                icon="pi pi-check"
+                iconPos="right"
+                submitEvent={createClientBillInfo}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
 };
 
 export default ClientBillToMaster;

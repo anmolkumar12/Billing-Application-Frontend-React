@@ -25,10 +25,10 @@ import { AccountsMasterService } from "../../services/masters/accounts-master/ac
 import { ClientContactMasterService } from "../../services/clients/client-contact-master/clientContactMaster.service";
 
 
-const ClientShipToMaster = () => {
+const ClientGroupMaster = () => {
   const ClientBillFormFields = {
     client_name: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Client",
       options: [],
       value: null,
@@ -37,38 +37,9 @@ const ClientShipToMaster = () => {
       },
       fieldWidth: "col-md-6",
     },
-    country_name: {
-      inputType: "singleSelect",
-      label: "Country",
-      options: [],
-      value: null,
-      disable: true,
-      validation: {
-        required: false,
-      },
-      fieldWidth: "col-md-6",
-    },
-    address1: {
+    group_name: {
       inputType: "inputtext",
-      label: "Address 1",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    },
-    address2: {
-      inputType: "inputtext",
-      label: "Address 2",
-      value: null,
-      validation: {
-        required: false,
-      },
-      fieldWidth: "col-md-6",
-    },
-    address3: {
-      inputType: "inputtext",
-      label: "Address 3",
+      label: "Group Name",
       value: null,
       validation: {
         required: false,
@@ -156,20 +127,20 @@ const ClientShipToMaster = () => {
     },
     {
       label: "Client",
-      fieldName: "client_name",
+      fieldName: "clientName",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "client_name",
+      fieldValue: "clientName",
       changeFilter: true,
       placeholder: "Client",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-          // data-pr-tooltip={rowData.client_name}
+          // data-pr-tooltip={rowData.clientName}
           >
-            {rowData.client_name}
+            {rowData.clientName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -179,117 +150,21 @@ const ClientShipToMaster = () => {
       ),
     },
     {
-      label: "Address 1",
-      fieldName: "address1",
+      label: "Group Name",
+      fieldName: "groupName",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "address1",
+      fieldValue: "groupName",
       changeFilter: true,
-      placeholder: "Address 1",
+      placeholder: "Group Name",
       body: (rowData: any) => (
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
           // data-pr-tooltip={rowData.address1}
           >
-            {rowData.address1}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Address 2",
-      fieldName: "address2",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "address2",
-      changeFilter: true,
-      placeholder: "Address 2",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-          // data-pr-tooltip={rowData.address2}
-          >
-            {rowData.address2}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Address 3",
-      fieldName: "address3",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "address3",
-      changeFilter: true,
-      placeholder: "Address 3",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-          // data-pr-tooltip={rowData.address3}
-          >
-            {rowData.address3}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Country",
-      fieldName: "countryName",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "countryName",
-      changeFilter: true,
-      placeholder: "Country",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-          // data-pr-tooltip={rowData.countryName}
-          >
-            {rowData.countryName}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Additional Address Details",
-      fieldName: "additionalAddressDetails",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "additionalAddressDetails",
-      changeFilter: true,
-      placeholder: "Additional Address Details",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.additionalAddressDetails}
-          >
-            {rowData.additionalAddressDetails}
+            {rowData.groupName}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -322,9 +197,9 @@ const ClientShipToMaster = () => {
       await getClientBillToMaster();
       const clients = await getClientMaster();
       const countries = await getCountryMaster();
-      const states = await getStateMaster();
-      await formatCountry_ClientDetails(countries);
-      await formatState_ClientDetails(states);
+    //   const states = await getStateMaster();
+    //   await formatCountry_ClientDetails(countries);
+    //   await formatState_ClientDetails(states);
       await formatClient_BillDetails(clients);
     };
     if (clientFormPopup == false && showConfirmDialogue == false) {
@@ -335,11 +210,11 @@ const ClientShipToMaster = () => {
   const getClientBillToMaster = async () => {
     setLoader(true);
     try {
-      const response = await clientService.getClientShipToMaster();
+      const response = await clientService.getClientGroupsMaster();
       console.log('tttttttttttttttt', response);
       
-      setClientBillToMaster(response?.data);
-      return response?.data;
+      setClientBillToMaster(response?.groups);
+      return response?.groups;
     } catch (error) {
       console.error(error);
     } finally {
@@ -371,21 +246,21 @@ const ClientShipToMaster = () => {
     }
   };
 
-  const formatCountry_ClientDetails = async (
-    countries: any = countryMaster
-  ) => {
-    const countrylist = countries.map((country: any) => country?.name);
-    clientBillFieldsStructure.country_name.options = countrylist;
-    await setClientBillFieldsStructure(clientBillFieldsStructure);
-    await clientBillFormHandler(clientBillFieldsStructure);
-  };
+//   const formatCountry_ClientDetails = async (
+//     countries: any = countryMaster
+//   ) => {
+//     const countrylist = countries.map((country: any) => country?.name);
+//     clientBillFieldsStructure.country_name.options = countrylist;
+//     await setClientBillFieldsStructure(clientBillFieldsStructure);
+//     await clientBillFormHandler(clientBillFieldsStructure);
+//   };
 
-  const formatState_ClientDetails = async (states: any = stateMaster) => {
-    const statelist = states.map((state: any) => state.state_name);
-    // clientBillFieldsStructure.state_name.options = statelist;
-    await setClientBillFieldsStructure(clientBillFieldsStructure);
-    await clientBillFormHandler(clientBillFieldsStructure);
-  };
+//   const formatState_ClientDetails = async (states: any = stateMaster) => {
+//     const statelist = states.map((state: any) => state.state_name);
+//     // clientBillFieldsStructure.state_name.options = statelist;
+//     await setClientBillFieldsStructure(clientBillFieldsStructure);
+//     await clientBillFormHandler(clientBillFieldsStructure);
+//   };
 
   const formatClient_BillDetails = async (clients: any = clientMaster) => {
     const clientlist = clients.map((client: any) => client?.client_name);
@@ -397,41 +272,19 @@ const ClientShipToMaster = () => {
   const clientBillFormHandler = async (form: FormType) => {
     setClientBillForm(form);
     // if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
-    const selectedClient = clientMaster?.find(
-      (item: any) => item?.client_name == form?.client_name?.value
-    );
-    const selectedCountry = countryMaster?.find(
-      (item: any) => item?.name == selectedClient?.countryName
-    );
-    if (selectedCountry) {
-      form.country_name.value = selectedClient?.countryName;
-      // const stateList = await getStateMaster(selectedCountry?.id);
-      // if (stateList) {
-      //   const stateNames = stateList?.map((state: any) => state.stateName);
-      //   form.state_name.options = stateNames || [];
-      //   form.state_name.value = null;
-      // }
+    // const selectedClient = clientMaster?.find(
+    //   (item: any) => item?.client_name == form?.client_name?.value
+    // );
+    // const selectedCountry = countryMaster?.find(
+    //   (item: any) => item?.name == selectedClient?.countryName
+    // );
+    // if (selectedCountry) {
+    //   form.country_name.value = selectedClient?.countryName;
 
-      const addressDetails = JSON.parse(
-        selectedCountry?.addressAdditionalFields
-      );
-      const detailsForm = Object.keys(addressDetails)?.reduce(
-        (acc: any, item: any, index: any) => {
-          acc[index] = {
-            inputType: "inputtext",
-            label: addressDetails[item],
-            value: null,
-            validation: {
-              required: true,
-            },
-            fieldWidth: "col-md-4",
-          };
-          return acc;
-        },
-        {}
-      );
-      setAdditionalDetailsForm(detailsForm);
-    }
+    //   const addressDetails = JSON.parse(
+    //     selectedCountry?.addressAdditionalFields
+    //   );
+    // }
     // }
 
   };
@@ -567,45 +420,22 @@ const ClientShipToMaster = () => {
     setIsFormValid(companyValidityFlag);
 
     if (companyValidityFlag) {
-      const clientId =
-        clientMaster.find(
-          (client: any) => client.client_name === ClientBillForm.client_name.value
-        )?.id ?? null;
-
-      const countryId =
-        countryMaster.find(
-          (country: any) => country.name === ClientBillForm.country_name.value
-        )?.id ?? null;
-
-      // const stateId =
-      //   stateMaster.find(
-      //     (state: any) => state.state_name === ClientBillForm.state_name.value
-      //   )?.state_id ?? null;
-
-      const addressData = Object.keys(AdditionalDetailsForm)?.reduce(
-        (acc: any, item: any, index: any) => {
-          if (AdditionalDetailsForm[index]?.value != null) {
-            acc[AdditionalDetailsForm[index]?.label] =
-              AdditionalDetailsForm[index]?.value;
-          }
-          return acc;
-        },
-        {}
-      );
+        let clientId = ClientBillForm?.client_name?.value
+        ?.map((item: any) =>
+            clientMaster?.find((com: any) => com?.client_name === item)?.id
+        )
+        .filter((id: any) => id !== undefined && id !== null)
+        .join(",");
 
       const obj = {
         clientId: clientId,
-        countryId: countryId,
-        address1: ClientBillForm?.address1?.value,
-        address2: ClientBillForm?.address2?.value,
-        address3: ClientBillForm?.address3?.value,
-        additionalAddressDetails: addressData,
+        groupName: ClientBillForm?.group_name?.value,
         updatedBy: loggedInUserId,
       };
 
       if (!stateData?.id) {
         clientService
-          .createClientShipToMaster(obj)
+          .createClientGroupMaster(obj)
           .then((response: any) => {
             if (response?.statusCode === HTTP_RESPONSE.CREATED) {
               setStateData({});
@@ -621,7 +451,7 @@ const ClientShipToMaster = () => {
         const updatePayload = { ...obj, billingId: stateData?.id };
 
         clientService
-          .updateClientShipToMaster(updatePayload)
+          .updateClientGroupMaster(updatePayload)
           .then((response: any) => {
             if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
               setStateData({});
@@ -651,7 +481,7 @@ const ClientShipToMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Shipping Info"
+          label="Add New Client Group"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}
@@ -688,7 +518,7 @@ const ClientShipToMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} Shipping Info</h4>
+                <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} Client Group</h4>
               </div>
               <div
                 className="popup-right-close"
@@ -727,6 +557,7 @@ const ClientShipToMaster = () => {
   );
 };
 
-export default ClientShipToMaster;
+export default ClientGroupMaster;
+
 
 

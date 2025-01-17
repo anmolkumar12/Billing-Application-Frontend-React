@@ -155,7 +155,7 @@ const ClientContactMaster = () => {
                         className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
                         style={{ cursor: "pointer" }}
                         title={rowData.isActive ? "Deactivate" : "Activate"}
-                        onClick={() => onUpdate(rowData)}
+                        onClick={() => onDelete(rowData)}
                     ></span>
                 </div>
             ),
@@ -253,7 +253,9 @@ const ClientContactMaster = () => {
             placeholder: "Status",
             body: (rowData: any) => (
                 <div>
-                    <span>{rowData.isActive ? "Active" : "Inactive"}</span>
+                    <span style={{ color: rowData?.isActive === 1 ? "green" : "red" }}>
+                        {rowData?.isActive === 1 ? "Active" : "Inactive"}
+                    </span>
                 </div>
             ),
         },
@@ -284,7 +286,7 @@ const ClientContactMaster = () => {
             ),
         }
     ];
-    
+
 
 
     useEffect(() => {
@@ -351,7 +353,7 @@ const ClientContactMaster = () => {
 
     const updateStateMaster = (data: any) => {
         console.log('rrrrrrrrrrrr', data);
-        
+
         try {
             clientFormFieldsStructure.client_name.value = data?.client_name;
             clientFormFieldsStructure.salutation.value = data?.salutation;
@@ -383,8 +385,8 @@ const ClientContactMaster = () => {
 
     const confirmDelete = () => {
         setLoader(true);
-        stateService
-            .deactivateStateMaster({ ...patchData, loggedInUserId })
+        clientContactService
+            .deactivateClientContactMaster({ ...patchData, loggedInUserId })
             .then(() => {
                 setLoader(false);
                 setShowConfirmDialogue(false);
@@ -470,23 +472,23 @@ const ClientContactMaster = () => {
 
         if (companyValidityFlag) {
 
-        //     // const companyId =
-        //     // companyMaster.find(
-        //     //   (company: any) =>
-        //     //     company.companyName === clientForm.companyName.value
-        //     // )?.id ?? null;
+            //     // const companyId =
+            //     // companyMaster.find(
+            //     //   (company: any) =>
+            //     //     company.companyName === clientForm.companyName.value
+            //     // )?.id ?? null;
 
 
-        const obj = {
-            client_name: clientForm?.client_name?.value,
-            salutation: clientForm?.salutation?.value,
-            first_name: clientForm?.first_name?.value,
-            last_name: clientForm?.last_name?.value,
-            email: clientForm?.email?.value,
-            phone_number: clientForm?.phone?.value,
-            updatedBy: loggedInUserId,
-        };
-        console.log('koooo', obj);
+            const obj = {
+                client_name: clientForm?.client_name?.value,
+                salutation: clientForm?.salutation?.value,
+                first_name: clientForm?.first_name?.value,
+                last_name: clientForm?.last_name?.value,
+                email: clientForm?.email?.value,
+                phone_number: clientForm?.phone?.value,
+                updatedBy: loggedInUserId,
+            };
+            console.log('koooo', obj);
 
 
             if (!stateData?.id) {
@@ -504,20 +506,9 @@ const ClientContactMaster = () => {
                         ToasterService.show(error, CONSTANTS.ERROR);
                     });
             } else {
-                const formData: any = new FormData();
-
-                const updatePayload = { ...obj, id: stateData?.id };
-
-                Object.entries(updatePayload).forEach(([key, value]: any) => {
-                    formData.set(key, value);
-                });
-
-                // if (attachments?.length) {
-                //   formData.set("file", attachments[0]);
-                // }
-
+                const updatePayload = { ...obj, clientContactId: stateData?.id, isActive: stateData?.isActive };
                 clientContactService
-                    .updateClientContactMaster(formData)
+                    .updateClientContactMaster(updatePayload)
                     .then((response: any) => {
                         if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
                             setStateData({});

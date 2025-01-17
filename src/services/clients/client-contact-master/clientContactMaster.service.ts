@@ -43,7 +43,7 @@ export class ClientContactMasterService {
   deactivateClientContactMaster = async (data: any) => {
     try {
       const body = {
-        salesManagerId: data.id,
+        clientContactId: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
       };
