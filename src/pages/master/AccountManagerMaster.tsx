@@ -93,6 +93,7 @@ const AccountManagerMaster = () => {
   const [storeFormPopup, setFormPopup] = useState(false);
   const [isEditAccManager, setIsEditAccManager] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
+  const [isDeactivateFormValid,setIsDeactivateFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
@@ -121,9 +122,9 @@ const AccountManagerMaster = () => {
       min:new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
       max:new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
-        required: false,
+        required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-12",
     },
   }
 
@@ -525,6 +526,24 @@ const AccountManagerMaster = () => {
   const deactivationFormHandler = async(form:FormType) => {
     setDeactivateForm(form);
   }
+    const submitDeactivateFormHandler = (event: FormEvent) => {
+      event.preventDefault();
+      let validity = true;
+      const deactivateFolrmValidaity: boolean[] = [];
+      console.log('jjjjjjjjjjjj', deactForm);
+  
+      _.each(deactForm, (item: any) => {
+        if (item?.validation?.required) {
+          deactivateFolrmValidaity.push(item.valid);
+          validity = validity && item.valid;
+        }
+      });
+  
+      setIsDeactivateFormValid(validity);
+      if(validity){
+      onDelete(rowData)
+      }
+    }
 
   const onUpdate = (data: any) => {
     setStateData(data);
@@ -536,7 +555,8 @@ const AccountManagerMaster = () => {
   const closeDeactivation = () => {
     setRowData(null)
     setDeactivatePopup(false);
-    setDeactivateForm(deactivateFormObject)
+    setIsDeactivateFormValid(true);
+    setDeactivateForm(_.cloneDeep(deactivateFormObject));
   }
 
   const onPopUpClose = (e?: any) => {
@@ -771,7 +791,7 @@ const AccountManagerMaster = () => {
 
 {deactivatePopup ? (
       <div className="popup-overlay md-popup-overlay">
-        <div style={{maxWidth:'600px'}} className="popup-body md-popup-body stretchLeft">
+        <div style={{maxWidth:'360px'}} className="popup-body md-popup-body stretchLeft">
           <div className="popup-header">
             <div
               className="popup-close"
@@ -781,7 +801,7 @@ const AccountManagerMaster = () => {
               }}
             >
               <i className="pi pi-angle-left"></i>
-              <h4 className="popup-heading">Deactivate Sales Manager</h4>
+              <h4 className="popup-heading">Deactivate Account Manager</h4>
             </div>
             <div
               className="popup-right-close"
@@ -793,11 +813,11 @@ const AccountManagerMaster = () => {
               &times;
             </div>
           </div>
-          <div className="popup-content" style={{ padding: "1rem 2rem",maxHeight:"calc(100vh - 528px)" }}>
+          <div className="popup-content"  style={{paddingBottom:'0rem',maxHeight:"calc(100vh - 535px)" }}>
             <FormComponent
               form={_.cloneDeep(deactForm)}
               formUpdateEvent={deactivationFormHandler}
-              isFormValidFlag={isFormValid}
+              isFormValidFlag={isDeactivateFormValid}
             ></FormComponent>
           </div>
 
@@ -806,7 +826,7 @@ const AccountManagerMaster = () => {
               label="Submit"
               icon="pi pi-check"
               iconPos="right"
-              submitEvent={() =>onDelete(rowData)}
+              submitEvent={submitDeactivateFormHandler}
             />
           </div>
         </div>

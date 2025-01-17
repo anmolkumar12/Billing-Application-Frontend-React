@@ -95,6 +95,7 @@ const SalesMaster = () => {
   const [rowData,setRowData] = useState<any>(null);
   const [isEditSalesManager, setIsEditSalesManager] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
+  const [isDeactivateFormValid,setIsDeactivateFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
@@ -113,9 +114,9 @@ const SalesMaster = () => {
       min:new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
       max:new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
-        required: false,
+        required: true,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-12",
     },
   }
 
@@ -518,6 +519,24 @@ const SalesMaster = () => {
   const deactivationFormHandler = async(form:FormType) => {
     setDeactivateForm(form);
   }
+  const submitDeactivateFormHandler = (event: FormEvent) => {
+    event.preventDefault();
+    let validity = true;
+    const deactivateFolrmValidaity: boolean[] = [];
+    console.log('jjjjjjjjjjjj', deactForm);
+
+    _.each(deactForm, (item: any) => {
+      if (item?.validation?.required) {
+        deactivateFolrmValidaity.push(item.valid);
+        validity = validity && item.valid;
+      }
+    });
+
+    setIsDeactivateFormValid(validity);
+    if(validity){
+    onDelete(rowData)
+    }
+  }
 
   const onUpdate = (data: any) => {
     setStateData(data);
@@ -677,11 +696,12 @@ const SalesMaster = () => {
     setSalesFieldsStructure(_.cloneDeep(SalesFormFields));
     setSalesForm(_.cloneDeep(SalesFormFields));
   };
-  const closeDeactivation = () => {
-    setRowData(null)
-    setDeactivatePopup(false);
-    setDeactivateForm(deactivateFormObject)
-  }
+   const closeDeactivation = () => {
+     setRowData(null)
+     setDeactivatePopup(false);
+     setIsDeactivateFormValid(true);
+     setDeactivateForm(_.cloneDeep(deactivateFormObject));
+   }
   return loader ? (
     <Loader />
   ) : (
@@ -761,49 +781,49 @@ const SalesMaster = () => {
           </div>
         </div>
       ) : null}
-       {deactivatePopup ? (
-        <div className="popup-overlay md-popup-overlay">
-          <div style={{maxWidth:'600px'}} className="popup-body md-popup-body stretchLeft">
-            <div className="popup-header">
-              <div
-                className="popup-close"
-                onClick={() => {
-     
-                  closeDeactivation()
-                }}
-              >
-                <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Deactivate Sales Manager</h4>
-              </div>
-              <div
-                className="popup-right-close"
-                onClick={() => {
-                  closeDeactivation()
-              
-                }}
-              >
-                &times;
-              </div>
+{deactivatePopup ? (
+      <div className="popup-overlay md-popup-overlay">
+        <div style={{maxWidth:'360px'}} className="popup-body md-popup-body stretchLeft">
+          <div className="popup-header">
+            <div
+              className="popup-close"
+              onClick={() => {
+   
+                closeDeactivation()
+              }}
+            >
+              <i className="pi pi-angle-left"></i>
+              <h4 className="popup-heading">Deactivate Sales Manager</h4>
             </div>
-            <div className="popup-content" style={{ padding: "1rem 2rem",maxHeight:"calc(100vh - 528px)" }}>
-              <FormComponent
-                form={_.cloneDeep(deactForm)}
-                formUpdateEvent={deactivationFormHandler}
-                isFormValidFlag={isFormValid}
-              ></FormComponent>
-            </div>
-
-            <div className="popup-lower-btn">
-              <ButtonComponent
-                label="Submit"
-                icon="pi pi-check"
-                iconPos="right"
-                submitEvent={() =>onDelete(rowData)}
-              />
+            <div
+              className="popup-right-close"
+              onClick={() => {
+                closeDeactivation()
+            
+              }}
+            >
+              &times;
             </div>
           </div>
+          <div className="popup-content"  style={{paddingBottom:'0rem',maxHeight:"calc(100vh - 535px)" }}>
+            <FormComponent
+              form={_.cloneDeep(deactForm)}
+              formUpdateEvent={deactivationFormHandler}
+              isFormValidFlag={isDeactivateFormValid}
+            ></FormComponent>
+          </div>
+
+          <div className="popup-lower-btn">
+            <ButtonComponent
+              label="Submit"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={submitDeactivateFormHandler}
+            />
+          </div>
         </div>
-      ) : null}
+      </div>
+    ) : null}
     </>
   );
 };

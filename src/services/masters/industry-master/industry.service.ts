@@ -45,7 +45,7 @@ export class IndustryMasterService {
         productionTypeId: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
-        deactivationDate:data?.deactivationDate?moment(new Date(data?.deactivationDate)).format('YYYY-MM-DD'): null
+        
       }
 
       const response = await HTTPService.postRequest(

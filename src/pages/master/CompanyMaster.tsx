@@ -522,12 +522,14 @@ const CompanyMaster = () => {
   };
 
   const parentFormHandler = async (form: FormType) => {
+    console.log('stadeData---->',stateData)
     if (form?.independent?.value == false || !form?.independent?.value) {
       const companyNamesList = companyMaster
         ?.filter(
-          (company: any) => company?.companyName != form?.companyName?.value
+          (company: any) => company?.companyName != stateData?.companyName
         )
         ?.map((company: any) => company?.companyName);
+        console.log('here we have again ---',companyNamesList);
       form.parent_comp.options = companyNamesList;
       form.parent_comp.disable = false;
       if (form.parent_comp.validation) {
@@ -633,6 +635,7 @@ const CompanyMaster = () => {
       const companyNamesList = companyMaster
         ?.filter((company: any) => company?.companyName != data?.companyName)
         ?.map((company: any) => company?.companyName);
+        console.log('company list',companyNamesList);
       companyFieldStructure.companyName.value = data?.companyName;
       companyFieldStructure.country_name.value = data?.countryName;
       companyFieldStructure.Email.value = data?.Email;
