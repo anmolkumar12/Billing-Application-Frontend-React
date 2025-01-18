@@ -26,9 +26,9 @@ export const APIURLS = {
   GET_PRODUCT_MASTER: '/api/masters/productList',
   GET_PROJECT_MASTER: '/api/masters/projectList',
   GET_TAX_MASTER: '/api/masters/taxTypeList',
-  GET_CLIENT_MASTER: '/api/masters/clientsList',
-  GET_CLIENT_BILL_TO_MASTER: '/api/masters/getClientBillingInfo',
-  GET_CLIENT_SHIP_TO_MASTER: '/api/masters/getClientShippingInfo',
+  GET_CLIENT_MASTER: '/api/masters/getClientsList',
+  GET_CLIENT_BILL_TO_MASTER: '/api/masters/getClientBillTo',
+  GET_CLIENT_SHIP_TO_MASTER: '/api/masters/getClientShipTo',
   GET_OEM_MASTER: '/api/masters/getOEMs',
   // POLESTAR PRODUCT 
   GET_POLESTAR_PRODUCT_MASTER:'/api/masters/getPoleStarProducts',
@@ -216,5 +216,12 @@ export const APIURLS = {
   CREATE_REGION_HEAD_MASTER: '/api/masters/addRegionHead',
   UPDATE_REGION_HEAD_MASTER: '/api/masters/updateRegionHead',
   TOGGLE_REGION_HEAD_STATUS: '/api/masters/activateDeactivateRegionHead',
- 
+  GET_CLIENT_CONTACT_MASTER: '/api/masters/getClientContactsList',
+  CREATE_CLIENT_CONTACT_MASTER: '/api/masters/addClientContact',
+  UPDATE_CLIENT_CONTACT_MASTER: '/api/masters/updateClientContact',
+  TOGGLE_CLIENT_CONTACT_STATUS: '/api/masters/activateDeactivateClientContact',
+  CREATE_CLIENT_GROUP: '/api/masters/createClientGroup',
+  UPDATE_CLIENT_GROUP: '/api/masters/updateClientGroup',
+  TOGGLE_CLIENT_GROUP_STATUS: '/api/masters/activateDeactivateClientGroup',
+  GET_CLIENT_GROUPS: '/api/masters/getClientGroups',
 }

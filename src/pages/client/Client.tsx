@@ -5,6 +5,9 @@ import { Tooltip } from "primereact/tooltip";
 import classes from "./Client.module.scss";
 import ClientMaster from './ClientMaster';
 import ClientContactMaster from './ClientContactMaster';
+import ClientBillToMaster from './ClientBillToMaster';
+import ClientShipToMaster from './ClientShipToMaster';
+import ClientGroupMaster from './ClientGroupMaster';
 
 function Client() {
 
@@ -34,7 +37,13 @@ function Client() {
           <ClientContactMaster />
         </TabPanel>
         <TabPanel header="Client Group">
-          {/* <ClientMaster /> */}
+          <ClientGroupMaster />
+        </TabPanel>
+        <TabPanel header="Client Bill To">
+          <ClientBillToMaster />
+        </TabPanel>
+        <TabPanel header="Client Ship To">
+          <ClientShipToMaster />
         </TabPanel>
       </TabView>
     </>

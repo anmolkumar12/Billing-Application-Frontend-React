@@ -109,7 +109,7 @@ const IndustryGroupMaster = () => {
       ),
     },
     {
-      label: "Industry Names",
+      label: "Sub Industry",
       fieldName: "industryNames",
       textAlign: "left",
       sort: true,
