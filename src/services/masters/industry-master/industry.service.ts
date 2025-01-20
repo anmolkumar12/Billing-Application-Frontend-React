@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { APIURLS } from '../../../constants/ApiUrls'
 import { AuthService } from '../../auth-service/auth.service'
 import { HTTPService } from '../../http-service/http-service'
@@ -44,6 +45,7 @@ export class IndustryMasterService {
         productionTypeId: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
+        
       }
 
       const response = await HTTPService.postRequest(

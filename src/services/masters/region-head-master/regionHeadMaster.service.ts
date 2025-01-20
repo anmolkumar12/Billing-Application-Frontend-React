@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { APIURLS } from '../../../constants/ApiUrls'
 import { AuthService } from '../../auth-service/auth.service'
 import { HTTPService } from '../../http-service/http-service'
@@ -47,6 +48,7 @@ export default class RegionHeadMasterService {
             regionHeadId: data.id,
             isActive: !data.isActive,
             updatedBy: data?.loggedInUserId,
+            deactivationDate:data?.deactivationDate?moment(new Date(data?.deactivationDate)).format('YYYY-MM-DD'): null
           };
           const response = await HTTPService.postRequest(
             APIURLS.TOGGLE_REGION_HEAD_STATUS,

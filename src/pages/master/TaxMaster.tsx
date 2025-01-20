@@ -15,6 +15,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 
 import {TaxMasterService} from "../../services/masters/tax-service-master/taxMaster.service";
 import { CountryMasterService } from "../../services/masters/country-master/country.service";
+import moment from "moment";
 
 const TaxMaster = () => {
     const [countriesList,setCountriesList] = useState<any>([]);
@@ -186,6 +187,42 @@ const TaxMaster = () => {
           <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
             {rowData?.isActive == 1 ? "Active" : "Inactive"}
           </span>
+        </div>
+      ),
+    },
+    {
+      label: "Updated By",
+      fieldName: "updated_by",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_by",
+      changeFilter: true,
+      placeholder: "Updated By",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {rowData?.updated_by}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
+    {
+      label: "Updated At",
+      fieldName: "updated_at",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_at",
+      changeFilter: true,
+      placeholder: "Description",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
       ),
     },

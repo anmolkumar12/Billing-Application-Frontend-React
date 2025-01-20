@@ -13,6 +13,7 @@ import { CONSTANTS } from "../../constants/Constants";
 import { FormType } from "../../schemas/FormField";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
+import moment from "moment";
 
 const CountryMaster = () => {
   const CountryFormFields = {
@@ -282,6 +283,42 @@ const CountryMaster = () => {
           <span style={{ color: rowData?.isactive == 1 ? "green" : "red" }}>
             {rowData?.isactive == 1 ? "Active" : "Inactive"}
           </span>
+        </div>
+      ),
+    },
+    {
+      label: "Updated By",
+      fieldName: "updated_by",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_by",
+      changeFilter: true,
+      placeholder: "Updated By",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {rowData?.updated_by}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
+    {
+      label: "Updated At",
+      fieldName: "updated_at",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_at",
+      changeFilter: true,
+      placeholder: "Description",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
       ),
     },

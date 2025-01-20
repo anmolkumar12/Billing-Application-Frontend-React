@@ -17,6 +17,7 @@ import { FILE_TYPES } from "../../enums/file-types.enum";
 import { Chip } from "primereact/chip";
 import { ImageUrl } from "../../utils/ImageUrl";
 import { CountryMasterService } from "../../services/masters/country-master/country.service";
+import moment from "moment";
 
 const CompanyMaster = () => {
   const [stateData, setStateData] = useState<any>();
@@ -392,6 +393,42 @@ const CompanyMaster = () => {
         </div>
       ),
     },
+    {
+      label: "Updated By",
+      fieldName: "updated_by",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_by",
+      changeFilter: true,
+      placeholder: "Updated By",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {rowData?.updated_by}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
+    {
+      label: "Updated At",
+      fieldName: "updated_at",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "updated_at",
+      changeFilter: true,
+      placeholder: "Description",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
   ];
 
   useEffect(() => {
@@ -485,12 +522,14 @@ const CompanyMaster = () => {
   };
 
   const parentFormHandler = async (form: FormType) => {
+    console.log('stadeData---->',stateData)
     if (form?.independent?.value == false || !form?.independent?.value) {
       const companyNamesList = companyMaster
         ?.filter(
-          (company: any) => company?.companyName != form?.companyName?.value
+          (company: any) => company?.companyName != stateData?.companyName
         )
         ?.map((company: any) => company?.companyName);
+        console.log('here we have again ---',companyNamesList);
       form.parent_comp.options = companyNamesList;
       form.parent_comp.disable = false;
       if (form.parent_comp.validation) {
@@ -596,6 +635,7 @@ const CompanyMaster = () => {
       const companyNamesList = companyMaster
         ?.filter((company: any) => company?.companyName != data?.companyName)
         ?.map((company: any) => company?.companyName);
+        console.log('company list',companyNamesList);
       companyFieldStructure.companyName.value = data?.companyName;
       companyFieldStructure.country_name.value = data?.countryName;
       companyFieldStructure.Email.value = data?.Email;
