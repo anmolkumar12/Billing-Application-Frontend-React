@@ -4076,14 +4076,14 @@ const Master: React.FC = () => {
         <TabPanel header="Regions">
           <RegionMaster />
         </TabPanel>
-        <TabPanel header="Region Head">
-          <RegionHeadMaster />
-        </TabPanel>
         <TabPanel header="Company">
           <CompanyMaster />
         </TabPanel>
         <TabPanel header="Company Location">
           <CompanyAddressMaster />
+        </TabPanel>
+        <TabPanel header="Region Head">
+          <RegionHeadMaster />
         </TabPanel>
         <TabPanel header="Bank Account Type">
           <AccountTypeMaster />
