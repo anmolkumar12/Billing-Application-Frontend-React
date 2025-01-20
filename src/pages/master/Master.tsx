@@ -89,7 +89,7 @@ const Master: React.FC = () => {
   let patchData: any;
 
   const companyService = new CompanyMasterService();
- ;
+  ;
   const industryService = new IndustryMasterService();
   const accountsService = new AccountsMasterService();
   const technologyService = new TechnologyMasterService();
@@ -490,8 +490,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Company record ${
-            patchData?.isactive ? "deactivated" : "activated"
+          `Company record ${patchData?.isactive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -510,8 +509,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Company record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Company record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -532,8 +530,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Industry record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Industry record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -552,13 +549,12 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Accounts record ${
-            patchData?.is_active ? "deactivated" : "activated"
+          `Accounts record ${patchData?.is_active ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
       })
-      .catch((error:any) => {
+      .catch((error: any) => {
         setLoader(false);
         return false;
       });
@@ -572,8 +568,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Technology record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Technology record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -592,8 +587,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Product record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Product record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -612,8 +606,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Project record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Project record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -632,8 +625,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Tax record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Tax record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -652,8 +644,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `States record ${
-            patchData?.isactive ? "deactivated" : "activated"
+          `States record ${patchData?.isactive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -672,8 +663,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `States record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `States record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -692,8 +682,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Client record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Client record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -712,8 +701,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Client Bill To record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Client Bill To record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -732,8 +720,7 @@ const Master: React.FC = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Client Ship To record ${
-            patchData?.isactive ? "deactivated" : "activated"
+          `Client Ship To record ${patchData?.isactive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -799,7 +786,7 @@ const Master: React.FC = () => {
         if (
           eventList.name
             .split(".")
-            [eventList.name.split(".").length - 1].toLowerCase() ===
+          [eventList.name.split(".").length - 1].toLowerCase() ===
           FILE_TYPES.PNG
         ) {
           if (eventList.size > 10485760) {
@@ -908,7 +895,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.currencyName}
+          // data-pr-tooltip={rowData.currencyName}
           >
             {rowData.currencyName}
           </span>
@@ -932,7 +919,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.currencyDescription}
+          // data-pr-tooltip={rowData.currencyDescription}
           >
             {rowData.currencyDescription}
           </span>
@@ -998,7 +985,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.productName}
+          // data-pr-tooltip={rowData.productName}
           >
             {rowData.technologyName}
           </span>
@@ -1022,7 +1009,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.productDescription}
+          // data-pr-tooltip={rowData.productDescription}
           >
             {rowData.description}
           </span>
@@ -1088,7 +1075,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.productName}
+          // data-pr-tooltip={rowData.productName}
           >
             {rowData.productName}
           </span>
@@ -1112,7 +1099,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.productDescription}
+          // data-pr-tooltip={rowData.productDescription}
           >
             {rowData.productDescription}
           </span>
@@ -1178,7 +1165,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.projectName}
+          // data-pr-tooltip={rowData.projectName}
           >
             {rowData.projectName}
           </span>
@@ -1202,7 +1189,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.projectDescription}
+          // data-pr-tooltip={rowData.projectDescription}
           >
             {rowData.projectDescription}
           </span>
@@ -1268,7 +1255,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.taxType}
+          // data-pr-tooltip={rowData.taxType}
           >
             {rowData.taxType}
           </span>
@@ -1292,7 +1279,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.taxPercentage}
+          // data-pr-tooltip={rowData.taxPercentage}
           >
             {rowData.taxPercentage}
           </span>
@@ -1316,7 +1303,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.effectiveDate}
+          // data-pr-tooltip={rowData.effectiveDate}
           >
             {rowData.effectiveDate}
           </span>
@@ -1382,7 +1369,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.industry_name}
+          // data-pr-tooltip={rowData.industry_name}
           >
             {rowData.industry_name}
           </span>
@@ -1406,7 +1393,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.name}
+          // data-pr-tooltip={rowData.name}
           >
             {rowData.name}
           </span>
@@ -1430,7 +1417,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.alias}
+          // data-pr-tooltip={rowData.alias}
           >
             {rowData.alias}
           </span>
@@ -1454,7 +1441,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.pan_no}
+          // data-pr-tooltip={rowData.pan_no}
           >
             {rowData.pan_no}
           </span>
@@ -1478,7 +1465,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.polestar_bank_account_number}
+          // data-pr-tooltip={rowData.polestar_bank_account_number}
           >
             {rowData.polestar_bank_account_number}
           </span>
@@ -1502,7 +1489,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.salutation}
+          // data-pr-tooltip={rowData.salutation}
           >
             {rowData.salutation}
           </span>
@@ -1526,7 +1513,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.first_name}
+          // data-pr-tooltip={rowData.first_name}
           >
             {rowData.first_name}
           </span>
@@ -1550,7 +1537,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.last_name}
+          // data-pr-tooltip={rowData.last_name}
           >
             {rowData.last_name}
           </span>
@@ -1574,7 +1561,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.email}
+          // data-pr-tooltip={rowData.email}
           >
             {rowData.email}
           </span>
@@ -1598,7 +1585,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.phone}
+          // data-pr-tooltip={rowData.phone}
           >
             {rowData.phone}
           </span>
@@ -1622,7 +1609,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.msa_flag}
+          // data-pr-tooltip={rowData.msa_flag}
           >
             <span>{rowData?.msa_flag === 1 ? "Yes" : "No"}</span>
           </span>
@@ -1646,7 +1633,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.gstn}
+          // data-pr-tooltip={rowData.gstn}
           >
             {rowData.gstn}
           </span>
@@ -1670,7 +1657,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.msa_start_date}
+          // data-pr-tooltip={rowData.msa_start_date}
           >
             {rowData.msa_start_date}
           </span>
@@ -1694,7 +1681,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.msa_end_date}
+          // data-pr-tooltip={rowData.msa_end_date}
           >
             {rowData.msa_end_date}
           </span>
@@ -1718,7 +1705,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.non_solicitation_clause}
+          // data-pr-tooltip={rowData.non_solicitation_clause}
           >
             <span>{rowData?.non_solicitation_clause === 1 ? "Yes" : "No"}</span>
           </span>
@@ -1742,7 +1729,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.use_logo_permission}
+          // data-pr-tooltip={rowData.use_logo_permission}
           >
             <span>{rowData?.use_logo_permission === 1 ? "Yes" : "No"}</span>
           </span>
@@ -1766,7 +1753,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_category}
+          // data-pr-tooltip={rowData.client_category}
           >
             {rowData.client_category}
           </span>
@@ -1790,7 +1777,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.servicing_type}
+          // data-pr-tooltip={rowData.servicing_type}
           >
             {rowData.servicing_type}
           </span>
@@ -1814,7 +1801,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.missing_msa_deadline}
+          // data-pr-tooltip={rowData.missing_msa_deadline}
           >
             <span>{rowData?.missing_msa_deadline === 1 ? "Yes" : "No"}</span>
           </span>
@@ -1838,7 +1825,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.is_msa_missing}
+          // data-pr-tooltip={rowData.is_msa_missing}
           >
             <span>{rowData?.is_msa_missing === 1 ? "Yes" : "No"}</span>
           </span>
@@ -1904,7 +1891,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_name}
+          // data-pr-tooltip={rowData.client_name}
           >
             {rowData.client_name}
           </span>
@@ -1928,7 +1915,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address1}
+          // data-pr-tooltip={rowData.address1}
           >
             {rowData.address1}
           </span>
@@ -1952,7 +1939,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address2}
+          // data-pr-tooltip={rowData.address2}
           >
             {rowData.address2}
           </span>
@@ -1976,7 +1963,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address3}
+          // data-pr-tooltip={rowData.address3}
           >
             {rowData.address3}
           </span>
@@ -2000,7 +1987,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.pin}
+          // data-pr-tooltip={rowData.pin}
           >
             {rowData.pin}
           </span>
@@ -2024,7 +2011,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.country_name}
+          // data-pr-tooltip={rowData.country_name}
           >
             {rowData.country_name}
           </span>
@@ -2048,7 +2035,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.state_name}
+          // data-pr-tooltip={rowData.state_name}
           >
             {rowData.state_name}
           </span>
@@ -2114,7 +2101,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_name}
+          // data-pr-tooltip={rowData.client_name}
           >
             {rowData.client_name}
           </span>
@@ -2138,7 +2125,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_ship_to_address1}
+          // data-pr-tooltip={rowData.client_ship_to_address1}
           >
             {rowData.client_ship_to_address1}
           </span>
@@ -2162,7 +2149,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_ship_to_address2}
+          // data-pr-tooltip={rowData.client_ship_to_address2}
           >
             {rowData.client_ship_to_address2}
           </span>
@@ -2186,7 +2173,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_ship_to_address3}
+          // data-pr-tooltip={rowData.client_ship_to_address3}
           >
             {rowData.client_ship_to_address3}
           </span>
@@ -2210,7 +2197,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_ship_to_pin}
+          // data-pr-tooltip={rowData.client_ship_to_pin}
           >
             {rowData.client_ship_to_pin}
           </span>
@@ -2234,7 +2221,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.country_name}
+          // data-pr-tooltip={rowData.country_name}
           >
             {rowData.country_name}
           </span>
@@ -2258,7 +2245,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.state_name}
+          // data-pr-tooltip={rowData.state_name}
           >
             {rowData.state_name}
           </span>
@@ -2282,7 +2269,7 @@ const Master: React.FC = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.client_ship_to_gstn}
+          // data-pr-tooltip={rowData.client_ship_to_gstn}
           >
             {rowData.client_ship_to_gstn}
           </span>
@@ -2315,11 +2302,10 @@ const Master: React.FC = () => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to ${
-        !(data?.isactive || data?.is_active || data?.isActive)
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
           ? "activate"
           : "deactivate"
-      } this record?`,
+        } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
     });
@@ -4067,6 +4053,12 @@ const Master: React.FC = () => {
         <TabPanel header="Financial Year">
           <FinancialYearMaster />
         </TabPanel>
+        <TabPanel header="Currency">
+          <CurrencyMaster />
+        </TabPanel>
+        <TabPanel header="Client Type">
+          <ClientTypeMaster />
+        </TabPanel>
         <TabPanel header="Country">
           <CountryMaster />
         </TabPanel>
@@ -4076,14 +4068,14 @@ const Master: React.FC = () => {
         <TabPanel header="Regions">
           <RegionMaster />
         </TabPanel>
-        <TabPanel header="Region Head">
-          <RegionHeadMaster />
-        </TabPanel>
         <TabPanel header="Company">
           <CompanyMaster />
         </TabPanel>
         <TabPanel header="Company Location">
           <CompanyAddressMaster />
+        </TabPanel>
+        <TabPanel header="Region Head">
+          <RegionHeadMaster />
         </TabPanel>
         <TabPanel header="Bank Account Type">
           <AccountTypeMaster />
@@ -4116,7 +4108,7 @@ const Master: React.FC = () => {
           <TechMaster />
         </TabPanel>
         <TabPanel header="OEM">
-          <OemMaster/>
+          <OemMaster />
         </TabPanel>
         <TabPanel header="Polestar Product Sales">
           <PolestarProductSalesMaster />
@@ -4127,12 +4119,7 @@ const Master: React.FC = () => {
         <TabPanel header="Tax">
           <TaxMaster />
         </TabPanel>
-        <TabPanel header="Currency">
-          <CurrencyMaster />
-        </TabPanel>
-        <TabPanel header="Client Type">
-          <ClientTypeMaster />
-        </TabPanel>
+
         {/* <TabPanel header="Product">
           <div
             style={{
@@ -4379,7 +4366,7 @@ const Master: React.FC = () => {
                       isFormValidFlag={isFormValid}
                     ></FormComponent>
                     {/* attachment */}
-                    {/* <div className={classes["upload-wrapper"]}>
+        {/* <div className={classes["upload-wrapper"]}>
                       <div className="row">
                         <div className="col-md-12">
                           <div className={classes["upload-file-section"]}>
@@ -4434,10 +4421,10 @@ const Master: React.FC = () => {
                         </div>
                       </div>
                     </div> */}
-                    {/* attachment */}
-                  {/* </div> */}
-                {/* </div> */}
-                {/* <div className={classes["popup-lower-btn"]}>
+        {/* attachment */}
+        {/* </div> */}
+        {/* </div> */}
+        {/* <div className={classes["popup-lower-btn"]}>
                   <ButtonComponent
                     label="Cancel"
                     icon="pi pi-check"
@@ -4683,7 +4670,7 @@ const Master: React.FC = () => {
               </div>
             </div>
           ) : null}
-        </TabPanel> */} 
+        </TabPanel> */}
       </TabView>
     </>
   );

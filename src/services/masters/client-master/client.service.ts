@@ -3,9 +3,9 @@ import { AuthService } from '../../auth-service/auth.service'
 import { HTTPService } from '../../http-service/http-service'
 
 export class ClientMasterService {
-  getClientMaster = async () => {
+  getClientMaster = async (clientId?: any) => {
     try {
-      const response = await HTTPService.getRequest(APIURLS.GET_CLIENT_MASTER)
+      const response = await HTTPService.postRequest(APIURLS.GET_CLIENT_MASTER, { clientId: clientId ? clientId : null })
       
       return response?.data
     } catch (err) {
@@ -13,20 +13,18 @@ export class ClientMasterService {
     }
   }
 
-  getClientBillToMaster = async () => {
+  getClientBillToMaster = async (clientId?: any) => {
     try {
-      const response = await HTTPService.getRequest(APIURLS.GET_CLIENT_BILL_TO_MASTER)
-      
+      const response = await HTTPService.postRequest(APIURLS.GET_CLIENT_BILL_TO_MASTER, { clientId: clientId ? clientId : null })
       return response?.data
     } catch (err) {
       return {}
     }
   }
-
-  getClientShipToMaster = async () => {
+  
+  getClientShipToMaster = async (clientId?: any) => {
     try {
-      const response = await HTTPService.getRequest(APIURLS.GET_CLIENT_SHIP_TO_MASTER)
-      
+      const response = await HTTPService.postRequest(APIURLS.GET_CLIENT_SHIP_TO_MASTER, { clientId: clientId ? clientId : null })
       return response?.data
     } catch (err) {
       return {}
@@ -161,4 +159,64 @@ export class ClientMasterService {
       return {}
     }
   }
+
+
+
+
+
+  // Create Client Group
+createClientGroupMaster = async (formData : any) => {
+  try {
+    const response = await HTTPService.postRequest(
+      APIURLS.CREATE_CLIENT_GROUP,
+      formData
+    );
+    return response?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+// Update Client Group
+updateClientGroupMaster = async (formData : any) => {
+  try {
+    const response = await HTTPService.postRequest(
+      APIURLS.UPDATE_CLIENT_GROUP,
+      formData
+    );
+    return response?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+// Activate/Deactivate Client Group
+toggleClientGroupStatus = async (data: any) => {
+  try {
+    const body = {
+      clientGroupId: data.id,
+      isActive: !data.isActive,
+      updatedBy: data?.loggedInUserId,
+    };
+
+    const response = await HTTPService.postRequest(
+      APIURLS.TOGGLE_CLIENT_GROUP_STATUS,
+      body
+    );
+    return response?.data;
+  } catch (err) {
+    return {};
+  }
+};
+
+// Get All Client Groups
+getClientGroupsMaster = async () => {
+  try {
+    const response = await HTTPService.getRequest(APIURLS.GET_CLIENT_GROUPS);
+    return response?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
 }

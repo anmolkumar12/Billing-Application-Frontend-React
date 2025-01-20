@@ -22,17 +22,18 @@ import { FILE_TYPES } from "../../enums/file-types.enum";
 import { ImageUrl } from "../../utils/ImageUrl";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
+import { ClientContactMasterService } from "../../services/clients/client-contact-master/clientContactMaster.service";
 
 
 const ClientContactMaster = () => {
-    const contactFormFields = {
-        client_selection: {
+    const ClientContactFormFields = {
+        client_name: {
             inputType: "singleSelect",
-            label: "Client Selection",
+            label: "Client",
             options: [],
             value: null,
             validation: {
-                required: true,
+                required: false,
             },
             fieldWidth: "col-md-6",
         },
@@ -70,22 +71,22 @@ const ClientContactMaster = () => {
             value: null,
             validation: {
                 required: true,
-                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                // pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             },
             fieldWidth: "col-md-6",
         },
-        phone_number: {
+        phone: {
             inputType: "inputtext",
             label: "Phone Number",
             value: null,
             validation: {
                 required: true,
-                pattern: /^\d{10}$/,
+                // pattern: /^\d{10}$/,
             },
             fieldWidth: "col-md-6",
         },
     };
-    
+
 
     const [countryMaster, setCountryMaster] = useState<any>([]);
     const [stateMaster, setStateMaster] = useState<any>([]);
@@ -109,18 +110,17 @@ const ClientContactMaster = () => {
     const [accountManagerMaster, setAccountManagerMaster] = useState<any>([]);
     const [accountsMaster, setAccountsMaster] = useState<any>([]);
     const [clientMaster, setClientMaster] = useState<any>([]);
-
-
+    const [clientContactMaster, setClientContactMaster] = useState<any>([]);
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
-        useState(contactFormFields);
+        useState(ClientContactFormFields);
     const [clientForm, setClientForm] = useState<any>(
         _.cloneDeep(clientFormFieldsStructure)
     );
 
     const companyService = new CompanyMasterService();
-    const clientService = new ClientMasterService();
+    const clientContactService = new ClientContactMasterService();
     const accountService = new AccountMasterService();
     const accountsService = new AccountsMasterService();
 
@@ -132,8 +132,10 @@ const ClientContactMaster = () => {
     const countryService = new CountryMasterService();
     const stateService = new StateMasterService();
     const industryService = new IndustryMasterService();
+    const clientService = new ClientMasterService();
 
-    const clientMasterColumns = [
+
+    const clientContactColumns = [
         {
             label: "Action",
             fieldName: "action",
@@ -150,9 +152,9 @@ const ClientContactMaster = () => {
                         onClick={() => onUpdate(rowData)}
                     ></span>
                     <span
-                        className={`pi pi-${rowData.isactive ? "ban" : "check-circle"}`}
+                        className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
                         style={{ cursor: "pointer" }}
-                        title={rowData.isactive ? "Deactivate" : "Activate"}
+                        title={rowData.isActive ? "Deactivate" : "Activate"}
                         onClick={() => onDelete(rowData)}
                     ></span>
                 </div>
@@ -164,8 +166,6 @@ const ClientContactMaster = () => {
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "client_name",
-            changeFilter: true,
             placeholder: "Client Name",
             body: (rowData: any) => (
                 <div>
@@ -175,112 +175,143 @@ const ClientContactMaster = () => {
             ),
         },
         {
-            label: "Vega Client Name",
-            fieldName: "vega_client_name",
+            label: "Salutation",
+            fieldName: "salutation",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "vega_client_name",
-            changeFilter: true,
-            placeholder: "Vega Client Name",
+            placeholder: "Salutation",
             body: (rowData: any) => (
                 <div>
-                    <span id={`vegaClientNameTooltip-${rowData.id}`}>{rowData.vega_client_name}</span>
-                    <Tooltip target={`#vegaClientNameTooltip-${rowData.id}`} position="top" />
+                    <span id={`salutationTooltip-${rowData.id}`}>{rowData.salutation}</span>
+                    <Tooltip target={`#salutationTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
         },
         {
-            label: "Client Type",
-            fieldName: "client_type",
+            label: "First Name",
+            fieldName: "first_name",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "client_type",
-            changeFilter: true,
-            placeholder: "Client Type",
+            placeholder: "First Name",
             body: (rowData: any) => (
                 <div>
-                    <span id={`clientTypeTooltip-${rowData.id}`}>{rowData.client_type}</span>
-                    <Tooltip target={`#clientTypeTooltip-${rowData.id}`} position="top" />
+                    <span id={`firstNameTooltip-${rowData.id}`}>{rowData.first_name}</span>
+                    <Tooltip target={`#firstNameTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
         },
         {
-            label: "Credit Period (No. of Days)",
-            fieldName: "credit_period",
+            label: "Last Name",
+            fieldName: "last_name",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "credit_period",
-            changeFilter: true,
-            placeholder: "Credit Period",
+            placeholder: "Last Name",
             body: (rowData: any) => (
                 <div>
-                    <span id={`creditPeriodTooltip-${rowData.id}`}>{rowData.credit_period}</span>
-                    <Tooltip target={`#creditPeriodTooltip-${rowData.id}`} position="top" />
+                    <span id={`lastNameTooltip-${rowData.id}`}>{rowData.last_name}</span>
+                    <Tooltip target={`#lastNameTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
         },
         {
-            label: "Client Status",
-            fieldName: "client_status",
+            label: "Email",
+            fieldName: "email",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "client_status",
-            changeFilter: true,
-            placeholder: "Client Status",
+            placeholder: "Email",
             body: (rowData: any) => (
                 <div>
-                    <span id={`clientStatusTooltip-${rowData.id}`}>{rowData.client_status}</span>
-                    <Tooltip target={`#clientStatusTooltip-${rowData.id}`} position="top" />
+                    <span id={`emailTooltip-${rowData.id}`}>{rowData.email}</span>
+                    <Tooltip target={`#emailTooltip-${rowData.id}`} position="top" />
                 </div>
             ),
         },
         {
-            label: "Country (Base Location)",
-            fieldName: "country_name",
+            label: "Phone Number",
+            fieldName: "phone_number",
             textAlign: "left",
             sort: true,
             filter: true,
-            fieldValue: "country_name",
-            changeFilter: true,
-            placeholder: "Country",
+            placeholder: "Phone Number",
             body: (rowData: any) => (
                 <div>
-                    <span id={`countryTooltip-${rowData.id}`}>{rowData.country_name}</span>
-                    <Tooltip target={`#countryTooltip-${rowData.id}`} position="top" />
+                    <span id={`phoneTooltip-${rowData.id}`}>{rowData.phone_number}</span>
+                    <Tooltip target={`#phoneTooltip-${rowData.id}`} position="top" />
+                </div>
+            ),
+        },
+        {
+            label: "Status",
+            fieldName: "isActive",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Status",
+            body: (rowData: any) => (
+                <div>
+                    <span style={{ color: rowData?.isActive === 1 ? "green" : "red" }}>
+                        {rowData?.isActive === 1 ? "Active" : "Inactive"}
+                    </span>
+                </div>
+            ),
+        },
+        {
+            label: "Updated By",
+            fieldName: "updated_by",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Updated By",
+            body: (rowData: any) => (
+                <div>
+                    <span>{rowData.updated_by}</span>
+                </div>
+            ),
+        },
+        {
+            label: "Updated At",
+            fieldName: "updated_at",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Updated At",
+            body: (rowData: any) => (
+                <div>
+                    <span>{new Date(rowData.updated_at).toLocaleString()}</span>
                 </div>
             ),
         }
     ];
 
 
+
     useEffect(() => {
         const fetchData = async () => {
-            // await getStateMaster();
-            const countries = await getCountryMaster();
-            await formatCountryDetails(countries);
-            const companies = await getCompanyMaster();
-            await formatCompanyDetails(companies);
-            const industryHead = await getIndustryHeadMaster();
-            await formatIndustryHeadDetails(industryHead);
-            const industryGroups = await getIndustryGroupMaster();
-            await formatIndustryGroupDetails(industryGroups);
-            const accountManagers = await getAccountManagerMaster();
-            await formatAccountManagerMasterDetails(accountManagers);
-            const accountMaster = await getAccountMaster();
-            await formatAccountMasterDetails(accountMaster);
-            const industries = await getIndustryMaster()
-            await formatIndustry_ClientDetails(industries);
-
+            await getClientContactMaster();
+            const clients = await getClientMaster();
+            await formatClientDetails(clients);
         };
         if (clientFormPopup == false && showConfirmDialogue == false) {
             fetchData();
         }
     }, [clientFormPopup, showConfirmDialogue]);
 
+    const getClientContactMaster = async () => {
+        setLoader(true);
+        try {
+            const response = await clientContactService.getClientContactMaster();
+            setClientContactMaster(response?.clientContacts);
+            return response?.clientContacts;
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoader(false);
+        }
+    };
     const getClientMaster = async () => {
         setLoader(true);
         try {
@@ -294,190 +325,19 @@ const ClientContactMaster = () => {
         }
     };
 
-    const getIndustryMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await industryService.getIndustryMaster();
-            const temp = response?.industryMasters?.filter((item: any) => item?.isactive || item?.isActive)
-            console.log('qqqqqqqqqqqq', temp);
-
-            setIndustryMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const getIndustryHeadMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await industryService.getIndustryHeadMaster();
-            const temp = response?.industryHeads?.filter((item: any) => item?.isactive || item?.isActive)
-            setIndustryHeadMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const getStateMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await stateService.getStateMaster();
-            const temp = response?.states?.filter((item: any) => item?.isactive || item?.isActive)
-            setStateMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const getCountryMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await countryService.getCountryMaster();
-            const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive);
-            setCountryMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const getCompanyMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await companyService.getCompanyMaster();
-            const temp = response?.companies?.filter((item: any) => item?.isactive || item?.isActive)
-            setCompanyMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const getIndustryGroupMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await industryService.getIndustryGroupMaster();
-            const temp = response?.groupIndustries?.filter((item: any) => item?.isactive || item?.isActive)
-            setIndustryGroupMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const getAccountManagerMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await accountService.getAccountMaster();
-            const temp = response?.accountManagers?.filter((item: any) => item?.isactive || item?.isActive)
-            setAccountManagerMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const getAccountMaster = async () => {
-        setLoader(true);
-        try {
-            const response = await accountsService.getAccountsMaster();
-            const temp = response?.companyAccounts?.filter((item: any) => item?.isactive || item?.isActive)
-            setAccountsMaster(temp);
-            return temp;
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoader(false);
-        }
-    };
-
-    const formatCountryDetails = async (countries: any = countryMaster) => {
-        const countrylist = countries.map((country: any) => country?.name);
-        // clientFormFieldsStructure.country_name.options = countrylist;
+    const formatClientDetails = async (clients: any = clientMaster) => {
+        const clientList = clients.map((item: any) => item?.client_name);
+        clientFormFieldsStructure.client_name.options = clientList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
-        await statesFormHandler(clientFormFieldsStructure);
+        await clientContactFormHandler(clientFormFieldsStructure);
     };
 
-    const formatCompanyDetails = async (companies: any = companyMaster) => {
-        const companyList = companies.map((company: any) => company?.companyName);
-        // clientFormFieldsStructure.companyName.options = companyList;
-        setClientFormFieldsStructure(clientFormFieldsStructure);
+    const clientContactFormHandler = async (form: FormType) => {
+        setClientForm(form);
     };
-
-    const formatIndustryHeadDetails = async (
-        industries: any = industryHeadMaster
-    ) => {
-        const industryHeadList = industries.map(
-            (industryHead: any) => industryHead?.industryHeadName
-        );
-        // clientFormFieldsStructure.industryHeadNames.options = industryHeadList;
-        setClientFormFieldsStructure(clientFormFieldsStructure);
-    };
-
-    const formatIndustryGroupDetails = async (
-        industries: any = industryGroupMaster
-    ) => {
-        const industryHeadList = industries.map(
-            (industryHead: any) => industryHead?.groupIndustryName
-        );
-        // clientFormFieldsStructure.industry_group.options = industryHeadList;
-        await setClientFormFieldsStructure(clientFormFieldsStructure);
-    };
-
-    const formatAccountManagerMasterDetails = async (
-        industries: any = accountManagerMaster
-    ) => {
-        const industryHeadList = industries.map(
-            (industryHead: any) => industryHead?.name
-        );
-        // clientFormFieldsStructure.account_manager.options = industryHeadList;
-        await setClientFormFieldsStructure(clientFormFieldsStructure);
-    };
-
-    const formatAccountMasterDetails = async (
-        industries: any = accountsMaster
-    ) => {
-        const industryHeadList = industries.map(
-            (industryHead: any) => industryHead?.bankName
-        );
-        // clientFormFieldsStructure.account_name.options = industryHeadList;
-        await setClientFormFieldsStructure(clientFormFieldsStructure);
-    };
-
-    const formatIndustry_ClientDetails = async (industries: any = industryMaster) => {
-        const industryList = industries.map(
-            (industry: any) => industry?.industryName
-        );
-        // clientFormFieldsStructure.industry_name.options = industryList;
-        await setClientFormFieldsStructure(clientFormFieldsStructure);
-        // await clientFormHandler(clientFormFieldsStructure);
-    };
-
-
 
     const openSaveForm = async () => {
         setClientFormPopup(true);
-    };
-
-    const statesFormHandler = async (form: FormType) => {
-        setClientForm(form);
     };
 
     const onUpdate = (data: any) => {
@@ -492,80 +352,19 @@ const ClientContactMaster = () => {
     };
 
     const updateStateMaster = (data: any) => {
+        console.log('rrrrrrrrrrrr', data);
+
         try {
-            clientFormFieldsStructure.country_name.value = data?.name;
-            clientFormFieldsStructure.stateName.value = data?.stateName;
-            clientFormFieldsStructure.stateCode.value = data?.stateCode;
-            clientFormFieldsStructure.gstCode.value = data?.gstCode;
+            clientFormFieldsStructure.client_name.value = data?.client_name;
+            clientFormFieldsStructure.salutation.value = data?.salutation;
+            clientFormFieldsStructure.first_name.value = data?.first_name;
+            clientFormFieldsStructure.last_name.value = data?.last_name;
+            clientFormFieldsStructure.email.value = data?.email;
+            clientFormFieldsStructure.phone.value = data?.phone_number;
 
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
         } catch (error) {
             console.log("error", error);
-        }
-    };
-
-    const createNewState = (event: FormEvent) => {
-        event.preventDefault();
-        let companyValidityFlag = true;
-        const companyFormValid: boolean[] = [];
-
-        _.each(clientForm, (item: any) => {
-            if (item?.validation?.required) {
-                companyFormValid.push(item.valid);
-                companyValidityFlag = companyValidityFlag && item.valid;
-            }
-        });
-
-        setIsFormValid(companyValidityFlag);
-
-        const countryId =
-            countryMaster.find(
-                (country: any) => country.name === clientForm.country_name.value
-            )?.id ?? null;
-
-        if (companyValidityFlag) {
-            const obj = {
-                stateName: clientForm?.stateName?.value,
-                stateCode: clientForm?.stateCode?.value,
-                gstCode: clientForm?.gstCode?.value,
-                countryId: countryId,
-                isActive: 1,
-                updatedBy: loggedInUserId,
-            };
-
-            if (!stateData?.id) {
-                stateService
-                    .createStateMaster(obj)
-                    .then((response: any) => {
-                        if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-                            setStateData({});
-                            closeFormPopup();
-                            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-                        }
-                    })
-                    .catch((error: any) => {
-                        setStateData({});
-                        ToasterService.show(error, CONSTANTS.ERROR);
-                    });
-            } else {
-                const updatePayload = { ...obj, stateId: stateData?.id };
-
-                stateService
-                    .updateStateMaster(updatePayload)
-                    .then((response: any) => {
-                        if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-                            setStateData({});
-                            closeFormPopup();
-                            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-                        }
-                    })
-                    .catch((error: any) => {
-                        setStateData({});
-                        ToasterService.show(error, CONSTANTS.ERROR);
-                    });
-            }
-        } else {
-            ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
         }
     };
 
@@ -586,8 +385,8 @@ const ClientContactMaster = () => {
 
     const confirmDelete = () => {
         setLoader(true);
-        stateService
-            .deactivateStateMaster({ ...patchData, loggedInUserId })
+        clientContactService
+            .deactivateClientContactMaster({ ...patchData, loggedInUserId })
             .then(() => {
                 setLoader(false);
                 setShowConfirmDialogue(false);
@@ -607,93 +406,8 @@ const ClientContactMaster = () => {
         setClientFormPopup(false);
         setIsEditState(false);
         setStateData({});
-        setClientFormFieldsStructure(_.cloneDeep(contactFormFields));
-        setClientForm(_.cloneDeep(contactFormFields));
-    };
-
-    const parseDateString = (dateString: any) => {
-        const [year, month, day] = dateString.split("/").map(Number);
-        return new Date(year, month - 1, day);
-    };
-
-    const formatDate = (dateString: any) => {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}/${month}/${day}`;
-    };
-
-    const selectAttachment = (files: any) => {
-        setAttachments([]);
-        if (files && files[0]) {
-            _.each(files, (eventList) => {
-                if (
-                    eventList.name
-                        .split(".")
-                    [eventList.name.split(".").length - 1].toLowerCase() ===
-                    FILE_TYPES.PNG
-                ) {
-                    if (eventList.size > 10485760) {
-                        return ToasterService.show(
-                            "file size is too large, allowed maximum size is 10 MB.",
-                            "error"
-                        );
-                    } else {
-                        setAttachments((prevVals: any) => [...prevVals, eventList]);
-                        const fileURL = URL.createObjectURL(eventList);
-                        setLogoUrl(fileURL)
-                    }
-                } else {
-                    ToasterService.show(
-                        `Invalid file format you can only attach the pdf here!`,
-                        "error"
-                    );
-                    eventList = null;
-                }
-            });
-        }
-    };
-
-    const selectDigitalSign = (files: any) => {
-        setDigitalSign([]);
-        if (files && files[0]) {
-            _.each(files, (eventList) => {
-                if (
-                    eventList.name
-                        .split(".")
-                    [eventList.name.split(".").length - 1].toLowerCase() ===
-                    FILE_TYPES.PNG
-                ) {
-                    if (eventList.size > 10485760) {
-                        return ToasterService.show(
-                            "file size is too large, allowed maximum size is 10 MB.",
-                            "error"
-                        );
-                    } else {
-                        setDigitalSign((prevVals: any) => [...prevVals, eventList]);
-                        const fileURL = URL.createObjectURL(eventList);
-                        setSignatureUrl(fileURL);
-                    }
-                } else {
-                    ToasterService.show(
-                        `Invalid file format you can only attach the pdf here!`,
-                        "error"
-                    );
-                    eventList = null;
-                }
-            });
-        }
-    };
-
-    const removeFileHandler = () => {
-        setAttachments([]);
-        setLogoUrl('');
-    };
-
-    const removeSignHandler = () => {
-        setDigitalSign([]);
-        setSignatureUrl('');
+        setClientFormFieldsStructure(_.cloneDeep(ClientContactFormFields));
+        setClientForm(_.cloneDeep(ClientContactFormFields));
     };
 
 
@@ -754,89 +468,32 @@ const ClientContactMaster = () => {
         let companyValidityFlag = true;
         const companyFormValid: boolean[] = [];
 
-        // _.each(clientForm, (item: any) => {
-        //   if (item?.validation?.required) {
-        //     companyFormValid.push(item.valid);
-        //     companyValidityFlag = companyValidityFlag && item.value;
-        //   }
-        // });
-
         setIsFormValid(companyValidityFlag);
 
         if (companyValidityFlag) {
-            const industry_id =
-                industryMaster.find(
-                    (industry: any) =>
-                        industry.industryName === clientForm.industry_name.value
-                )?.id ?? null;
-            console.log('createClientForm : ', companyMaster, clientForm.companyName.value);
 
-            // const companyId =
-            // companyMaster.find(
-            //   (company: any) =>
-            //     company.companyName === clientForm.companyName.value
-            // )?.id ?? null;
+            //     // const companyId =
+            //     // companyMaster.find(
+            //     //   (company: any) =>
+            //     //     company.companyName === clientForm.companyName.value
+            //     // )?.id ?? null;
 
-            let companyId = "";
-            clientForm?.companyName?.value?.forEach((item: any) => {
-                const id =
-                    companyMaster?.find(
-                        (com: any) => com?.companyName == item
-                    )?.id ?? null;
-                if (id != null) {
-                    companyId =
-                        companyId != "" ? companyId + "," + id : id;
-                }
-            });
-
-            const formData: any = new FormData();
 
             const obj = {
                 client_name: clientForm?.client_name?.value,
-                vega_client_name: clientForm?.vega_client_name?.value,
-                client_type: clientForm?.client_type?.value,
-                credit_period: clientForm?.credit_period?.value,
-                client_status: clientForm?.client_status?.value,
-                country_name: clientForm?.country_name?.value,
-                companyId: companyId,
-                account_selection: clientForm?.account_selection?.value,
-                industryId: industry_id,
-                industryHeadNames: clientForm?.industryHeadNames?.value,
-                industry_group: clientForm?.industry_group?.value,
-                industry_sub_group: clientForm?.industry_sub_group?.value,
-                sales_person: clientForm?.sales_person?.value,
-                account_manager: clientForm?.account_manager?.value,
-                msa_start_date: formatDate(clientForm?.msa_start_date?.value),
-                msa_end_date: formatDate(clientForm?.msa_end_date?.value),
-                is_msa_missing: clientForm?.is_msa_missing?.value ? 1 : 0,
-                nda_flag: clientForm?.nda_flag?.value ? 1 : 0,
-                non_solicitation_clause: clientForm?.non_solicitation_clause?.value ? 1 : 0,
-                use_logo_permission: clientForm?.use_logo_permission?.value ? 1 : 0,
-                updated_by: loggedInUserId,
-
+                salutation: clientForm?.salutation?.value,
+                first_name: clientForm?.first_name?.value,
+                last_name: clientForm?.last_name?.value,
+                email: clientForm?.email?.value,
+                phone_number: clientForm?.phone?.value,
+                updatedBy: loggedInUserId,
             };
-
-
-            Object.entries(obj).forEach(([key, value]: any) => {
-                formData.set(key, value);
-            });
-
-
-            if (attachments?.length) {
-                formData.set("logo", attachments[0]);
-            }
-
-            if (digitalSign?.length) {
-                formData.set("digitalSign", digitalSign[0]);
-            }
-            console.log("here formData", formData);
-
-            console.log('createClientForm : ', clientForm, obj);
+            console.log('koooo', obj);
 
 
             if (!stateData?.id) {
-                clientService
-                    .createClientMaster(formData)
+                clientContactService
+                    .createClientContactMaster(obj)
                     .then((response: any) => {
                         if (response?.statusCode === HTTP_RESPONSE.CREATED) {
                             setStateData({});
@@ -849,20 +506,9 @@ const ClientContactMaster = () => {
                         ToasterService.show(error, CONSTANTS.ERROR);
                     });
             } else {
-                const formData: any = new FormData();
-
-                const updatePayload = { ...obj, id: stateData?.id };
-
-                Object.entries(updatePayload).forEach(([key, value]: any) => {
-                    formData.set(key, value);
-                });
-
-                // if (attachments?.length) {
-                //   formData.set("file", attachments[0]);
-                // }
-
-                clientService
-                    .updateClientMaster(formData)
+                const updatePayload = { ...obj, clientContactId: stateData?.id, isActive: stateData?.isActive };
+                clientContactService
+                    .updateClientContactMaster(updatePayload)
                     .then((response: any) => {
                         if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
                             setStateData({});
@@ -900,8 +546,8 @@ const ClientContactMaster = () => {
             </div>
             <p className="m-0">
                 <DataTableBasicDemo
-                    data={clientMaster}
-                    column={clientMasterColumns}
+                    data={clientContactMaster}
+                    column={clientContactColumns}
                     showGridlines={true}
                     resizableColumns={true}
                     rows={20}
@@ -946,102 +592,6 @@ const ClientContactMaster = () => {
                                 formUpdateEvent={clientFormHandler}
                                 isFormValidFlag={isFormValid}
                             ></FormComponent>
-
-
-
-                            {/* attachment */}
-                            {showNDAAttacment || showMSAAttacment ? <div className="row">
-                                {showMSAAttacment ? <div className="col-md-6">
-                                    <div className={classes["upload-wrapper"]}>
-                                        <div className="row pd-10">
-                                            <div
-                                                className={`col-md-12 ${classes["addition-field-header"]}`}
-                                            >
-                                                <h5 className="popup-heading">MSA Attachment</h5>
-                                            </div>
-                                            <div className="col-md-12">
-                                                <div className={classes["upload-file-section"]}>
-                                                    <div className={classes["upload-file"]}>
-                                                        {logoUrl ? (
-                                                            <div className={classes["image-preview"]}>
-                                                                <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeFileHandler} style={{ color: 'red', fontSize: '1rem' }}></i></div>
-                                                                <img src={logoUrl} style={{ width: '200px', height: '130px' }} alt="Preview" />
-                                                            </div>
-                                                        ) : (
-                                                            <div className={classes["empty-upload"]}>
-                                                                <input
-                                                                    type="file"
-                                                                    onClick={(event: any) => {
-                                                                        event.target.value = null;
-                                                                    }}
-                                                                    onChange={(e) => selectAttachment(e.target.files)}
-                                                                    className={classes["upload"]}
-                                                                    style={{ width: "unset" }}
-                                                                />
-                                                                <img
-                                                                    src={ImageUrl.FolderIconImage}
-                                                                    alt="Folder Icon"
-                                                                />
-                                                                <p>
-                                                                    Drag files here <span> or browse</span> <br />
-                                                                    <u>Support PNG</u>
-                                                                </p>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> : null}
-                                {showNDAAttacment ? <div className="col-md-6">
-                                    <div className={classes["upload-wrapper"]}>
-                                        <div className="row pd-10">
-                                            <div
-                                                className={`col-md-12 ${classes["addition-field-header"]}`}
-                                            >
-                                                <h5 className="popup-heading">NDA Attachment</h5>
-                                            </div>
-
-                                            <div className="col-md-12">
-                                                <div className={classes["upload-file-section"]}>
-                                                    <div className={classes["upload-file"]}>
-                                                        {signatureUrl ? (
-                                                            <div className={classes["image-preview"]}>
-                                                                <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeSignHandler} style={{ color: 'red', fontSize: '1rem' }}></i></div>
-                                                                <img src={signatureUrl} style={{ width: '200px', height: '130px' }} alt="Preview" />
-                                                            </div>
-                                                        ) : (
-                                                            <div className={classes["empty-upload"]}>
-                                                                <input
-                                                                    type="file"
-                                                                    onClick={(event: any) => {
-                                                                        event.target.value = null;
-                                                                    }}
-                                                                    onChange={(e) =>
-                                                                        selectDigitalSign(e.target.files)
-                                                                    }
-                                                                    className={classes["upload"]}
-                                                                    style={{ width: "unset" }}
-                                                                />
-                                                                <img
-                                                                    src={ImageUrl.FolderIconImage}
-                                                                    alt="Folder Icon"
-                                                                />
-                                                                <p>
-                                                                    Drag files here <span> or browse</span> <br />
-                                                                    <u>Support PNG</u>
-                                                                </p>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> : null}
-                            </div> : null}
-                            {/* attachment */}
                         </div>
 
                         <div className="popup-lower-btn">
