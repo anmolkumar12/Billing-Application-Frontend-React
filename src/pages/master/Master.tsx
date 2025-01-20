@@ -55,6 +55,7 @@ import RegionHeadMaster from "./RegionHeadMaster";
 import FinancialYearMaster from "./FinancialYearMaster";
 import CurrencyMaster from "./CurrencyMaster";
 import TaxMaster from "./TaxMaster";
+import ClientTypeMaster from "./ClientTypeMaster";
 
 const Master: React.FC = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -4128,6 +4129,9 @@ const Master: React.FC = () => {
         </TabPanel>
         <TabPanel header="Currency">
           <CurrencyMaster />
+        </TabPanel>
+        <TabPanel header="Client Type">
+          <ClientTypeMaster />
         </TabPanel>
         {/* <TabPanel header="Product">
           <div

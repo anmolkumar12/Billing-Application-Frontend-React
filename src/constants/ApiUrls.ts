@@ -41,6 +41,14 @@ export const APIURLS = {
   UPDATE_PROJECT_SERVICE_MASTER:'/api/masters/updateProjectService',
   TOGGLE_PROJECT_SERVICE_MASTER_STATUS:'/api/masters/activateDeactivateProjectService',
 
+  // Client Type
+
+  GET_CLIENT_TYPE_MASTER: '/api/masters/getClientType',
+  CREATE_CLIENT_TYPE_MASTER: '/api/masters/createClientType',
+  UPDATE_CLIENT_TYPE_MASTER: '/api/masters/updateClientType',
+  TOGGLE_CLIENT_TYPE_MASTER_STATUS: '/api/masters/activateDeactivateClientType',
+
+
   // FINANCIAL YEAR
   GET_FINANCIAL_YEAR_MASTER: '/api/masters/getAllFinancialYearsHandler',
   CREATE_FINANCIAL_YEAR_MASTER: '/api/masters/createFinancialYear',
