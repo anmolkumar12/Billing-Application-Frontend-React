@@ -347,13 +347,10 @@ const ClientGroupMaster = () => {
 
   const updateClientBillToMaster = async (data: any) => {
     try {
-      clientBillFieldsStructure.client_name.value = data?.client_name;
-      clientBillFieldsStructure.address1.value = data?.address1;
-      clientBillFieldsStructure.address2.value = data?.address2;
-      clientBillFieldsStructure.address3.value = data?.address3;
-      clientBillFieldsStructure.pin.value = data?.pin;
-      clientBillFieldsStructure.country_name.value = data?.country_name;
-      clientBillFieldsStructure.state_name.value = data?.state_name;
+      console.log('rrrrrrrrrrrrrrrr', data);
+      
+      clientBillFieldsStructure.client_name.value = data?.clientName?.split(',');
+      clientBillFieldsStructure.group_name.value = data?.groupName;
 
       setClientBillFieldsStructure(_.cloneDeep(clientBillFieldsStructure));
     } catch (error) {
@@ -378,13 +375,13 @@ const ClientGroupMaster = () => {
 
   const confirmDelete = () => {
     setLoader(true);
-    stateService
-      .deactivateStateMaster({ ...patchData, loggedInUserId })
+    clientService
+      .toggleClientGroupStatus({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `State record ${patchData?.isactive ? "deactivated" : "activated"
+          `Client group record ${patchData?.isactive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );
@@ -448,7 +445,7 @@ const ClientGroupMaster = () => {
             ToasterService.show(error, CONSTANTS.ERROR);
           });
       } else {
-        const updatePayload = { ...obj, billingId: stateData?.id };
+        const updatePayload = { ...obj, id: stateData?.id };
 
         clientService
           .updateClientGroupMaster(updatePayload)

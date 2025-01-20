@@ -391,7 +391,7 @@ const ClientContactMaster = () => {
                 setLoader(false);
                 setShowConfirmDialogue(false);
                 ToasterService.show(
-                    `State record ${patchData?.isactive ? "deactivated" : "activated"
+                    `Client contact record ${patchData?.isactive ? "deactivated" : "activated"
                     } successfully`,
                     CONSTANTS.SUCCESS
                 );

@@ -215,6 +215,28 @@ const IndustryHeadMaster = () => {
       ),
     },
     {
+      label: "Company",
+      fieldName: "companyName",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.IECode}
+          >
+            {rowData.companyName}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
       label: "Region Wise",
       fieldName: "isRegionWise",
       textAlign: "left",
@@ -462,8 +484,8 @@ const IndustryHeadMaster = () => {
   const getIndustryMaster = async () => {
     setLoader(true);
     try {
-      const response = await industryService.getIndustryMaster();
-      const temp = response?.industryMasters?.filter((item: any) => item?.isactive || item?.isActive)
+      const response = await industryService.getIndustryGroupMaster();
+      const temp = response?.groupIndustries?.filter((item: any) => item?.isactive || item?.isActive)
       setIndustryMaster(temp);
       return temp;
     } catch (error) {
@@ -523,7 +545,7 @@ const IndustryHeadMaster = () => {
 
   const formatIndustryDetails = async (industries: any = industryMaster) => {
     const industryList = industries.map(
-      (industry: any) => industry?.industryName
+      (industry: any) => industry?.groupIndustryName
     );
     industryHeadFieldsStructure.industryNames.options = industryList;
     setIndustryHeadFieldsStructure(industryHeadFieldsStructure);
@@ -791,7 +813,7 @@ const IndustryHeadMaster = () => {
       IndustryHeadForm?.industryNames?.value?.forEach((item: any) => {
         const id =
           industryMaster?.find(
-            (industry: any) => industry?.industryName == item
+            (industry: any) => industry?.groupIndustryName == item
           )?.id ?? null;
         if (id != null) {
           industryIds = industryIds != "" ? industryIds + "," + id : id;

@@ -22,6 +22,7 @@ import { FILE_TYPES } from "../../enums/file-types.enum";
 import { ImageUrl } from "../../utils/ImageUrl";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
+import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
 
 
 const ClientMaster = () => {
@@ -31,7 +32,7 @@ const ClientMaster = () => {
             label: "Client Name",
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -40,7 +41,7 @@ const ClientMaster = () => {
             label: "Vega Client Name (Alias)",
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -50,7 +51,7 @@ const ClientMaster = () => {
             options: ["PVT", "LLP", "Public", "Proprietorship"],
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -59,7 +60,7 @@ const ClientMaster = () => {
             label: "Credit Period (No. of Days)",
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -69,7 +70,7 @@ const ClientMaster = () => {
             options: ["Existing", "New"],
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -79,17 +80,17 @@ const ClientMaster = () => {
             options: [],
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
         companyName: {
-            inputType: "multiSelect",
+            inputType: "singleSelect",
             label: "Company",
             options: [],
-            value: [],
+            value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -99,17 +100,7 @@ const ClientMaster = () => {
             options: [],
             value: [],
             validation: {
-                required: false,
-            },
-            fieldWidth: "col-md-4",
-        },
-        industry_name: {
-            inputType: "singleSelect",
-            label: "Industry",
-            options: [],
-            value: null,
-            validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -119,7 +110,17 @@ const ClientMaster = () => {
             options: [],
             value: null,
             validation: {
-                required: false,
+                required: true,
+            },
+            fieldWidth: "col-md-4",
+        },
+        industry_name: {
+            inputType: "singleSelect",
+            label: "Industry",
+            options: [],
+            value: null,
+            validation: {
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -129,7 +130,7 @@ const ClientMaster = () => {
             options: [],
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -139,7 +140,7 @@ const ClientMaster = () => {
             options: [],
             value: null,
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -149,7 +150,7 @@ const ClientMaster = () => {
             options: [],
             value: [],
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -159,7 +160,7 @@ const ClientMaster = () => {
             options: [],
             value: [],
             validation: {
-                required: false,
+                required: true,
             },
             fieldWidth: "col-md-4",
         },
@@ -221,6 +222,31 @@ const ClientMaster = () => {
         },
     };
 
+
+    const msaFormFields = {
+        start_date: {
+            inputType: "singleDatePicker",
+            label: "Start Date",
+            value: null,
+            validation: {
+                required: true,
+            },
+            fieldWidth: "col-md-6",
+        },
+        end_date: {
+            inputType: "singleDatePicker",
+            label: "End Date",
+            value: null,
+            validation: {
+                required: true,
+            },
+            fieldWidth: "col-md-6",
+        },
+
+    };
+
+
+
     const [countryMaster, setCountryMaster] = useState<any>([]);
     const [stateMaster, setStateMaster] = useState<any>([]);
     const [loader, setLoader] = useState(false);
@@ -243,11 +269,20 @@ const ClientMaster = () => {
     const [accountManagerMaster, setAccountManagerMaster] = useState<any>([]);
     const [accountsMaster, setAccountsMaster] = useState<any>([]);
     const [clientMaster, setClientMaster] = useState<any>([]);
+    const [salesMaster, setSalesMaster] = useState<any>([]);
+    const [showMsaUpdatePopup, setShowMsaUpdatePopup] = useState<boolean>(false);
+
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
         useState(clientFormFields);
     const [clientForm, setClientForm] = useState<any>(
         _.cloneDeep(clientFormFieldsStructure)
+    );
+
+    const [msaFormFieldsStructure, setMsaFormFieldsStructure]: any =
+        useState(msaFormFields);
+    const [msaForm, setMsaForm] = useState<any>(
+        _.cloneDeep(msaFormFieldsStructure)
     );
 
     const companyService = new CompanyMasterService();
@@ -263,6 +298,8 @@ const ClientMaster = () => {
     const countryService = new CountryMasterService();
     const stateService = new StateMasterService();
     const industryService = new IndustryMasterService();
+    const salesService = new SalesMasterService();
+
 
     const clientMasterColumns = [
         {
@@ -285,6 +322,12 @@ const ClientMaster = () => {
                         style={{ cursor: "pointer" }}
                         title={rowData.isActive ? "Deactivate" : "Activate"}
                         onClick={() => onDelete(rowData)}
+                    ></span>
+                    <span
+                        className="pi pi-ellipsis-v"
+                        style={{ cursor: "pointer" }}
+                        title="Update MSA"
+                        onClick={() => onMSAUpdate(rowData)}
                     ></span>
                 </div>
             ),
@@ -450,9 +493,8 @@ const ClientMaster = () => {
             sort: false,
             filter: false,
             placeholder: "MSA File",
-            body: (rowData: any) => (
-                <span onClick={() => downloadFile(rowData.msaFilePath)}>MSA</span>
-            ),
+            body: (rowData: any) => (<>{rowData?.msaFilePath ? <span onClick={() => downloadFile(rowData.msaFilePath)}>MSA</span> : null}
+            </>),
         },
         {
             label: "NDA File",
@@ -461,9 +503,24 @@ const ClientMaster = () => {
             sort: false,
             filter: false,
             placeholder: "NDA File",
-            body: (rowData: any) => (
-                <span onClick={() => downloadFile(rowData.msaFilePath)}>NDA</span>),
+            body: (rowData: any) => (<>{rowData?.ndaFilePath ? <span onClick={() => downloadFile(rowData.ndaFilePath)}>NDA</span> : null}
+            </>),
         },
+        {
+            label: "Status",
+            fieldName: "isActive",
+            textAlign: "left",
+            frozen: false,
+            sort: true,
+            filter: true,
+            body: (rowData: any) => (
+              <div>
+                <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
+                  {rowData?.isActive == 1 ? "Active" : "Inactive"}
+                </span>
+              </div>
+            ),
+          },
         {
             label: "Updated At",
             fieldName: "updated_at",
@@ -487,14 +544,14 @@ const ClientMaster = () => {
         link.click();
         document.body.removeChild(link);
     };
-      
-      const viewMSAFile = (filePath: any) => {
+
+    const viewMSAFile = (filePath: any) => {
         const signatureUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
         // Open the file in a new tab
         window.open(signatureUrl, "_blank");
     };
 
-      
+
     const TooltipWrapper = ({ id, content }: any) => (
         <div>
             <span id={id}>{content}</span>
@@ -516,21 +573,21 @@ const ClientMaster = () => {
             await formatIndustryHeadDetails(industryHead);
             const industryGroups = await getIndustryGroupMaster();
             await formatIndustryGroupDetails(industryGroups);
-            // await formatIndustrySubGroupDetails(industryGroups)
-            const accountManagers = await getAccountManagerMaster();
-            await formatAccountManagerMasterDetails(accountManagers);
-            const accountMaster = await getAccountMaster();
-            console.log('aaaaaaaaaaaaaa', accountMaster);
-
-            await formatAccountMasterDetails(accountMaster);
+            // const accountManagers = await getAccountManagerMaster();
+            // await formatAccountManagerMasterDetails(accountManagers);
+            // const accountMaster = await getAccountMaster();
+            // await formatAccountMasterDetails(accountMaster);
+            // const salesManager = await getSalesMaster();
+            // await formatSalesManagerDetails(salesManager)
+            // await formatAccountMasterDetails(accountMaster);
             const industries = await getIndustryMaster()
             await formatIndustry_ClientDetails(industries);
             await formatIndustrySubGroupDetails(industries)
         };
-        if (clientFormPopup == false && showConfirmDialogue == false) {
+        if (clientFormPopup == false && showConfirmDialogue == false && showMsaUpdatePopup == false) {
             fetchData();
         }
-    }, [clientFormPopup, showConfirmDialogue]);
+    }, [clientFormPopup, showConfirmDialogue, showMsaUpdatePopup]);
 
     const getClientMaster = async () => {
         setLoader(true);
@@ -542,6 +599,20 @@ const ClientMaster = () => {
             console.error(error);
         } finally {
             setLoader(false);
+        }
+    };
+
+
+    const getSalesMaster = async () => {
+        // setLoader(true);
+        try {
+            const response = await salesService.getSalesMaster();
+            setSalesMaster(response?.salesManagers);
+            return response?.salesManagers;
+        } catch (error) {
+            console.error(error);
+        } finally {
+            // setLoader(false);
         }
     };
 
@@ -630,7 +701,7 @@ const ClientMaster = () => {
     };
 
     const getAccountManagerMaster = async () => {
-        setLoader(true);
+        // setLoader(true);
         try {
             const response = await accountService.getAccountMaster();
             const temp = response?.accountManagers?.filter((item: any) => item?.isactive || item?.isActive)
@@ -639,12 +710,12 @@ const ClientMaster = () => {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoader(false);
+            // setLoader(false);
         }
     };
 
     const getAccountMaster = async () => {
-        setLoader(true);
+        // setLoader(true);
         try {
             const response = await accountsService.getAccountsMaster();
             const temp = response?.companyAccounts?.filter((item: any) => item?.isactive || item?.isActive)
@@ -653,9 +724,11 @@ const ClientMaster = () => {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoader(false);
+            // setLoader(false);
         }
     };
+
+
 
     const formatCountryDetails = async (countries: any = countryMaster) => {
         const countrylist = countries.map((country: any) => country?.name);
@@ -667,7 +740,8 @@ const ClientMaster = () => {
     const formatCompanyDetails = async (companies: any = companyMaster) => {
         const companyList = companies.map((company: any) => company?.companyName);
         clientFormFieldsStructure.companyName.options = companyList;
-        setClientFormFieldsStructure(clientFormFieldsStructure);
+        await setClientFormFieldsStructure(clientFormFieldsStructure);
+        await clientFormHandler(clientFormFieldsStructure)
     };
 
     const formatIndustryHeadDetails = async (
@@ -677,7 +751,8 @@ const ClientMaster = () => {
             (industryHead: any) => industryHead?.industryHeadName
         );
         clientFormFieldsStructure.industryHeadNames.options = industryHeadList;
-        setClientFormFieldsStructure(clientFormFieldsStructure);
+        await setClientFormFieldsStructure(clientFormFieldsStructure);
+        await clientFormHandler(clientFormFieldsStructure)
     };
 
     const formatIndustryGroupDetails = async (
@@ -688,6 +763,7 @@ const ClientMaster = () => {
         );
         clientFormFieldsStructure.industry_group.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
+        await clientFormHandler(clientFormFieldsStructure)
     };
 
     const formatIndustrySubGroupDetails = async (
@@ -700,6 +776,7 @@ const ClientMaster = () => {
         );
         clientFormFieldsStructure.industry_sub_group.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
+        await clientFormHandler(clientFormFieldsStructure)
     };
 
     const formatAccountManagerMasterDetails = async (
@@ -708,9 +785,18 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.name
         );
-        console.log('aaaaaaaaaaaa', industryHeadList);
-
         clientFormFieldsStructure.account_manager.options = industryHeadList;
+        await setClientFormFieldsStructure(clientFormFieldsStructure);
+    };
+
+    const formatSalesManagerDetails = async (
+        industries: any = salesMaster
+    ) => {
+        const industryHeadList = industries.map(
+            (industryHead: any) => industryHead?.name
+        );
+
+        clientFormFieldsStructure.sales_person.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
 
@@ -720,8 +806,6 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.bankName
         );
-        console.log('aaaaaaaaaaaa', industryHeadList);
-
         clientFormFieldsStructure.account_name.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
     };
@@ -732,7 +816,7 @@ const ClientMaster = () => {
         );
         clientFormFieldsStructure.industry_name.options = industryList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
-        // await clientFormHandler(clientFormFieldsStructure);
+        await clientFormHandler(clientFormFieldsStructure);
     };
 
 
@@ -745,11 +829,22 @@ const ClientMaster = () => {
         setClientForm(form);
     };
 
-    const onUpdate = (data: any) => {
+    const onUpdate = async (data: any) => {
+            const accountManagers = await getAccountManagerMaster();
+            await formatAccountManagerMasterDetails(accountManagers);
+            const accountMaster = await getAccountMaster();
+            await formatAccountMasterDetails(accountMaster);
+            const salesManager = await getSalesMaster();
+            await formatSalesManagerDetails(salesManager)
+            await formatAccountMasterDetails(accountMaster);
+        await setCliendData(data);
+        await updateClientaster(data);
+        await setClientFormPopup(true);
+        await setIsEditClient(true);
+    };
+    const onMSAUpdate = (data: any) => {
+        setShowMsaUpdatePopup(true);
         setCliendData(data);
-        updateClientaster(data);
-        setClientFormPopup(true);
-        setIsEditClient(true);
     };
 
     const onPopUpClose = (e?: any) => {
@@ -765,28 +860,33 @@ const ClientMaster = () => {
             clientFormFieldsStructure.credit_period.value = data?.credit_period;
             clientFormFieldsStructure.client_status.value = data?.client_status;
             clientFormFieldsStructure.country_name.value = data?.country_name;
-            clientFormFieldsStructure.companyName.value = data?.companyName?.split(',');
-
-            clientFormFieldsStructure.account_name.value = data?.account_selection;
+            clientFormFieldsStructure.companyName.value = data?.companyName;
+            clientFormFieldsStructure.account_name.value = data?.bankName?.split(',');
+            clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadName;
+            
+            clientFormFieldsStructure.industry_name.value = data?.industryGroupNames;
+            clientFormFieldsStructure.industry_group.value = data?.industryName;
+            clientFormFieldsStructure.industry_sub_group.value = data?.industrySubGroupNames;
+            clientFormFieldsStructure.sales_person.value = data?.salesMangerName?.split(',');
+            clientFormFieldsStructure.account_manager.value = data?.accountManagerNames?.split(',');
+            clientFormFieldsStructure.msa_start_date.value = parseDateString(data?.msa_start_date);
+            clientFormFieldsStructure.msa_end_date.value = parseDateString(data?.msa_end_date);
+            clientFormFieldsStructure.is_msa_missing.value = data?.msa_flag ? true : false;
+            clientFormFieldsStructure.nda_flag.value = data?.nda_flag ? true : false;
+            clientFormFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause_flag ? true : false;
+            clientFormFieldsStructure.use_logo_permission.value = data?.use_logo_permission_flag ? true : false;
             console.log('dataaaaaaaaaa---->>>', clientFormFieldsStructure, data);
-            // clientFormFieldsStructure.industryId.value = data?.industryId;
-            // clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadNames;
-            // clientFormFieldsStructure.industry_group.value = data?.industry_group;
-            // clientFormFieldsStructure.industry_sub_group.value = data?.industry_sub_group;
-            // clientFormFieldsStructure.sales_person.value = data?.sales_person;
-            // clientFormFieldsStructure.account_manager.value = data?.account_manager;
-            clientFormFieldsStructure.msa_start_date.value = data?.msa_start_date;
-            clientFormFieldsStructure.msa_end_date.value = data?.msa_end_date;
-            clientFormFieldsStructure.is_msa_missing.value = data?.is_msa_missing ? 1 : 0;
-            clientFormFieldsStructure.nda_flag.value = data?.nda_flag ? 1 : 0;
-            clientFormFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause ? 1 : 0;
-            clientFormFieldsStructure.use_logo_permission.value = data?.use_logo_permission ? 1 : 0;
             // clientFormFieldsStructure.msaFilePath.value = data?.msaFilePath;
             // clientFormFieldsStructure.ndaFilePath.value = data?.ndaFilePath;
             // clientFormFieldsStructure.updated_by.value = data?.updated_by;
             // clientFormFieldsStructure.isActive.value = data?.isActive;
             // clientFormFieldsStructure.updated_at.value = data?.updated_at;
-
+            if(data?.msa_flag){
+                setLogoUrl(data?.msaFilePath)
+            }
+            if(data?.nda_flag){
+                setSignatureUrl(data?.ndaFilePath)
+            }
 
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
         } catch (error) {
@@ -875,22 +975,23 @@ const ClientMaster = () => {
     };
 
     const confirmDelete = () => {
-        setLoader(true);
-        stateService
-            .deactivateStateMaster({ ...patchData, loggedInUserId })
-            .then(() => {
-                setLoader(false);
-                setShowConfirmDialogue(false);
-                ToasterService.show(
-                    `State record ${patchData?.isactive ? "deactivated" : "activated"
-                    } successfully`,
-                    CONSTANTS.SUCCESS
-                );
-            })
-            .catch((error) => {
-                setLoader(false);
-                return false;
-            });
+    setLoader(true);
+    clientService
+      .deactivateClientMaster({ ...patchData, loggedInUserId })
+      .then(() => {
+        setLoader(false);
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          `Client record ${
+            patchData?.isActive ? "deactivated" : "activated"
+          } successfully`,
+          CONSTANTS.SUCCESS
+        );
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
     };
 
     const closeFormPopup = () => {
@@ -899,12 +1000,23 @@ const ClientMaster = () => {
         setCliendData({});
         setClientFormFieldsStructure(_.cloneDeep(clientFormFields));
         setClientForm(_.cloneDeep(clientFormFields));
+        setShowMsaUpdatePopup(false);
+        setMsaForm(_.cloneDeep(msaFormFields));
+        setAttachments([]);
+        setDigitalSign([]);
+        setSignatureUrl('');
+        setLogoUrl('')
     };
 
     const parseDateString = (dateString: any) => {
-        const [year, month, day] = dateString.split("/").map(Number);
+        if (!dateString) return new Date();
+        const date: any = new Date(dateString);
+        if (isNaN(date)) return new Date();
+        const year = date.getFullYear();
+        const month: any = String(date.getMonth() + 1).padStart(2, "0");
+        const day: any = String(date.getDate()).padStart(2, "0");
         return new Date(year, month - 1, day);
-    };
+      };
 
     const formatDate = (dateString: any) => {
         const date = new Date(dateString);
@@ -922,7 +1034,7 @@ const ClientMaster = () => {
                     eventList.name
                         .split(".")
                     [eventList.name.split(".").length - 1].toLowerCase() ===
-                    FILE_TYPES.PNG
+                    FILE_TYPES.PDF
                 ) {
                     if (eventList.size > 10485760) {
                         return ToasterService.show(
@@ -936,7 +1048,7 @@ const ClientMaster = () => {
                     }
                 } else {
                     ToasterService.show(
-                        `Invalid file format you can only attach the PNG here!`,
+                        `Invalid file format you can only attach the PDF here!`,
                         "error"
                     );
                     eventList = null;
@@ -953,7 +1065,7 @@ const ClientMaster = () => {
                     eventList.name
                         .split(".")
                     [eventList.name.split(".").length - 1].toLowerCase() ===
-                    FILE_TYPES.PNG
+                    FILE_TYPES.PDF
                 ) {
                     if (eventList.size > 10485760) {
                         return ToasterService.show(
@@ -967,7 +1079,7 @@ const ClientMaster = () => {
                     }
                 } else {
                     ToasterService.show(
-                        `Invalid file format you can only attach the png here!`,
+                        `Invalid file format you can only attach the PDF here!`,
                         "error"
                     );
                     eventList = null;
@@ -987,16 +1099,18 @@ const ClientMaster = () => {
     };
 
 
+
+
     const clientFormHandler = async (currentForm: FormType) => {
         const form = _.cloneDeep(currentForm);
 
         // if (form?.companyName?.value != clientForm?.companyName?.value) {
-        const selectedCompany = companyMaster?.find(
-            (item: any) => item?.companyName == form?.companyName?.value
-        );
-        const selectedCountry = countryMaster?.find(
-            (item: any) => item?.name == selectedCompany?.countryName
-        );
+        // const selectedCompany = companyMaster?.find(
+        //     (item: any) => item?.companyName == form?.companyName?.value
+        // );
+        // const selectedCountry = countryMaster?.find(
+        //     (item: any) => item?.name == selectedCompany?.countryName
+        // );
         if (form?.nda_flag?.value == true) {
             setShowNDAAttacment(true);
         } else {
@@ -1025,19 +1139,47 @@ const ClientMaster = () => {
             form.msa_end_date.disable = true;
         }
 
-        // console.log('isMSAChecked', form);
+        // console.log('form handler checking ---->>> ', form, clientForm);
 
-        //   if (selectedCountry) {
-        //     form.country_name.value = selectedCompany?.countryName;
-        //     const stateList = await getStateMaster(selectedCountry?.id);
-        //     if (stateList) {
-        //       const stateNames = stateList?.map((state: any) => state.stateName);
-        //       form.state_name.options = stateNames || [];
-        //       form.state_name.value = null;
-        //     }
-        //   }
-        // }
+        if (form.companyName?.value !== clientForm?.companyName?.value) {
+            const selectedCompany = form.companyName?.value
+            if (selectedCompany) {
+                const accountMaster = await getAccountMaster();
+                if (accountMaster) {
+                    const tempData = accountMaster?.filter((item: any) => item?.companyName == selectedCompany).map((ele: any) => ele?.bankName);
+                    form.account_name.options = tempData || [];
+
+                    const defaultAccount = [accountMaster?.filter((item: any) => item?.companyName == selectedCompany)?.find((ele: any) => ele?.isDefaultAccount)?.bankName];
+                    form.account_name.value = defaultAccount.includes(undefined) ? [] : defaultAccount;
+
+                    console.log('form handler checking ---->>> ', defaultAccount);
+
+                }
+            }
+        }
+        if (form.industryHeadNames?.value !== clientForm?.industryHeadNames?.value) {
+            const selectedIndustryHead = form.industryHeadNames?.value
+            if (selectedIndustryHead) {
+                const accountManagers = await getAccountManagerMaster();
+                const salesManager = await getSalesMaster();
+
+                if (accountManagers) {
+                    const tempData = accountManagers?.filter((item: any) => item?.industryHeadNames == selectedIndustryHead).map((ele: any) => ele?.name);
+                    form.account_manager.options = tempData || [];
+                }
+                if (salesManager) {
+                    const tempData = salesManager?.filter((item: any) => item?.industryHeadNames == selectedIndustryHead).map((ele: any) => ele?.name);
+                    form.sales_person.options = tempData || [];
+                }
+            }
+        }
+
         setClientForm(form);
+    };
+
+    const msaFormHandler = async (currentForm: FormType) => {
+        const form = _.cloneDeep(currentForm);
+        setMsaForm(form);
     };
 
     const createNewClient = async (event: FormEvent) => {
@@ -1045,22 +1187,25 @@ const ClientMaster = () => {
         let companyValidityFlag = true;
         const companyFormValid: boolean[] = [];
 
+
         // _.each(clientForm, (item: any) => {
-        //   if (item?.validation?.required) {
-        //     companyFormValid.push(item.valid);
-        //     companyValidityFlag = companyValidityFlag && item.value;
-        //   }
+        //     if (item?.validation?.required) {
+        //         companyFormValid.push(item.value);
+        //         companyValidityFlag = companyValidityFlag && !!item.value; // Ensure boolean value
+        //     }
         // });
+        
 
         setIsFormValid(companyValidityFlag);
-
+        console.log('clientForm', clientForm, companyValidityFlag);
+        
         if (companyValidityFlag) {
             const industry_id =
                 industryMaster.find(
                     (industry: any) =>
                         industry.industryName === clientForm.industry_name.value
                 )?.id ?? null;
-            console.log('createClientForm : ', industryMaster);
+            console.log('createClientForm : ', countryMaster, clientForm);
 
             const countryId =
                 countryMaster.find(
@@ -1068,17 +1213,21 @@ const ClientMaster = () => {
                         el.name === clientForm.country_name.value
                 )?.id ?? null;
 
-            let companyId = "";
-            clientForm?.companyName?.value?.forEach((item: any) => {
-                const id =
-                    companyMaster?.find(
-                        (com: any) => com?.companyName == item
-                    )?.id ?? null;
-                if (id != null) {
-                    companyId =
-                        companyId != "" ? companyId + "," + id : id;
-                }
-            });
+            let companyId =
+                // clientForm?.companyName?.value?.forEach((item: any) => {
+                //     const id =
+                //         companyMaster?.find(
+                //             (com: any) => com?.companyName == item
+                //         )?.id ?? null;
+                //     if (id != null) {
+                //         companyId =
+                //             companyId != "" ? companyId + "," + id : id;
+                //     }
+                // });
+                companyMaster.find(
+                    (el: any) =>
+                        el.companyName === clientForm.companyName.value
+                )?.id ?? null;
 
             let bankId = clientForm?.account_name?.value
                 ?.map((item: any) =>
@@ -1119,6 +1268,18 @@ const ClientMaster = () => {
                 }
             });
 
+            let salesManagerId = "";
+            clientForm?.sales_person?.value?.forEach((item: any) => {
+                const id =
+                salesMaster?.find(
+                        (com: any) => com?.name == item
+                    )?.id ?? null;
+                if (id != null) {
+                    salesManagerId =
+                        salesManagerId != "" ? salesManagerId + "," + id : id;
+                }
+            });
+
 
             const formData: any = new FormData();
 
@@ -1128,14 +1289,14 @@ const ClientMaster = () => {
                 client_type: clientForm?.client_type?.value,
                 credit_period: clientForm?.credit_period?.value,
                 client_status: clientForm?.client_status?.value,
-                countryId: countryId,
+                // countryId: countryId,
                 companyId: companyId,
                 accountId: bankId,
                 industryId: industry_id,
                 IndustryHeadId: IndustryHeadId,
                 IndustryGroupId: IndustryGroupId,
                 IndustrySubGroupId: IndustrySubGroupId,
-                salesMangerId: clientForm?.sales_person?.value,
+                salesMangerId: salesManagerId,
                 accountManagerId: accountManagerId,
                 msa_start_date: formatDate(clientForm?.msa_start_date?.value),
                 msa_end_date: formatDate(clientForm?.msa_end_date?.value),
@@ -1144,7 +1305,7 @@ const ClientMaster = () => {
                 non_solicitation_clause_flag: clientForm?.non_solicitation_clause?.value ? 1 : 0,
                 use_logo_permission_flag: clientForm?.use_logo_permission?.value ? 1 : 0,
                 updated_by: loggedInUserId,
-
+                isActive: 1
             };
 
 
@@ -1182,15 +1343,19 @@ const ClientMaster = () => {
             } else {
                 const formData: any = new FormData();
 
-                const updatePayload = { ...obj, id: cliendData?.id };
+                const updatePayload = { ...obj, clientId: cliendData?.id };
 
                 Object.entries(updatePayload).forEach(([key, value]: any) => {
                     formData.set(key, value);
-                });
-
-                // if (attachments?.length) {
-                //   formData.set("file", attachments[0]);
-                // }
+                  });
+          
+                  if (attachments?.length) {
+                    formData.set("msaFile", attachments[0]);
+                  }
+          
+                  if (digitalSign?.length) {
+                    formData.set("ndaFile", digitalSign[0]);
+                  }
 
                 clientService
                     .updateClientMaster(formData)
@@ -1206,6 +1371,62 @@ const ClientMaster = () => {
                         ToasterService.show(error, CONSTANTS.ERROR);
                     });
             }
+        } else {
+            ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+        }
+    };
+
+
+    const updateCurrentMSA = async (event: FormEvent) => {
+        event.preventDefault();
+        let companyValidityFlag = true;
+        const companyFormValid: boolean[] = [];
+
+        _.each(msaForm, (item: any) => {
+            if (item?.validation?.required) {
+                companyFormValid.push(item.valid);
+                companyValidityFlag = companyValidityFlag && item.value;
+            }
+        });
+
+        setIsFormValid(companyValidityFlag);
+
+        if (companyValidityFlag) {
+
+            const formData: any = new FormData();
+
+            const obj = {
+                clientId: cliendData?.id,
+                start_date: formatDate(msaForm?.start_date?.value),
+                end_date: formatDate(msaForm?.end_date?.value),
+                updated_by: loggedInUserId,
+            };
+
+
+            Object.entries(obj).forEach(([key, value]: any) => {
+                formData.set(key, value);
+            });
+
+
+            if (attachments?.length) {
+                formData.set("msaFile", attachments[0]);
+            }
+            console.log('createClientForm : ', clientForm, obj);
+
+            clientService
+                .updateMSAFile(formData)
+                .then((response: any) => {
+                    if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+                        setCliendData({});
+                        closeFormPopup();
+                        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+                    }
+                })
+                .catch((error: any) => {
+                    setCliendData({});
+                    ToasterService.show(error, CONSTANTS.ERROR);
+                });
+
         } else {
             ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
         }
@@ -1296,7 +1517,8 @@ const ClientMaster = () => {
                                                         {logoUrl ? (
                                                             <div className={classes["image-preview"]}>
                                                                 <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeFileHandler} style={{ color: 'red', fontSize: '1rem' }}></i></div>
-                                                                <img src={logoUrl} style={{ width: '200px', height: '130px' }} alt="Preview" />
+                                                                {/* <img src={logoUrl} style={{ width: '200px', height: '130px' }} alt="Preview" /> */}
+                                                                <img src={ImageUrl.PdfIcon} style={{ width: '200px', height: '130px' }} alt="Preview" />
                                                             </div>
                                                         ) : (
                                                             <div className={classes["empty-upload"]}>
@@ -1315,7 +1537,7 @@ const ClientMaster = () => {
                                                                 />
                                                                 <p>
                                                                     Drag files here <span> or browse</span> <br />
-                                                                    <u>Support PNG</u>
+                                                                    <u>Support PDF</u>
                                                                 </p>
                                                             </div>
                                                         )}
@@ -1340,7 +1562,7 @@ const ClientMaster = () => {
                                                         {signatureUrl ? (
                                                             <div className={classes["image-preview"]}>
                                                                 <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeSignHandler} style={{ color: 'red', fontSize: '1rem' }}></i></div>
-                                                                <img src={signatureUrl} style={{ width: '200px', height: '130px' }} alt="Preview" />
+                                                                <img src={ImageUrl.PdfIcon} style={{ width: '200px', height: '130px' }} alt="Preview" />
                                                             </div>
                                                         ) : (
                                                             <div className={classes["empty-upload"]}>
@@ -1361,7 +1583,7 @@ const ClientMaster = () => {
                                                                 />
                                                                 <p>
                                                                     Drag files here <span> or browse</span> <br />
-                                                                    <u>Support PNG</u>
+                                                                    <u>Support PDF</u>
                                                                 </p>
                                                             </div>
                                                         )}
@@ -1381,6 +1603,96 @@ const ClientMaster = () => {
                                 icon="pi pi-check"
                                 iconPos="right"
                                 submitEvent={createNewClient}
+                            />
+                        </div>
+                    </div>
+                </div>
+            ) : null}
+            {showMsaUpdatePopup ? (
+                <div className="popup-overlay md-popup-overlay">
+                    <div className="popup-body md-popup-body stretchLeft">
+                        <div className="popup-header ">
+                            <div
+                                className="popup-close"
+                                onClick={() => {
+                                    closeFormPopup();
+                                }}
+                            >
+                                <i className="pi pi-angle-left"></i>
+                                <h4 className="popup-heading">Update MSA</h4>
+                            </div>
+                            <div
+                                className="popup-right-close"
+                                onClick={() => {
+                                    closeFormPopup();
+                                }}
+                            >
+                                &times;
+                            </div>
+                        </div>
+                        <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                            <FormComponent
+                                form={_.cloneDeep(msaForm)}
+                                formUpdateEvent={msaFormHandler}
+                                isFormValidFlag={isFormValid}
+                            ></FormComponent>
+
+                            {/* attachment */}
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className={classes["upload-wrapper"]}>
+                                        <div className="row pd-10">
+                                            <div
+                                                className={`col-md-12 ${classes["addition-field-header"]}`}
+                                            >
+                                                <h5 className="popup-heading">MSA Attachment</h5>
+                                            </div>
+                                            <div className="col-md-12">
+                                                <div className={classes["upload-file-section"]}>
+                                                    <div className={classes["upload-file"]}>
+                                                        {logoUrl ? (
+                                                            <div className={classes["image-preview"]}>
+                                                                <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeFileHandler} style={{ color: 'red', fontSize: '1rem' }}></i></div>
+                                                                {/* <img src={logoUrl} style={{ width: '200px', height: '130px' }} alt="Preview" /> */}
+                                                                <img src={ImageUrl.PdfIcon} style={{ width: '200px', height: '130px' }} alt="Preview" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className={classes["empty-upload"]}>
+                                                                <input
+                                                                    type="file"
+                                                                    onClick={(event: any) => {
+                                                                        event.target.value = null;
+                                                                    }}
+                                                                    onChange={(e) => selectAttachment(e.target.files)}
+                                                                    className={classes["upload"]}
+                                                                    style={{ width: "unset" }}
+                                                                />
+                                                                <img
+                                                                    src={ImageUrl.FolderIconImage}
+                                                                    alt="Folder Icon"
+                                                                />
+                                                                <p>
+                                                                    Drag files here <span> or browse</span> <br />
+                                                                    <u>Support PDF</u>
+                                                                </p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* attachment */}
+                        </div>
+
+                        <div className="popup-lower-btn">
+                            <ButtonComponent
+                                label="Submit"
+                                icon="pi pi-check"
+                                iconPos="right"
+                                submitEvent={updateCurrentMSA}
                             />
                         </div>
                     </div>
