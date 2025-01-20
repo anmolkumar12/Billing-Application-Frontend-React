@@ -298,8 +298,9 @@ const FinancialYearMaster = () => {
   const updateFinancialYearMaster = (data: any) => {
     console.log('data there --->',data)
     formObjState.financialYearName.value = data.financialYearName;
-    formObjState.startYear.value = data.startYear.toString();
-    formObjState.endYear.value = data.endYear.toString();
+    formObjState.startYear.value = new Date(data.startYear)
+    // data.startYear.toString();
+    formObjState.endYear.value = new Date(data.endYear);
     // formObjState.description.value = data.description;
   };
 

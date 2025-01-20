@@ -15,6 +15,7 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { StateMasterService } from "../../services/masters/state-master/state.service";
 import { Loader } from "../../components/ui/loader/Loader";
 import moment from "moment";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const StateMaster = () => {
   const StatesFormFields = {
@@ -34,6 +35,8 @@ const StateMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.onlyCharacters.pattern,
+        patternHint:ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-6",
     },
@@ -43,11 +46,13 @@ const StateMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.onlyCharacters.pattern,
+        patternHint:ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-6",
     },
     gstCode: {
-      inputType: "inputtext",
+      inputType: "inputNumber",
       label: "GST Code",
       value: null,
       validation: {
@@ -322,7 +327,7 @@ const StateMaster = () => {
       statesFieldsStructure.country_name.value = data?.name;
       statesFieldsStructure.stateName.value = data?.stateName;
       statesFieldsStructure.stateCode.value = data?.stateCode;
-      statesFieldsStructure.gstCode.value = data?.gstCode;
+      statesFieldsStructure.gstCode.value = Number(data?.gstCode);
 
       setStatesForm(_.cloneDeep(statesFieldsStructure));
     } catch (error) {

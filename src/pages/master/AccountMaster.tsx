@@ -70,7 +70,7 @@ const AccountMaster = () => {
       fieldWidth: "col-md-4",
     },
     account_no: {
-      inputType: "inputtext",
+      inputType: "inputNumber",
       label: "Account Number",
       value: null,
       validation: {

@@ -15,6 +15,7 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { AccountTypeMasterService } from "../../services/masters/account-type-master/accountType.service";
 import { Loader } from "../../components/ui/loader/Loader";
 import moment from "moment";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const AccountTypeMaster = () => {
   const AccountTypeFormFields = {
@@ -34,6 +35,8 @@ const AccountTypeMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.onlyCharacters.pattern,
+        patternHint:ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-6",
     },

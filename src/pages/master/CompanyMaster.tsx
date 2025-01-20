@@ -18,10 +18,11 @@ import { Chip } from "primereact/chip";
 import { ImageUrl } from "../../utils/ImageUrl";
 import { CountryMasterService } from "../../services/masters/country-master/country.service";
 import moment from "moment";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const CompanyMaster = () => {
   const [stateData, setStateData] = useState<any>();
-  const CompanyFormFields: FormType = {
+  const CompanyFormFields = {
     companyName: {
       inputType: "inputtext",
       label: "Company Name",
@@ -47,6 +48,8 @@ const CompanyMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern: ValidationRegex.website.pattern,
+        patternHint:ValidationRegex.website.patternHint
       },
       fieldWidth: "col-md-4",
     },
@@ -56,6 +59,7 @@ const CompanyMaster = () => {
       value: null,
       validation: {
         required: true,
+        email:true
       },
       fieldWidth: "col-md-4",
     },
