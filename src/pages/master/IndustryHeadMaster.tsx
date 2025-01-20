@@ -18,15 +18,18 @@ import { StateMasterService } from "../../services/masters/state-master/state.se
 import { RegionMasterService } from "../../services/masters/region-master/region.service";
 import moment from "moment";
 import { CompanyMasterService } from "../../services/masters/company-master/company.service";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const IndustryHeadMaster = () => {
-  const IndustryHeadFormFields: FormType = {
+  const IndustryHeadFormFields: any = {
     industryHeadName: {
       inputType: "inputtext",
       label: "Industry Head Name",
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.onlyCharacters.pattern,
+        patternHint:ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-4",
     },

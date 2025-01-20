@@ -16,6 +16,7 @@ import { IndustryMasterService } from "../../services/masters/industry-master/in
 import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
 import moment from "moment";
 import { CompanyMasterService } from "../../services/masters/company-master/company.service";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const SalesMaster = () => {
   const SalesFormFields = {
@@ -25,6 +26,8 @@ const SalesMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.onlyCharacters.pattern,
+        patternHint:ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-4",
     },
@@ -43,7 +46,8 @@ const SalesMaster = () => {
       value: null,
       validation: {
         required: true,
-      },
+        email:true
+      },  
       fieldWidth: "col-md-4",
     },
     companyName: {

@@ -119,6 +119,7 @@ const FormComponent: React.FC<{
 
   const { blurHandler = handleBlur } = props
 
+
   const updateValidityHandler = (
     valid: boolean,
     fieldKey: string,

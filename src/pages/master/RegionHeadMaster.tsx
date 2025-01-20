@@ -18,6 +18,7 @@ import { StateMasterService } from "../../services/masters/state-master/state.se
 import { RegionMasterService } from "../../services/masters/region-master/region.service";
 import RegionHeadMasterService from "../../services/masters/region-head-master/regionHeadMaster.service";
 import moment from "moment";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const RegionHeadMaster = () => {
   const [stateData, setStateData] = useState<any>();
@@ -60,6 +61,8 @@ const RegionHeadMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.onlyCharacters.pattern,
+        patternHint:ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-4",
     },
@@ -78,6 +81,7 @@ const RegionHeadMaster = () => {
       value: null,
       validation: {
         required: true,
+        email:true,
       },
       fieldWidth: "col-md-4",
     },

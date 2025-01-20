@@ -15,6 +15,7 @@ import { Loader } from "../../components/ui/loader/Loader";
 
 import moment from "moment";
 import { ClientTypeMasterService } from "../../services/masters/client-type/clientType.service";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const ClientTypeMaster = () => {
   const formObj = {
@@ -24,6 +25,9 @@ const ClientTypeMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.alphanumeric.pattern,
+        patternHint:ValidationRegex.alphanumeric.patternHint
+        
       },
       fieldWidth: "col-md-6",
     },

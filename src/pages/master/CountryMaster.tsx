@@ -14,6 +14,7 @@ import { FormType } from "../../schemas/FormField";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import { Loader } from "../../components/ui/loader/Loader";
 import moment from "moment";
+import { ValidationRegex } from "../../constants/ValidationRegex";
 
 const CountryMaster = () => {
   const CountryFormFields = {
@@ -32,6 +33,8 @@ const CountryMaster = () => {
       value: null,
       validation: {
         required: true,
+        pattern:ValidationRegex.onlyCharacters.pattern,
+        patternHint:ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-6",
     },
@@ -41,6 +44,7 @@ const CountryMaster = () => {
       value: null,
       validation: {
         required: false,
+  
       },
       fieldWidth: "col-md-6",
     },
@@ -50,6 +54,8 @@ const CountryMaster = () => {
       value: null,
       validation: {
         required: false,
+        pattern:ValidationRegex.phoneCode.pattern,
+        patternHint:ValidationRegex.phoneCode.patternHint
       },
       fieldWidth: "col-md-6",
     },
@@ -176,7 +182,7 @@ const CountryMaster = () => {
       ),
     },
     {
-      label: "Phone Code",
+      label: "Phone Codes",
       fieldName: "phoneCode",
       textAlign: "left",
       sort: true,
@@ -534,7 +540,7 @@ const CountryMaster = () => {
         },
         {}
       );
-
+      console.log('countrycode--->',CountryForm);
       const obj = {
         name: CountryForm?.name?.value,
         code: CountryForm?.code?.value,
