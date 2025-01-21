@@ -1172,6 +1172,22 @@ const ClientMaster = () => {
                     const tempData = salesManager?.filter((item: any) => item?.industryHeadNames == selectedIndustryHead).map((ele: any) => ele?.name);
                     form.sales_person.options = tempData || [];
                 }
+                if (industryGroupMaster) {
+                    const selectedIndustry = industryHeadMaster
+                        ?.find((item: any) => item?.industryHeadName === selectedIndustryHead)
+                        ?.industryNames;
+                
+                    const selectedIndustryArray = selectedIndustry?.split(',').map((str: string) => str.trim()); // Split and trim the selected industries
+                
+                    const tempData = industryGroupMaster
+                        ?.filter((item: any) =>
+                            selectedIndustryArray?.some((industry: string) => item?.groupIndustryName.includes(industry))
+                        )
+                        .map((ele: any) => ele?.groupIndustryName);
+                
+                    form.industry_group.options = tempData || [];
+                    console.log('Filtered tempData:', tempData, 'Selected Industries:', selectedIndustryArray);
+                }
             }
         }
 
