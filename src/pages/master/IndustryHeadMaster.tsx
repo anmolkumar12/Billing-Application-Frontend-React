@@ -33,9 +33,28 @@ const IndustryHeadMaster = () => {
       },
       fieldWidth: "col-md-4",
     },
+    code: {
+      inputType: "inputtext",
+      label: "Account Manager Ecode",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+    },
+    industry_head_email: {
+      inputType: "inputtext",
+      label: "Account Manager Email",
+      value: null,
+      validation: {
+        required: true,
+        email:true
+      },
+      fieldWidth: "col-md-6",
+    },
     industryNames: {
       inputType: "multiSelect",
-      label: "Industries",
+      label: "Industry Group",
       value: null,
       options: [],
       validation: {
@@ -194,7 +213,55 @@ const IndustryHeadMaster = () => {
       ),
     },
     {
-      label: "Industry Names",
+          label: "Industry Head Ecode",
+          fieldName: "code",
+          textAlign: "left",
+          sort: true,
+          filter: true,
+          fieldValue: "code",
+          changeFilter: true,
+          placeholder: "Industry Head Ecode",
+          body: (rowData: any) => (
+            <div>
+              <span
+                id={`companyNameTooltip-${rowData.id}`}
+              // data-pr-tooltip={rowData.code}
+              >
+                {rowData.code}
+              </span>
+              <Tooltip
+                target={`#companyNameTooltip-${rowData.id}`}
+                position="top"
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Industry Head Email",
+          fieldName: "industry_head_email",
+          textAlign: "left",
+          sort: true,
+          filter: true,
+          fieldValue: "industry_head_email",
+          changeFilter: true,
+          placeholder: "Account Manager Email",
+          body: (rowData: any) => (
+            <div>
+              <span
+                id={`companyNameTooltip-${rowData.id}`}
+              // data-pr-tooltip={rowData.code}
+              >
+                {rowData.industry_head_email}
+              </span>
+              <Tooltip
+                target={`#companyNameTooltip-${rowData.id}`}
+                position="top"
+              />
+            </div>
+          ),
+        },
+    {
+      label: "Industry Group",
       fieldName: "industryNames",
       textAlign: "left",
       sort: true,
@@ -755,6 +822,8 @@ const IndustryHeadMaster = () => {
       industryHeadFieldsStructure.companyName.value = data?.companyName;
       industryHeadFieldsStructure.industryHeadName.value =
         data?.industryHeadName;
+        industryHeadFieldsStructure.code.value = data?.code;
+      industryHeadFieldsStructure.industry_head_email.value = data?.industry_head_email;
       industryHeadFieldsStructure.industryNames.value =
         data?.industryNames?.split(",");
       industryHeadFieldsStructure.country_name.value =
@@ -881,6 +950,8 @@ const IndustryHeadMaster = () => {
         companyId: companyIds,
         industryHeadName: IndustryHeadForm?.industryHeadName?.value,
         industryIds: industryIds,
+        code: IndustryHeadForm?.code?.value,
+        industry_head_email: IndustryHeadForm?.industry_head_email.value,
         isRegionWise: IndustryHeadForm?.isRegionWise?.value == true ? 1 : 0,
         countryIds: countryIds,
         regionIds: regionIds != "" ? regionIds : null,

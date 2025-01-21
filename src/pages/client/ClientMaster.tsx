@@ -114,16 +114,6 @@ const ClientMaster = () => {
             },
             fieldWidth: "col-md-4",
         },
-        industry_name: {
-            inputType: "singleSelect",
-            label: "Industry",
-            options: [],
-            value: null,
-            validation: {
-                required: true,
-            },
-            fieldWidth: "col-md-4",
-        },
         industry_group: {
             inputType: "singleSelect",
             label: "Industry Group",
@@ -134,7 +124,7 @@ const ClientMaster = () => {
             },
             fieldWidth: "col-md-4",
         },
-        industry_sub_group: {
+        industry_name: {
             inputType: "singleSelect",
             label: "Industry Sub Group",
             options: [],
@@ -144,6 +134,16 @@ const ClientMaster = () => {
             },
             fieldWidth: "col-md-4",
         },
+        // industry_sub_group: {
+        //     inputType: "singleSelect",
+        //     label: "Industry Sub Group",
+        //     options: [],
+        //     value: null,
+        //     validation: {
+        //         required: true,
+        //     },
+        //     fieldWidth: "col-md-4",
+        // },
         sales_person: {
             inputType: "multiSelect",
             label: "Sales Person",
@@ -409,17 +409,7 @@ const ClientMaster = () => {
                 <TooltipWrapper id={`companyNameTooltip-${rowData.id}`} content={rowData.companyName} />
             ),
         },
-        {
-            label: "Industry Name",
-            fieldName: "industryName",
-            textAlign: "left",
-            sort: true,
-            filter: true,
-            placeholder: "Industry Name",
-            body: (rowData: any) => (
-                <TooltipWrapper id={`industryNameTooltip-${rowData.id}`} content={rowData.industryName} />
-            ),
-        },
+
         {
             label: "Industry Head Name",
             fieldName: "industryHeadName",
@@ -432,7 +422,7 @@ const ClientMaster = () => {
             ),
         },
         {
-            label: "Industry Group Names",
+            label: "Industry Sub Group",
             fieldName: "industryGroupNames",
             textAlign: "left",
             sort: true,
@@ -443,16 +433,27 @@ const ClientMaster = () => {
             ),
         },
         {
-            label: "Industry Subgroup Names",
-            fieldName: "industrySubGroupNames",
+            label: "Industry Group",
+            fieldName: "industryName",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Industry Subgroup Names",
+            placeholder: "Industry Name",
             body: (rowData: any) => (
-                <TooltipWrapper id={`industrySubgroupTooltip-${rowData.id}`} content={rowData.industrySubGroupNames} />
+                <TooltipWrapper id={`industryNameTooltip-${rowData.id}`} content={rowData.industryName} />
             ),
         },
+        // {
+        //     label: "Industry Subgroup Names",
+        //     fieldName: "industrySubGroupNames",
+        //     textAlign: "left",
+        //     sort: true,
+        //     filter: true,
+        //     placeholder: "Industry Subgroup Names",
+        //     body: (rowData: any) => (
+        //         <TooltipWrapper id={`industrySubgroupTooltip-${rowData.id}`} content={rowData.industrySubGroupNames} />
+        //     ),
+        // },
         {
             label: "Account Manager Names",
             fieldName: "accountManagerNames",
@@ -774,7 +775,7 @@ const ClientMaster = () => {
         const industryHeadList = industries.map(
             (industryHead: any) => industryHead?.subIndustryCategory
         );
-        clientFormFieldsStructure.industry_sub_group.options = industryHeadList;
+        // clientFormFieldsStructure.industry_sub_group.options = industryHeadList;
         await setClientFormFieldsStructure(clientFormFieldsStructure);
         await clientFormHandler(clientFormFieldsStructure)
     };
@@ -859,14 +860,14 @@ const ClientMaster = () => {
             clientFormFieldsStructure.client_type.value = data?.client_type;
             clientFormFieldsStructure.credit_period.value = data?.credit_period;
             clientFormFieldsStructure.client_status.value = data?.client_status;
-            clientFormFieldsStructure.country_name.value = data?.country_name;
+            clientFormFieldsStructure.country_name.value = data?.countryName;
             clientFormFieldsStructure.companyName.value = data?.companyName;
             clientFormFieldsStructure.account_name.value = data?.bankName?.split(',');
             clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadName;
             
             clientFormFieldsStructure.industry_name.value = data?.industryGroupNames;
             clientFormFieldsStructure.industry_group.value = data?.industryName;
-            clientFormFieldsStructure.industry_sub_group.value = data?.industrySubGroupNames;
+            // clientFormFieldsStructure.industry_sub_group.value = data?.industrySubGroupNames;
             clientFormFieldsStructure.sales_person.value = data?.salesMangerName?.split(',');
             clientFormFieldsStructure.account_manager.value = data?.accountManagerNames?.split(',');
             clientFormFieldsStructure.msa_start_date.value = parseDateString(data?.msa_start_date);
@@ -1250,11 +1251,11 @@ const ClientMaster = () => {
                 )?.id ?? null;
 
 
-            const IndustrySubGroupId =
-                industryMaster.find(
-                    (el: any) =>
-                        el.subIndustryCategory === clientForm.industry_sub_group.value
-                )?.id ?? null;
+            // const IndustrySubGroupId =
+            //     industryMaster.find(
+            //         (el: any) =>
+            //             el.subIndustryCategory === clientForm.industry_sub_group.value
+            //     )?.id ?? null;
 
             let accountManagerId = "";
             clientForm?.account_manager?.value?.forEach((item: any) => {
@@ -1289,13 +1290,13 @@ const ClientMaster = () => {
                 client_type: clientForm?.client_type?.value,
                 credit_period: clientForm?.credit_period?.value,
                 client_status: clientForm?.client_status?.value,
-                // countryId: countryId,
+                countryId: countryId,
                 companyId: companyId,
                 accountId: bankId,
                 industryId: industry_id,
                 IndustryHeadId: IndustryHeadId,
                 IndustryGroupId: IndustryGroupId,
-                IndustrySubGroupId: IndustrySubGroupId,
+                // IndustrySubGroupId: IndustrySubGroupId,
                 salesMangerId: salesManagerId,
                 accountManagerId: accountManagerId,
                 msa_start_date: formatDate(clientForm?.msa_start_date?.value),
