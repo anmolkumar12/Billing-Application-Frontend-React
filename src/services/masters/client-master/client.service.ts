@@ -111,7 +111,7 @@ export class ClientMasterService {
       const body = {
         clientId: data.id,
         isActive: !data.isActive,
-        updatedBy: data?.loggedInUserId,
+        updated_by: data?.loggedInUserId,
       }
 
       const response = await HTTPService.postRequest(
@@ -127,7 +127,7 @@ export class ClientMasterService {
   deactivateClientBillToMaster = async (data: any) => {
     try {
       const body = {
-        billingId: data.id,
+        id: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
       }
@@ -145,7 +145,7 @@ export class ClientMasterService {
   deactivateClientShipToMaster = async (data: any) => {
     try {
       const body = {
-        shippingId: data.id,
+        id: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
       }
@@ -194,7 +194,7 @@ updateClientGroupMaster = async (formData : any) => {
 toggleClientGroupStatus = async (data: any) => {
   try {
     const body = {
-      clientGroupId: data.id,
+      id: data.id,
       isActive: !data.isActive,
       updatedBy: data?.loggedInUserId,
     };
@@ -218,5 +218,18 @@ getClientGroupsMaster = async () => {
     return error;
   }
 };
+
+
+updateMSAFile = async (formData: any) => {
+  try {
+    const response = await HTTPService.postRequest(
+      APIURLS.UPDATE_MSA_FILE,
+      formData
+    )
+    return response?.data
+  } catch (error) {
+    return error
+  }
+}
 
 }

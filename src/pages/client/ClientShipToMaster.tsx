@@ -498,11 +498,29 @@ const ClientShipToMaster = () => {
       clientBillFieldsStructure.address1.value = data?.address1;
       clientBillFieldsStructure.address2.value = data?.address2;
       clientBillFieldsStructure.address3.value = data?.address3;
-      clientBillFieldsStructure.pin.value = data?.pin;
+      // clientBillFieldsStructure.pin.value = data?.pin;
       clientBillFieldsStructure.country_name.value = data?.country_name;
-      clientBillFieldsStructure.state_name.value = data?.state_name;
+      // clientBillFieldsStructure.state_name.value = data?.state_name;
 
       setClientBillFieldsStructure(_.cloneDeep(clientBillFieldsStructure));
+
+      const addressDetails = JSON.parse(data?.additionalAddressDetails);
+      const addressForm = Object.keys(addressDetails)?.reduce(
+        (acc: any, item: any, index: any) => {
+          acc[index] = {
+            inputType: "inputtext",
+            label: item,
+            value: addressDetails[item],
+            validation: {
+              required: false,
+            },
+            fieldWidth: "col-md-4",
+          };
+          return acc;
+        },
+        {}
+      );
+      setAdditionalDetailsForm(addressForm);
     } catch (error) {
       console.log("error", error);
     }
@@ -525,8 +543,8 @@ const ClientShipToMaster = () => {
 
   const confirmDelete = () => {
     setLoader(true);
-    stateService
-      .deactivateStateMaster({ ...patchData, loggedInUserId })
+    clientService
+      .deactivateClientShipToMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
@@ -618,7 +636,7 @@ const ClientShipToMaster = () => {
             ToasterService.show(error, CONSTANTS.ERROR);
           });
       } else {
-        const updatePayload = { ...obj, billingId: stateData?.id };
+        const updatePayload = { ...obj, id: stateData?.id };
 
         clientService
           .updateClientShipToMaster(updatePayload)

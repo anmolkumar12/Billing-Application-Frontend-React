@@ -91,8 +91,8 @@ export const APIURLS = {
   TOGGLE_PROJECT_STATUS: '/api/masters/toggleProjectActiveStatus',
   TOGGLE_TAX_TYPE_STATUS: '/api/masters/toggleTaxTypeActiveStatus',
   TOGGLE_CLIENT_STATUS: '/api/masters/toggleClientsActiveStatus',
-  TOGGLE_CLIENT_BILL_TO_STATUS: '/api/masters/toggleClientBillingActiveStatus',
-  TOGGLE_CLIENT_SHIP_TO_STATUS: '/api/masters/toggleClientShippingActiveStatus',
+  TOGGLE_CLIENT_BILL_TO_STATUS: '/api/masters/activateDeactivateClientBillTo',
+  TOGGLE_CLIENT_SHIP_TO_STATUS: '/api/masters/activateDeactivateClientShipTo',
   TOGGLE_CONTRACT_STATUS: '/api/masters/',
   CREATE_COUNTRY: '/api/masters/addCountry',
   CREATE_STATE_MASTER: '/api/masters/addState',
@@ -139,7 +139,7 @@ export const APIURLS = {
   UPDATE_PRODUCT_MASTER: '/api/masters/updateProduct',
   UPDATE_PROJECT_MASTER: '/api/masters/updateProject',
   UPDATE_TAX_MASTER: '/api/masters/updateTaxType',
-  UPDATE_CLIENT_MASTER: '/api/masters/updateClientDetails',
+  UPDATE_CLIENT_MASTER: '/api/masters/updateClient',
   UPDATE_CLIENT_BILL_TO_MASTER: '/api/masters/updateClientBillingInfo',
   UPDATE_CLIENT_SHIP_TO_MASTER: '/api/masters/updateClientShippingInfo',
   UPDATE_OEM_MASTER: '/api/masters/updateOEM',
@@ -232,4 +232,6 @@ export const APIURLS = {
   UPDATE_CLIENT_GROUP: '/api/masters/updateClientGroup',
   TOGGLE_CLIENT_GROUP_STATUS: '/api/masters/activateDeactivateClientGroup',
   GET_CLIENT_GROUPS: '/api/masters/getClientGroups',
+  UPDATE_MSA_FILE: '/api/masters/updateMSAFile',
+
 }
