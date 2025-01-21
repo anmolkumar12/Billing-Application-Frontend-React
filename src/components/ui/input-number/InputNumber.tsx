@@ -45,6 +45,7 @@ export const InputNumberComponent: React.FC<PropsInterface> = (props) => {
           locale={props.inputNumberOptions?.locale}
           currencyDisplay={props.inputNumberOptions?.currencyDisplay}
           disabled={props.disable}
+          useGrouping={false}
           onBlur={() => props.blurred(props.id)}
         />
       </span>
