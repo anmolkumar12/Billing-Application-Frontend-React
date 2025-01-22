@@ -189,14 +189,14 @@ const IndustryHeadMaster = () => {
       ),
     },
     {
-      label: "Name",
+      label: "Industry Head Name",
       fieldName: "industryHeadName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "industryHeadName",
       changeFilter: true,
-      placeholder: "Name",
+      placeholder: "Industry Head Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -213,14 +213,14 @@ const IndustryHeadMaster = () => {
       ),
     },
     {
-          label: "Ecode",
+          label: "Industry Head Ecode",
           fieldName: "code",
           textAlign: "left",
           sort: true,
           filter: true,
           fieldValue: "code",
           changeFilter: true,
-          placeholder: "Ecode",
+          placeholder: "Industry Head Ecode",
           body: (rowData: any) => (
             <div>
               <span
@@ -237,14 +237,14 @@ const IndustryHeadMaster = () => {
           ),
         },
         {
-          label: "Email",
+          label: "Industry Head Email",
           fieldName: "industry_head_email",
           textAlign: "left",
           sort: true,
           filter: true,
           fieldValue: "industry_head_email",
           changeFilter: true,
-          placeholder: "Email",
+          placeholder: "Account Manager Email",
           body: (rowData: any) => (
             <div>
               <span
@@ -863,10 +863,11 @@ const IndustryHeadMaster = () => {
 
     _.each(IndustryHeadForm, (item: any) => {
       if (item?.validation?.required) {
-        // companyFormValid.push(item.valid);
+        companyFormValid.push(item.valid);
         companyValidityFlag =
           companyValidityFlag &&
-          item.value;
+          item.valid &&
+          IndustryHeadForm?.country_name?.value != null;
       }
       if (
         (IndustryHeadForm?.isRegionWise?.value == false &&
