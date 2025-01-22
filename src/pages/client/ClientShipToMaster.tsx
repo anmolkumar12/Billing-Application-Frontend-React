@@ -75,6 +75,15 @@ const ClientShipToMaster = () => {
       },
       fieldWidth: "col-md-6",
     },
+    isDefaultAddress: {
+      inputType: "inputSwitch",
+      label: "Is It Default Address",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
   };
 
 
@@ -275,6 +284,28 @@ const ClientShipToMaster = () => {
       ),
     },
     {
+      label: "Default Address",
+      fieldName: "isDefaultAddress",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+          // data-pr-tooltip={rowData.IECode}
+          >
+            {rowData.isDefaultAddress == 1 ? "Yes" : "No"}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
       label: "Additional Address Details",
       fieldName: "additionalAddressDetails",
       textAlign: "left",
@@ -287,7 +318,7 @@ const ClientShipToMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.additionalAddressDetails}
+          // data-pr-tooltip={rowData.additionalAddressDetails}
           >
             {rowData.additionalAddressDetails}
           </span>
@@ -336,8 +367,6 @@ const ClientShipToMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientShipToMaster();
-      console.log('tttttttttttttttt', response);
-      
       setClientBillToMaster(response?.data);
       return response?.data;
     } catch (error) {
@@ -350,8 +379,9 @@ const ClientShipToMaster = () => {
     setLoader(true);
     try {
       const response = await countryService.getCountryMaster();
-      setCountryMaster(response?.countries);
-      return response?.countries;
+      const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive)
+      setCountryMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -362,8 +392,9 @@ const ClientShipToMaster = () => {
     setLoader(true);
     try {
       const response = await stateService.getStateMaster();
-      setStateMaster(response?.states);
-      return response?.states;
+      const temp = response?.states?.filter((item: any) => item?.isactive || item?.isActive)
+      setStateMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -457,8 +488,9 @@ const ClientShipToMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientMaster();
-      setClientMaster(response?.clients);
-      return response?.clients;
+      const temp = response?.clients?.filter((item: any) => item?.isactive || item?.isActive)
+      setClientMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -500,6 +532,7 @@ const ClientShipToMaster = () => {
       clientBillFieldsStructure.address3.value = data?.address3;
       // clientBillFieldsStructure.pin.value = data?.pin;
       clientBillFieldsStructure.country_name.value = data?.country_name;
+      clientBillFieldsStructure.isDefaultAddress.value = data?.isDefaultAddress == 1 ? true : false;
       // clientBillFieldsStructure.state_name.value = data?.state_name;
 
       setClientBillFieldsStructure(_.cloneDeep(clientBillFieldsStructure));
@@ -577,8 +610,8 @@ const ClientShipToMaster = () => {
 
     _.each(ClientBillForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+        // companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
 
@@ -594,6 +627,24 @@ const ClientShipToMaster = () => {
         countryMaster.find(
           (country: any) => country.name === ClientBillForm.country_name.value
         )?.id ?? null;
+
+      if (ClientBillForm?.isDefaultAddress?.value == true) {
+        let defaultAccountFlag = false;
+        clientBillToMaster
+          ?.filter(
+            (acc: any) => acc?.client_name == ClientBillForm.client_name.value
+          )
+          ?.forEach((item: any) => {
+            defaultAccountFlag = defaultAccountFlag || item?.isDefaultAddress;
+          });
+        if (defaultAccountFlag) {
+          ToasterService.show(
+            "A default address for this company is already present",
+            CONSTANTS.ERROR
+          );
+          return;
+        }
+      }
 
       // const stateId =
       //   stateMaster.find(
@@ -618,7 +669,8 @@ const ClientShipToMaster = () => {
         address2: ClientBillForm?.address2?.value,
         address3: ClientBillForm?.address3?.value,
         additionalAddressDetails: addressData,
-        updatedBy: loggedInUserId,
+        isDefaultAddress: ClientBillForm?.isDefaultAddress?.value == true ? 1 : 0,
+        updated_by: loggedInUserId,
       };
 
       if (!stateData?.id) {

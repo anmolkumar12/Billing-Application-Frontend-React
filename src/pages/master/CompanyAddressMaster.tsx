@@ -23,7 +23,7 @@ const CompanyAddressMaster = () => {
     companyName: {
       inputType: "singleSelect",
       label: "Company",
-      disable:false,
+      disable: false,
       options: [],
       value: null,
       validation: {
@@ -87,6 +87,15 @@ const CompanyAddressMaster = () => {
         required: false,
       },
       fieldWidth: "col-md-4",
+    },
+    isDefaultAddress: {
+      inputType: "inputSwitch",
+      label: "Is It Default Address",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
     },
   };
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -154,7 +163,7 @@ const CompanyAddressMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.companyName}
+          // data-pr-tooltip={rowData.companyName}
           >
             {rowData.companyName}
           </span>
@@ -178,7 +187,7 @@ const CompanyAddressMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.countryName}
+          // data-pr-tooltip={rowData.countryName}
           >
             {rowData.countryName}
           </span>
@@ -202,7 +211,7 @@ const CompanyAddressMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.stateName}
+          // data-pr-tooltip={rowData.stateName}
           >
             {rowData.stateName}
           </span>
@@ -224,7 +233,7 @@ const CompanyAddressMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address}
+          // data-pr-tooltip={rowData.address}
           >
             {rowData.address1}
           </span>
@@ -246,7 +255,7 @@ const CompanyAddressMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address}
+          // data-pr-tooltip={rowData.address}
           >
             {rowData.address2}
           </span>
@@ -268,7 +277,7 @@ const CompanyAddressMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address}
+          // data-pr-tooltip={rowData.address}
           >
             {rowData.address3}
           </span>
@@ -292,9 +301,31 @@ const CompanyAddressMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.additionalAddressDetails}
+          // data-pr-tooltip={rowData.additionalAddressDetails}
           >
             {rowData.additionalAddressDetails}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Default Address",
+      fieldName: "isDefaultAddress",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+          // data-pr-tooltip={rowData.IECode}
+          >
+            {rowData.isDefaultAddress == 1 ? "Yes" : "No"}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -348,7 +379,7 @@ const CompanyAddressMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+            {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -449,7 +480,7 @@ const CompanyAddressMaster = () => {
   };
 
   const companyLocationFormHandler = async (currentForm: FormType) => {
-       const form = _.cloneDeep(currentForm);
+    const form = _.cloneDeep(currentForm);
     if (form?.companyName?.value != CompanyLocationForm?.companyName?.value) {
       const selectedCompany = companyMaster?.find(
         (item: any) => item?.companyName == form?.companyName?.value
@@ -496,8 +527,8 @@ const CompanyAddressMaster = () => {
   const onUpdate = async (data: any) => {
     setStateData(data);
     const selectedCountry = countryMaster?.find(
-        (item: any) => item?.name == data?.countryName
-      );
+      (item: any) => item?.name == data?.countryName
+    );
     const stateList = await getStateMaster(selectedCountry?.id);
     const stateNames = stateList?.map((state: any) => state.stateName);
     updateCompanyLocationMaster(data, stateNames);
@@ -520,6 +551,7 @@ const CompanyAddressMaster = () => {
       // companyLocationFieldStructure.companyCode.value = data?.companyCode;
       companyLocationFieldStructure.address2.value = data?.address2;
       companyLocationFieldStructure.address3.value = data?.address3;
+      companyLocationFieldStructure.isDefaultAddress.value = data?.isDefaultAddress == 1 ? true : false;
       setCompanyLocationForm(_.cloneDeep(companyLocationFieldStructure));
       const addressDetails = JSON.parse(data?.additionalAddressDetails);
       const addressForm = Object.keys(addressDetails)?.reduce(
@@ -547,7 +579,7 @@ const CompanyAddressMaster = () => {
     event.preventDefault();
     let companyValidityFlag = true;
     console.log('CompanyLocationForm', CompanyLocationForm);
-    
+
     _.each(CompanyLocationForm, (item: any) => {
       if (item?.validation?.required) {
         companyValidityFlag = companyValidityFlag && item.value;
@@ -574,6 +606,25 @@ const CompanyAddressMaster = () => {
           state.stateName === CompanyLocationForm.state_name.value
       )?.id ?? null;
 
+    if (CompanyLocationForm?.isDefaultAddress?.value == true) {
+      let defaultAccountFlag = false;
+      companyLocationMaster
+        ?.filter(
+          (acc: any) => acc?.companyName
+            == CompanyLocationForm.companyName.value
+        )
+        ?.forEach((item: any) => {
+          defaultAccountFlag = defaultAccountFlag || item?.isDefaultAddress;
+        });
+      if (defaultAccountFlag) {
+        ToasterService.show(
+          "A default address for this company is already present",
+          CONSTANTS.ERROR
+        );
+        return;
+      }
+    }
+
     if (companyValidityFlag) {
       const addressData = Object.keys(AdditionalDetailsForm)?.reduce(
         (acc: any, item: any, index: any) => {
@@ -594,6 +645,7 @@ const CompanyAddressMaster = () => {
         address3: CompanyLocationForm?.address3?.value,
         // companyCode: CompanyLocationForm?.companyCode?.value,
         additionalAddressDetails: addressData,
+        isDefaultAddress: CompanyLocationForm?.isDefaultAddress?.value == true ? 1 : 0,
         isActive: 1,
         updatedBy: loggedInUserId,
       };
@@ -639,11 +691,10 @@ const CompanyAddressMaster = () => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to ${
-        !(data?.isactive || data?.is_active || data?.isActive)
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
           ? "activate"
           : "deactivate"
-      } this record?`,
+        } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
     });
@@ -658,8 +709,7 @@ const CompanyAddressMaster = () => {
         setLoader(false);
         setShowConfirmDialogue(false);
         ToasterService.show(
-          `Company Address record ${
-            patchData?.isActive ? "deactivated" : "activated"
+          `Company Address record ${patchData?.isActive ? "deactivated" : "activated"
           } successfully`,
           CONSTANTS.SUCCESS
         );

@@ -480,3 +480,27 @@
     gap: 10px; /* Adjust the gap between buttons as needed */
     flex: 0 0 auto;
   }
+
+  /* Make the MSA text clickable */
+.clickable-msa {
+  color: #007bff; /* Blue color for links */
+  text-decoration: none; /* Remove underline */
+  cursor: pointer; /* Pointer cursor on hover */
+  display: inline-flex; /* Align icon with text */
+  align-items: center; /* Center icon vertically */
+}
+
+/* Change color on hover */
+.clickable-msa:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
+
+/* Add spacing and style for the download icon */
+.download-icon {
+  margin-left: 8px; /* Space between text and icon */
+  width: 16px; /* Icon size */
+  height: 16px;
+  // background-image: url('path-to-your-download-icon.svg'); /* Replace with your icon path */
+  background-size: cover;
+  background-repeat: no-repeat;
+}

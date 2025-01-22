@@ -64,16 +64,16 @@ const ClientMaster = () => {
             },
             fieldWidth: "col-md-4",
         },
-        client_status: {
-            inputType: "singleSelect",
-            label: "Client Status",
-            options: ["Existing", "New"],
-            value: null,
-            validation: {
-                required: true,
-            },
-            fieldWidth: "col-md-4",
-        },
+        // client_status: {
+        //     inputType: "singleSelect",
+        //     label: "Client Status",
+        //     options: ["Existing", "New"],
+        //     value: null,
+        //     validation: {
+        //         required: true,
+        //     },
+        //     fieldWidth: "col-md-4",
+        // },
         country_name: {
             inputType: "singleSelect",
             label: "Country",
@@ -186,7 +186,7 @@ const ClientMaster = () => {
         },
         is_msa_missing: {
             inputType: "inputSwitch",
-            label: "MSA Missing?",
+            label: "Is MSA",
             value: false,
             validation: {
                 required: false,
@@ -310,7 +310,7 @@ const ClientMaster = () => {
             sort: false,
             filter: false,
             body: (rowData: any) => (
-                <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
+                <div style={{ display: "flex", gap: "12px", marginLeft: "20px" }}>
                     <span
                         className="pi pi-pencil"
                         style={{ cursor: "pointer" }}
@@ -324,7 +324,7 @@ const ClientMaster = () => {
                         onClick={() => onDelete(rowData)}
                     ></span>
                     <span
-                        className="pi pi-ellipsis-v"
+                        className="pi pi-sync"
                         style={{ cursor: "pointer" }}
                         title="Update MSA"
                         onClick={() => onMSAUpdate(rowData)}
@@ -494,8 +494,28 @@ const ClientMaster = () => {
             sort: false,
             filter: false,
             placeholder: "MSA File",
-            body: (rowData: any) => (<>{rowData?.msaFilePath ? <span onClick={() => downloadFile(rowData.msaFilePath)}>MSA</span> : null}
-            </>),
+            body: (rowData: any) => (
+                <>
+                    {rowData?.msaFilePath ? (
+                        <div onClick={() => downloadFile(rowData.msaFilePath)} >
+                            <span style={{
+                                cursor: "pointer", // Pointer cursor on hover
+                                color: "#007bff", // Icon color (same as text)
+                            }}>MSA</span>
+                            <span
+                                className="pi pi-download" // Use the PrimeIcons class for download icon
+                                style={{
+                                    cursor: "pointer", // Pointer cursor on hover
+                                    marginLeft: "8px", // Space between text and icon
+                                    fontSize: "10px", // Icon size
+                                    color: "#007bff", // Icon color (same as text)
+                                }}
+                                title="Download MSA"
+                            ></span>
+                        </div>
+
+                    ) : null}
+                </>),
         },
         {
             label: "NDA File",
@@ -504,7 +524,27 @@ const ClientMaster = () => {
             sort: false,
             filter: false,
             placeholder: "NDA File",
-            body: (rowData: any) => (<>{rowData?.ndaFilePath ? <span onClick={() => downloadFile(rowData.ndaFilePath)}>NDA</span> : null}
+            body: (rowData: any) =>
+            (<>
+                {rowData?.ndaFilePath ? (
+                    <div onClick={() => downloadFile(rowData.ndaFilePath)} >
+                        <span style={{
+                            cursor: "pointer", // Pointer cursor on hover
+                            color: "#007bff", // Icon color (same as text)
+                        }}>NDA</span>
+                        <span
+                            className="pi pi-download" // Use the PrimeIcons class for download icon
+                            style={{
+                                cursor: "pointer", // Pointer cursor on hover
+                                marginLeft: "8px", // Space between text and icon
+                                fontSize: "10px", // Icon size
+                                color: "#007bff", // Icon color (same as text)
+                            }}
+                            title="Download MSA"
+                        ></span>
+                    </div>
+
+                ) : null}
             </>),
         },
         {
@@ -515,13 +555,13 @@ const ClientMaster = () => {
             sort: true,
             filter: true,
             body: (rowData: any) => (
-              <div>
-                <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
-                  {rowData?.isActive == 1 ? "Active" : "Inactive"}
-                </span>
-              </div>
+                <div>
+                    <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
+                        {rowData?.isActive == 1 ? "Active" : "Inactive"}
+                    </span>
+                </div>
             ),
-          },
+        },
         {
             label: "Updated At",
             fieldName: "updated_at",
@@ -608,8 +648,9 @@ const ClientMaster = () => {
         // setLoader(true);
         try {
             const response = await salesService.getSalesMaster();
-            setSalesMaster(response?.salesManagers);
-            return response?.salesManagers;
+            const temp = response?.salesManagers?.filter((item: any) => item?.isactive || item?.isActive)
+            setSalesMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -831,13 +872,13 @@ const ClientMaster = () => {
     };
 
     const onUpdate = async (data: any) => {
-            const accountManagers = await getAccountManagerMaster();
-            await formatAccountManagerMasterDetails(accountManagers);
-            const accountMaster = await getAccountMaster();
-            await formatAccountMasterDetails(accountMaster);
-            const salesManager = await getSalesMaster();
-            await formatSalesManagerDetails(salesManager)
-            await formatAccountMasterDetails(accountMaster);
+        const accountManagers = await getAccountManagerMaster();
+        await formatAccountManagerMasterDetails(accountManagers);
+        const accountMaster = await getAccountMaster();
+        await formatAccountMasterDetails(accountMaster);
+        const salesManager = await getSalesMaster();
+        await formatSalesManagerDetails(salesManager)
+        await formatAccountMasterDetails(accountMaster);
         await setCliendData(data);
         await updateClientaster(data);
         await setClientFormPopup(true);
@@ -859,12 +900,12 @@ const ClientMaster = () => {
             clientFormFieldsStructure.vega_client_name.value = data?.vega_client_name;
             clientFormFieldsStructure.client_type.value = data?.client_type;
             clientFormFieldsStructure.credit_period.value = data?.credit_period;
-            clientFormFieldsStructure.client_status.value = data?.client_status;
+            // clientFormFieldsStructure.client_status.value = data?.client_status;
             clientFormFieldsStructure.country_name.value = data?.countryName;
             clientFormFieldsStructure.companyName.value = data?.companyName;
             clientFormFieldsStructure.account_name.value = data?.bankName?.split(',');
             clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadName;
-            
+
             clientFormFieldsStructure.industry_name.value = data?.industryGroupNames;
             clientFormFieldsStructure.industry_group.value = data?.industryName;
             // clientFormFieldsStructure.industry_sub_group.value = data?.industrySubGroupNames;
@@ -882,10 +923,10 @@ const ClientMaster = () => {
             // clientFormFieldsStructure.updated_by.value = data?.updated_by;
             // clientFormFieldsStructure.isActive.value = data?.isActive;
             // clientFormFieldsStructure.updated_at.value = data?.updated_at;
-            if(data?.msa_flag){
+            if (data?.msa_flag) {
                 setLogoUrl(data?.msaFilePath)
             }
-            if(data?.nda_flag){
+            if (data?.nda_flag) {
                 setSignatureUrl(data?.ndaFilePath)
             }
 
@@ -976,23 +1017,22 @@ const ClientMaster = () => {
     };
 
     const confirmDelete = () => {
-    setLoader(true);
-    clientService
-      .deactivateClientMaster({ ...patchData, loggedInUserId })
-      .then(() => {
-        setLoader(false);
-        setShowConfirmDialogue(false);
-        ToasterService.show(
-          `Client record ${
-            patchData?.isActive ? "deactivated" : "activated"
-          } successfully`,
-          CONSTANTS.SUCCESS
-        );
-      })
-      .catch((error) => {
-        setLoader(false);
-        return false;
-      });
+        setLoader(true);
+        clientService
+            .deactivateClientMaster({ ...patchData, loggedInUserId })
+            .then(() => {
+                setLoader(false);
+                setShowConfirmDialogue(false);
+                ToasterService.show(
+                    `Client record ${patchData?.isActive ? "deactivated" : "activated"
+                    } successfully`,
+                    CONSTANTS.SUCCESS
+                );
+            })
+            .catch((error) => {
+                setLoader(false);
+                return false;
+            });
     };
 
     const closeFormPopup = () => {
@@ -1017,7 +1057,7 @@ const ClientMaster = () => {
         const month: any = String(date.getMonth() + 1).padStart(2, "0");
         const day: any = String(date.getDate()).padStart(2, "0");
         return new Date(year, month - 1, day);
-      };
+    };
 
     const formatDate = (dateString: any) => {
         const date = new Date(dateString);
@@ -1176,15 +1216,15 @@ const ClientMaster = () => {
                     const selectedIndustry = industryHeadMaster
                         ?.find((item: any) => item?.industryHeadName === selectedIndustryHead)
                         ?.industryNames;
-                
+
                     const selectedIndustryArray = selectedIndustry?.split(',').map((str: string) => str.trim()); // Split and trim the selected industries
-                
+
                     const tempData = industryGroupMaster
                         ?.filter((item: any) =>
                             selectedIndustryArray?.some((industry: string) => item?.groupIndustryName.includes(industry))
                         )
                         .map((ele: any) => ele?.groupIndustryName);
-                
+
                     form.industry_group.options = tempData || [];
                     console.log('Filtered tempData:', tempData, 'Selected Industries:', selectedIndustryArray);
                 }
@@ -1205,17 +1245,17 @@ const ClientMaster = () => {
         const companyFormValid: boolean[] = [];
 
 
-        // _.each(clientForm, (item: any) => {
-        //     if (item?.validation?.required) {
-        //         companyFormValid.push(item.value);
-        //         companyValidityFlag = companyValidityFlag && !!item.value; // Ensure boolean value
-        //     }
-        // });
-        
+        _.each(clientForm, (item: any) => {
+            if (item?.validation?.required) {
+                // companyFormValid.push(item.value);
+                companyValidityFlag = companyValidityFlag && item.value; // Ensure boolean value
+            }
+        });
+
 
         setIsFormValid(companyValidityFlag);
         console.log('clientForm', clientForm, companyValidityFlag);
-        
+
         if (companyValidityFlag) {
             const industry_id =
                 industryMaster.find(
@@ -1288,7 +1328,7 @@ const ClientMaster = () => {
             let salesManagerId = "";
             clientForm?.sales_person?.value?.forEach((item: any) => {
                 const id =
-                salesMaster?.find(
+                    salesMaster?.find(
                         (com: any) => com?.name == item
                     )?.id ?? null;
                 if (id != null) {
@@ -1305,7 +1345,7 @@ const ClientMaster = () => {
                 vega_client_name: clientForm?.vega_client_name?.value,
                 client_type: clientForm?.client_type?.value,
                 credit_period: clientForm?.credit_period?.value,
-                client_status: clientForm?.client_status?.value,
+                client_status: 1,
                 countryId: countryId,
                 companyId: companyId,
                 accountId: bankId,
@@ -1331,13 +1371,28 @@ const ClientMaster = () => {
             });
 
 
-            if (attachments?.length) {
-                formData.set("msaFile", attachments[0]);
-            }
+                // Check for msaFile and ndaFile requirements
+    if (clientForm?.is_msa_missing?.value && (!attachments || !attachments.length)) {
+        ToasterService.show("MSA file is required!", CONSTANTS.ERROR);
+        return;
+    } else if (attachments?.length) {
+        formData.set("msaFile", attachments[0]);
+    }
 
-            if (digitalSign?.length) {
-                formData.set("ndaFile", digitalSign[0]);
-            }
+    if (clientForm?.nda_flag?.value && (!digitalSign || !digitalSign.length)) {
+        ToasterService.show("NDA file is required!", CONSTANTS.ERROR);
+        return;
+    } else if (digitalSign?.length) {
+        formData.set("ndaFile", digitalSign[0]);
+    }
+
+            // if (attachments?.length) {
+            //     formData.set("msaFile", attachments[0]);
+            // }
+
+            // if (digitalSign?.length) {
+            //     formData.set("ndaFile", digitalSign[0]);
+            // }
             console.log("here formData", formData);
 
             console.log('createClientForm : ', clientForm, obj);
@@ -1364,15 +1419,15 @@ const ClientMaster = () => {
 
                 Object.entries(updatePayload).forEach(([key, value]: any) => {
                     formData.set(key, value);
-                  });
-          
-                  if (attachments?.length) {
+                });
+
+                if (attachments?.length) {
                     formData.set("msaFile", attachments[0]);
-                  }
-          
-                  if (digitalSign?.length) {
+                }
+
+                if (digitalSign?.length) {
                     formData.set("ndaFile", digitalSign[0]);
-                  }
+                }
 
                 clientService
                     .updateClientMaster(formData)
@@ -1401,7 +1456,7 @@ const ClientMaster = () => {
 
         _.each(msaForm, (item: any) => {
             if (item?.validation?.required) {
-                companyFormValid.push(item.valid);
+                // companyFormValid.push(item.valid);
                 companyValidityFlag = companyValidityFlag && item.value;
             }
         });

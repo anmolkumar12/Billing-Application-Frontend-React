@@ -316,8 +316,9 @@ const ClientContactMaster = () => {
         setLoader(true);
         try {
             const response = await clientService.getClientMaster();
-            setClientMaster(response?.clients);
-            return response?.clients;
+            const temp = response?.clients?.filter((item: any) => item?.isactive || item?.isActive)
+            setClientMaster(temp);
+            return temp;
         } catch (error) {
             console.error(error);
         } finally {
@@ -467,6 +468,13 @@ const ClientContactMaster = () => {
         event.preventDefault();
         let companyValidityFlag = true;
         const companyFormValid: boolean[] = [];
+
+        _.each(clientForm, (item: any) => {
+            if (item?.validation?.required) {
+                // companyFormValid.push(item.valid);
+                companyValidityFlag = companyValidityFlag && item.value;
+            }
+        });
 
         setIsFormValid(companyValidityFlag);
 
