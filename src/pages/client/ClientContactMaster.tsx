@@ -538,7 +538,7 @@ const ClientContactMaster = () => {
                 }}
             >
                 <ButtonComponent
-                    label="Add New Client"
+                    label="Add New Contact"
                     icon="pi pi-check"
                     iconPos="right"
                     submitEvent={openSaveForm}
@@ -575,7 +575,7 @@ const ClientContactMaster = () => {
                                 }}
                             >
                                 <i className="pi pi-angle-left"></i>
-                                <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} Client</h4>
+                                <h4 className="popup-heading">{isEditState ? 'Update' : 'Add New'} Contact</h4>
                             </div>
                             <div
                                 className="popup-right-close"
