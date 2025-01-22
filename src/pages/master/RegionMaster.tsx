@@ -56,15 +56,15 @@ const RegionMaster = () => {
     //   },
     //   fieldWidth: "col-md-4",
     // },
-    fromDate: {
-      inputType: "singleDatePicker",
-      label: "From Date",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    }
+    // fromDate: {
+    //   inputType: "singleDatePicker",
+    //   label: "From Date",
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-6",
+    // }
     
   };
   const [statesList,setStatesList] = useState<any>([]);
@@ -272,31 +272,31 @@ const RegionMaster = () => {
     //     </div>
     //   ),
     // },
-    {
-      label: "From Date",
-      fieldName: "fromDate",
-      textAlign: "left",
-      sort: true,
-      filter: true,
-      fieldValue: "fromDate",
-      changeFilter: true,
-      placeholder: "From Date",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.fromDate}
-          >
-            {/* {rowData.fromDate} */}
-            {moment(rowData?.fromDate).format('YYYY-MM-DD')}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
+    // {
+    //   label: "From Date",
+    //   fieldName: "fromDate",
+    //   textAlign: "left",
+    //   sort: true,
+    //   filter: true,
+    //   fieldValue: "fromDate",
+    //   changeFilter: true,
+    //   placeholder: "From Date",
+    //   body: (rowData: any) => (
+    //     <div>
+    //       <span
+    //         id={`companyNameTooltip-${rowData.id}`}
+    //         // data-pr-tooltip={rowData.fromDate}
+    //       >
+    //         {/* {rowData.fromDate} */}
+    //         {moment(rowData?.fromDate).format('YYYY-MM-DD')}
+    //       </span>
+    //       <Tooltip
+    //         target={`#companyNameTooltip-${rowData.id}`}
+    //         position="top"
+    //       />
+    //     </div>
+    //   ),
+    // },
     {
       label: "States",
       fieldName: "stateNames",
@@ -570,7 +570,7 @@ const RegionMaster = () => {
       // regionFieldsStructure.regionHeadEcode.value = data?.regionHeadEcode;
       // regionFieldsStructure.regionHeadEmail.value = data?.regionHeadEmail;
       // regionFieldsStructure.fromDate.value = data?.fromDate;
-      regionFieldsStructure.fromDate.value = parseDateString(data?.fromDate);
+      // regionFieldsStructure.fromDate.value = parseDateString(data?.fromDate);
 
       setRegionForm(_.cloneDeep(regionFieldsStructure));
       const stateForm: any = [];
@@ -718,7 +718,7 @@ const RegionMaster = () => {
           // regionHeadEcode:RegionForm?.regionHeadEcode?.value,
           // regionHeadEmail:RegionForm?.regionHeadEmail?.value,
           // fromDate:new Date(RegionForm?.fromDate?.value),
-          fromDate: formatDate(RegionForm?.fromDate?.value),  
+          // fromDate: formatDate(RegionForm?.fromDate?.value),  
           stateIds: ids,
           isActive: 1,
           updatedBy: loggedInUserId,

@@ -32,7 +32,7 @@ const IndustryMaster = () => {
       value: null,
       options: [],
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
