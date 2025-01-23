@@ -13,7 +13,7 @@ const MasterLazyComponent = React.lazy(() => {
 const ContractLazyComponent = React.lazy(() => {
   return new Promise<void>((resolve) => {
     resolve()
-  }).then(() => import('../../pages/contract/Contract'))
+  }).then(() => import('../po-contract/PoContract'))
 })
 
 const ClientLazyComponent = React.lazy(() => {

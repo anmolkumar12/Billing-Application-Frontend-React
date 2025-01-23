@@ -29,12 +29,24 @@ export const APIURLS = {
   GET_CLIENT_MASTER: '/api/masters/getClientsList',
   GET_CLIENT_BILL_TO_MASTER: '/api/masters/getClientBillTo',
   GET_CLIENT_SHIP_TO_MASTER: '/api/masters/getClientShipTo',
+
+// CLIENT PO Contract Configuration
+   GET_PO_CONTRACT_CONFIGURATION:'/api/masters/getPoContractConfiguration',
+   GET_PO_MASTER_CONFIG_DATA:'/api/masters/getPoContractMasterData',
+
   GET_OEM_MASTER: '/api/masters/getOEMs',
   // POLESTAR PRODUCT 
   GET_POLESTAR_PRODUCT_MASTER:'/api/masters/getPoleStarProducts',
   CREATE_POLESTAR_PRODUCT_MASTER:'/api/masters/createPoleStarProduct',
   UPDATE_POLESTAR_PRODUCT_MASTER:'/api/masters/updatePoleStarProduct',
   TOGGLE_POLESTAR_PRODUCT_MASTER_STATUS:'/api/masters/activateDeactivatePoleStarProduct',
+//  PO CONTARCT
+
+    GET_PO_CONTRACTS: '/api/contracts/getPoContractsData',
+    CREATE_PO_CONTRACT: '/api/contracts/insertPoContract',
+    UPDATE_PO_CONTRACT: '/api/contracts/updatePoContract',
+    TOGGLE_PO_CONTRACT_STATUS: '/api/contracts/activateDeactivatePoContract',
+
   // PROJECT SERVICE
   GET_PROJECT_SERVICE_MASTER:'/api/masters/getProjectService',
   CREATE_PROJECT_SERVICE_MASTER:'/api/masters/createProjectService',
