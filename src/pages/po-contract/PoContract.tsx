@@ -21,6 +21,8 @@ import classes from "../master/Master.module.scss";
 import { FILE_TYPES } from "../../enums/file-types.enum";
 
 import { PoContractService}  from "../../services/po-contract/poContract.service";
+import EditableTable from "./EditableTable";
+import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 
 const Contract: React.FC = () => {
 
@@ -119,7 +121,7 @@ const Contract: React.FC = () => {
       },
       dueAmount: {
         inputType: "inputNumber",
-        label: "Due Amount",
+        label: "Pending Amount",
         // options: [],
         disable:true,
         value: null,
@@ -207,6 +209,57 @@ const Contract: React.FC = () => {
         },
         fieldWidth: "col-md-4",
       },
+      industryGroups: {
+        inputType: "multiSelect",
+        label: "Industry Groups",
+        options: [],
+        value: null,
+        validation: {
+          required:false
+        },
+        fieldWidth: "col-md-4",
+      },
+      subIndustries: {
+        inputType: "multiSelect",
+        label: "Sub Industries",
+        options: [],
+        value: null,
+        validation: {
+          required:false
+        },
+        fieldWidth: "col-md-4",
+      },
+      industryHead: {
+        inputType: "multiSelect",
+        label: "Industry Head",
+        options: [],
+        value: null,
+        validation: {
+          required:false
+        },
+        fieldWidth: "col-md-4",
+      },
+      salesManager: {
+        inputType: "multiSelect",
+        label: "Sales Manager",
+        options: [],
+        value: null,
+        validation: {
+          required:false
+        },
+        fieldWidth: "col-md-4",
+      },
+      accountManager: {
+        inputType: "multiSelect",
+        label: "Account Manager",
+        options: [],
+        value: null,
+        validation: {
+          required:false
+        },
+        fieldWidth: "col-md-4",
+      },
+     
 
     docType: {
       inputType: "singleSelect",
@@ -238,16 +291,47 @@ const Contract: React.FC = () => {
       },
       fieldWidth: "col-md-4",
     },
+    noOfResources: {
+      inputType: "inputtext",
+      label: "No of Resources",
+      // options: [],
+      value: null,
+      validation: {
+        required:false
+      },
+      fieldWidth: "col-md-4",
+    },
+   
   };
-  const [contractMaster, setContractMaster] = useState<any>([]);
+  const [poContractsData, setPoContractData] = useState<any>([]);
   const [clientListNames,setClientListNames] = useState<any>([]);
   const [poContractConfData,setPoContractConfData] = useState<any>([]);
+  const [poContractNames,setPoContractNames] = useState<any>({
+    projectService_names:'',
+    technolgyGroup_names:'',
+    technolgySubGroup_names:'',
+    technolgy_names:'',
+    oem_names:'',
+    product_names:'',
+    industryGroups_names:'',
+    subIndustries_names:'',
+    industryHead_names:'',
+    salesManager_names:'',
+    accountManager_names:'',
+    clientBillTo_names:'',                        
+    clientShipAddress_names:'',
+    clientContact_names:'',
+    companyName:'',
+    companyLocation_names:''
+  })
   const [poMastersConfigData,setPoMastersConfigData] = useState<any>({});
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [tableData, setTableData] = useState<any>([]);
+  const [cascadingData,setCascadingData] = useState<any>({groupIndustryData:[], industryData:[], industryHeadData:[], salesManagerData:[], accountManagerData:[]})
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
     const [logoUrl,setLogoUrl] = useState('');
@@ -265,6 +349,7 @@ const Contract: React.FC = () => {
       getContractMaster();
       getPoContractConfiguration();
       getPOContractMasterConfigData();
+      getPOContractMasterCascadingData()
 
   }, []);
 
@@ -272,15 +357,16 @@ const Contract: React.FC = () => {
 
 
   const getContractMaster = async () => {
-    // setLoader(true);
-    // try {
-    // //   const response = await contractService.getContractMaster();
-    //   setContractMaster(response?.contracts);
-    // } catch (error) {
-    //   console.error(error);
-    // } finally {
-    //   setLoader(false);
-    // }
+    setLoader(true);
+    try {
+      const response = await poContractService.getPoContractsData();
+   
+      setPoContractData(response?.poContracts);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
   };
   const getPoContractConfiguration = async () => {
     setLoader(true);
@@ -294,6 +380,7 @@ const Contract: React.FC = () => {
         //      value:item?.id?.toString()
         // }
       }))
+      return response?.data
     } catch (error) {
       console.error(error);
     } finally {
@@ -305,7 +392,6 @@ const Contract: React.FC = () => {
     setLoader(true);
     try {
       const response = await poContractService.getPOContractMasterConfigData();
-      console.log('------>',response?.data?.data)
       setPoMastersConfigData(response?.data?.data);
 
       // setPoContractConfData(response?.data);
@@ -322,6 +408,28 @@ const Contract: React.FC = () => {
       setLoader(false);
     }
   };
+  const getPOContractMasterCascadingData = async () => {
+    setLoader(true);
+    try {
+      const response = await poContractService.getPOContractMasterCascadingData();
+      console.log('------>',response?.data?.data)
+      setCascadingData(response?.data?.data);
+
+      // setPoContractConfData(response?.data);
+      // setClientListNames(response?.data?.map((item:any) => {
+      //   return item.client_name 
+      //   // return {
+      //   //      label:item?.client_name,
+      //   //      value:item?.id?.toString()
+      //   // }
+      // }))
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+  
 
   const deactivateContractMaster = () => {
     setLoader(true);
@@ -360,12 +468,11 @@ const Contract: React.FC = () => {
   
 
   
-  objFormState.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
-    ? poMastersConfigData?.technolgy.map((item: any) => ({
-        label: item?.techName,
-        value: item.id.toString(),
+  objFormState.industryGroups.options = cascadingData.groupIndustryData.map((item: any) => ({
+        label: item?.groupIndustryName,
+        value: item.groupIndustryId.toString(),
       }))
-    : [];
+   
   
   objFormState.oem.options = Array.isArray(poMastersConfigData?.oem)
     ? poMastersConfigData?.oem.map((item: any) => ({
@@ -398,7 +505,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: false,
       filter: false,
-      body: (rowData: any) => (
+      body: (rowData:any) => (
         <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
@@ -407,279 +514,78 @@ const Contract: React.FC = () => {
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isactive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
             style={{ cursor: "pointer" }}
-            title={rowData.isactive ? "Deactivate" : "Activate"}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
           ></span>
         </div>
       ),
     },
     {
-      label: "Client",
-      fieldName: "client",
+      label: "Client Name",
+      fieldName: "client_name",
       textAlign: "left",
       sort: true,
       filter: true,
-      fieldValue: "client",
+      fieldValue: "client_name",
       changeFilter: true,
-      placeholder: "Name",
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.companyName}
-          >
-            {rowData.client}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
+      placeholder: "Client Name",
+      body: (rowData:any) => <span>{rowData.client_name}</span>,
     },
     {
-      label: "Client Bill To",
+      label: "Bill To",
       fieldName: "clientBillTo",
       textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.Website}
-          >
-            {rowData.clientBillTo}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
+      body: (rowData:any) => <span>{rowData?.masterNames?.clientBillTo_names}</span>,
     },
     {
-      label: "Client Shipping Address",
-      fieldName: "clientShipAdd",
+      label: "Shipping Address",
+      fieldName: "clientShipAddress",
       textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.CINNO}
-          >
-            {rowData.clientShipAdd}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
+      body: (rowData:any) => <span>{rowData?.masterNames?.clientShipAddress_names}</span>,
     },
     {
       label: "Contact",
-      fieldName: "contact",
+      fieldName: "clientContact",
       textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.IECode}
-          >
-            {rowData.contact}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
+      body: (rowData:any) => <span>{rowData?.masterNames?.clientContact_names}</span>,
+    },
+    // {
+    //   label: "Bill From",
+    //   fieldName: "billFrom",
+    //   textAlign: "left",
+    //   frozen: false,
+    //   sort: true,
+    //   filter: true,
+    //   body: (rowData:any) => <span>{rowData.billFrom || "N/A"}</span>,
+    // },
+    {
+      label: "Company Name",
+      fieldName: "companyName",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData.companyName}</span>,
     },
     {
-      label: "Bill From",
-      fieldName: "billFrom",
+      label: "Company Location",
+      fieldName: "companyLocation",
       textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.PAN}
-          >
-            {rowData.billFrom}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Technology",
-      fieldName: "technology",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.gst_number}
-          >
-            {rowData.technology}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Start Date",
-      fieldName: "startDate",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.address}
-          >
-            {rowData.startDate}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "End Date",
-      fieldName: "endDate",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.Email}
-          >
-            {rowData.endDate}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Name",
-      fieldName: "name",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.name}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Code",
-      fieldName: "code",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.code}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Tax Code",
-      fieldName: "taxCode",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.taxCode}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Project Manager",
-      fieldName: "projectManager",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.projectManager}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
+      body: (rowData:any) => <span>{rowData?.masterNames?.companyLocation_names}</span>,
     },
     {
       label: "Credit Period",
@@ -688,81 +594,168 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.creditPeriod}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
-    },
-    {
-      label: "Document Type",
-      fieldName: "docType",
-      textAlign: "left",
-      frozen: false,
-      sort: true,
-      filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.docType}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
+      body: (rowData:any) => <span>{rowData.creditPeriod} days</span>,
     },
     {
       label: "PO Amount",
-      fieldName: "poAmt",
+      fieldName: "poAmount",
       textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span
-            id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.description}
-          >
-            {rowData.poAmt}
-          </span>
-          <Tooltip
-            target={`#companyNameTooltip-${rowData.id}`}
-            position="top"
-          />
-        </div>
-      ),
+      body: (rowData:any) => <span>{rowData.poAmount}</span>,
+    },
+    {
+      label: "Pending Amount",
+      fieldName: "dueAmount",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData.dueAmount}</span>,
+    },
+    {
+      label: "Start Date",
+      fieldName: "start_date",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData.start_date}</span>,
+    },
+    {
+      label: "End Date",
+      fieldName: "end_date",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData.end_date}</span>,
+    },
+    {
+      label: "Project Service",
+      fieldName: "projectService",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.projectService_names}</span>,
+    },
+    {
+      label: "Technology Group",
+      fieldName: "technolgyGroup",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.technolgyGroup_names}</span>,
+    },
+    {
+      label: "Technology Sub-Group",
+      fieldName: "technolgySubGroup",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.technolgySubGroup_names}</span>,
+    },
+    {
+      label: "Technology",
+      fieldName: "technolgy",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.technolgy_names}</span>,
+    },
+    {
+      label: "OEM",
+      fieldName: "oem",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.oem_names}</span>,
+    },
+    {
+      label: "Product",
+      fieldName: "product",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.product_names}</span>,
+    },
+    {
+      label: "Industry Groups",
+      fieldName: "industryGroups",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.industryGroups_names}</span>,
+    },
+    {
+      label: "Sub-Industries",
+      fieldName: "subIndustries",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.subIndustries_names}</span>,
+    },
+    {
+      label: "Industry Head",
+      fieldName: "industryHead",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.industryHead_names}</span>,
+    },
+    {
+      label: "Sales Manager",
+      fieldName: "salesManager",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.salesManager_names}</span>,
+    },
+    {
+      label: "Account Manager",
+      fieldName: "accountManager",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData?.masterNames?.accountManager_names}</span>,
+    },
+    {
+      label: "PO Number",
+      fieldName: "poNumber",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData:any) => <span>{rowData.poNumber}</span>,
     },
     {
       label: "Status",
-      fieldName: "isactive",
+      fieldName: "isActive",
       textAlign: "left",
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => (
-        <div>
-          <span style={{ color: rowData?.isactive === 1 ? "green" : "red" }}>
-            {rowData?.isactive === 1 ? "Active" : "Inactive"}
-          </span>
-        </div>
+      body: (rowData:any) => (
+        <span style={{ color: rowData?.isActive ? "green" : "red" }}>
+          {rowData?.isActive ? "Active" : "Inactive"}
+        </span>
       ),
     },
   ];
+  
+
 
   const onDelete = (data: unknown) => {
     patchData = data;
@@ -779,8 +772,10 @@ const Contract: React.FC = () => {
 
 
   const onUpdate = (data: any) => {
-    updateContractMaster(data);
-    setFormPopup(true);
+    console.log('rowData---->',data);
+
+    updatePoContactMasterData(data);
+    // setFormPopup(true);
   };
 
   const onPopUpClose = (e?: any) => {
@@ -790,11 +785,21 @@ const Contract: React.FC = () => {
 
 
 
-  const updateContractMaster = (data: any) => {
+  const updatePoContactMasterData = (rowData: any) => {
     try {
+      // objFormState.client_name.value = rowData.
+
     } catch (error) {
       console.log("error", error);
     }
+  };
+
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
   };
 
 
@@ -912,77 +917,182 @@ const Contract: React.FC = () => {
     if(currentForm.poAmount.value != objFormState.poAmount.value){
       currentForm.dueAmount.value = currentForm.poAmount.value;
     }
+    const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
+
+    // 1. Filter Sub-Industries Based on Selected Industry Groups
+    if (
+      currentForm.industryGroups.value !== objFormState.industryGroups.value &&
+      currentForm.industryGroups.value
+    ) {
+      currentForm.subIndustries.options = groupIndustryData
+        .filter((group:any) =>
+          Number(group.groupIndustryId) === Number(currentForm.industryGroups.value)
+        )
+        .flatMap((group:any) =>
+          industryData
+            .filter((industry:any) =>
+              group.industryIds.split(',').includes(industry.industryId.toString())
+            )
+            .map((industry:any) => ({
+              label: industry.industryName,
+              value: industry.industryId.toString(),
+            }))
+        );
+    }
+  
+    // 2. Filter Industry Heads Based on Selected Sub-Industries
+    if (
+      currentForm.subIndustries.value !== objFormState.subIndustries.value &&
+      currentForm.subIndustries.value
+    ) {
+      currentForm.industryHead.options = industryHeadData
+        .filter((head:any) =>
+          head.industryIds.split(',').includes(currentForm.subIndustries.value?currentForm.subIndustries.value.toString():'')
+        )
+        .map((head:any) => ({
+          label: head.industryHeadName,
+          value: head.industryHeadId.toString(),
+        }));
+    }
+  
+
+    if (
+      currentForm.industryHead.value !== objFormState.industryHead.value &&
+      currentForm.industryHead.value
+    ) {
+      currentForm.salesManager.options = salesManagerData
+        .filter((manager:any) =>
+          manager.industryHeadIds.split(',').includes(currentForm.industryHead.value?currentForm.industryHead.value.toString():'')
+        )
+        .map((manager:any) => ({
+          label: manager.salesManagerName,
+          value: manager.salesManagerId.toString(),
+        }));
+    }
+  
+
+    if (
+      currentForm.industryHead.value !== objFormState.industryHead.value &&
+      currentForm.industryHead.value
+    ) {
+      currentForm.accountManager.options = accountManagerData
+        .filter((manager:any) =>
+          manager.industryHeadIds.split(',').includes(currentForm.industryHead.value?currentForm.industryHead.value.toString():'')
+        )
+        .map((manager:any) => ({
+          label: manager.accountManagerName,
+          value: manager.accountManagerId.toString(),
+        }));
+    }
+    
     setobjFormState(currentForm);
   };
 
-  const createNewContract = (event: FormEvent) => {
-    event.preventDefault();
-    let companyValidityFlag = true;
-    // const companyFormValid: boolean[] = [];
-    // _.each(objFormState, (item: any) => {
-    //   if (item?.validation?.required) {
-    //     companyFormValid.push(item.valid);
-    //     companyValidityFlag = companyValidityFlag && item.valid;
-    //   }
-    // });
-    setIsFormValid(companyValidityFlag);
-    console.log('finalData---->',objFormState);
-    // const formattedDate =
-    // objFormState.start_date?.value
-    //   ? moment(new Date(objFormState.start_date.value)).isValid()
-    //     ? moment(new Date(objFormState.start_date.value)).format('YYYY-MM-DD')
-    //     : ''
-    //   : '';
-    //   const formattedEndDate =
-    //   objFormState.end_date?.value
-    //     ? moment(new Date(objFormState.end_date.value)).isValid()
-    //       ? moment(new Date(objFormState.end_date.value)).format('YYYY-MM-DD')
-    //       : ''
-    //     : '';
+ 
+const getNamesFromOptions = (field: any) => {
+  if (!field?.options || !Array.isArray(field.value)) return '';
+  return field.value
+      .map((value: string) => field.options.find((item: any) => item.value === value)?.label || '')
+      .filter((name: string) => name !== '') 
+      .join(', '); 
+};
 
+  const returnNamesHandler = async (objectFormState: any) => {
     const obj = {
-    clientId:10,
-    client_name:objFormState.client_name.value || '',
-    clientBillTo:objFormState.clientBillTo.value.toString() || '',
-    clientShipAddress:objFormState.clientShipAddress.value.toString() || '',
-    clientContact:objFormState.clientContact.value.toString() || '',
-    // billFrom:objFormState.clientBillTo.value || '',
-    companyName:objFormState.companyName.value || '',
-    companyLocation:objFormState.companyLocation.value || '',
-    creditPeriod:objFormState.creditPeriod.value,
-    poAmount:objFormState.poAmount.value || '',
-    dueAmount:objFormState.dueAmount.value || '',
-    // start_date:moment(new Date(objFormState.start_date.value)).format('YYYY-MM-DD'), // Current date in YYYY-MM-DD format
-    // end_date:objFormState.end_date.value,
-    projectService:objFormState.projectService.value || '',
-    technolgyGroup:objFormState.technolgyGroup.value || '',
-    technolgySubGroup:objFormState.technolgySubGroup.value || '',
-    technolgy:objFormState.technolgy.value || '',
-    oem:objFormState.oem.value || '',
-    product:objFormState.product.value || '',
-    docType:objFormState.docType.value || '',
-    poNumber:objFormState.poNumber.value || '',
-    }
-    console.log('object ----->',obj);
-    // poContractService.createPoContract(obj).then(())
+        projectService_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || '',
+        technolgyGroup_names: objectFormState.technolgyGroup.options.find((item: any) => item.value === objectFormState.technolgyGroup.value)?.label || '',
+        technolgySubGroup_names: objectFormState.technolgySubGroup.options.find((item: any) => item.value === objectFormState.technolgySubGroup.value)?.label || '',
+        technolgy_names: objectFormState.technolgy.options.find((item: any) => item.value === objectFormState.technolgy.value)?.label || '',
+        oem_names: objectFormState.oem.options.find((item: any) => item.value === objectFormState.oem.value)?.label || '',
+        product_names: objectFormState.product.options.find((item: any) => item.value === objectFormState.product.value)?.label || '',
+        industryGroups_names: getNamesFromOptions(objectFormState.industryGroups),
+        subIndustries_names: getNamesFromOptions(objectFormState.subIndustries),
+        industryHead_names: getNamesFromOptions(objectFormState.industryHead),
+        salesManager_names: getNamesFromOptions(objectFormState.salesManager),
+        accountManager_names: getNamesFromOptions(objectFormState.accountManager),
+        clientBillTo_names: getNamesFromOptions(objectFormState.clientBillTo),
+        clientShipAddress_names: getNamesFromOptions(objectFormState.clientShipAddress),
+        clientContact_names: getNamesFromOptions(objectFormState.clientContact),
+        companyName: objectFormState.companyName?.value || '',
+        companyLocation_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || ''
+    };
+    return obj;
+};
 
-    poContractService
-              .createPoContract(obj)
-              .then((response: any) => {
-                // if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-                //   setStateData({});
-                //   closeFormPopup();
-                //   ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-                // }
-              })
-              .catch((error: any) => {
-                // setStateData({});
-                ToasterService.show(error, CONSTANTS.ERROR);
-              });
 
-    
 
+
+ 
+
+const createNewContract = async (event: FormEvent) => {
+  event.preventDefault();
+  let companyValidityFlag = true;
+  const formData: any = new FormData();
+
+  setIsFormValid(companyValidityFlag);
+  console.log('finalData---->', objFormState);
+  const getAllMasterNames = await returnNamesHandler(objFormState);
+
+  const obj = {
+      clientId: poContractConfData.find((item: any) => item.client_name === objFormState.client_name.value)?.client_id || '',
+      client_name: objFormState.client_name.value || '',
+      clientBillTo: objFormState.clientBillTo.value.toString() || '',
+      clientShipAddress: objFormState.clientShipAddress.value.toString() || '',
+      clientContact: objFormState.clientContact.value.toString() || '',
+      companyName: objFormState.companyName.value || '',
+      companyLocation: objFormState.companyLocation.value || '',
+      creditPeriod: objFormState.creditPeriod.value,
+      poAmount: objFormState.poAmount.value || '',
+      dueAmount: objFormState.dueAmount.value || '',
+      start_date: formatDate(objFormState.start_date.value),
+      end_date: formatDate(objFormState.end_date.value),
+      projectService: objFormState.projectService.value || '',
+      technolgyGroup: objFormState.technolgyGroup.value || '',
+      technolgySubGroup: objFormState.technolgySubGroup.value || '',
+      technolgy: objFormState.technolgy.value || '',
+      oem: objFormState.oem.value || '',
+      product: objFormState.product.value || '',
+      docType: objFormState.docType.value || '',
+      poNumber: objFormState.poNumber.value || '',
+      srNumber: objFormState.srNumber.value || '',
+      industryGroups: objFormState.industryGroups.value.toString() || '',
+      subIndustries: objFormState.subIndustries.value.toString() || '',
+      industryHead: objFormState.industryHead.value.toString() || '',
+      salesManager: objFormState.salesManager.value.toString() || '',
+      accountManager: objFormState.accountManager.value.toString() || '',
+      masterNames: JSON.stringify(getAllMasterNames) || '{}',
+      noOfResources:objFormState.noOfResources.value || '',
+      resourcesData: JSON.stringify(tableData) || '[]',
   };
+
+
+  console.log('Names Object ----->', getAllMasterNames);
+  console.log('Data ---------------->', tableData);
+
+  Object.entries(obj).forEach(([key, value]: any) => {
+      formData.set(key, value);
+  });
+
+  if (attachments?.length) {
+      console.log('Attachments ---->', attachments);
+      formData.set("file", attachments[0]);
+  }
+
+  poContractService
+      .createPoContract(formData)
+      .then((response: any) => {
+          console.log('Response ----->', response);
+          if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+              closeFormPopup();
+              getContractMaster();
+              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+          }
+      })
+      .catch((error: any) => {
+          ToasterService.show(error, CONSTANTS.ERROR);
+      });
+};
+
 
   const removeFileHandler = () => {
     setAttachments([]);
@@ -990,6 +1100,7 @@ const Contract: React.FC = () => {
   };
     const selectAttachment = (files: any) => {
       setAttachments([]);
+      console.log('fileUrl--->123');
       if (files && files[0]) {
         _.each(files, (eventList) => {
           if (
@@ -1006,6 +1117,7 @@ const Contract: React.FC = () => {
             } else {
               setAttachments((prevVals: any) => [...prevVals, eventList]);
               const fileURL = URL.createObjectURL(eventList);
+              console.log('fileUrl--->',fileURL);
               setLogoUrl(fileURL)
             }
           } else {
@@ -1039,7 +1151,7 @@ const Contract: React.FC = () => {
         </div>
         <p className="m-0">
         <DataTableBasicDemo
-            data={contractMaster}
+            data={poContractsData}
             column={ContractTableColumns}
             showGridlines={true}
             resizableColumns={true}
@@ -1086,8 +1198,11 @@ const Contract: React.FC = () => {
                 formUpdateEvent={poContractHandler}
                 isFormValidFlag={isFormValid}
                 ></FormComponent>
+                 {objFormState.noOfResources.value?
+                 <EditableTable noOfRows = {objFormState.noOfResources.value} tableData = {tableData} setTableData ={setTableData} />
+                 :null}
                 {/* {(objFormState?.docType.value && objFormState?.docType.value != 'PO')? */}
-                     <div className={classes["upload-wrapper"]}>
+                  <div className={classes["upload-wrapper"]}>
                 <div className="row pd-10-t-0">
                   <div
                     className={`col-md-12 ${classes["addition-field-header"]}`}
@@ -1144,6 +1259,7 @@ const Contract: React.FC = () => {
                 </div>
               </div>
               {/* :null} */}
+             
             </div>
        
 
@@ -1155,6 +1271,7 @@ const Contract: React.FC = () => {
                 submitEvent={createNewContract}
                 />
             </div>
+            
             </div>
         </div>
         ) : null}

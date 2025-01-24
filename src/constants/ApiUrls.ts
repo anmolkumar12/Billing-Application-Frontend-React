@@ -33,6 +33,14 @@ export const APIURLS = {
 // CLIENT PO Contract Configuration
    GET_PO_CONTRACT_CONFIGURATION:'/api/masters/getPoContractConfiguration',
    GET_PO_MASTER_CONFIG_DATA:'/api/masters/getPoContractMasterData',
+   GET_PO_CONTRACT_CASCADING_DATA:'/api/masters/getAllCascadingData',
+
+   //  PO CONTARCT
+
+  GET_PO_CONTRACTS: '/api/masters/getPoContractsData',
+  CREATE_PO_CONTRACT: '/api/masters/insertPoContract',
+  UPDATE_PO_CONTRACT: '/api/masters/updatePoContract',
+  TOGGLE_PO_CONTRACT_STATUS: '/api/masters/activateDeactivatePoContract',
 
   GET_OEM_MASTER: '/api/masters/getOEMs',
   // POLESTAR PRODUCT 
@@ -40,12 +48,7 @@ export const APIURLS = {
   CREATE_POLESTAR_PRODUCT_MASTER:'/api/masters/createPoleStarProduct',
   UPDATE_POLESTAR_PRODUCT_MASTER:'/api/masters/updatePoleStarProduct',
   TOGGLE_POLESTAR_PRODUCT_MASTER_STATUS:'/api/masters/activateDeactivatePoleStarProduct',
-//  PO CONTARCT
 
-    GET_PO_CONTRACTS: '/api/contracts/getPoContractsData',
-    CREATE_PO_CONTRACT: '/api/contracts/insertPoContract',
-    UPDATE_PO_CONTRACT: '/api/contracts/updatePoContract',
-    TOGGLE_PO_CONTRACT_STATUS: '/api/contracts/activateDeactivatePoContract',
 
   // PROJECT SERVICE
   GET_PROJECT_SERVICE_MASTER:'/api/masters/getProjectService',

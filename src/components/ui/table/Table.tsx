@@ -31,6 +31,7 @@ type TableProps = {
     padding?: string
     filter?: boolean
     filterElement?: any
+    onCellEditComplete?:any
     bodyStyle?: any
     frozen?: boolean
     flexGrow?: number
@@ -42,7 +43,7 @@ type TableProps = {
     }
     height?: string
     rowEditor?: boolean
-    editor?: boolean
+    editor?: any
     print?: boolean
     pdfStyle?: any
     dropDownFilter?: {
@@ -458,6 +459,7 @@ const DataTableBasicDemo = (props: TableProps) => {
       sort = false,
       width = '',
       body = null,
+      onCellEditComplete = null,
       padding,
       textAlign,
       filter = false,
@@ -480,7 +482,7 @@ const DataTableBasicDemo = (props: TableProps) => {
       },
       height,
       rowEditor = false,
-      editor = false,
+      editor,
       print = true,
     } = item
 
@@ -527,6 +529,7 @@ const DataTableBasicDemo = (props: TableProps) => {
         field={fieldName}
         header={label}
         sortable={sort}
+        onCellEditComplete={onCellEditComplete}
         body={body}
         frozen={frozen}
         filter={filter}
@@ -538,11 +541,12 @@ const DataTableBasicDemo = (props: TableProps) => {
         filterElement={
           dropDownFilter?.changeFilter ? filterFunctionality : null
         }
-        editor={
-          editor
-            ? (props) => nameEditor('products3', props, fieldName)
-            : undefined
-        }
+        // editor={
+        //   editor
+        //     ? (props) => nameEditor('products3', props, fieldName)
+        //     : undefined
+        // }
+        editor = {editor}
       ></Column>
     )
   })

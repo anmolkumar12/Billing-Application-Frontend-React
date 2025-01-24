@@ -5,7 +5,7 @@ export class PoContractService {
   // Fetch all PO Contracts
   getPoContractsData = async () => {
     try {
-      const response = await HTTPService.getRequest(APIURLS.GET_PO_CONTRACTS);
+      const response = await HTTPService.postRequest(APIURLS.GET_PO_CONTRACTS);
       return response?.data;
     } catch (err) {
       console.error('Error fetching PO Contracts:', err);
@@ -76,4 +76,15 @@ export class PoContractService {
       return {}
     }
   }
+
+  getPOContractMasterCascadingData  = async () => {
+    try {
+      const response = await HTTPService.postRequest(APIURLS.GET_PO_CONTRACT_CASCADING_DATA, {})
+      return response
+    } catch (err) {
+      return {}
+    }
+  }
+  
+  
 }
