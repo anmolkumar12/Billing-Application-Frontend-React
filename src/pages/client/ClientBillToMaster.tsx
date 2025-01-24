@@ -75,6 +75,15 @@ const ClientBillToMaster = () => {
       },
       fieldWidth: "col-md-6",
     },
+    isDefaultAddress: {
+      inputType: "inputSwitch",
+      label: "Is It Default Address",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
   };
 
 
@@ -275,6 +284,28 @@ const ClientBillToMaster = () => {
       ),
     },
     {
+      label: "Default Address",
+      fieldName: "isDefaultAddress",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+          // data-pr-tooltip={rowData.IECode}
+          >
+            {rowData.isDefaultAddress == 1 ? "Yes" : "No"}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
+    {
       label: "Additional Address Details",
       fieldName: "additionalAddressDetails",
       textAlign: "left",
@@ -287,7 +318,7 @@ const ClientBillToMaster = () => {
         <div>
           <span
             id={`companyNameTooltip-${rowData.id}`}
-            // data-pr-tooltip={rowData.additionalAddressDetails}
+          // data-pr-tooltip={rowData.additionalAddressDetails}
           >
             {rowData.additionalAddressDetails}
           </span>
@@ -348,8 +379,9 @@ const ClientBillToMaster = () => {
     setLoader(true);
     try {
       const response = await countryService.getCountryMaster();
-      setCountryMaster(response?.countries);
-      return response?.countries;
+      const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive)
+      setCountryMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -360,8 +392,9 @@ const ClientBillToMaster = () => {
     setLoader(true);
     try {
       const response = await stateService.getStateMaster();
-      setStateMaster(response?.states);
-      return response?.states;
+      const temp = response?.states?.filter((item: any) => item?.isactive || item?.isActive)
+      setStateMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -392,46 +425,48 @@ const ClientBillToMaster = () => {
     await clientBillFormHandler(clientBillFieldsStructure);
   };
 
-  const clientBillFormHandler = async (form: FormType) => {
-    setClientBillForm(form);
-    // if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
-    const selectedClient = clientMaster?.find(
-      (item: any) => item?.client_name == form?.client_name?.value
-    );
-    const selectedCountry = countryMaster?.find(
-      (item: any) => item?.name == selectedClient?.countryName
-    );
-    if (selectedCountry) {
-      form.country_name.value = selectedClient?.countryName;
-      // const stateList = await getStateMaster(selectedCountry?.id);
-      // if (stateList) {
-      //   const stateNames = stateList?.map((state: any) => state.stateName);
-      //   form.state_name.options = stateNames || [];
-      //   form.state_name.value = null;
-      // }
+  const clientBillFormHandler = async (currentForm: FormType) => {
+    const form = _.cloneDeep(currentForm);
+    console.log('bbbbbbbbbb', form?.client_name?.value, ClientBillForm?.client_name?.value);
 
-      const addressDetails = JSON.parse(
-        selectedCountry?.addressAdditionalFields
+    if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
+      const selectedClient = clientMaster?.find(
+        (item: any) => item?.client_name == form?.client_name?.value
       );
-      const detailsForm = Object.keys(addressDetails)?.reduce(
-        (acc: any, item: any, index: any) => {
-          acc[index] = {
-            inputType: "inputtext",
-            label: addressDetails[item],
-            value: null,
-            validation: {
-              required: true,
-            },
-            fieldWidth: "col-md-4",
-          };
-          return acc;
-        },
-        {}
+      const selectedCountry = countryMaster?.find(
+        (item: any) => item?.name == selectedClient?.countryName
       );
-      setAdditionalDetailsForm(detailsForm);
+      if (selectedCountry) {
+        form.country_name.value = selectedClient?.countryName;
+        // const stateList = await getStateMaster(selectedCountry?.id);
+        // if (stateList) {
+        //   const stateNames = stateList?.map((state: any) => state.stateName);
+        //   form.state_name.options = stateNames || [];
+        //   form.state_name.value = null;
+        // }
+
+        const addressDetails = JSON.parse(
+          selectedCountry?.addressAdditionalFields
+        );
+        const detailsForm = Object.keys(addressDetails)?.reduce(
+          (acc: any, item: any, index: any) => {
+            acc[index] = {
+              inputType: "inputtext",
+              label: addressDetails[item],
+              value: null,
+              validation: {
+                required: true,
+              },
+              fieldWidth: "col-md-4",
+            };
+            return acc;
+          },
+          {}
+        );
+        setAdditionalDetailsForm(detailsForm);
+      }
     }
-    // }
-
+    setClientBillForm(form);
   };
 
   const additionalDetailsFormHandler = async (form: FormType) => {
@@ -498,6 +533,8 @@ const ClientBillToMaster = () => {
       clientBillFieldsStructure.address3.value = data?.address3;
       // clientBillFieldsStructure.pin.value = data?.pin;
       clientBillFieldsStructure.country_name.value = data?.country_name;
+      clientBillFieldsStructure.isDefaultAddress.value = data?.isDefaultAddress == 1 ? true : false;
+
       // clientBillFieldsStructure.state_name.value = data?.state_name;
 
       setClientBillFieldsStructure(_.cloneDeep(clientBillFieldsStructure));
@@ -575,10 +612,11 @@ const ClientBillToMaster = () => {
 
     _.each(ClientBillForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+        // companyFormValid.push(item.valid);
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
+    console.log('clientForm', ClientBillForm, companyValidityFlag);
 
     setIsFormValid(companyValidityFlag);
 
@@ -592,6 +630,25 @@ const ClientBillToMaster = () => {
         countryMaster.find(
           (country: any) => country.name === ClientBillForm.country_name.value
         )?.id ?? null;
+
+      console.log('hiiii', countryId);
+      if (ClientBillForm?.isDefaultAddress?.value == true) {
+        let defaultAccountFlag = false;
+        clientBillToMaster
+          ?.filter(
+            (acc: any) => acc?.client_name == ClientBillForm.client_name.value
+          )
+          ?.forEach((item: any) => {
+            defaultAccountFlag = defaultAccountFlag || item?.isDefaultAddress;
+          });
+        if (defaultAccountFlag) {
+          ToasterService.show(
+            "A default address for this company is already present",
+            CONSTANTS.ERROR
+          );
+          return;
+        }
+      }
 
       // const stateId =
       //   stateMaster.find(
@@ -609,6 +666,7 @@ const ClientBillToMaster = () => {
         {}
       );
 
+
       const obj = {
         clientId: clientId,
         countryId: countryId,
@@ -616,7 +674,8 @@ const ClientBillToMaster = () => {
         address2: ClientBillForm?.address2?.value,
         address3: ClientBillForm?.address3?.value,
         additionalAddressDetails: addressData,
-        updatedBy: loggedInUserId,
+        isDefaultAddress: ClientBillForm?.isDefaultAddress?.value == true ? 1 : 0,
+        updated_by: loggedInUserId,
       };
 
       if (!stateData?.id) {

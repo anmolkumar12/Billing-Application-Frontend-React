@@ -42,7 +42,7 @@ const ClientGroupMaster = () => {
       label: "Group Name",
       value: null,
       validation: {
-        required: false,
+        required: true,
       },
       fieldWidth: "col-md-6",
     },
@@ -211,8 +211,6 @@ const ClientGroupMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientGroupsMaster();
-      console.log('tttttttttttttttt', response);
-      
       setClientBillToMaster(response?.groups);
       return response?.groups;
     } catch (error) {
@@ -225,8 +223,9 @@ const ClientGroupMaster = () => {
     setLoader(true);
     try {
       const response = await countryService.getCountryMaster();
-      setCountryMaster(response?.countries);
-      return response?.countries;
+      const temp = response?.countries?.filter((item: any) => item?.isactive || item?.isActive)
+      setCountryMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -310,8 +309,9 @@ const ClientGroupMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientMaster();
-      setClientMaster(response?.clients);
-      return response?.clients;
+      const temp = response?.clients?.filter((item: any) => item?.isactive || item?.isActive)
+      setClientMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {
@@ -413,6 +413,7 @@ const ClientGroupMaster = () => {
         companyValidityFlag = companyValidityFlag && item.valid;
       }
     });
+    console.log('clientForm', ClientBillForm, companyValidityFlag);
 
     setIsFormValid(companyValidityFlag);
 
