@@ -26,8 +26,8 @@ const AccountManagerMaster = () => {
       value: null,
       validation: {
         required: true,
-        pattern:ValidationRegex.onlyCharacters.pattern,
-        patternHint:ValidationRegex.onlyCharacters.patternHint
+        pattern: ValidationRegex.onlyCharacters.pattern,
+        patternHint: ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-6",
     },
@@ -46,7 +46,7 @@ const AccountManagerMaster = () => {
       value: null,
       validation: {
         required: true,
-        email:true
+        email: true
       },
       fieldWidth: "col-md-6",
     },
@@ -97,7 +97,7 @@ const AccountManagerMaster = () => {
   const [storeFormPopup, setFormPopup] = useState(false);
   const [isEditAccManager, setIsEditAccManager] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
-  const [isDeactivateFormValid,setIsDeactivateFormValid] = useState(true);
+  const [isDeactivateFormValid, setIsDeactivateFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
@@ -115,16 +115,16 @@ const AccountManagerMaster = () => {
 
 
   const [deactivatePopup, setDeactivatePopup] = useState(false);
-  const [rowData,setRowData] = useState<any>(null);
+  const [rowData, setRowData] = useState<any>(null);
 
 
-  const deactivateFormObject:any = {
+  const deactivateFormObject: any = {
     deactivationDate: {
       inputType: "singleDatePicker",
       label: "Select Deactivation Date",
       value: null,
-      min:new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
-      max:new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
+      min: new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
+      max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
         required: true,
       },
@@ -132,15 +132,15 @@ const AccountManagerMaster = () => {
     },
   }
 
-  const [deactForm,setDeactivateForm] = useState<any>(_.cloneDeep(deactivateFormObject));
+  const [deactForm, setDeactivateForm] = useState<any>(_.cloneDeep(deactivateFormObject));
 
-  const onDeactivate = (rowData:any) => {
+  const onDeactivate = (rowData: any) => {
     console.log('here we are')
     setRowData(rowData);
-    if(rowData.isActive == 1){
-    setDeactivatePopup(true);
+    if (rowData.isActive == 1) {
+      setDeactivatePopup(true);
     }
-    else{
+    else {
       onDelete(rowData);
     }
 
@@ -171,7 +171,7 @@ const AccountManagerMaster = () => {
             className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
-            onClick={() => onDeactivate(rowData)}
+            onClick={() => onDelete(rowData)}
           ></span>
         </div>
       ),
@@ -363,7 +363,7 @@ const AccountManagerMaster = () => {
           // data-pr-tooltip={rowData.fromDate}
           >
             {rowData.deactivationDate}
-           
+
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -417,7 +417,7 @@ const AccountManagerMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+            {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -462,9 +462,9 @@ const AccountManagerMaster = () => {
     setLoader(true);
     try {
       const response = await accountService.getAccountMaster();
-      const temp = response?.accountManagers?.filter((item: any) => item?.isactive || item?.isActive)
-      setAccountMaster(temp);
-      return temp;
+      // const temp = response?.accountManagers?.filter((item: any) => item?.isactive || item?.isActive)
+      setAccountMaster(response?.accountManagers);
+      return response?.accountManagers;
     } catch (error) {
       console.error(error);
     } finally {
@@ -527,27 +527,27 @@ const AccountManagerMaster = () => {
   const accountFormHandler = async (form: FormType) => {
     setAccountForm(form);
   };
-  const deactivationFormHandler = async(form:FormType) => {
+  const deactivationFormHandler = async (form: FormType) => {
     setDeactivateForm(form);
   }
-    const submitDeactivateFormHandler = (event: FormEvent) => {
-      event.preventDefault();
-      let validity = true;
-      const deactivateFolrmValidaity: boolean[] = [];
-      console.log('jjjjjjjjjjjj', deactForm);
-  
-      _.each(deactForm, (item: any) => {
-        if (item?.validation?.required) {
-          deactivateFolrmValidaity.push(item.valid);
-          validity = validity && item.valid;
-        }
-      });
-  
-      setIsDeactivateFormValid(validity);
-      if(validity){
-      onDelete(rowData)
+  const submitDeactivateFormHandler = (event: FormEvent) => {
+    event.preventDefault();
+    let validity = true;
+    const deactivateFolrmValidaity: boolean[] = [];
+    console.log('jjjjjjjjjjjj', deactForm);
+
+    _.each(deactForm, (item: any) => {
+      if (item?.validation?.required) {
+        deactivateFolrmValidaity.push(item.valid);
+        validity = validity && item.valid;
       }
+    });
+
+    setIsDeactivateFormValid(validity);
+    if (validity) {
+      onDelete(rowData)
     }
+  }
 
   const onUpdate = (data: any) => {
     setStateData(data);
@@ -674,31 +674,33 @@ const AccountManagerMaster = () => {
       displayToggle: false,
       title: "Delete",
       message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
-          ? "activate"
-          : "deactivate"
+        ? "activate"
+        : "deactivate"
         } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
+      askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (deactivationDate?: Date) => {
     setLoader(true);
     accountService
-      .deactivateAccountMaster({ ...patchData, loggedInUserId,deactivationDate:deactForm.deactivationDate.value })
+      // .deactivateAccountMaster({ ...patchData, loggedInUserId,deactivationDate:deactForm.deactivationDate.value })
+      .deactivateAccountMaster({ ...patchData, loggedInUserId, deactivationDate: deactivationDate ? formatDate(deactivationDate) : null })
       .then((response) => {
         setLoader(false);
         setShowConfirmDialogue(false);
-       if(response.statusCode === 200){
-        closeDeactivation();
-    
-        ToasterService.show(
-          `Account Manager record ${patchData?.isActive ? "deactivated" : "activated"
-          } successfully`,
-          CONSTANTS.SUCCESS
-        );
-       }
+        if (response.statusCode === 200) {
+          closeDeactivation();
+
+          ToasterService.show(
+            `Account Manager record ${patchData?.isActive ? "deactivated" : "activated"
+            } successfully`,
+            CONSTANTS.SUCCESS
+          );
+        }
       })
       .catch((error) => {
         setLoader(false);
@@ -793,7 +795,7 @@ const AccountManagerMaster = () => {
         </div>
       ) : null}
 
-{deactivatePopup ? (
+      {/* {deactivatePopup ? (
       <div className="popup-overlay md-popup-overlay">
         <div style={{maxWidth:'360px'}} className="popup-body md-popup-body stretchLeft">
           <div className="popup-header">
@@ -835,7 +837,7 @@ const AccountManagerMaster = () => {
           </div>
         </div>
       </div>
-    ) : null}
+    ) : null} */}
     </>
   );
 };

@@ -26,8 +26,8 @@ const SalesMaster = () => {
       value: null,
       validation: {
         required: true,
-        pattern:ValidationRegex.onlyCharacters.pattern,
-        patternHint:ValidationRegex.onlyCharacters.patternHint
+        pattern: ValidationRegex.onlyCharacters.pattern,
+        patternHint: ValidationRegex.onlyCharacters.patternHint
       },
       fieldWidth: "col-md-4",
     },
@@ -46,8 +46,8 @@ const SalesMaster = () => {
       value: null,
       validation: {
         required: true,
-        email:true
-      },  
+        email: true
+      },
       fieldWidth: "col-md-4",
     },
     companyName: {
@@ -96,10 +96,10 @@ const SalesMaster = () => {
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
   const [deactivatePopup, setDeactivatePopup] = useState(false);
-  const [rowData,setRowData] = useState<any>(null);
+  const [rowData, setRowData] = useState<any>(null);
   const [isEditSalesManager, setIsEditSalesManager] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
-  const [isDeactivateFormValid,setIsDeactivateFormValid] = useState(true);
+  const [isDeactivateFormValid, setIsDeactivateFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
@@ -109,14 +109,14 @@ const SalesMaster = () => {
   const [SalesForm, setSalesForm] = useState<any>(
     _.cloneDeep(salesFieldsStructure)
   );
-  
-  const deactivateFormObject:any = {
+
+  const deactivateFormObject: any = {
     deactivationDate: {
       inputType: "singleDatePicker",
       label: "Select Deactivation Date",
       value: null,
-      min:new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
-      max:new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
+      min: new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
+      max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
         required: true,
       },
@@ -124,7 +124,7 @@ const SalesMaster = () => {
     },
   }
 
-  const [deactForm,setDeactivateForm] = useState<any>(_.cloneDeep(deactivateFormObject));
+  const [deactForm, setDeactivateForm] = useState<any>(_.cloneDeep(deactivateFormObject));
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
@@ -136,16 +136,15 @@ const SalesMaster = () => {
   const [companyMaster, setCompanyMaster] = useState<any>([]);
   const companyService = new CompanyMasterService();
 
-  const onDeactivate = (rowData:any) => {
+  const onDeactivate = (rowData: any) => {
     console.log('here we are')
     setRowData(rowData);
-    if(rowData.isActive == 1){
-    setDeactivatePopup(true);
+    if (rowData.isActive == 1) {
+      setDeactivatePopup(true);
     }
-    else{
+    else {
       onDelete(rowData);
     }
-
   }
 
 
@@ -169,7 +168,7 @@ const SalesMaster = () => {
             className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
-            onClick={() => onDeactivate(rowData)}
+            onClick={() => onDelete(rowData)}
           ></span>
         </div>
       ),
@@ -361,7 +360,7 @@ const SalesMaster = () => {
           // data-pr-tooltip={rowData.fromDate}
           >
             {rowData.deactivationDate}
-           
+
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -415,7 +414,7 @@ const SalesMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+            {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -520,7 +519,7 @@ const SalesMaster = () => {
   const salesFormHandler = async (form: FormType) => {
     setSalesForm(form);
   };
-  const deactivationFormHandler = async(form:FormType) => {
+  const deactivationFormHandler = async (form: FormType) => {
     setDeactivateForm(form);
   }
   const submitDeactivateFormHandler = (event: FormEvent) => {
@@ -537,8 +536,8 @@ const SalesMaster = () => {
     });
 
     setIsDeactivateFormValid(validity);
-    if(validity){
-    onDelete(rowData)
+    if (validity) {
+      onDelete(rowData)
     }
   }
 
@@ -662,30 +661,32 @@ const SalesMaster = () => {
       displayToggle: false,
       title: "Delete",
       message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
-          ? "activate"
-          : "deactivate"
+        ? "activate"
+        : "deactivate"
         } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
+      askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (deactivationDate?: Date) => {
     setLoader(true);
     salesService
-      .deactivateSalesMaster({ ...patchData, loggedInUserId,deactivationDate:deactForm.deactivationDate.value })
+      // .deactivateSalesMaster({ ...patchData, loggedInUserId,deactivationDate:deactForm.deactivationDate.value })
+      .deactivateSalesMaster({ ...patchData, loggedInUserId, deactivationDate: deactivationDate ? formatDate(deactivationDate) : null })
       .then((response) => {
         setLoader(false);
         setShowConfirmDialogue(false);
-       if(response.statusCode === 200){
-        closeDeactivation();
-        ToasterService.show(
-          `Sales Manager record ${patchData?.isActive ? "deactivated" : "activated"
-          } successfully`,
-          CONSTANTS.SUCCESS
-        );
-      }
+        if (response.statusCode === 200) {
+          closeDeactivation();
+          ToasterService.show(
+            `Sales Manager record ${patchData?.isActive ? "deactivated" : "activated"
+            } successfully`,
+            CONSTANTS.SUCCESS
+          );
+        }
       })
       .catch((error) => {
         setLoader(false);
@@ -700,12 +701,12 @@ const SalesMaster = () => {
     setSalesFieldsStructure(_.cloneDeep(SalesFormFields));
     setSalesForm(_.cloneDeep(SalesFormFields));
   };
-   const closeDeactivation = () => {
-     setRowData(null)
-     setDeactivatePopup(false);
-     setIsDeactivateFormValid(true);
-     setDeactivateForm(_.cloneDeep(deactivateFormObject));
-   }
+  const closeDeactivation = () => {
+    setRowData(null)
+    setDeactivatePopup(false);
+    setIsDeactivateFormValid(true);
+    setDeactivateForm(_.cloneDeep(deactivateFormObject));
+  }
   return loader ? (
     <Loader />
   ) : (
@@ -785,7 +786,7 @@ const SalesMaster = () => {
           </div>
         </div>
       ) : null}
-{deactivatePopup ? (
+      {/* {deactivatePopup ? (
       <div className="popup-overlay md-popup-overlay">
         <div style={{maxWidth:'360px'}} className="popup-body md-popup-body stretchLeft">
           <div className="popup-header">
@@ -827,7 +828,7 @@ const SalesMaster = () => {
           </div>
         </div>
       </div>
-    ) : null}
+    ) : null} */}
     </>
   );
 };

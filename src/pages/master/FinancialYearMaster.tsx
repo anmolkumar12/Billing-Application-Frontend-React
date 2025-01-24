@@ -18,37 +18,38 @@ import FinancialYearMasterService from "../../services/masters/financial-year-ma
 import { UtilityService } from "../../services/utility-service/utility.service";
 
 const FinancialYearMaster = () => {
-    const [yearsRange,setYearsRange] = useState<any>(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033', '2034', '2035', '2036', '2037', '2038', '2039', '2040']) 
+  const [yearsRange, setYearsRange] = useState<any>(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033', '2034', '2035', '2036', '2037', '2038', '2039', '2040'])
   const formObj = {
+    startYear: {
+      inputType: "singleDatePicker",
+      label: "Start Date",
+      value: null,
+      validation: {
+        required: true,
+      },
+      fieldWidth: "col-md-6",
+
+    },
     financialYearName: {
       inputType: "inputtext",
-      label: "Financial Year Name",
+      label: "Financial Year",
       value: null,
+      disable: true,
       validation: {
         required: true,
       },
       fieldWidth: "col-md-6",
     },
-    startYear: {
-        inputType: "singleDatePicker",
-        label: "Start Time",
-        value: null,
-        validation: {
-          required: true,
-        },
-        fieldWidth: "col-md-6",
-      
-    },
-    endYear: {
-        inputType: "singleDatePicker",
-      label: "End Time",
-      value: null,
-      validation: {
-        required: true,
-      },
-      fieldWidth: "col-md-6",
-    
-    },
+    // endYear: {
+    //     inputType: "singleDatePicker",
+    //   label: "End Time",
+    //   value: null,
+    //   validation: {
+    //     required: true,
+    //   },
+    //   fieldWidth: "col-md-6",
+
+    // },
     // description: {
     //   inputType: "inputtext",
     //   label: "Description",
@@ -79,34 +80,33 @@ const FinancialYearMaster = () => {
     setShowConfirmDialogue(false);
   };
 
-    const confirmDelete = (data: any) => {
-      setLoader(true);
-      financialYearService
-        .activateDeactivateFinancialYearMaster({ id: data.id, isActive: data.isActive == 0 ? 1 : 0, loggedInUserId: loggedInUserId })
-        .then(() => {
-          setLoader(false);
-          getFinancialYearMaster();
-          setShowConfirmDialogue(false);
-          ToasterService.show(
-            `Financial year record ${data?.isActive ? "deactivated" : "activated"} successfully`,
-            CONSTANTS.SUCCESS
-          );
-        })
-        .catch((error) => {
-          setLoader(false);
-          return false;
-        });
-    };
+  const confirmDelete = (data: any) => {
+    setLoader(true);
+    financialYearService
+      .activateDeactivateFinancialYearMaster({ id: data.id, isActive: data.isActive == 0 ? 1 : 0, loggedInUserId: loggedInUserId })
+      .then(() => {
+        setLoader(false);
+        getFinancialYearMaster();
+        setShowConfirmDialogue(false);
+        ToasterService.show(
+          `Financial year record ${data?.isActive ? "deactivated" : "activated"} successfully`,
+          CONSTANTS.SUCCESS
+        );
+      })
+      .catch((error) => {
+        setLoader(false);
+        return false;
+      });
+  };
 
   const onDelete = (data: any) => {
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
-      message: `Are you sure you want to ${
-        !(data?.isactive || data?.is_active || data?.isActive)
+      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
           ? "activate"
           : "deactivate"
-      } this record?`,
+        } this record?`,
       acceptFunction: () => confirmDelete(data),
       rejectFunction: onPopUpClose,
     });
@@ -159,48 +159,48 @@ const FinancialYearMaster = () => {
         </div>
       ),
     },
-   
+
     {
-        label: "Start Time",
-        fieldName: "startYear",
-        textAlign: "left",
-        sort: true,
-        filter: true,
-        fieldValue: "startYear",
-        changeFilter: true,
-        placeholder: "Start Year",
-        body: (rowData: any) => (
-          <div>
-            <span id={`descriptionTooltip-${rowData.id}`}>
-              {rowData.startYear}
-            </span>
-            <Tooltip
-              target={`#descriptionTooltip-${rowData.id}`}
-              position="top"
-            />
-          </div>
-        ),
+      label: "Start Time",
+      fieldName: "startYear",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "startYear",
+      changeFilter: true,
+      placeholder: "Start Year",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {moment(rowData.startYear)?.format('DD-MM-YYYY')}
+          </span>
+          <Tooltip
+            target={`#descriptionTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
     },
     {
-        label: "End Time",
-        fieldName: "endYear",
-        textAlign: "left",
-        sort: true,
-        filter: true,
-        fieldValue: "endYear",
-        changeFilter: true,
-        placeholder: "End Year",
-        body: (rowData: any) => (
-          <div>
-            <span id={`descriptionTooltip-${rowData.id}`}>
-              {rowData.endYear}
-            </span>
-            <Tooltip
-              target={`#descriptionTooltip-${rowData.id}`}
-              position="top"
-            />
-          </div>
-        ),
+      label: "End Time",
+      fieldName: "endYear",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "endYear",
+      changeFilter: true,
+      placeholder: "End Year",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {moment(rowData.endYear)?.format('DD-MM-YYYY')}
+          </span>
+          <Tooltip
+            target={`#descriptionTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
     },
     {
       label: "Status",
@@ -247,7 +247,7 @@ const FinancialYearMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+            {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -277,47 +277,108 @@ const FinancialYearMaster = () => {
   };
 
   const financialYearHandler = async (form: FormType) => {
-    const updatedForm = { ...form };
-    setFormObjState(updatedForm);
+    console.log("fy form: ", form);
+
+    // Extract the startYear value from the form
+    const startYear: any = form?.startYear?.value;
+    if (startYear) {
+      const startYearDate = new Date(startYear); // Convert startYear to a Date object
+      const startYearFormatted = startYearDate.getFullYear(); // Extract the year from the start date
+      const endYearFormatted = startYearFormatted + 1; // Calculate the end year (next year)
+
+      // Construct the financial year name (e.g., FY 25-26)
+      const financialYearName = `FY ${startYearFormatted % 100}-${endYearFormatted % 100}`;
+
+      // Update the form with the calculated values
+      const updatedForm = {
+        ...form,
+        financialYearName: { ...form.financialYearName, value: financialYearName },
+      };
+
+      // Set the updated form state
+      setFormObjState(updatedForm);
+    }
   };
+
 
   const onUpdate = async (data: any) => {
     setRowData(data);
     updateFinancialYearMaster(data);
     setFormPopup(true);
   };
-  const getRequiredFormat = (dateString:string) => {
+  const getRequiredFormat = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-GB",{
-        day:"2-digit",
-        month:"short",
-        year:"numeric"
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
     })
   }
 
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
+  };
+
+  const parseDateString = (dateString: any) => {
+    if (!dateString) return new Date();
+    const date: any = new Date(dateString);
+    if (isNaN(date)) return new Date();
+    const year = date.getFullYear();
+    const month: any = String(date.getMonth() + 1).padStart(2, "0");
+    const day: any = String(date.getDate()).padStart(2, "0");
+    return new Date(year, month - 1, day);
+  };
+
   const updateFinancialYearMaster = (data: any) => {
-    console.log('data there --->',data)
+    console.log('data there --->', data)
     formObjState.financialYearName.value = data.financialYearName;
-    formObjState.startYear.value = new Date(data.startYear)
+    formObjState.startYear.value = parseDateString(data.startYear)
+    // formObjState.startYear.value = new Date(data.startYear)
     // data.startYear.toString();
-    formObjState.endYear.value = new Date(data.endYear);
+    // formObjState.endYear.value = new Date(data.endYear);
     // formObjState.description.value = data.description;
   };
 
   const createNewRecord = async (event: FormEvent) => {
     event.preventDefault();
+    console.log('data there --->', formObjState)
+
+    // Extract startYear from the form state
+    const startYear = formObjState?.startYear?.value;
+
+    // Calculate financialYearName and format endYear if startYear is provided
+    let financialYearName = "";
+    let endYear = "";
+
+    if (startYear) {
+      const startYearDate = new Date(startYear); // Convert to Date object
+      const startYearFormatted = startYearDate.getFullYear(); // Extract year
+      const endYearFormatted = startYearFormatted + 1; // Calculate next year
+
+      // Construct financialYearName
+      // financialYearName = `FY ${startYearFormatted % 100}-${endYearFormatted % 100}`;
+
+      // Calculate endYear as 31/03 of the next year and format it
+      const calculatedEndYear = new Date(`03/31/${endYearFormatted}`);
+      endYear = formatDate(calculatedEndYear.toISOString());
+    }
+
     const obj: any = {
       financialYearName: formObjState?.financialYearName?.value,
-      startYear: getRequiredFormat(formObjState?.startYear?.value),
-      endYear: getRequiredFormat(formObjState?.endYear?.value),
-    //   description: formObjState?.description?.value,
+      startYear: formatDate(formObjState?.startYear?.value),
+      endYear: endYear,
+      //   description: formObjState?.description?.value,
       isActive: 1,
       updatedBy: loggedInUserId,
     };
     if (rowData && rowData?.id) {
       obj["id"] = rowData.id;
     }
-    console.log('object----->',obj);
+    console.log('object----->', obj);
     try {
       const response =
         await financialYearService.createFinancialYearMasterData(obj);
@@ -369,7 +430,7 @@ const FinancialYearMaster = () => {
           headerRequired={true}
           scrollHeight={"calc(100vh - 200px)"}
           downloadedfileName={"FinancialYear_Master_Table"}
-        />  
+        />
         {showConfirmDialogue ? (
           <ConfirmDialogue
             actionPopupToggle={actionPopupToggle}

@@ -45,7 +45,7 @@ const StateMaster = () => {
       label: "State Code",
       value: null,
       validation: {
-        required: true,
+        required: false,
         pattern:ValidationRegex.onlyCharacters.pattern,
         patternHint:ValidationRegex.onlyCharacters.patternHint
       },
