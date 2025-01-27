@@ -112,6 +112,7 @@ export class ClientMasterService {
         clientId: data.id,
         isActive: !data.isActive,
         updated_by: data?.loggedInUserId,
+        deactivationDate: data?.deactivationDate
       }
 
       const response = await HTTPService.postRequest(

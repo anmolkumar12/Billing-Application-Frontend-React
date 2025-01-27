@@ -205,6 +205,7 @@ export class IndustryMasterService {
         industryHeadId: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
+        deactivationDate: data?.deactivationDate
       }
 
       const response = await HTTPService.postRequest(

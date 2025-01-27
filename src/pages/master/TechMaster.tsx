@@ -37,7 +37,7 @@ const TechMaster = () => {
       fieldWidth: "col-md-4",
     },
     subGroup_name: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Technology SubGroup",
       options: [],
       value: null,
@@ -387,7 +387,7 @@ const TechMaster = () => {
       techFieldsStructure.techName.value = data?.techName;
       techFieldsStructure.group_name.value = data?.techGroupNames;
       techFieldsStructure.subGroup_name.options = subGroupList;
-      techFieldsStructure.subGroup_name.value = data?.techSubgroupNames;
+      techFieldsStructure.subGroup_name.value = data?.techSubgroupNames?.split(',');
       techFieldsStructure.description.value =
         data?.description != null && data?.description != "null"
           ? data?.description
@@ -419,10 +419,21 @@ const TechMaster = () => {
       const techSubGroup = techSubGroupMaster?.find(
         (subGroup: any) => subGroup?.name == TechForm?.subGroup_name?.value
       );
+
+      let techSubGroupId = "";
+      TechForm?.subGroup_name?.value?.forEach((item: any) => {
+        const id =
+        techSubGroupMaster?.find((tech: any) => tech?.name == item)?.id ??
+          null;
+        if (id != null) {
+          techSubGroupId = techSubGroupId != "" ? techSubGroupId + "," + id : id;
+        }
+      });
+
       const obj = {
         techName: TechForm?.techName?.value,
         techGroupIds: techGroup?.id || null,
-        techSubgroupIds: techSubGroup?.id || null,
+        techSubgroupIds: techSubGroupId || null,
         description: TechForm?.description?.value,
         isActive: 1,
         updatedBy: loggedInUserId,

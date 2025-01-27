@@ -36,6 +36,15 @@ const ClientMaster = () => {
             },
             fieldWidth: "col-md-4",
         },
+        is_same_alias: {
+            inputType: "inputSwitch",
+            label: "Alias same as client name",
+            value: false,
+            validation: {
+                required: false,
+            },
+            fieldWidth: "col-md-4",
+        },
         vega_client_name: {
             inputType: "inputtext",
             label: "Vega Client Name (Alias)",
@@ -120,7 +129,7 @@ const ClientMaster = () => {
             options: [],
             value: null,
             validation: {
-                required: true,
+                required: false,
             },
             fieldWidth: "col-md-4",
         },
@@ -130,7 +139,7 @@ const ClientMaster = () => {
             options: [],
             value: null,
             validation: {
-                required: true,
+                required: false,
             },
             fieldWidth: "col-md-4",
         },
@@ -150,7 +159,7 @@ const ClientMaster = () => {
             options: [],
             value: [],
             validation: {
-                required: true,
+                required: false,
             },
             fieldWidth: "col-md-4",
         },
@@ -160,7 +169,7 @@ const ClientMaster = () => {
             options: [],
             value: [],
             validation: {
-                required: true,
+                required: false,
             },
             fieldWidth: "col-md-4",
         },
@@ -263,8 +272,8 @@ const ClientMaster = () => {
     const [digitalSign, setDigitalSign]: any = useState([]);
     const [logoUrl, setLogoUrl] = useState('');
     const [signatureUrl, setSignatureUrl] = useState('');
-    const [showNDAAttacment, setShowNDAAttacment] = useState(false);
-    const [showMSAAttacment, setShowMSAAttacment] = useState(false);
+    const [showNDAAttacment, setShowNDAAttacment] = useState<boolean>(false);
+    const [showMSAAttacment, setShowMSAAttacment] = useState<boolean>(false);
     const [industryGroupMaster, setIndustryGroupMaster] = useState<any>([]);
     const [accountManagerMaster, setAccountManagerMaster] = useState<any>([]);
     const [accountsMaster, setAccountsMaster] = useState<any>([]);
@@ -1012,14 +1021,17 @@ const ClientMaster = () => {
                 } this record?`,
             acceptFunction: confirmDelete,
             rejectFunction: onPopUpClose,
+            askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
         });
         setShowConfirmDialogue(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = (deactivationDate?: Date) => {
         setLoader(true);
+        console.log('deactivationDate', deactivationDate);
+    
         clientService
-            .deactivateClientMaster({ ...patchData, loggedInUserId })
+            .deactivateClientMaster({ ...patchData, loggedInUserId, deactivationDate: deactivationDate ? formatDate(deactivationDate) : null, })
             .then(() => {
                 setLoader(false);
                 setShowConfirmDialogue(false);
@@ -1152,11 +1164,16 @@ const ClientMaster = () => {
         // const selectedCountry = countryMaster?.find(
         //     (item: any) => item?.name == selectedCompany?.countryName
         // );
-        if (form?.nda_flag?.value == true) {
+        if (form.nda_flag.value == true) {
             setShowNDAAttacment(true);
-        } else {
+        } else if (form.nda_flag.value == false) {
             setShowNDAAttacment(false);
         }
+        console.log('hhhhh', form);
+        
+        if (form?.is_same_alias?.value == true) {
+            form.vega_client_name.value = form?.client_name?.value;
+        } 
 
         if (form?.is_msa_missing?.value == true) {
             setShowMSAAttacment(true);
@@ -1349,7 +1366,7 @@ const ClientMaster = () => {
                 countryId: countryId,
                 companyId: companyId,
                 accountId: bankId,
-                industryId: industry_id,
+                industryId: industry_id ?  industry_id : null,
                 IndustryHeadId: IndustryHeadId,
                 IndustryGroupId: IndustryGroupId,
                 // IndustrySubGroupId: IndustrySubGroupId,

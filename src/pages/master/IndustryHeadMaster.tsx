@@ -109,7 +109,7 @@ const IndustryHeadMaster = () => {
       options: [],
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-4",
     },
@@ -118,7 +118,7 @@ const IndustryHeadMaster = () => {
       label: "Start Date",
       value: null,
       validation: {
-        required: false,
+        required: true,
       },
       fieldWidth: "col-md-4",
     },
@@ -189,14 +189,14 @@ const IndustryHeadMaster = () => {
       ),
     },
     {
-      label: "Industry Head Name",
+      label: "Name",
       fieldName: "industryHeadName",
       textAlign: "left",
       sort: true,
       filter: true,
       fieldValue: "industryHeadName",
       changeFilter: true,
-      placeholder: "Industry Head Name",
+      placeholder: "Name",
       body: (rowData: any) => (
         <div>
           <span
@@ -213,14 +213,14 @@ const IndustryHeadMaster = () => {
       ),
     },
     {
-          label: "Industry Head Ecode",
+          label: "Ecode",
           fieldName: "code",
           textAlign: "left",
           sort: true,
           filter: true,
           fieldValue: "code",
           changeFilter: true,
-          placeholder: "Industry Head Ecode",
+          placeholder: "Ecode",
           body: (rowData: any) => (
             <div>
               <span
@@ -237,14 +237,14 @@ const IndustryHeadMaster = () => {
           ),
         },
         {
-          label: "Industry Head Email",
+          label: "Email",
           fieldName: "industry_head_email",
           textAlign: "left",
           sort: true,
           filter: true,
           fieldValue: "industry_head_email",
           changeFilter: true,
-          placeholder: "Account Manager Email",
+          placeholder: "Email",
           body: (rowData: any) => (
             <div>
               <span
@@ -540,7 +540,7 @@ const IndustryHeadMaster = () => {
       const response = await industryService.getIndustryHeadMaster();
       response.industryHeads?.forEach((el: any) => {
         el.viewStartDate = moment(el?.startDate).format("YYYY-MM-DD")
-        el.viewEndDate = moment(el?.endDate).format("YYYY-MM-DD")
+        el.viewEndDate = el?.endDate ? moment(el?.endDate).format("YYYY-MM-DD") : null
       })
       setIndustryHeadMaster(response?.industryHeads);
       return response?.industryHeads;
@@ -735,50 +735,50 @@ const IndustryHeadMaster = () => {
     }
 
 
-    if (form?.isRegionWise?.value == true) {
-      form.region_code.disable = false;
-      if (form.region_code.validation) {
-        form.region_code.validation.required = true;
-      }
-      form.state_name.value = null;
-      form.state_name.disable = true;
-      if (form.state_name.validation) {
-        form.state_name.validation.required = false;
-      }
-      console.log('IndustryHeadForm?.country_name?.value----------->',IndustryHeadForm?.country_name?.value)
-      // const countryAreUnequal =
-      //   JSON.stringify(form?.country_name?.value) !==
-      //   JSON.stringify(IndustryHeadForm?.country_name?.value);
-      //   console.log('form.country_name.value--------->',form.country_name.value)
-      // if (countryAreUnequal && form.country_name.value != null) {
-      //   const [regionCodesList, regionList]: any = await modifyFormRegionWise(
-      //     form?.country_name?.value
-      //   );
-      //   console.log('regionCodesList-->',regionCodesList)
-      //   form.region_code.options = regionCodesList;
-      //   form.region_code.value = null;
-      // }
-    } else {
-      form.state_name.disable = false;
-      if (form.state_name.validation) {
-        form.state_name.validation.required = true;
-      }
-      form.region_code.value = null;
-      form.region_code.disable = true;
-      if (form.region_code.validation) {
-        form.region_code.validation.required = false;
-      }
-      // const countryAreUnequal =
-      //   JSON.stringify(form?.country_name?.value) !==
-      //   JSON.stringify(IndustryHeadForm?.country_name?.value);
-      // if (countryAreUnequal && form.country_name.value != null) {
-      //   const stateNamesList: any = await modifyFormStateWise(
-      //     form?.country_name?.value
-      //   );
-      //   form.state_name.options = stateNamesList;
-      //   form.state_name.value = null;
-      // }
-    }
+    // if (form?.isRegionWise?.value == true) {
+    //   form.region_code.disable = false;
+    //   if (form.region_code.validation) {
+    //     form.region_code.validation.required = true;
+    //   }
+    //   form.state_name.value = null;
+    //   form.state_name.disable = true;
+    //   if (form.state_name.validation) {
+    //     form.state_name.validation.required = false;
+    //   }
+    //   console.log('IndustryHeadForm?.country_name?.value----------->',IndustryHeadForm?.country_name?.value)
+    //   // const countryAreUnequal =
+    //   //   JSON.stringify(form?.country_name?.value) !==
+    //   //   JSON.stringify(IndustryHeadForm?.country_name?.value);
+    //   //   console.log('form.country_name.value--------->',form.country_name.value)
+    //   // if (countryAreUnequal && form.country_name.value != null) {
+    //   //   const [regionCodesList, regionList]: any = await modifyFormRegionWise(
+    //   //     form?.country_name?.value
+    //   //   );
+    //   //   console.log('regionCodesList-->',regionCodesList)
+    //   //   form.region_code.options = regionCodesList;
+    //   //   form.region_code.value = null;
+    //   // }
+    // } else {
+    //   form.state_name.disable = false;
+    //   if (form.state_name.validation) {
+    //     form.state_name.validation.required = true;
+    //   }
+    //   form.region_code.value = null;
+    //   form.region_code.disable = true;
+    //   if (form.region_code.validation) {
+    //     form.region_code.validation.required = false;
+    //   }
+    //   // const countryAreUnequal =
+    //   //   JSON.stringify(form?.country_name?.value) !==
+    //   //   JSON.stringify(IndustryHeadForm?.country_name?.value);
+    //   // if (countryAreUnequal && form.country_name.value != null) {
+    //   //   const stateNamesList: any = await modifyFormStateWise(
+    //   //     form?.country_name?.value
+    //   //   );
+    //   //   form.state_name.options = stateNamesList;
+    //   //   form.state_name.value = null;
+    //   // }
+    // }
     setIndustryHeadForm(form);
   };
 
@@ -863,20 +863,19 @@ const IndustryHeadMaster = () => {
 
     _.each(IndustryHeadForm, (item: any) => {
       if (item?.validation?.required) {
-        companyFormValid.push(item.valid);
+        // companyFormValid.push(item.valid);
         companyValidityFlag =
           companyValidityFlag &&
-          item.valid &&
-          IndustryHeadForm?.country_name?.value != null;
+          item.value;
       }
-      if (
-        (IndustryHeadForm?.isRegionWise?.value == false &&
-          IndustryHeadForm?.state_name?.value == null) ||
-        (IndustryHeadForm?.isRegionWise?.value == true &&
-          IndustryHeadForm?.region_code?.value == null)
-      ) {
-        companyValidityFlag = false;
-      }
+      // if (
+      //   (IndustryHeadForm?.isRegionWise?.value == false &&
+      //     IndustryHeadForm?.state_name?.value == null) ||
+      //   (IndustryHeadForm?.isRegionWise?.value == true &&
+      //     IndustryHeadForm?.region_code?.value == null)
+      // ) {
+      //   companyValidityFlag = false;
+      // }
     });
     setIsFormValid(companyValidityFlag);
 
@@ -956,8 +955,8 @@ const IndustryHeadMaster = () => {
         countryIds: countryIds,
         regionIds: regionIds != "" ? regionIds : null,
         stateIds: stateIds != "" ? stateIds : null,
-        startDate: formatDate(IndustryHeadForm?.start_date?.value),
-        endDate: formatDate(IndustryHeadForm?.end_date?.value),
+        startDate: formatDate(IndustryHeadForm?.start_date?.value) || null,
+        endDate: IndustryHeadForm?.end_date?.value ? formatDate(IndustryHeadForm?.end_date?.value) : null,
         isActive: 1,
         updatedBy: loggedInUserId,
       };
@@ -1009,14 +1008,17 @@ const IndustryHeadMaster = () => {
       } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
+      askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (deactivationDate?: Date) => {
     setLoader(true);
+    console.log('deactivationDate', deactivationDate);
+    
     industryService
-      .deactivateIndustryHeadMaster({ ...patchData, loggedInUserId })
+      .deactivateIndustryHeadMaster({ ...patchData, loggedInUserId, deactivationDate: deactivationDate ? formatDate(deactivationDate) : null, })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
