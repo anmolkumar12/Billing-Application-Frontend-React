@@ -1259,16 +1259,16 @@ const createNewContract = async (event: FormEvent) => {
   const obj = {
       clientId: poContractConfData.find((item: any) => item.client_name === objFormState.client_name.value)?.client_id || '',
       client_name: objFormState.client_name.value || '',
-      clientBillTo: objFormState.clientBillTo.value.toString() || '',
-      clientShipAddress: objFormState.clientShipAddress.value.toString() || '',
-      clientContact: objFormState.clientContact.value.toString() || '',
+      clientBillTo: objFormState.clientBillTo.value?.toString() || '',
+      clientShipAddress: objFormState.clientShipAddress.value?.toString() || '',
+      clientContact: objFormState.clientContact.value?.toString() || '',
       companyName: objFormState.companyName.value || '',
       companyLocation: objFormState.companyLocation.value || '',
       creditPeriod: objFormState.creditPeriod.value,
       poAmount: objFormState.poAmount.value || '',
       dueAmount: objFormState.dueAmount.value || '',
-      start_date: formatDate(objFormState.start_date.value),
-      end_date: formatDate(objFormState.end_date.value),
+      start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
+      end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
       projectService: objFormState.projectService.value || '',
       technolgyGroup: objFormState.technolgyGroup.value || '',
       technolgySubGroup: objFormState.technolgySubGroup.value || '',
@@ -1278,11 +1278,11 @@ const createNewContract = async (event: FormEvent) => {
       docType: objFormState.docType.value || '',
       poNumber: objFormState.poNumber.value || '',
       srNumber: objFormState.srNumber.value || '',
-      industryGroups: objFormState.industryGroups.value.toString() || '',
-      subIndustries: objFormState.subIndustries.value.toString() || '',
-      industryHead: objFormState.industryHead.value.toString() || '',
-      salesManager: objFormState.salesManager.value.toString() || '',
-      accountManager: objFormState.accountManager.value.toString() || '',
+      industryGroups: objFormState.industryGroups.value?.toString() || '',
+      subIndustries: objFormState.subIndustries.value?.toString() || '',
+      industryHead: objFormState.industryHead.value?.toString() || '',
+      salesManager: objFormState.salesManager.value?.toString() || '',
+      accountManager: objFormState.accountManager.value?.toString() || '',
       masterNames: JSON.stringify(getAllMasterNames) || '{}',
       noOfResources:objFormState.noOfResources.value || '',
       resourcesData: JSON.stringify(tableData) || '[]',
@@ -1290,7 +1290,7 @@ const createNewContract = async (event: FormEvent) => {
 
 
   console.log('Names Object ----->', getAllMasterNames);
-  console.log('Data ---------------->', tableData);
+  console.log('Data ---------------->', tableData, rowData);
 
   Object.entries(obj).forEach(([key, value]: any) => {
       formData.set(key, value);
