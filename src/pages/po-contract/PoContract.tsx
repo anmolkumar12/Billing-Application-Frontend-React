@@ -454,6 +454,8 @@ const Contract: React.FC = () => {
 
   const openSaveForm = () => {
     setRowData(null);
+    console.log('objFormState', objFormState);
+    
     objFormState.client_name.options = clientListNames;
     objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
     ? poMastersConfigData?.projectService.map((item: any) => ({

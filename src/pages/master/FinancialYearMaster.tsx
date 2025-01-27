@@ -139,7 +139,7 @@ const FinancialYearMaster = () => {
       ),
     },
     {
-      label: "Financial Year Name",
+      label: "Financial Year",
       fieldName: "financialYearName",
       textAlign: "left",
       sort: true,
@@ -161,7 +161,7 @@ const FinancialYearMaster = () => {
     },
 
     {
-      label: "Start Time",
+      label: "Start Date",
       fieldName: "startYear",
       textAlign: "left",
       sort: true,
@@ -182,7 +182,7 @@ const FinancialYearMaster = () => {
       ),
     },
     {
-      label: "End Time",
+      label: "End Date",
       fieldName: "endYear",
       textAlign: "left",
       sort: true,

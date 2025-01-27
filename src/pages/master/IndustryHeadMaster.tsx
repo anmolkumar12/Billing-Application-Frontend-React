@@ -35,7 +35,7 @@ const IndustryHeadMaster = () => {
     },
     code: {
       inputType: "inputtext",
-      label: "Account Manager Ecode",
+      label: "Industry Head Ecode",
       value: null,
       validation: {
         required: true,
@@ -44,7 +44,7 @@ const IndustryHeadMaster = () => {
     },
     industry_head_email: {
       inputType: "inputtext",
-      label: "Account Manager Email",
+      label: "Industry Head Email",
       value: null,
       validation: {
         required: true,
