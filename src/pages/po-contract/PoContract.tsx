@@ -328,6 +328,7 @@ const Contract: React.FC = () => {
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
+  const [rowData,setRowData] = useState<any>(null);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
   const [tableData, setTableData] = useState<any>([]);
@@ -432,9 +433,10 @@ const Contract: React.FC = () => {
   
 
   const deactivateContractMaster = () => {
+    console.log('patchData--->',patchData)
     setLoader(true);
-    contractService
-      .deactivateContractMaster({...patchData, loggedInUserId})
+    poContractService
+      .activateDeactivatePoContract({id:patchData.id,isActive:patchData.isActive?0:1,loggedInUserId:loggedInUserId})
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
@@ -451,6 +453,7 @@ const Contract: React.FC = () => {
   };
 
   const openSaveForm = () => {
+    setRowData(null);
     objFormState.client_name.options = clientListNames;
     objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
     ? poMastersConfigData?.projectService.map((item: any) => ({
@@ -768,11 +771,12 @@ const Contract: React.FC = () => {
     setShowConfirmDialogue(true);
   };
 
-  console.log('data-------> ',poContractConfData);
+
 
 
   const onUpdate = (data: any) => {
     console.log('rowData---->',data);
+    setRowData(data)
 
     updatePoContactMasterData(data);
     // setFormPopup(true);
@@ -787,12 +791,229 @@ const Contract: React.FC = () => {
 
   const updatePoContactMasterData = (rowData: any) => {
     try {
-      // objFormState.client_name.value = rowData.
+      // objFormState.client_name.value = 
+      objFormState.client_name.options = clientListNames;
+      objFormState.client_name.value = rowData.client_name
+      // if(currentForm.client_name.value !== objFormState.client_name.value){
+        const configData = poContractConfData.find((item:any) => item.client_name == rowData?.client_name)
+        if(configData){
+          objFormState.clientBillTo.options = configData.clientBill?.filter((item:any) => item.id).map((item:any,index:number) => {
+              return {
+                label:concatAddresses(item.address1, item.address2, item.address3),
+                value:item.id.toString(),
+                isDefault:index == 0? 1:0
+              }
+            })
+           
+              objFormState.clientBillTo.value = rowData?.clientBillTo?rowData?.clientBillTo.split(","):[];
+            
+            objFormState.clientShipAddress.options = configData.clientShip?.filter((item:any) => item.id).map((item:any,index:number) => {
+              return {
+                label:concatAddresses(item.address1, item.address2, item.address3),
+                value:item.id.toString(),
+                isDefault:index == 0? 1:0
+              }
+            })
+            objFormState.clientShipAddress.value = rowData?.clientShipAddress?rowData?.clientShipAddress.split(","):[];
+            objFormState.clientContact.options = Array.isArray(configData?.contacts)?configData.contacts?.filter((item:any) => item.id).map((item:any,index:number) => {
+              return {
+                label:item.name,
+                value:item.id.toString(),
+                isDefault:index == 0? 1:0
+              }
+            }):[]
+          
+            objFormState.clientContact.value = rowData?.clientContact?rowData?.clientContact.split(","):[];
+
+            objFormState.companyName.value = configData?.companyInfo.companyName;
+            objFormState.companyName.disable = false;
+
+            
+            objFormState.companyLocation.options = [{label:concatAddresses(configData?.companyLocation?.address1,configData?.companyLocation?.address2,configData?.companyLocation?.address3)||"",value:configData?.companyLocation?.id.toString()}];
+            objFormState.companyLocation.value = configData?.companyLocation?.id.toString()
+
+        }
+    // }
+      objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
+      ? poMastersConfigData?.projectService.map((item: any) => ({
+          label: item?.name,
+          value: item.id.toString(),
+        }))
+      : [];
+    
+    objFormState.technolgyGroup.options = Array.isArray(poMastersConfigData?.technolgyGroup)
+      ? poMastersConfigData?.technolgyGroup.map((item: any) => ({
+          label: item?.name,
+          value: item.id.toString(),
+        }))
+      : [];
+    
+  
+    
+    objFormState.industryGroups.options = cascadingData.groupIndustryData.map((item: any) => ({
+          label: item?.groupIndustryName,
+          value: item.groupIndustryId.toString(),
+        }))
+     
+    
+    objFormState.oem.options = Array.isArray(poMastersConfigData?.oem)
+      ? poMastersConfigData?.oem.map((item: any) => ({
+          label: item?.oemName,
+          value: item.id.toString(),
+        }))
+      : [];
+    
+    objFormState.product.options = Array.isArray(poMastersConfigData?.product)
+      ? poMastersConfigData?.product.map((item: any) => ({
+          label: item?.productName,
+          value: item.id.toString(),
+        }))
+      : [];
+      objFormState.creditPeriod.value = rowData.creditPeriod;
+      objFormState.docType.value = rowData.docType;
+      objFormState.poAmount.value = rowData.poAmount;
+      objFormState.dueAmount.value = rowData.dueAmount;
+      objFormState.end_date.value = rowData.end_date ? new Date(rowData.end_date) : '';
+      objFormState.start_date.value = rowData.start_date ? new Date(rowData.start_date) : '';
+      objFormState.noOfResources.value = rowData.noOfResources;
+      if(rowData.poNumber){
+        objFormState.poNumber.value = rowData.poNumber;
+        objFormState.poNumber.hideField = false;
+      }
+      if(rowData.srNumber){
+        objFormState.srNumber.value = rowData.srNumber;
+        objFormState.srNumber.hideField = false;
+      }
+
+      objFormState.projectService.value = rowData.projectService?rowData.projectService:"";
+      objFormState.oem.value = rowData.oem?rowData.oem:"";
+      objFormState.product.value = rowData.product?rowData.product:"";
+
+      if(rowData?.technolgyGroup){
+        objFormState.technolgyGroup.value = rowData.technolgyGroup;
+
+        objFormState.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
+          ? poMastersConfigData?.technolgySubGroup.filter((item:any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
+              label: item?.name,
+              value: item.id.toString(),
+            }))
+          : [];
+
+          if(rowData.technolgySubGroup){
+            objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
+        
+          objFormState.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
+          ? poMastersConfigData?.technolgy.filter((item:any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
+              label: item?.techName,
+              value: item.id.toString(),
+            }))
+          : [];
+         
+          objFormState.technolgy.value = rowData.technolgy;
+
+          }
+        
+        
+      }
+
+      if(rowData?.technolgyGroup){
+        objFormState.technolgyGroup.value = rowData.technolgyGroup;
+
+        objFormState.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
+          ? poMastersConfigData?.technolgySubGroup.filter((item:any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
+              label: item?.name,
+              value: item.id.toString(),
+            }))
+          : [];
+
+          if(rowData.technolgySubGroup){
+            objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
+        
+          objFormState.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
+          ? poMastersConfigData?.technolgy.filter((item:any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
+              label: item?.techName,
+              value: item.id.toString(),
+            }))
+          : [];
+          objFormState.technolgy.value = rowData.technolgy;
+          }
+      }
+
+
+      const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
+
+      if(rowData?.industryGroups){
+        objFormState.industryGroups.value = rowData.industryGroups.split(",");
+        objFormState.subIndustries.options = groupIndustryData
+        .filter((group:any) =>
+          Number(group.groupIndustryId) === Number(rowData.industryGroups?.split(",")[0])
+        )
+        .flatMap((group:any) =>
+          industryData
+            .filter((industry:any) =>
+              group.industryIds.split(',').includes(industry.industryId.toString())
+            )
+            .map((industry:any) => ({
+              label: industry.industryName,
+              value: industry.industryId.toString(),
+            }))
+        );
+      }
+      if(rowData?.subIndustries){
+        objFormState.subIndustries.value = rowData.subIndustries.split(",");
+        objFormState.industryHead.options = industryHeadData
+        .filter((head:any) =>
+          head.industryIds.split(',').includes(rowData?.subIndustries?rowData?.subIndustries?.split(",")[0]:'')
+        )
+        .map((head:any) => ({
+          label: head.industryHeadName,
+          value: head.industryHeadId.toString(),
+        }));
+      }
+
+      if(rowData?.industryHead){
+        objFormState.industryHead.value = rowData.industryHead.split(",");
+        objFormState.salesManager.options = salesManagerData
+          .filter((manager:any) =>
+            manager.industryHeadIds.split(',').includes(rowData.industryHead?rowData.industryHead?.split(",")[0]:'')
+          )
+          .map((manager:any) => ({
+            label: manager.salesManagerName,
+            value: manager.salesManagerId.toString(),
+          }));
+
+          objFormState.accountManager.options = accountManagerData
+          .filter((manager:any) =>
+            manager.industryHeadIds.split(',').includes(rowData.industryHead?rowData.industryHead?.split(",")[0]:'')
+          )
+          .map((manager:any) => ({
+            label: manager.accountManagerName,
+            value: manager.accountManagerId.toString(),
+          }));
+      }
+      if(rowData?.salesManager){
+        objFormState.salesManager.value = rowData.salesManager.split(",");
+      }
+      if(rowData?.accountManager){
+        objFormState.accountManager.value = rowData.accountManager.split(",");
+      }
+
+      setLogoUrl(rowData?.filePath?`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`:'');
+
+
+      console.log('----------------1111111111111111',rowData.resourcesData);
+      let arr = [...rowData.resourcesData];
+      
+      setTableData(arr);
+      console.log('`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`',`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`)
+
+      setFormPopup(true);
 
     } catch (error) {
       console.log("error", error);
     }
   };
+
 
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -1021,7 +1242,7 @@ const getNamesFromOptions = (field: any) => {
 
 
 
-
+console.log('Data ---------------->', tableData);
  
 
 const createNewContract = async (event: FormEvent) => {
@@ -1078,6 +1299,10 @@ const createNewContract = async (event: FormEvent) => {
       formData.set("file", attachments[0]);
   }
 
+  if(rowData && rowData?.id){
+    formData.set("id",rowData.id)
+  }
+  else{
   poContractService
       .createPoContract(formData)
       .then((response: any) => {
@@ -1091,6 +1316,7 @@ const createNewContract = async (event: FormEvent) => {
       .catch((error: any) => {
           ToasterService.show(error, CONSTANTS.ERROR);
       });
+    }
 };
 
 

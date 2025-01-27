@@ -17,7 +17,7 @@ export class PoContractService {
   createPoContract = async (formData: any) => {
     try {
       const response = await HTTPService.postRequest(
-        APIURLS.CREATE_PO_CONTRACT,
+        formData?.id?APIURLS.UPDATE_PO_CONTRACT:APIURLS.CREATE_PO_CONTRACT,
         formData
       );
       return response?.data;
@@ -45,8 +45,8 @@ export class PoContractService {
   activateDeactivatePoContract = async (data: any) => {
     try {
       const body = {
-        contractId: data.id, // Assuming `id` represents the PO Contract ID
-        isActive: !data.isActive,
+        id: data.id, // Assuming `id` represents the PO Contract ID
+        isActive: data.isActive,
         updatedBy: data?.loggedInUserId,
       };
 

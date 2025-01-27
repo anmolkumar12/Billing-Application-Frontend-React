@@ -9,6 +9,8 @@ import { InputComponent } from "../../components/ui/input/Input";
 const EditableTable = (props:any) => {
     const {tableData,setTableData} = props;
 
+    console.log('table--->',tableData);
+
 //   const [numRows, setNumRows] = useState(0); // Number of rows from input
    // Dynamic table data
 
@@ -23,10 +25,11 @@ const EditableTable = (props:any) => {
   };
 
   useEffect(() => {
+    const existingData = props?.tableData;
     const rows = Array.from({ length: props?.noOfRows || 0 }, (_, i) => ({
         id: i + 1,
-        resourceType: "",
-        manMonthRate: "",
+        resourceType: existingData[i]?.resourceType || "",
+        manMonthRate:  existingData[i]?.manMonthRate || "",
       }));
       setTableData(rows);
     
