@@ -20,21 +20,22 @@ import { ImageUrl } from "../../utils/ImageUrl";
 import classes from "../master/Master.module.scss";
 import { FILE_TYPES } from "../../enums/file-types.enum";
 
-import { PoContractService}  from "../../services/po-contract/poContract.service";
+import { PoContractService } from "../../services/po-contract/poContract.service";
 import EditableTable from "./EditableTable";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
+import moment from "moment";
 
 const Contract: React.FC = () => {
 
 
-  const objForm:any = {
+  const objForm: any = {
     client_name: {
       inputType: "singleSelect",
       label: "Client",
       options: [],
       value: null,
       validation: {
-        required:false
+        required: false
       },
       fieldWidth: "col-md-4",
     },
@@ -44,7 +45,7 @@ const Contract: React.FC = () => {
       options: [],
       value: null,
       validation: {
-        required:false
+        required: false
       },
       fieldWidth: "col-md-4",
     },
@@ -54,7 +55,7 @@ const Contract: React.FC = () => {
       options: [],
       value: null,
       validation: {
-        required:false
+        required: false
       },
       fieldWidth: "col-md-4",
     },
@@ -64,7 +65,7 @@ const Contract: React.FC = () => {
       options: [],
       value: null,
       validation: {
-        required:false
+        required: false
       },
       fieldWidth: "col-md-4",
     },
@@ -79,64 +80,64 @@ const Contract: React.FC = () => {
     //   fieldWidth: "col-md-4",
     // },
     companyName: {
-        inputType: "inputtext",
-        label: "Company Name",
-        // options: [],
-        value: null,
-        
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
-      },
-      companyLocation: {
-        inputType: "singleSelect",
-        label: "Company Location",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
-      },
-      creditPeriod: {
-        inputType: "inputNumber",
-        label: "Credit Period (Days)",
+      inputType: "inputtext",
+      label: "Company Name",
+      // options: [],
+      value: null,
 
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      validation: {
+        required: false
       },
-      poAmount: {
-        inputType: "inputNumber",
-        label: "Po Amount",
-        // options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    companyLocation: {
+      inputType: "singleSelect",
+      label: "Company Location",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      dueAmount: {
-        inputType: "inputNumber",
-        label: "Pending Amount",
-        // options: [],
-        disable:true,
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    creditPeriod: {
+      inputType: "inputNumber",
+      label: "Credit Period (Days)",
+
+      value: null,
+      validation: {
+        required: false
       },
+      fieldWidth: "col-md-4",
+    },
+    poAmount: {
+      inputType: "inputNumber",
+      label: "Po Amount",
+      // options: [],
+      value: null,
+      validation: {
+        required: false
+      },
+      fieldWidth: "col-md-4",
+    },
+    dueAmount: {
+      inputType: "inputNumber",
+      label: "Pending Amount",
+      // options: [],
+      disable: true,
+      value: null,
+      validation: {
+        required: false
+      },
+      fieldWidth: "col-md-4",
+    },
 
     start_date: {
       inputType: "singleDatePicker",
       label: "PO Start Date",
       value: null,
       validation: {
-        required:false
+        required: false
       },
       fieldWidth: "col-md-4",
     },
@@ -150,124 +151,124 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     projectService: {
-        inputType: "singleSelect",
-        label: "Service Type",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      inputType: "singleSelect",
+      label: "Service Type",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      technolgyGroup: {
-        inputType: "singleSelect",
-        label: "Technology Group",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    technolgyGroup: {
+      inputType: "singleSelect",
+      label: "Technology Group",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      technolgySubGroup: {
-        inputType: "singleSelect",
-        label: "Technology Sub Group",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    technolgySubGroup: {
+      inputType: "singleSelect",
+      label: "Technology Sub Group",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      technolgy: {
-        inputType: "singleSelect",
-        label: "Technology",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    technolgy: {
+      inputType: "singleSelect",
+      label: "Technology",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      oem: {
-        inputType: "singleSelect",
-        label: "OEM",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    oem: {
+      inputType: "singleSelect",
+      label: "OEM",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      product: {
-        inputType: "singleSelect",
-        label: "Product",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    product: {
+      inputType: "singleSelect",
+      label: "Product",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      industryGroups: {
-        inputType: "multiSelect",
-        label: "Industry Groups",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    industryGroups: {
+      inputType: "multiSelect",
+      label: "Industry Groups",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      subIndustries: {
-        inputType: "multiSelect",
-        label: "Sub Industries",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    subIndustries: {
+      inputType: "multiSelect",
+      label: "Sub Industries",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      industryHead: {
-        inputType: "multiSelect",
-        label: "Industry Head",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    industryHead: {
+      inputType: "multiSelect",
+      label: "Industry Head",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      salesManager: {
-        inputType: "multiSelect",
-        label: "Sales Manager",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    salesManager: {
+      inputType: "multiSelect",
+      label: "Sales Manager",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-      accountManager: {
-        inputType: "multiSelect",
-        label: "Account Manager",
-        options: [],
-        value: null,
-        validation: {
-          required:false
-        },
-        fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4",
+    },
+    accountManager: {
+      inputType: "multiSelect",
+      label: "Account Manager",
+      options: [],
+      value: null,
+      validation: {
+        required: false
       },
-     
+      fieldWidth: "col-md-4",
+    },
+
 
     docType: {
       inputType: "singleSelect",
       label: "Document Type",
-      options: ["PO","SOW","Email"],
+      options: ["PO", "SOW", "Email"],
       value: null,
       validation: {
-        required:false
+        required: false
       },
       fieldWidth: "col-md-4",
     },
@@ -275,7 +276,7 @@ const Contract: React.FC = () => {
       inputType: "inputtext",
       label: "PO Number",
       value: null,
-      hideField:true,
+      hideField: true,
       validation: {
         required: false,
       },
@@ -285,7 +286,7 @@ const Contract: React.FC = () => {
       inputType: "inputtext",
       label: "Sr Number",
       value: null,
-      hideField:true,
+      hideField: true,
       validation: {
         required: false,
       },
@@ -297,46 +298,46 @@ const Contract: React.FC = () => {
       // options: [],
       value: null,
       validation: {
-        required:false
+        required: false
       },
       fieldWidth: "col-md-4",
     },
-   
+
   };
   const [poContractsData, setPoContractData] = useState<any>([]);
-  const [clientListNames,setClientListNames] = useState<any>([]);
-  const [poContractConfData,setPoContractConfData] = useState<any>([]);
-  const [poContractNames,setPoContractNames] = useState<any>({
-    projectService_names:'',
-    technolgyGroup_names:'',
-    technolgySubGroup_names:'',
-    technolgy_names:'',
-    oem_names:'',
-    product_names:'',
-    industryGroups_names:'',
-    subIndustries_names:'',
-    industryHead_names:'',
-    salesManager_names:'',
-    accountManager_names:'',
-    clientBillTo_names:'',                        
-    clientShipAddress_names:'',
-    clientContact_names:'',
-    companyName:'',
-    companyLocation_names:''
+  const [clientListNames, setClientListNames] = useState<any>([]);
+  const [poContractConfData, setPoContractConfData] = useState<any>([]);
+  const [poContractNames, setPoContractNames] = useState<any>({
+    projectService_names: '',
+    technolgyGroup_names: '',
+    technolgySubGroup_names: '',
+    technolgy_names: '',
+    oem_names: '',
+    product_names: '',
+    industryGroups_names: '',
+    subIndustries_names: '',
+    industryHead_names: '',
+    salesManager_names: '',
+    accountManager_names: '',
+    clientBillTo_names: '',
+    clientShipAddress_names: '',
+    clientContact_names: '',
+    companyName: '',
+    companyLocation_names: ''
   })
-  const [poMastersConfigData,setPoMastersConfigData] = useState<any>({});
+  const [poMastersConfigData, setPoMastersConfigData] = useState<any>({});
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
-  const [rowData,setRowData] = useState<any>(null);
+  const [rowData, setRowData] = useState<any>(null);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
   const [tableData, setTableData] = useState<any>([]);
-  const [cascadingData,setCascadingData] = useState<any>({groupIndustryData:[], industryData:[], industryHeadData:[], salesManagerData:[], accountManagerData:[]})
+  const [cascadingData, setCascadingData] = useState<any>({ groupIndustryData: [], industryData: [], industryHeadData: [], salesManagerData: [], accountManagerData: [] })
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
-    const [logoUrl,setLogoUrl] = useState('');
-      const [attachments, setAttachments]: any = useState([]);
+  const [logoUrl, setLogoUrl] = useState('');
+  const [attachments, setAttachments]: any = useState([]);
 
   const loggedInUserId = userInfo?.userId;
 
@@ -346,11 +347,11 @@ const Contract: React.FC = () => {
   const clientService = new ClientMasterService();
 
   useEffect(() => {
-      
-      getContractMaster();
-      getPoContractConfiguration();
-      getPOContractMasterConfigData();
-      getPOContractMasterCascadingData()
+
+    getContractMaster();
+    getPoContractConfiguration();
+    getPOContractMasterConfigData();
+    getPOContractMasterCascadingData()
 
   }, []);
 
@@ -361,7 +362,7 @@ const Contract: React.FC = () => {
     setLoader(true);
     try {
       const response = await poContractService.getPoContractsData();
-   
+
       setPoContractData(response?.poContracts);
     } catch (error) {
       console.error(error);
@@ -374,8 +375,8 @@ const Contract: React.FC = () => {
     try {
       const response = await poContractService.getPoContractConfiguration();
       setPoContractConfData(response?.data);
-      setClientListNames(response?.data?.map((item:any) => {
-        return item.client_name 
+      setClientListNames(response?.data?.map((item: any) => {
+        return item.client_name
         // return {
         //      label:item?.client_name,
         //      value:item?.id?.toString()
@@ -388,7 +389,7 @@ const Contract: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
   const getPOContractMasterConfigData = async () => {
     setLoader(true);
     try {
@@ -413,7 +414,7 @@ const Contract: React.FC = () => {
     setLoader(true);
     try {
       const response = await poContractService.getPOContractMasterCascadingData();
-      console.log('------>',response?.data?.data)
+      console.log('------>', response?.data?.data)
       setCascadingData(response?.data?.data);
 
       // setPoContractConfData(response?.data);
@@ -430,13 +431,13 @@ const Contract: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
 
   const deactivateContractMaster = () => {
-    console.log('patchData--->',patchData)
+    console.log('patchData--->', patchData)
     setLoader(true);
     poContractService
-      .activateDeactivatePoContract({id:patchData.id,isActive:patchData.isActive?0:1,loggedInUserId:loggedInUserId})
+      .activateDeactivatePoContract({ id: patchData.id, isActive: patchData.isActive ? 0 : 1, loggedInUserId: loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
@@ -455,44 +456,44 @@ const Contract: React.FC = () => {
   const openSaveForm = () => {
     setRowData(null);
     console.log('objFormState', objFormState);
-    
+
     objFormState.client_name.options = clientListNames;
     objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
-    ? poMastersConfigData?.projectService.map((item: any) => ({
+      ? poMastersConfigData?.projectService.map((item: any) => ({
         label: item?.name,
         value: item.id.toString(),
       }))
-    : [];
-  
-  objFormState.technolgyGroup.options = Array.isArray(poMastersConfigData?.technolgyGroup)
-    ? poMastersConfigData?.technolgyGroup.map((item: any) => ({
-        label: item?.name,
-        value: item.id.toString(),
-      }))
-    : [];
-  
+      : [];
 
-  
-  objFormState.industryGroups.options = cascadingData.groupIndustryData.map((item: any) => ({
-        label: item?.groupIndustryName,
-        value: item.groupIndustryId.toString(),
+    objFormState.technolgyGroup.options = Array.isArray(poMastersConfigData?.technolgyGroup)
+      ? poMastersConfigData?.technolgyGroup.map((item: any) => ({
+        label: item?.name,
+        value: item.id.toString(),
       }))
-   
-  
-  objFormState.oem.options = Array.isArray(poMastersConfigData?.oem)
-    ? poMastersConfigData?.oem.map((item: any) => ({
+      : [];
+
+
+
+    objFormState.industryGroups.options = cascadingData.groupIndustryData.map((item: any) => ({
+      label: item?.groupIndustryName,
+      value: item.groupIndustryId.toString(),
+    }))
+
+
+    objFormState.oem.options = Array.isArray(poMastersConfigData?.oem)
+      ? poMastersConfigData?.oem.map((item: any) => ({
         label: item?.oemName,
         value: item.id.toString(),
       }))
-    : [];
-  
-  objFormState.product.options = Array.isArray(poMastersConfigData?.product)
-    ? poMastersConfigData?.product.map((item: any) => ({
+      : [];
+
+    objFormState.product.options = Array.isArray(poMastersConfigData?.product)
+      ? poMastersConfigData?.product.map((item: any) => ({
         label: item?.productName,
         value: item.id.toString(),
       }))
-    : [];
-  
+      : [];
+
     // setobjFormState(_.cloneDeep(objForm));
     setFormPopup(true);
 
@@ -510,7 +511,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: false,
       filter: false,
-      body: (rowData:any) => (
+      body: (rowData: any) => (
         <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
           <span
             className="pi pi-pencil"
@@ -536,7 +537,7 @@ const Contract: React.FC = () => {
       fieldValue: "client_name",
       changeFilter: true,
       placeholder: "Client Name",
-      body: (rowData:any) => <span>{rowData.client_name}</span>,
+      body: (rowData: any) => <span>{rowData.client_name}</span>,
     },
     {
       label: "Bill To",
@@ -545,7 +546,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.clientBillTo_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.clientBillTo_names}</span>,
     },
     {
       label: "Shipping Address",
@@ -554,7 +555,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.clientShipAddress_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.clientShipAddress_names}</span>,
     },
     {
       label: "Contact",
@@ -563,7 +564,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.clientContact_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.clientContact_names}</span>,
     },
     // {
     //   label: "Bill From",
@@ -581,7 +582,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData.companyName}</span>,
+      body: (rowData: any) => <span>{rowData.companyName}</span>,
     },
     {
       label: "Company Location",
@@ -590,7 +591,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.companyLocation_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.companyLocation_names}</span>,
     },
     {
       label: "Credit Period",
@@ -599,7 +600,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData.creditPeriod} days</span>,
+      body: (rowData: any) => <span>{rowData.creditPeriod} days</span>,
     },
     {
       label: "PO Amount",
@@ -608,7 +609,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData.poAmount}</span>,
+      body: (rowData: any) => <span>{rowData.poAmount}</span>,
     },
     {
       label: "Pending Amount",
@@ -617,7 +618,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData.dueAmount}</span>,
+      body: (rowData: any) => <span>{rowData.dueAmount}</span>,
     },
     {
       label: "Start Date",
@@ -626,7 +627,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData.start_date}</span>,
+      body: (rowData: any) => <span>{ rowData.start_date != "null" ? moment(rowData.start_date).format('DD-MM-YYYY') : 'NA'}</span>,
     },
     {
       label: "End Date",
@@ -635,7 +636,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData.end_date}</span>,
+      body: (rowData: any) => <span>{ rowData.end_date != "null" ? moment(rowData.end_date).format('DD-MM-YYYY') : 'NA'}</span>,
     },
     {
       label: "Project Service",
@@ -644,7 +645,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.projectService_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.projectService_names}</span>,
     },
     {
       label: "Technology Group",
@@ -653,7 +654,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.technolgyGroup_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.technolgyGroup_names}</span>,
     },
     {
       label: "Technology Sub-Group",
@@ -662,7 +663,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.technolgySubGroup_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.technolgySubGroup_names}</span>,
     },
     {
       label: "Technology",
@@ -671,7 +672,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.technolgy_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.technolgy_names}</span>,
     },
     {
       label: "OEM",
@@ -680,7 +681,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.oem_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.oem_names}</span>,
     },
     {
       label: "Product",
@@ -689,7 +690,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.product_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.product_names}</span>,
     },
     {
       label: "Industry Groups",
@@ -698,7 +699,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.industryGroups_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.industryGroups_names}</span>,
     },
     {
       label: "Sub-Industries",
@@ -707,7 +708,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.subIndustries_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.subIndustries_names}</span>,
     },
     {
       label: "Industry Head",
@@ -716,7 +717,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.industryHead_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.industryHead_names}</span>,
     },
     {
       label: "Sales Manager",
@@ -725,7 +726,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.salesManager_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.salesManager_names}</span>,
     },
     {
       label: "Account Manager",
@@ -734,7 +735,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData?.masterNames?.accountManager_names}</span>,
+      body: (rowData: any) => <span>{rowData?.masterNames?.accountManager_names}</span>,
     },
     {
       label: "PO Number",
@@ -743,7 +744,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => <span>{rowData.poNumber}</span>,
+      body: (rowData: any) => <span>{rowData.poNumber}</span>,
     },
     {
       label: "Status",
@@ -752,14 +753,14 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData:any) => (
+      body: (rowData: any) => (
         <span style={{ color: rowData?.isActive ? "green" : "red" }}>
           {rowData?.isActive ? "Active" : "Inactive"}
         </span>
       ),
     },
   ];
-  
+
 
 
   const onDelete = (data: unknown) => {
@@ -777,7 +778,7 @@ const Contract: React.FC = () => {
 
 
   const onUpdate = (data: any) => {
-    console.log('rowData---->',data);
+    console.log('rowData---->', data);
     setRowData(data)
 
     updatePoContactMasterData(data);
@@ -797,80 +798,80 @@ const Contract: React.FC = () => {
       objFormState.client_name.options = clientListNames;
       objFormState.client_name.value = rowData.client_name
       // if(currentForm.client_name.value !== objFormState.client_name.value){
-        const configData = poContractConfData.find((item:any) => item.client_name == rowData?.client_name)
-        if(configData){
-          objFormState.clientBillTo.options = configData.clientBill?.filter((item:any) => item.id).map((item:any,index:number) => {
-              return {
-                label:concatAddresses(item.address1, item.address2, item.address3),
-                value:item.id.toString(),
-                isDefault:index == 0? 1:0
-              }
-            })
-           
-              objFormState.clientBillTo.value = rowData?.clientBillTo?rowData?.clientBillTo.split(","):[];
-            
-            objFormState.clientShipAddress.options = configData.clientShip?.filter((item:any) => item.id).map((item:any,index:number) => {
-              return {
-                label:concatAddresses(item.address1, item.address2, item.address3),
-                value:item.id.toString(),
-                isDefault:index == 0? 1:0
-              }
-            })
-            objFormState.clientShipAddress.value = rowData?.clientShipAddress?rowData?.clientShipAddress.split(","):[];
-            objFormState.clientContact.options = Array.isArray(configData?.contacts)?configData.contacts?.filter((item:any) => item.id).map((item:any,index:number) => {
-              return {
-                label:item.name,
-                value:item.id.toString(),
-                isDefault:index == 0? 1:0
-              }
-            }):[]
-          
-            objFormState.clientContact.value = rowData?.clientContact?rowData?.clientContact.split(","):[];
+      const configData = poContractConfData.find((item: any) => item.client_name == rowData?.client_name)
+      if (configData) {
+        objFormState.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
+          return {
+            label: concatAddresses(item.address1, item.address2, item.address3),
+            value: item.id.toString(),
+            isDefault: index == 0 ? 1 : 0
+          }
+        })
 
-            objFormState.companyName.value = configData?.companyInfo.companyName;
-            objFormState.companyName.disable = false;
+        objFormState.clientBillTo.value = rowData?.clientBillTo ? rowData?.clientBillTo.split(",") : [];
 
-            
-            objFormState.companyLocation.options = [{label:concatAddresses(configData?.companyLocation?.address1,configData?.companyLocation?.address2,configData?.companyLocation?.address3)||"",value:configData?.companyLocation?.id.toString()}];
-            objFormState.companyLocation.value = configData?.companyLocation?.id.toString()
+        objFormState.clientShipAddress.options = configData.clientShip?.filter((item: any) => item.id).map((item: any, index: number) => {
+          return {
+            label: concatAddresses(item.address1, item.address2, item.address3),
+            value: item.id.toString(),
+            isDefault: index == 0 ? 1 : 0
+          }
+        })
+        objFormState.clientShipAddress.value = rowData?.clientShipAddress ? rowData?.clientShipAddress.split(",") : [];
+        objFormState.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
+          return {
+            label: item.name,
+            value: item.id.toString(),
+            isDefault: index == 0 ? 1 : 0
+          }
+        }) : []
 
-        }
-    // }
+        objFormState.clientContact.value = rowData?.clientContact ? rowData?.clientContact.split(",") : [];
+
+        objFormState.companyName.value = configData?.companyInfo.companyName;
+        objFormState.companyName.disable = false;
+
+
+        objFormState.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
+        objFormState.companyLocation.value = configData?.companyLocation?.id.toString()
+
+      }
+      // }
       objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
-      ? poMastersConfigData?.projectService.map((item: any) => ({
+        ? poMastersConfigData?.projectService.map((item: any) => ({
           label: item?.name,
           value: item.id.toString(),
         }))
-      : [];
-    
-    objFormState.technolgyGroup.options = Array.isArray(poMastersConfigData?.technolgyGroup)
-      ? poMastersConfigData?.technolgyGroup.map((item: any) => ({
+        : [];
+
+      objFormState.technolgyGroup.options = Array.isArray(poMastersConfigData?.technolgyGroup)
+        ? poMastersConfigData?.technolgyGroup.map((item: any) => ({
           label: item?.name,
           value: item.id.toString(),
         }))
-      : [];
-    
-  
-    
-    objFormState.industryGroups.options = cascadingData.groupIndustryData.map((item: any) => ({
-          label: item?.groupIndustryName,
-          value: item.groupIndustryId.toString(),
-        }))
-     
-    
-    objFormState.oem.options = Array.isArray(poMastersConfigData?.oem)
-      ? poMastersConfigData?.oem.map((item: any) => ({
+        : [];
+
+
+
+      objFormState.industryGroups.options = cascadingData.groupIndustryData.map((item: any) => ({
+        label: item?.groupIndustryName,
+        value: item.groupIndustryId.toString(),
+      }))
+
+
+      objFormState.oem.options = Array.isArray(poMastersConfigData?.oem)
+        ? poMastersConfigData?.oem.map((item: any) => ({
           label: item?.oemName,
           value: item.id.toString(),
         }))
-      : [];
-    
-    objFormState.product.options = Array.isArray(poMastersConfigData?.product)
-      ? poMastersConfigData?.product.map((item: any) => ({
+        : [];
+
+      objFormState.product.options = Array.isArray(poMastersConfigData?.product)
+        ? poMastersConfigData?.product.map((item: any) => ({
           label: item?.productName,
           value: item.id.toString(),
         }))
-      : [];
+        : [];
       objFormState.creditPeriod.value = rowData.creditPeriod;
       objFormState.docType.value = rowData.docType;
       objFormState.poAmount.value = rowData.poAmount;
@@ -878,136 +879,136 @@ const Contract: React.FC = () => {
       objFormState.end_date.value = rowData.end_date ? new Date(rowData.end_date) : '';
       objFormState.start_date.value = rowData.start_date ? new Date(rowData.start_date) : '';
       objFormState.noOfResources.value = rowData.noOfResources;
-      if(rowData.poNumber){
+      if (rowData.poNumber) {
         objFormState.poNumber.value = rowData.poNumber;
         objFormState.poNumber.hideField = false;
       }
-      if(rowData.srNumber){
+      if (rowData.srNumber) {
         objFormState.srNumber.value = rowData.srNumber;
         objFormState.srNumber.hideField = false;
       }
 
-      objFormState.projectService.value = rowData.projectService?rowData.projectService:"";
-      objFormState.oem.value = rowData.oem?rowData.oem:"";
-      objFormState.product.value = rowData.product?rowData.product:"";
+      objFormState.projectService.value = rowData.projectService ? rowData.projectService : "";
+      objFormState.oem.value = rowData.oem ? rowData.oem : "";
+      objFormState.product.value = rowData.product ? rowData.product : "";
 
-      if(rowData?.technolgyGroup){
+      if (rowData?.technolgyGroup) {
         objFormState.technolgyGroup.value = rowData.technolgyGroup;
 
         objFormState.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
-          ? poMastersConfigData?.technolgySubGroup.filter((item:any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
-              label: item?.name,
-              value: item.id.toString(),
-            }))
+          ? poMastersConfigData?.technolgySubGroup.filter((item: any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
+            label: item?.name,
+            value: item.id.toString(),
+          }))
           : [];
 
-          if(rowData.technolgySubGroup){
-            objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
-        
+        if (rowData.technolgySubGroup) {
+          objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
+
           objFormState.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
-          ? poMastersConfigData?.technolgy.filter((item:any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
+            ? poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
               label: item?.techName,
               value: item.id.toString(),
             }))
-          : [];
-         
+            : [];
+
           objFormState.technolgy.value = rowData.technolgy;
 
-          }
-        
-        
+        }
+
+
       }
 
-      if(rowData?.technolgyGroup){
+      if (rowData?.technolgyGroup) {
         objFormState.technolgyGroup.value = rowData.technolgyGroup;
 
         objFormState.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
-          ? poMastersConfigData?.technolgySubGroup.filter((item:any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
-              label: item?.name,
-              value: item.id.toString(),
-            }))
+          ? poMastersConfigData?.technolgySubGroup.filter((item: any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
+            label: item?.name,
+            value: item.id.toString(),
+          }))
           : [];
 
-          if(rowData.technolgySubGroup){
-            objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
-        
+        if (rowData.technolgySubGroup) {
+          objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
+
           objFormState.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
-          ? poMastersConfigData?.technolgy.filter((item:any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
+            ? poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
               label: item?.techName,
               value: item.id.toString(),
             }))
-          : [];
+            : [];
           objFormState.technolgy.value = rowData.technolgy;
-          }
+        }
       }
 
 
       const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
 
-      if(rowData?.industryGroups){
+      if (rowData?.industryGroups) {
         objFormState.industryGroups.value = rowData.industryGroups.split(",");
         objFormState.subIndustries.options = groupIndustryData
-        .filter((group:any) =>
-          Number(group.groupIndustryId) === Number(rowData.industryGroups?.split(",")[0])
-        )
-        .flatMap((group:any) =>
-          industryData
-            .filter((industry:any) =>
-              group.industryIds.split(',').includes(industry.industryId.toString())
-            )
-            .map((industry:any) => ({
-              label: industry.industryName,
-              value: industry.industryId.toString(),
-            }))
-        );
+          .filter((group: any) =>
+            Number(group.groupIndustryId) === Number(rowData.industryGroups?.split(",")[0])
+          )
+          .flatMap((group: any) =>
+            industryData
+              .filter((industry: any) =>
+                group.industryIds.split(',').includes(industry.industryId.toString())
+              )
+              .map((industry: any) => ({
+                label: industry.industryName,
+                value: industry.industryId.toString(),
+              }))
+          );
       }
-      if(rowData?.subIndustries){
+      if (rowData?.subIndustries) {
         objFormState.subIndustries.value = rowData.subIndustries.split(",");
         objFormState.industryHead.options = industryHeadData
-        .filter((head:any) =>
-          head.industryIds.split(',').includes(rowData?.subIndustries?rowData?.subIndustries?.split(",")[0]:'')
-        )
-        .map((head:any) => ({
-          label: head.industryHeadName,
-          value: head.industryHeadId.toString(),
-        }));
+          .filter((head: any) =>
+            head.industryIds.split(',').includes(rowData?.subIndustries ? rowData?.subIndustries?.split(",")[0] : '')
+          )
+          .map((head: any) => ({
+            label: head.industryHeadName,
+            value: head.industryHeadId.toString(),
+          }));
       }
 
-      if(rowData?.industryHead){
+      if (rowData?.industryHead) {
         objFormState.industryHead.value = rowData.industryHead.split(",");
         objFormState.salesManager.options = salesManagerData
-          .filter((manager:any) =>
-            manager.industryHeadIds.split(',').includes(rowData.industryHead?rowData.industryHead?.split(",")[0]:'')
+          .filter((manager: any) =>
+            manager.industryHeadIds.split(',').includes(rowData.industryHead ? rowData.industryHead?.split(",")[0] : '')
           )
-          .map((manager:any) => ({
+          .map((manager: any) => ({
             label: manager.salesManagerName,
             value: manager.salesManagerId.toString(),
           }));
 
-          objFormState.accountManager.options = accountManagerData
-          .filter((manager:any) =>
-            manager.industryHeadIds.split(',').includes(rowData.industryHead?rowData.industryHead?.split(",")[0]:'')
+        objFormState.accountManager.options = accountManagerData
+          .filter((manager: any) =>
+            manager.industryHeadIds.split(',').includes(rowData.industryHead ? rowData.industryHead?.split(",")[0] : '')
           )
-          .map((manager:any) => ({
+          .map((manager: any) => ({
             label: manager.accountManagerName,
             value: manager.accountManagerId.toString(),
           }));
       }
-      if(rowData?.salesManager){
+      if (rowData?.salesManager) {
         objFormState.salesManager.value = rowData.salesManager.split(",");
       }
-      if(rowData?.accountManager){
+      if (rowData?.accountManager) {
         objFormState.accountManager.value = rowData.accountManager.split(",");
       }
 
-      setLogoUrl(rowData?.filePath?`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`:'');
+      setLogoUrl(rowData?.filePath ? `${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}` : '');
 
 
-      console.log('----------------1111111111111111',rowData.resourcesData);
+      console.log('----------------1111111111111111', rowData.resourcesData);
       let arr = [...rowData.resourcesData];
-      
+
       setTableData(arr);
-      console.log('`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`',`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`)
+      console.log('`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`', `${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`)
 
       setFormPopup(true);
 
@@ -1036,7 +1037,7 @@ const Contract: React.FC = () => {
     setobjFormState(_.cloneDeep(objForm));
   };
 
-  function concatAddresses(address1:string, address2:string, address3:string) {
+  function concatAddresses(address1: string, address2: string, address3: string) {
     // Check for null/undefined values and join non-empty addresses
     return [address1, address2, address3].filter((addr) => addr).join(", ");
   }
@@ -1044,100 +1045,100 @@ const Contract: React.FC = () => {
 
 
   const poContractHandler = async (form: FormType) => {
-    console.log('form----->',form);
+    console.log('form----->', form);
     const currentForm = _.cloneDeep(form);
-    if(currentForm.client_name.value !== objFormState.client_name.value){
-        const configData = poContractConfData.find((item:any) => item.client_name == currentForm.client_name.value)
-        if(configData){
-            currentForm.clientBillTo.options = configData.clientBill?.filter((item:any) => item.id).map((item:any,index:number) => {
-              return {
-                label:concatAddresses(item.address1, item.address2, item.address3),
-                value:item.id.toString(),
-                isDefault:index == 0? 1:0
-              }
-            })
-            const defaultBillItem = currentForm.clientBillTo.options?.find((ele:any) => ele.isDefault == 1 );
-            if(defaultBillItem && defaultBillItem?.value){
-              currentForm.clientBillTo.value = [defaultBillItem?.value.toString()];
-            }
-            else{
-              currentForm.clientBillTo.value = null;
-            }
-            currentForm.clientShipAddress.options = configData.clientShip?.filter((item:any) => item.id).map((item:any,index:number) => {
-              return {
-                label:concatAddresses(item.address1, item.address2, item.address3),
-                value:item.id.toString(),
-                isDefault:index == 0? 1:0
-              }
-            })
-            const defaultShipItem = currentForm.clientShipAddress?.options?.find((ele:any) => ele.isDefault == 1 );
-            if(defaultShipItem && defaultShipItem?.value){
-              currentForm.clientShipAddress.value = [defaultShipItem?.value.toString()];
-            }
-            else{
-              currentForm.clientShipAddress.value = null;
-            }
-            currentForm.clientContact.options = Array.isArray(configData?.contacts)?configData.contacts?.filter((item:any) => item.id).map((item:any,index:number) => {
-              return {
-                label:item.name,
-                value:item.id.toString(),
-                isDefault:index == 0? 1:0
-              }
-            }):[]
-            const defaultContact= currentForm.clientContact?.options?.find((ele:any) => ele.isDefault == 1 );
-            if(defaultContact && defaultContact?.value){
-              currentForm.clientContact.value = [defaultContact?.value.toString()];
-            }
-            else{
-              currentForm.clientContact.value = null;
-            }
-            // currentForm.billFrom.options = Array.isArray(configData?.billFrom)? configData?.billFrom?.filter((item:any) => item.id).map((item:any,index:number) => {
-            //   return {
-            //     label:item.address1,
-            //     value:item.id.toString()
-            //   }
-            // }):[]
-            currentForm.companyName.value = configData?.companyInfo.companyName;
-            currentForm.companyName.disable = false;
-
-            
-            currentForm.companyLocation.options = [{label:concatAddresses(configData?.companyLocation?.address1,configData?.companyLocation?.address2,configData?.companyLocation?.address3)||"",value:configData?.companyLocation?.id.toString()}];
-            currentForm.companyLocation.value = configData?.companyLocation?.id.toString()
-
+    if (currentForm.client_name.value !== objFormState.client_name.value) {
+      const configData = poContractConfData.find((item: any) => item.client_name == currentForm.client_name.value)
+      if (configData) {
+        currentForm.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
+          return {
+            label: concatAddresses(item.address1, item.address2, item.address3),
+            value: item.id.toString(),
+            isDefault: index == 0 ? 1 : 0
+          }
+        })
+        const defaultBillItem = currentForm.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
+        if (defaultBillItem && defaultBillItem?.value) {
+          currentForm.clientBillTo.value = [defaultBillItem?.value.toString()];
         }
+        else {
+          currentForm.clientBillTo.value = null;
+        }
+        currentForm.clientShipAddress.options = configData.clientShip?.filter((item: any) => item.id).map((item: any, index: number) => {
+          return {
+            label: concatAddresses(item.address1, item.address2, item.address3),
+            value: item.id.toString(),
+            isDefault: index == 0 ? 1 : 0
+          }
+        })
+        const defaultShipItem = currentForm.clientShipAddress?.options?.find((ele: any) => ele.isDefault == 1);
+        if (defaultShipItem && defaultShipItem?.value) {
+          currentForm.clientShipAddress.value = [defaultShipItem?.value.toString()];
+        }
+        else {
+          currentForm.clientShipAddress.value = null;
+        }
+        currentForm.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
+          return {
+            label: item.name,
+            value: item.id.toString(),
+            isDefault: index == 0 ? 1 : 0
+          }
+        }) : []
+        const defaultContact = currentForm.clientContact?.options?.find((ele: any) => ele.isDefault == 1);
+        if (defaultContact && defaultContact?.value) {
+          currentForm.clientContact.value = [defaultContact?.value.toString()];
+        }
+        else {
+          currentForm.clientContact.value = null;
+        }
+        // currentForm.billFrom.options = Array.isArray(configData?.billFrom)? configData?.billFrom?.filter((item:any) => item.id).map((item:any,index:number) => {
+        //   return {
+        //     label:item.address1,
+        //     value:item.id.toString()
+        //   }
+        // }):[]
+        currentForm.companyName.value = configData?.companyInfo.companyName;
+        currentForm.companyName.disable = false;
+
+
+        currentForm.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
+        currentForm.companyLocation.value = configData?.companyLocation?.id.toString()
+
+      }
     }
-    if(currentForm.docType.value !== objFormState.docType.value){
-      console.log('doctype handler---->',currentForm.docType.value);
-      if(currentForm.docType.value == 'PO'){
+    if (currentForm.docType.value !== objFormState.docType.value) {
+      console.log('doctype handler---->', currentForm.docType.value);
+      if (currentForm.docType.value == 'PO') {
         currentForm.poNumber.hideField = false;
         currentForm.srNumber.hideField = true;
       }
-      else{
+      else {
         currentForm.poNumber.hideField = true;
         currentForm.srNumber.hideField = false;
       }
     }
-    if((currentForm.technolgyGroup.value != objFormState.technolgyGroup.value) && currentForm.technolgyGroup.value){
+    if ((currentForm.technolgyGroup.value != objFormState.technolgyGroup.value) && currentForm.technolgyGroup.value) {
       currentForm.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
-      ? poMastersConfigData?.technolgySubGroup.filter((item:any) => Number(item.techGroupIds) == Number(currentForm?.technolgyGroup?.value)).map((item: any) => ({
+        ? poMastersConfigData?.technolgySubGroup.filter((item: any) => Number(item.techGroupIds) == Number(currentForm?.technolgyGroup?.value)).map((item: any) => ({
           label: item?.name,
           value: item.id.toString(),
         }))
-      : [];
+        : [];
     }
-    if((currentForm.technolgySubGroup.value != objFormState.technolgySubGroup.value) && currentForm.technolgySubGroup.value){
+    if ((currentForm.technolgySubGroup.value != objFormState.technolgySubGroup.value) && currentForm.technolgySubGroup.value) {
       currentForm.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
-      ? poMastersConfigData?.technolgy.filter((item:any) => Number(item.techSubgroupIds) == Number(currentForm?.technolgySubGroup?.value)).map((item: any) => ({
+        ? poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(currentForm?.technolgySubGroup?.value)).map((item: any) => ({
           label: item?.techName,
           value: item.id.toString(),
         }))
-      : [];
-      console.log('tech array---->', poMastersConfigData?.technolgy.filter((item:any) => Number(item.techSubgroupIds) == Number(currentForm?.technolgySubGroup?.value)).map((item: any) => ({
+        : [];
+      console.log('tech array---->', poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(currentForm?.technolgySubGroup?.value)).map((item: any) => ({
         label: item?.name,
         value: item.id.toString(),
       })));
     }
-    if(currentForm.poAmount.value != objFormState.poAmount.value){
+    if (currentForm.poAmount.value != objFormState.poAmount.value) {
       currentForm.dueAmount.value = currentForm.poAmount.value;
     }
     const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
@@ -1148,115 +1149,115 @@ const Contract: React.FC = () => {
       currentForm.industryGroups.value
     ) {
       currentForm.subIndustries.options = groupIndustryData
-        .filter((group:any) =>
+        .filter((group: any) =>
           Number(group.groupIndustryId) === Number(currentForm.industryGroups.value)
         )
-        .flatMap((group:any) =>
+        .flatMap((group: any) =>
           industryData
-            .filter((industry:any) =>
+            .filter((industry: any) =>
               group.industryIds.split(',').includes(industry.industryId.toString())
             )
-            .map((industry:any) => ({
+            .map((industry: any) => ({
               label: industry.industryName,
               value: industry.industryId.toString(),
             }))
         );
     }
-  
+
     // 2. Filter Industry Heads Based on Selected Sub-Industries
     if (
       currentForm.subIndustries.value !== objFormState.subIndustries.value &&
       currentForm.subIndustries.value
     ) {
       currentForm.industryHead.options = industryHeadData
-        .filter((head:any) =>
-          head.industryIds.split(',').includes(currentForm.subIndustries.value?currentForm.subIndustries.value.toString():'')
+        .filter((head: any) =>
+          head.industryIds.split(',').includes(currentForm.subIndustries.value ? currentForm.subIndustries.value.toString() : '')
         )
-        .map((head:any) => ({
+        .map((head: any) => ({
           label: head.industryHeadName,
           value: head.industryHeadId.toString(),
         }));
     }
-  
+
 
     if (
       currentForm.industryHead.value !== objFormState.industryHead.value &&
       currentForm.industryHead.value
     ) {
       currentForm.salesManager.options = salesManagerData
-        .filter((manager:any) =>
-          manager.industryHeadIds.split(',').includes(currentForm.industryHead.value?currentForm.industryHead.value.toString():'')
+        .filter((manager: any) =>
+          manager.industryHeadIds.split(',').includes(currentForm.industryHead.value ? currentForm.industryHead.value.toString() : '')
         )
-        .map((manager:any) => ({
+        .map((manager: any) => ({
           label: manager.salesManagerName,
           value: manager.salesManagerId.toString(),
         }));
     }
-  
+
 
     if (
       currentForm.industryHead.value !== objFormState.industryHead.value &&
       currentForm.industryHead.value
     ) {
       currentForm.accountManager.options = accountManagerData
-        .filter((manager:any) =>
-          manager.industryHeadIds.split(',').includes(currentForm.industryHead.value?currentForm.industryHead.value.toString():'')
+        .filter((manager: any) =>
+          manager.industryHeadIds.split(',').includes(currentForm.industryHead.value ? currentForm.industryHead.value.toString() : '')
         )
-        .map((manager:any) => ({
+        .map((manager: any) => ({
           label: manager.accountManagerName,
           value: manager.accountManagerId.toString(),
         }));
     }
-    
+
     setobjFormState(currentForm);
   };
 
- 
-const getNamesFromOptions = (field: any) => {
-  if (!field?.options || !Array.isArray(field.value)) return '';
-  return field.value
+
+  const getNamesFromOptions = (field: any) => {
+    if (!field?.options || !Array.isArray(field.value)) return '';
+    return field.value
       .map((value: string) => field.options.find((item: any) => item.value === value)?.label || '')
-      .filter((name: string) => name !== '') 
-      .join(', '); 
-};
+      .filter((name: string) => name !== '')
+      .join(', ');
+  };
 
   const returnNamesHandler = async (objectFormState: any) => {
     const obj = {
-        projectService_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || '',
-        technolgyGroup_names: objectFormState.technolgyGroup.options.find((item: any) => item.value === objectFormState.technolgyGroup.value)?.label || '',
-        technolgySubGroup_names: objectFormState.technolgySubGroup.options.find((item: any) => item.value === objectFormState.technolgySubGroup.value)?.label || '',
-        technolgy_names: objectFormState.technolgy.options.find((item: any) => item.value === objectFormState.technolgy.value)?.label || '',
-        oem_names: objectFormState.oem.options.find((item: any) => item.value === objectFormState.oem.value)?.label || '',
-        product_names: objectFormState.product.options.find((item: any) => item.value === objectFormState.product.value)?.label || '',
-        industryGroups_names: getNamesFromOptions(objectFormState.industryGroups),
-        subIndustries_names: getNamesFromOptions(objectFormState.subIndustries),
-        industryHead_names: getNamesFromOptions(objectFormState.industryHead),
-        salesManager_names: getNamesFromOptions(objectFormState.salesManager),
-        accountManager_names: getNamesFromOptions(objectFormState.accountManager),
-        clientBillTo_names: getNamesFromOptions(objectFormState.clientBillTo),
-        clientShipAddress_names: getNamesFromOptions(objectFormState.clientShipAddress),
-        clientContact_names: getNamesFromOptions(objectFormState.clientContact),
-        companyName: objectFormState.companyName?.value || '',
-        companyLocation_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || ''
+      projectService_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || '',
+      technolgyGroup_names: objectFormState.technolgyGroup.options.find((item: any) => item.value === objectFormState.technolgyGroup.value)?.label || '',
+      technolgySubGroup_names: objectFormState.technolgySubGroup.options.find((item: any) => item.value === objectFormState.technolgySubGroup.value)?.label || '',
+      technolgy_names: objectFormState.technolgy.options.find((item: any) => item.value === objectFormState.technolgy.value)?.label || '',
+      oem_names: objectFormState.oem.options.find((item: any) => item.value === objectFormState.oem.value)?.label || '',
+      product_names: objectFormState.product.options.find((item: any) => item.value === objectFormState.product.value)?.label || '',
+      industryGroups_names: getNamesFromOptions(objectFormState.industryGroups),
+      subIndustries_names: getNamesFromOptions(objectFormState.subIndustries),
+      industryHead_names: getNamesFromOptions(objectFormState.industryHead),
+      salesManager_names: getNamesFromOptions(objectFormState.salesManager),
+      accountManager_names: getNamesFromOptions(objectFormState.accountManager),
+      clientBillTo_names: getNamesFromOptions(objectFormState.clientBillTo),
+      clientShipAddress_names: getNamesFromOptions(objectFormState.clientShipAddress),
+      clientContact_names: getNamesFromOptions(objectFormState.clientContact),
+      companyName: objectFormState.companyName?.value || '',
+      companyLocation_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || ''
     };
     return obj;
-};
+  };
 
 
 
-console.log('Data ---------------->', tableData);
- 
+  console.log('Data ---------------->', tableData);
 
-const createNewContract = async (event: FormEvent) => {
-  event.preventDefault();
-  let companyValidityFlag = true;
-  const formData: any = new FormData();
 
-  setIsFormValid(companyValidityFlag);
-  console.log('finalData---->', objFormState);
-  const getAllMasterNames = await returnNamesHandler(objFormState);
+  const createNewContract = async (event: FormEvent) => {
+    event.preventDefault();
+    let companyValidityFlag = true;
+    const formData: any = new FormData();
 
-  const obj = {
+    setIsFormValid(companyValidityFlag);
+    console.log('finalData---->', objFormState);
+    const getAllMasterNames = await returnNamesHandler(objFormState);
+
+    const obj = {
       clientId: poContractConfData.find((item: any) => item.client_name === objFormState.client_name.value)?.client_id || '',
       client_name: objFormState.client_name.value || '',
       clientBillTo: objFormState.clientBillTo.value?.toString() || '',
@@ -1284,153 +1285,166 @@ const createNewContract = async (event: FormEvent) => {
       salesManager: objFormState.salesManager.value?.toString() || '',
       accountManager: objFormState.accountManager.value?.toString() || '',
       masterNames: JSON.stringify(getAllMasterNames) || '{}',
-      noOfResources:objFormState.noOfResources.value || '',
+      noOfResources: objFormState.noOfResources.value || '',
       resourcesData: JSON.stringify(tableData) || '[]',
-  };
+    };
 
 
-  console.log('Names Object ----->', getAllMasterNames);
-  console.log('Data ---------------->', tableData, rowData);
+    console.log('Names Object ----->', getAllMasterNames);
+    console.log('Data ---------------->', tableData, rowData);
 
-  Object.entries(obj).forEach(([key, value]: any) => {
+    Object.entries(obj).forEach(([key, value]: any) => {
       formData.set(key, value);
-  });
+    });
 
-  if (attachments?.length) {
+    if (attachments?.length) {
       console.log('Attachments ---->', attachments);
       formData.set("file", attachments[0]);
-  }
+    }
 
-  if(rowData && rowData?.id){
-    formData.set("id",rowData.id)
-  }
-  else{
-  poContractService
-      .createPoContract(formData)
-      .then((response: any) => {
+    if (rowData && rowData?.id) {
+      formData.set("id", rowData.id)
+      poContractService
+        .updatePoContract(formData)
+        .then((response: any) => {
+          console.log('Response ----->', response);
+          if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+            closeFormPopup();
+            getContractMaster();
+            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+          }
+        })
+        .catch((error: any) => {
+          ToasterService.show(error, CONSTANTS.ERROR);
+        });
+    }
+    else {
+      poContractService
+        .createPoContract(formData)
+        .then((response: any) => {
           console.log('Response ----->', response);
           if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-              closeFormPopup();
-              getContractMaster();
-              ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+            closeFormPopup();
+            getContractMaster();
+            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
           }
-      })
-      .catch((error: any) => {
+        })
+        .catch((error: any) => {
           ToasterService.show(error, CONSTANTS.ERROR);
-      });
+        });
     }
-};
+  };
 
 
   const removeFileHandler = () => {
     setAttachments([]);
     setLogoUrl('');
   };
-    const selectAttachment = (files: any) => {
-      setAttachments([]);
-      console.log('fileUrl--->123');
-      if (files && files[0]) {
-        _.each(files, (eventList) => {
-          if (
-            eventList.name
-              .split(".")
-              [eventList.name.split(".").length - 1].toLowerCase() ===
-            FILE_TYPES.PNG
-          ) {
-            if (eventList.size > 10485760) {
-              return ToasterService.show(
-                "file size is too large, allowed maximum size is 10 MB.",
-                "error"
-              );
-            } else {
-              setAttachments((prevVals: any) => [...prevVals, eventList]);
-              const fileURL = URL.createObjectURL(eventList);
-              console.log('fileUrl--->',fileURL);
-              setLogoUrl(fileURL)
-            }
-          } else {
-            ToasterService.show(
-              `Invalid file format you can only attach the pdf here!`,
+  const selectAttachment = (files: any) => {
+    setAttachments([]);
+    console.log('fileUrl--->123');
+    if (files && files[0]) {
+      _.each(files, (eventList) => {
+        if (
+          eventList.name
+            .split(".")
+          [eventList.name.split(".").length - 1].toLowerCase() ===
+          FILE_TYPES.PDF
+        ) {
+          if (eventList.size > 10485760) {
+            return ToasterService.show(
+              "file size is too large, allowed maximum size is 10 MB.",
               "error"
             );
-            eventList = null;
+          } else {
+            setAttachments((prevVals: any) => [...prevVals, eventList]);
+            const fileURL = URL.createObjectURL(eventList);
+            console.log('fileUrl--->', fileURL);
+            setLogoUrl(fileURL)
           }
-        });
-      }
-    };
+        } else {
+          ToasterService.show(
+            `Invalid file format you can only attach the pdf here!`,
+            "error"
+          );
+          eventList = null;
+        }
+      });
+    }
+  };
 
   return loader ? (
     <Loader />
   ) : (
     <>
-        <div
+      <div
         style={{
-            display: "flex",
-            justifyContent: "end",
-            marginBottom: "0.5em",
+          display: "flex",
+          justifyContent: "end",
+          marginBottom: "0.5em",
         }}
-        >
+      >
         <ButtonComponent
-            label="Add New PO (Contract)"
-            icon="pi pi-check"
-            iconPos="right"
-            submitEvent={openSaveForm}
+          label="Add New PO (Contract)"
+          icon="pi pi-check"
+          iconPos="right"
+          submitEvent={openSaveForm}
         />
-        </div>
-        <p className="m-0">
+      </div>
+      <p className="m-0">
         <DataTableBasicDemo
-            data={poContractsData}
-            column={ContractTableColumns}
-            showGridlines={true}
-            resizableColumns={true}
-            rows={20}
-            paginator={true}
-            sortable={true}
-            headerRequired={true}
-            scrollHeight={"calc(100vh - 80px)"}
-            downloadedfileName={"Brandwise_Denomination_table"}
+          data={poContractsData}
+          column={ContractTableColumns}
+          showGridlines={true}
+          resizableColumns={true}
+          rows={20}
+          paginator={true}
+          sortable={true}
+          headerRequired={true}
+          scrollHeight={"calc(100vh - 80px)"}
+          downloadedfileName={"Brandwise_Denomination_table"}
         />
         {showConfirmDialogue ? (
-            <ConfirmDialogue
+          <ConfirmDialogue
             actionPopupToggle={actionPopupToggle}
             onCloseFunction={onPopUpClose}
             loading={false}
-            />
+          />
         ) : null}
-        </p>
-        {storeFormPopup ? (
+      </p>
+      {storeFormPopup ? (
         <div className="popup-overlay md-popup-overlay">
-            <div className="popup-body md-popup-body stretchLeft">
+          <div className="popup-body md-popup-body stretchLeft">
             <div className="popup-header">
-                <div
+              <div
                 className="popup-close"
                 onClick={() => {
-                    closeFormPopup();
+                  closeFormPopup();
                 }}
-                >
+              >
                 <i className="pi pi-angle-left"></i>
                 <h4 className="popup-heading">Add New PO (Contract)</h4>
-                </div>
-                <div
+              </div>
+              <div
                 className="popup-right-close"
                 onClick={() => {
-                    closeFormPopup();
+                  closeFormPopup();
                 }}
-                >
+              >
                 &times;
-                </div>
+              </div>
             </div>
             <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                <FormComponent
+              <FormComponent
                 form={_.cloneDeep(objFormState)}
                 formUpdateEvent={poContractHandler}
                 isFormValidFlag={isFormValid}
-                ></FormComponent>
-                 {objFormState.noOfResources.value?
-                 <EditableTable noOfRows = {objFormState.noOfResources.value} tableData = {tableData} setTableData ={setTableData} />
-                 :null}
-                {/* {(objFormState?.docType.value && objFormState?.docType.value != 'PO')? */}
-                  <div className={classes["upload-wrapper"]}>
+              ></FormComponent>
+              {objFormState.noOfResources.value ?
+                <EditableTable noOfRows={objFormState.noOfResources.value} tableData={tableData} setTableData={setTableData} />
+                : null}
+              {/* {(objFormState?.docType.value && objFormState?.docType.value != 'PO')? */}
+              <div className={classes["upload-wrapper"]}>
                 <div className="row pd-10-t-0">
                   <div
                     className={`col-md-12 ${classes["addition-field-header"]}`}
@@ -1440,10 +1454,11 @@ const createNewContract = async (event: FormEvent) => {
                   <div className="col-md-12">
                     <div className={classes["upload-file-section"]}>
                       <div className={classes["upload-file"]}>
-                        {logoUrl  ? (
+                        {logoUrl ? (
                           <div className={classes["image-preview"]}>
-                            <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeFileHandler} style={{ color: 'red',fontSize: '1rem' }}></i></div>
-                            <img src={logoUrl} style={{width:'200px',height:'130px'}}  alt="Preview" />
+                            <div className="icon-ui677"> <i className="pi pi-times-circle" onClick={removeFileHandler} style={{ color: 'red', fontSize: '1rem' }}></i></div>
+                            <img src={ImageUrl.PdfIcon} style={{ width: '200px', height: '130px' }} alt="Preview" />
+                            {/* <img src={logoUrl} style={{ width: '200px', height: '130px' }} alt="Preview" /> */}
                             {/* <div className={classes["chip-tm"]}>
                               {attachments.map(
                                 (
@@ -1477,7 +1492,7 @@ const createNewContract = async (event: FormEvent) => {
                             />
                             <p>
                               Drag files here <span> or browse</span> <br />
-                              <u>Support PNG</u>
+                              <u>Support PDF</u>
                             </p>
                           </div>
                         )}
@@ -1487,22 +1502,22 @@ const createNewContract = async (event: FormEvent) => {
                 </div>
               </div>
               {/* :null} */}
-             
+
             </div>
-       
+
 
             <div className="popup-lower-btn">
-                <ButtonComponent
+              <ButtonComponent
                 label="Submit"
                 icon="pi pi-check"
                 iconPos="right"
                 submitEvent={createNewContract}
-                />
+              />
             </div>
-            
-            </div>
+
+          </div>
         </div>
-        ) : null}
+      ) : null}
     </>
   );
 };

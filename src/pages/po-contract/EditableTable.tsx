@@ -52,7 +52,8 @@ const EditableTable = (props:any) => {
         value={options.value}
         onChange={(e) => options.editorCallback(e.target.value)}
         placeholder="Enter value"
-        style={{ width: "100%" }}
+        style={{ width: "100%", height: "10px", padding: "10px 10px", border: "0px" }}
+        className="customForm"
       />
     
     );
