@@ -497,6 +497,21 @@ const ClientMaster = () => {
             ),
         },
         {
+            label: "MSA available?",
+            fieldName: "msa_flag",
+            textAlign: "left",
+            frozen: false,
+            sort: true,
+            filter: true,
+            body: (rowData: any) => (
+                <div>
+                    <span>
+                        {rowData?.msa_flag == 1 ? "Yes" : "No"}
+                    </span>
+                </div>
+            ),
+        },
+        {
             label: "MSA File",
             fieldName: "msaFilePath",
             textAlign: "left",
@@ -525,6 +540,21 @@ const ClientMaster = () => {
 
                     ) : null}
                 </>),
+        },
+        {
+            label: "NDA available?",
+            fieldName: "nda_flag",
+            textAlign: "left",
+            frozen: false,
+            sort: true,
+            filter: true,
+            body: (rowData: any) => (
+                <div>
+                    <span>
+                        {rowData?.nda_flag == 1 ? "Yes" : "No"}
+                    </span>
+                </div>
+            ),
         },
         {
             label: "NDA File",

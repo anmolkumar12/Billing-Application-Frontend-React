@@ -100,6 +100,15 @@ const Contract: React.FC = () => {
       },
       fieldWidth: "col-md-4",
     },
+    po_name: {
+      inputType: "inputtext",
+      label: "P.O Name",
+      value: null,
+      validation: {
+        required: false
+      },
+      fieldWidth: "col-md-4",
+    },
     creditPeriod: {
       inputType: "inputNumber",
       label: "Credit Period (Days)",
@@ -594,6 +603,15 @@ const Contract: React.FC = () => {
       body: (rowData: any) => <span>{rowData?.masterNames?.companyLocation_names}</span>,
     },
     {
+      label: "P.O Name",
+      fieldName: "po_name",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => <span>{rowData.po_name}</span>,
+    },
+    {
       label: "Credit Period",
       fieldName: "creditPeriod",
       textAlign: "left",
@@ -873,6 +891,7 @@ const Contract: React.FC = () => {
         }))
         : [];
       objFormState.creditPeriod.value = rowData.creditPeriod;
+      objFormState.po_name.value = rowData.po_name;
       objFormState.docType.value = rowData.docType;
       objFormState.poAmount.value = rowData.poAmount;
       objFormState.dueAmount.value = rowData.dueAmount;
@@ -1266,6 +1285,7 @@ const Contract: React.FC = () => {
       companyName: objFormState.companyName.value || '',
       companyLocation: objFormState.companyLocation.value || '',
       creditPeriod: objFormState.creditPeriod.value,
+      po_name: objFormState.po_name.value,
       poAmount: objFormState.poAmount.value || '',
       dueAmount: objFormState.dueAmount.value || '',
       start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
