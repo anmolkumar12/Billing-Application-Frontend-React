@@ -42,6 +42,12 @@ export const APIURLS = {
   UPDATE_PO_CONTRACT: '/api/masters/updatePoContract',
   TOGGLE_PO_CONTRACT_STATUS: '/api/masters/activateDeactivatePoContract',
 
+  // INVOICE
+  GET_INVOICES: '/api/masters/getInvoicesData',
+  CREATE_INVOICE: '/api/masters/insertInvoice',
+  UPDATE_INVOICE: '/api/masters/updateInvoice',
+  TOGGLE_INVOICE_STATUS: '/api/masters/activateDeactivateInvoice',
+
   GET_OEM_MASTER: '/api/masters/getOEMs',
   // POLESTAR PRODUCT 
   GET_POLESTAR_PRODUCT_MASTER:'/api/masters/getPoleStarProducts',

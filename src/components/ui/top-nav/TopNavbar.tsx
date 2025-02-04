@@ -47,6 +47,8 @@ const TopNavbar: React.FC<{ mobileMenu: any }> = ({ mobileMenu }) => {
       return 'Contract'
     } else if (path === ROUTE_CONSTANTS.CLIENT) {
       return 'Client'
+    } else if (path === ROUTE_CONSTANTS.INVOICE) {
+      return 'Invoice'
     } else {
       return ''
     }
