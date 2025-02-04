@@ -265,314 +265,31 @@ const InvoiceMaster = () => {
     const poContractService = new PoContractService();
     const taxService = new TaxMasterService();
 
-
-
-
-    // const clientMasterColumns = [
-    //     {
-    //         label: "Action",
-    //         fieldName: "action",
-    //         textAlign: "left",
-    //         frozen: false,
-    //         sort: false,
-    //         filter: false,
-    //         body: (rowData: any) => (
-    //             <div style={{ display: "flex", gap: "12px", marginLeft: "20px" }}>
-    //                 <span
-    //                     className="pi pi-pencil"
-    //                     style={{ cursor: "pointer" }}
-    //                     title="Update"
-    //                     onClick={() => onUpdate(rowData)}
-    //                 ></span>
-    //                 <span
-    //                     className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
-    //                     style={{ cursor: "pointer" }}
-    //                     title={rowData.isActive ? "Deactivate" : "Activate"}
-    //                     onClick={() => onDelete(rowData)}
-    //                 ></span>
-    //                 <span
-    //                     className="pi pi-sync"
-    //                     style={{ cursor: "pointer" }}
-    //                     title="Update MSA"
-    //                     onClick={() => onMSAUpdate(rowData)}
-    //                 ></span>
-    //             </div>
-    //         ),
-    //     },
-    //     {
-    //         label: "Client Name",
-    //         fieldName: "client_name",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Client Name",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`clientNameTooltip-${rowData.id}`} content={rowData.client_name} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Vega Client Name",
-    //         fieldName: "vega_client_name",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Vega Client Name",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`vegaClientNameTooltip-${rowData.id}`} content={rowData.vega_client_name} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Client Type",
-    //         fieldName: "client_type",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Client Type",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`clientTypeTooltip-${rowData.id}`} content={rowData.client_type} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Credit Period (No. of Days)",
-    //         fieldName: "credit_period",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Credit Period",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`creditPeriodTooltip-${rowData.id}`} content={rowData.credit_period} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Client Status",
-    //         fieldName: "client_status",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Client Status",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`clientStatusTooltip-${rowData.id}`} content={rowData.client_status} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Country",
-    //         fieldName: "countryName",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Country",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`countryTooltip-${rowData.id}`} content={rowData.countryName} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Company Name",
-    //         fieldName: "companyName",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Company Name",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`companyNameTooltip-${rowData.id}`} content={rowData.companyName} />
-    //         ),
-    //     },
-
-    //     {
-    //         label: "Industry Head Name",
-    //         fieldName: "industryHeadName",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Industry Head Name",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`industryHeadTooltip-${rowData.id}`} content={rowData.industryHeadName} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Industry Sub Group",
-    //         fieldName: "industryGroupNames",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Industry Group Names",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`industryGroupTooltip-${rowData.id}`} content={rowData.industryGroupNames} />
-    //         ),
-    //     },
-    //     {
-    //         label: "Industry Group",
-    //         fieldName: "industryName",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Industry Name",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`industryNameTooltip-${rowData.id}`} content={rowData.industryName} />
-    //         ),
-    //     },
-    //     // {
-    //     //     label: "Industry Subgroup Names",
-    //     //     fieldName: "industrySubGroupNames",
-    //     //     textAlign: "left",
-    //     //     sort: true,
-    //     //     filter: true,
-    //     //     placeholder: "Industry Subgroup Names",
-    //     //     body: (rowData: any) => (
-    //     //         <TooltipWrapper id={`industrySubgroupTooltip-${rowData.id}`} content={rowData.industrySubGroupNames} />
-    //     //     ),
-    //     // },
-    //     {
-    //         label: "Account Manager Names",
-    //         fieldName: "accountManagerNames",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Account Manager Names",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`accountManagerTooltip-${rowData.id}`} content={rowData.accountManagerNames} />
-    //         ),
-    //     },
-    //     {
-    //         label: "MSA Start Date",
-    //         fieldName: "msa_start_date",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "MSA Start Date",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`msaStartTooltip-${rowData.id}`} content={new Date(rowData.msa_start_date).toLocaleDateString()} />
-    //         ),
-    //     },
-    //     {
-    //         label: "MSA End Date",
-    //         fieldName: "msa_end_date",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "MSA End Date",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`msaEndTooltip-${rowData.id}`} content={new Date(rowData.msa_end_date).toLocaleDateString()} />
-    //         ),
-    //     },
-    //     {
-    //         label: "MSA available?",
-    //         fieldName: "msa_flag",
-    //         textAlign: "left",
-    //         frozen: false,
-    //         sort: true,
-    //         filter: true,
-    //         body: (rowData: any) => (
-    //             <div>
-    //                 <span>
-    //                     {rowData?.msa_flag == 1 ? "Yes" : "No"}
-    //                 </span>
-    //             </div>
-    //         ),
-    //     },
-    //     {
-    //         label: "MSA File",
-    //         fieldName: "msaFilePath",
-    //         textAlign: "left",
-    //         sort: false,
-    //         filter: false,
-    //         placeholder: "MSA File",
-    //         body: (rowData: any) => (
-    //             <>
-    //                 {rowData?.msaFilePath ? (
-    //                     <div onClick={() => downloadFile(rowData.msaFilePath)} >
-    //                         <span style={{
-    //                             cursor: "pointer", // Pointer cursor on hover
-    //                             color: "#007bff", // Icon color (same as text)
-    //                         }}>MSA</span>
-    //                         <span
-    //                             className="pi pi-download" // Use the PrimeIcons class for download icon
-    //                             style={{
-    //                                 cursor: "pointer", // Pointer cursor on hover
-    //                                 marginLeft: "8px", // Space between text and icon
-    //                                 fontSize: "10px", // Icon size
-    //                                 color: "#007bff", // Icon color (same as text)
-    //                             }}
-    //                             title="Download MSA"
-    //                         ></span>
-    //                     </div>
-
-    //                 ) : null}
-    //             </>),
-    //     },
-    //     {
-    //         label: "NDA available?",
-    //         fieldName: "nda_flag",
-    //         textAlign: "left",
-    //         frozen: false,
-    //         sort: true,
-    //         filter: true,
-    //         body: (rowData: any) => (
-    //             <div>
-    //                 <span>
-    //                     {rowData?.nda_flag == 1 ? "Yes" : "No"}
-    //                 </span>
-    //             </div>
-    //         ),
-    //     },
-    //     {
-    //         label: "NDA File",
-    //         fieldName: "ndaFilePath",
-    //         textAlign: "left",
-    //         sort: false,
-    //         filter: false,
-    //         placeholder: "NDA File",
-    //         body: (rowData: any) =>
-    //         (<>
-    //             {rowData?.ndaFilePath ? (
-    //                 <div onClick={() => downloadFile(rowData.ndaFilePath)} >
-    //                     <span style={{
-    //                         cursor: "pointer", // Pointer cursor on hover
-    //                         color: "#007bff", // Icon color (same as text)
-    //                     }}>NDA</span>
-    //                     <span
-    //                         className="pi pi-download" // Use the PrimeIcons class for download icon
-    //                         style={{
-    //                             cursor: "pointer", // Pointer cursor on hover
-    //                             marginLeft: "8px", // Space between text and icon
-    //                             fontSize: "10px", // Icon size
-    //                             color: "#007bff", // Icon color (same as text)
-    //                         }}
-    //                         title="Download MSA"
-    //                     ></span>
-    //                 </div>
-
-    //             ) : null}
-    //         </>),
-    //     },
-    //     {
-    //         label: "Status",
-    //         fieldName: "isActive",
-    //         textAlign: "left",
-    //         frozen: false,
-    //         sort: true,
-    //         filter: true,
-    //         body: (rowData: any) => (
-    //             <div>
-    //                 <span style={{ color: rowData?.isActive == 1 ? "green" : "red" }}>
-    //                     {rowData?.isActive == 1 ? "Active" : "Inactive"}
-    //                 </span>
-    //             </div>
-    //         ),
-    //     },
-    //     {
-    //         label: "Updated At",
-    //         fieldName: "updated_at",
-    //         textAlign: "left",
-    //         sort: true,
-    //         filter: true,
-    //         placeholder: "Updated At",
-    //         body: (rowData: any) => (
-    //             <TooltipWrapper id={`updatedAtTooltip-${rowData.id}`} content={new Date(rowData.updated_at).toLocaleString()} />
-    //         ),
-    //     }
-    // ];
-
     const clientMasterColumns = [
+        {
+            label: "Action",
+            fieldName: "action",
+            textAlign: "left",
+            frozen: false,
+            sort: false,
+            filter: false,
+            body: (rowData: any) => (
+                <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
+                    <span
+                        className="pi pi-pencil"
+                        style={{ cursor: "pointer" }}
+                        title="Update"
+                        onClick={() => onUpdate(rowData)}
+                    ></span>
+                    <span
+                        className={`pi pi-ellipsis-v`}
+                        style={{ cursor: "pointer" }}
+                        title="Generate PDF"
+                    //   onClick={() => onDelete(rowData)}
+                    ></span>
+                </div>
+            ),
+        },
         {
             label: "Invoice Name",
             fieldName: "invoice_name",
@@ -805,37 +522,6 @@ const InvoiceMaster = () => {
         </div>
     );
 
-
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         await getClientMaster();
-    //         // await getStateMaster();
-    //         const countries = await getCountryMaster();
-    //         await formatCountryDetails(countries);
-    //         const companies = await getCompanyMaster();
-    //         await formatCompanyDetails(companies);
-    //         const industryHead = await getIndustryHeadMaster();
-    //         await formatIndustryHeadDetails(industryHead);
-    //         const industryGroups = await getIndustryGroupMaster();
-    //         await formatIndustryGroupDetails(industryGroups);
-    //         // const accountManagers = await getAccountManagerMaster();
-    //         // await formatAccountManagerMasterDetails(accountManagers);
-    //         // const accountMaster = await getAccountMaster();
-    //         // await formatAccountMasterDetails(accountMaster);
-    //         // const salesManager = await getSalesMaster();
-    //         // await formatSalesManagerDetails(salesManager)
-    //         // await formatAccountMasterDetails(accountMaster);
-    //         const industries = await getIndustryMaster()
-    //         await formatIndustry_ClientDetails(industries);
-    //         await formatIndustrySubGroupDetails(industries)
-    //     };
-    //     if (clientFormPopup == false && showConfirmDialogue == false && showMsaUpdatePopup == false) {
-    //         fetchData();
-    //     }
-    // }, [clientFormPopup, showConfirmDialogue, showMsaUpdatePopup]);
-
-
     useEffect(() => {
         const fetchData = async () => {
             getInvoiceData()
@@ -844,17 +530,26 @@ const InvoiceMaster = () => {
             getTaxMaster();
             getCompanyLocationMaster();
         };
-        if (clientFormPopup == false && showConfirmDialogue == false && showMsaUpdatePopup == false) {
+        if (clientFormPopup == false && showConfirmDialogue == false) {
             fetchData();
         }
-    }, [clientFormPopup, showConfirmDialogue, showMsaUpdatePopup]);
+    }, [clientFormPopup, showConfirmDialogue]);
 
 
     const getInvoiceData = async () => {
         setLoader(true);
         try {
             const response = await invoiceService.getInvoicesData();
-            setInvoiceMasterData(response?.invoices);
+            response.invoices.forEach((item: any) => item.invoiceInfo = JSON.parse(item.invoiceInfo))
+
+            const parsedData = response.invoices.map((invoice: any) => ({
+                ...invoice,
+                invoiceInfo: invoice.invoiceInfo.map((info: any) => ({
+                    ...info,
+                    taxBreakdown: info.taxBreakdown ? JSON.parse(info.taxBreakdown) : []
+                }))
+            }));
+            setInvoiceMasterData(parsedData);
         } catch (error) {
             console.error(error);
         } finally {
@@ -862,7 +557,7 @@ const InvoiceMaster = () => {
         }
     };
     const getContractMaster = async () => {
-        setLoader(true);
+        // setLoader(true);
         try {
             const response = await poContractService.getPoContractsData();
 
@@ -870,11 +565,11 @@ const InvoiceMaster = () => {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoader(false);
+            // setLoader(false);
         }
     };
     const getPoContractConfiguration = async () => {
-        setLoader(true);
+        // setLoader(true);
         try {
             const response = await poContractService.getPoContractConfiguration();
             setPoContractConfData(response?.data);
@@ -885,13 +580,13 @@ const InvoiceMaster = () => {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoader(false);
+            // setLoader(false);
         }
     };
 
 
     const getTaxMaster = async () => {
-        setLoader(true);
+        // setLoader(true);
         try {
             const response = await taxService.getTax();
             if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
@@ -905,7 +600,7 @@ const InvoiceMaster = () => {
     };
 
     const getCompanyLocationMaster = async () => {
-        setLoader(true);
+        // setLoader(true);
         try {
             const response = await companyService.getCompanyLocationMaster();
             console.log('setCompanyLocationMaster', response?.locations);
@@ -915,7 +610,7 @@ const InvoiceMaster = () => {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoader(false);
+            // setLoader(false);
         }
     };
 
@@ -1181,15 +876,12 @@ const InvoiceMaster = () => {
     };
 
     const onUpdate = async (data: any) => {
-        const accountManagers = await getAccountManagerMaster();
-        await formatAccountManagerMasterDetails(accountManagers);
-        const accountMaster = await getAccountMaster();
-        await formatAccountMasterDetails(accountMaster);
-        const salesManager = await getSalesMaster();
-        await formatSalesManagerDetails(salesManager)
-        await formatAccountMasterDetails(accountMaster);
+        await getContractMaster();
+        await getPoContractConfiguration();
+        await getTaxMaster();
+        await getCompanyLocationMaster();
         await setCliendData(data);
-        await updateClientaster(data);
+        await updateClientMaster(data);
         await setClientFormPopup(true);
         await setIsEditClient(true);
     };
@@ -1202,48 +894,92 @@ const InvoiceMaster = () => {
         setShowConfirmDialogue(false);
     };
 
-    const updateClientaster = (data: any) => {
-
+    const updateClientMaster = (data: any) => {
         try {
-            clientFormFieldsStructure.client_name.value = data?.client_name;
-            clientFormFieldsStructure.vega_client_name.value = data?.vega_client_name;
-            clientFormFieldsStructure.client_type.value = data?.client_type;
-            clientFormFieldsStructure.credit_period.value = data?.credit_period;
-            // clientFormFieldsStructure.client_status.value = data?.client_status;
-            clientFormFieldsStructure.country_name.value = data?.countryName;
-            clientFormFieldsStructure.companyName.value = data?.companyName;
-            clientFormFieldsStructure.account_name.value = data?.bankName?.split(',');
-            clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadName;
+            clientFormFieldsStructure.client_name.options = clientListNames;
+            clientFormFieldsStructure.client_name.options = clientListNames;
+            const taxDetails = taxMaster.map((item: any) => item?.taxType);
+            clientFormFieldsStructure.tax_type.options = taxDetails;
 
-            clientFormFieldsStructure.industry_name.value = data?.industryGroupNames;
-            clientFormFieldsStructure.industry_group.value = data?.industryName;
-            // clientFormFieldsStructure.industry_sub_group.value = data?.industrySubGroupNames;
-            clientFormFieldsStructure.sales_person.value = data?.salesMangerName?.split(',');
-            clientFormFieldsStructure.account_manager.value = data?.accountManagerNames?.split(',');
-            clientFormFieldsStructure.msa_start_date.value = parseDateString(data?.msa_start_date);
-            clientFormFieldsStructure.msa_end_date.value = parseDateString(data?.msa_end_date);
-            clientFormFieldsStructure.is_msa_missing.value = data?.msa_flag ? true : false;
-            clientFormFieldsStructure.nda_flag.value = data?.nda_flag ? true : false;
-            clientFormFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause_flag ? true : false;
-            clientFormFieldsStructure.use_logo_permission.value = data?.use_logo_permission_flag ? true : false;
-            console.log('dataaaaaaaaaa---->>>', clientFormFieldsStructure, data);
-            // clientFormFieldsStructure.msaFilePath.value = data?.msaFilePath;
-            // clientFormFieldsStructure.ndaFilePath.value = data?.ndaFilePath;
-            // clientFormFieldsStructure.updated_by.value = data?.updated_by;
-            // clientFormFieldsStructure.isActive.value = data?.isActive;
-            // clientFormFieldsStructure.updated_at.value = data?.updated_at;
-            if (data?.msa_flag) {
-                setLogoUrl(data?.msaFilePath)
-            }
-            if (data?.nda_flag) {
-                setSignatureUrl(data?.ndaFilePath)
+            const configData = poContractConfData.find((item: any) => item.client_name == data?.client_name)
+            if (configData) {
+                clientFormFieldsStructure.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
+                    return {
+                        label: concatAddresses(item.address1, item.address2, item.address3),
+                        value: item.id.toString(),
+                        isDefault: index == 0 ? 1 : 0
+                    }
+                })
+                console.log('Updating client form fields:', clientFormFieldsStructure, data);
+
+                clientFormFieldsStructure.clientBillTo.value = typeof data?.clientBillTo === "string"
+                    ? data.clientBillTo.split(",").map((item: any) => item.trim())
+                    : [];
+
+                clientFormFieldsStructure.clientShipAddress.options = configData.clientShip?.filter((item: any) => item.id).map((item: any, index: number) => {
+                    return {
+                        label: concatAddresses(item.address1, item.address2, item.address3),
+                        value: item.id.toString(),
+                        isDefault: index == 0 ? 1 : 0
+                    }
+                })
+                clientFormFieldsStructure.clientShipAddress.value = typeof data?.clientShipAddress === "string"
+                    ? data.clientShipAddress.split(",").map((item: any) => item.trim())
+                    : [];
+                clientFormFieldsStructure.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
+                    return {
+                        label: item.name,
+                        value: item.id.toString(),
+                        isDefault: index == 0 ? 1 : 0
+                    }
+                }) : []
+
+                clientFormFieldsStructure.clientContact.value = data?.clientContact ? data?.clientContact : [];
+                clientFormFieldsStructure.company_name.value = configData?.companyInfo.companyName;
             }
 
+            const tempData: any = companyLocationMaster?.filter((item: any) => item?.companyName == clientFormFieldsStructure.company_name.value).map((ele: any) => {
+                return {
+                    label: concatAddresses(ele?.address1, ele?.address2, ele?.address3),
+                    isDefault: ele?.isDefaultAddress
+                }
+            });
+
+            clientFormFieldsStructure.bill_from.options = tempData?.map((ele: any) => ele?.label) || [];
+            clientFormFieldsStructure.bill_from.value = data?.bill_from ? data?.bill_from : "";
+
+            clientFormFieldsStructure.client_name.value = data?.client_name || "";
+            clientFormFieldsStructure.contract_name.value = data?.contract_name || "";
+            clientFormFieldsStructure.po_number.value = data?.po_number || "";
+            clientFormFieldsStructure.po_amount.value = data?.po_amount || "";
+            clientFormFieldsStructure.remain_po_amount.value = data?.remain_po_amount || "";
+            clientFormFieldsStructure.invoice_date.value = data?.invoice_date ? parseDateString(data?.invoice_date) : null;
+            clientFormFieldsStructure.contract_type.value = data?.contract_type || "";
+            clientFormFieldsStructure.tax_type.value = data?.tax_type || "";
+            clientFormFieldsStructure.tax_code.value = data?.tax_code ? data?.tax_code.split(",") : [];
+            clientFormFieldsStructure.invoice_amount.value = data?.invoice_amount || "";
+            clientFormFieldsStructure.note_one.value = data?.note_one || "";
+            clientFormFieldsStructure.note_two.value = data?.note_two || "";
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
+            
+
+            console.log("Updated form data:", clientFormFieldsStructure);
         } catch (error) {
-            console.log("error", error);
+            console.error("Error updating client master form:", error);
         }
     };
+
+    const patchInvoiceData = (data: any) => {
+        if (Array.isArray(data)) {
+            setInvoiceItems(data.map((item) => ({
+                id: item.id || Date.now(),
+                description: item.description || "",
+                sacCode: item.sacCode || "",
+                amount: item.amount || 0
+            })));
+        }
+    };
+
 
     const createNewState = (event: FormEvent) => {
         event.preventDefault();
@@ -1379,79 +1115,6 @@ const InvoiceMaster = () => {
         return `${year}/${month}/${day}`;
     };
 
-    const selectAttachment = (files: any) => {
-        setAttachments([]);
-        if (files && files[0]) {
-            _.each(files, (eventList) => {
-                if (
-                    eventList.name
-                        .split(".")
-                    [eventList.name.split(".").length - 1].toLowerCase() ===
-                    FILE_TYPES.PDF
-                ) {
-                    if (eventList.size > 10485760) {
-                        return ToasterService.show(
-                            "file size is too large, allowed maximum size is 10 MB.",
-                            "error"
-                        );
-                    } else {
-                        setAttachments((prevVals: any) => [...prevVals, eventList]);
-                        const fileURL = URL.createObjectURL(eventList);
-                        setLogoUrl(fileURL)
-                    }
-                } else {
-                    ToasterService.show(
-                        `Invalid file format you can only attach the PDF here!`,
-                        "error"
-                    );
-                    eventList = null;
-                }
-            });
-        }
-    };
-
-    const selectDigitalSign = (files: any) => {
-        setDigitalSign([]);
-        if (files && files[0]) {
-            _.each(files, (eventList) => {
-                if (
-                    eventList.name
-                        .split(".")
-                    [eventList.name.split(".").length - 1].toLowerCase() ===
-                    FILE_TYPES.PDF
-                ) {
-                    if (eventList.size > 10485760) {
-                        return ToasterService.show(
-                            "file size is too large, allowed maximum size is 10 MB.",
-                            "error"
-                        );
-                    } else {
-                        setDigitalSign((prevVals: any) => [...prevVals, eventList]);
-                        const fileURL = URL.createObjectURL(eventList);
-                        setSignatureUrl(fileURL);
-                    }
-                } else {
-                    ToasterService.show(
-                        `Invalid file format you can only attach the PDF here!`,
-                        "error"
-                    );
-                    eventList = null;
-                }
-            });
-        }
-    };
-
-    const removeFileHandler = () => {
-        setAttachments([]);
-        setLogoUrl('');
-    };
-
-    const removeSignHandler = () => {
-        setDigitalSign([]);
-        setSignatureUrl('');
-    };
-
-
     function concatAddresses(address1: string, address2: string, address3: string) {
         // Check for null/undefined values and join non-empty addresses
         return [address1, address2, address3].filter((addr) => addr).join(", ");
@@ -1543,37 +1206,6 @@ const InvoiceMaster = () => {
                     form.bill_from.options = tempData?.map((ele: any) => ele?.label) || [];
                     form.bill_from.value = tempData?.find((ele: any) => ele?.isDefault)?.label;
                 }
-
-                // console.log('aaaaaaaaaaaaaa', companyLocationMaster?.filter((ele: any) => ele.companyName
-                // == form.company_name?.value));
-
-
-                // form.bill_from.options = companyLocationMaster?.filter((ele: any) => ele.companyName
-                //     == form.company_name?.value).map((item: any, index: any) => {
-                //         return {
-                //             label: concatAddresses(item?.address1, item?.address2, item?.address3),
-                //             value: item.id.toString(),
-                //             isDefault: item?.isDefaultAddress
-                //         }
-                //     })
-
-                // const defaultBillFrom = form.bill_from?.options?.find((ele: any) => ele.isDefaultAddress == 1);
-                // if (defaultBillFrom && defaultBillFrom?.value) {
-                //     form.bill_from.value = [defaultBillFrom?.value.toString()];
-                // }
-                // else {
-                //     form.bill_from.value = null;
-                // }
-                // console.log('defaultBillFrom', form, form.bill_from.options,defaultBillFrom);
-
-                //   form.companyName.value = configData?.companyInfo.companyName;
-                //   form.companyName.disable = false;
-
-
-                //   form.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
-                //   form.companyLocation.value = configData?.companyLocation?.id.toString()
-
-                // console.log('form handler checking selectedClient---->>> ', defaultContact, form);
             }
 
         }
@@ -1626,28 +1258,20 @@ const InvoiceMaster = () => {
         return clientName.split(" ").map((word: any) => word[0]).join("").toUpperCase();
     };
 
-
     const createNewClient = async (event: FormEvent) => {
         event.preventDefault();
         let companyValidityFlag = true;
-        const companyFormValid: boolean[] = [];
-
 
         _.each(clientForm, (item: any) => {
             if (item?.validation?.required) {
-                // companyFormValid.push(item.value);
-                companyValidityFlag = companyValidityFlag && item.value; // Ensure boolean value
+                companyValidityFlag = companyValidityFlag && item.value;
             }
         });
 
-
         setIsFormValid(companyValidityFlag);
-        // console.log('clientForm', clientForm, companyValidityFlag);
-
 
         // Prepare invoice data
         const invoiceData = {
-            // taxCode: taxCode,
             invoiceItems: invoiceItems.map((item: any) => ({
                 description: item.description,
                 sacCode: item.sacCode,
@@ -1665,137 +1289,129 @@ const InvoiceMaster = () => {
 
         console.log("Final Invoice Data:", invoiceData, clientForm);
 
-        if (companyValidityFlag) {
+        if (!companyValidityFlag) {
+            ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+            return;
+        }
 
-            console.log('dddddddddddd', companyLocationMaster, clientForm?.bill_from?.value);
+        // Extract values from form
+        const poAmount = parseFloat(clientForm.po_amount.value) || 0;
+        const invoiceAmount = parseFloat(clientForm.invoice_amount.value) || 0;
 
+        // Validation checks
+        if (invoiceAmount > poAmount) {
+            ToasterService.show("Invoice Amount cannot be greater than PO Amount!", CONSTANTS.ERROR);
+            return;
+        }
 
-            const clientId = poContractConfData.find((item: any) => item.client_name === clientForm.client_name.value)?.client_id || '';
+        if (parseFloat(invoiceData.totalAmount) !== invoiceAmount) {
+            ToasterService.show("Total Amount must match Invoice Amount!", CONSTANTS.ERROR);
+            return;
+        }
 
-            const contractId = poContractsData.find((item: any) => item.po_name === clientForm.contract_name.value)?.client_id || '';
+        console.log('Processing with valid data:', clientForm);
 
-            const invoiceBillFromId = companyLocationMaster.find((el: any) => concatAddresses(el.address1, el?.address2, el?.address3) == clientForm.bill_from.value)?.id ?? null;
+        const clientId = poContractConfData.find((item: any) => item.client_name === clientForm.client_name.value)?.client_id || '';
+        const contractId = poContractsData.find((item: any) => item.po_name === clientForm.contract_name.value)?.client_id || '';
+        const invoiceBillFromId = companyLocationMaster.find((el: any) => concatAddresses(el.address1, el?.address2, el?.address3) == clientForm.bill_from.value)?.id ?? null;
+        const taxTypeId = taxMaster.find((el: any) => el?.taxType == clientForm.tax_type.value)?.id ?? null;
 
-            const taxTypeId = taxMaster.find((el: any) => el?.taxType == clientForm.tax_type.value)?.id ?? null;
+        let taxCodeId = "";
+        clientForm?.tax_code?.value?.forEach((item: any) => {
+            const id = taxMaster?.find((com: any) => com?.taxFieldName == item)?.id ?? null;
+            if (id != null) {
+                taxCodeId = taxCodeId != "" ? taxCodeId + "," + id : id;
+            }
+        });
 
+        const formData: any = new FormData();
+        const clientAbbr = getClientAbbreviation(clientForm.client_name.value);
+        const financialYear = getFinancialYear(clientForm.invoice_date.value);
+        const invoiceName = `${clientAbbr}/${financialYear}`;
 
-            let taxCodeId = "";
-            clientForm?.tax_code?.value?.forEach((item: any) => {
-                const id =
-                    taxMaster?.find(
-                        (com: any) => com?.taxFieldName == item
-                    )?.id ?? null;
-                if (id != null) {
-                    taxCodeId =
-                        taxCodeId != "" ? taxCodeId + "," + id : id;
-                }
-            });
+        const obj = {
+            client_name: clientForm.client_name.value || '',
+            client_id: clientId,
+            invoice_name: invoiceName,
+            contract_name: clientForm.contract_name.value || '',
+            contract_id: contractId,
+            po_number: clientForm.po_number.value || '',
+            po_amount: poAmount.toFixed(2),
+            remain_po_amount: clientForm.remain_po_amount.value || '',
+            invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
+            clientBillTo: clientForm.clientBillTo.value?.toString() || '',
+            clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
+            clientContact: clientForm.clientContact.value?.toString() || '',
+            company_name: clientForm.company_name.value || '',
+            bill_from: clientForm.bill_from.value || '',
+            invoice_bill_from_id: invoiceBillFromId,
+            contract_type: clientForm.contract_type.value || '',
+            tax_type: clientForm.tax_type.value || '',
+            tax_type_id: taxTypeId,
+            tax_code: clientForm.tax_code.value?.toString() || '',
+            tax_code_id: taxCodeId,
+            invoice_amount: invoiceAmount.toFixed(2),
+            note_one: clientForm.note_one.value || '',
+            note_two: clientForm.note_two.value || '',
+            clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),
+            clientShipAddress_name: getNamesFromOptions(clientForm.clientShipAddress),
+            clientContact_name: getNamesFromOptions(clientForm.clientContact),
+            total_amount: invoiceData.totalAmount,
+            final_amount: invoiceData.finalAmount,
+            gst_total: invoiceData.gstTotal,
+            invoiceData: JSON.stringify(invoiceData),
+            updated_by: loggedInUserId,
+            isActive: 1
+        };
 
-            console.log('dddddddddddd -checkkkk', getNamesFromOptions(clientForm.clientBillTo));
+        Object.entries(obj).forEach(([key, value]: any) => {
+            formData.set(key, value);
+        });
 
-            const formData: any = new FormData();
+        console.log("Final formData:", formData);
 
-            const clientAbbr = getClientAbbreviation(clientForm.client_name.value);
-            const financialYear = getFinancialYear(clientForm.invoice_date.value);
-            const invoiceName = `${clientAbbr}/${financialYear}`;
+        if (!cliendData?.id) {
+            invoiceService
+                .createInvoice(formData)
+                .then((response: any) => {
+                    if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+                        setCliendData({});
+                        closeFormPopup();
+                        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+                    }
+                })
+                .catch((error: any) => {
+                    setCliendData({});
+                    ToasterService.show(error, CONSTANTS.ERROR);
+                });
+        } else {
+            const updatePayload = { ...obj, clientId: cliendData?.id };
 
-            const obj = {
-                client_name: clientForm.client_name.value || '',
-                client_id: clientId,
-                invoice_name: invoiceName,
-                contract_name: clientForm.contract_name.value || '',
-                contract_id: contractId,
-                po_number: clientForm.po_number.value || '',
-                po_amount: clientForm.po_amount.value || '',
-                remain_po_amount: clientForm.remain_po_amount.value || '',
-                invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
-                clientBillTo: clientForm.clientBillTo.value?.toString() || '',
-                clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
-                clientContact: clientForm.clientContact.value?.toString() || '',
-                company_name: clientForm.company_name.value || '',
-                bill_from: clientForm.bill_from.value || '',
-                invoice_bill_from_id: invoiceBillFromId,
-                contract_type: clientForm.contract_type.value || '',
-                tax_type: clientForm.tax_type.value || '',
-                tax_type_id: taxTypeId,
-                tax_code: clientForm.tax_code.value?.toString() || '',
-                tax_code_id: taxCodeId,
-                invoice_amount: clientForm.invoice_amount.value || '',
-                note_one: clientForm.note_one.value || '',
-                note_two: clientForm.note_two.value || '',
-
-                clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),
-                clientShipAddress_name: getNamesFromOptions(clientForm.clientShipAddress),
-                clientContact_name: getNamesFromOptions(clientForm.clientContact),
-
-                total_amount: invoiceData.totalAmount || '',
-                final_amount: invoiceData.finalAmount || '',
-                gst_total: invoiceData.gstTotal || '',
-
-                invoiceData: JSON.stringify(invoiceData) || {},
-
-                // invoiceData: JSON.stringify(invoiceData) || {},
-                updated_by: loggedInUserId,
-                isActive: 1
-            };
-
-
-
-            Object.entries(obj).forEach(([key, value]: any) => {
+            Object.entries(updatePayload).forEach(([key, value]: any) => {
                 formData.set(key, value);
             });
-            console.log("here formData", formData);
 
-            console.log('createClientForm : ', clientForm, obj);
-
-
-            if (!cliendData?.id) {
-                invoiceService
-                    .createInvoice(formData)
-                    .then((response: any) => {
-                        if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-                            setCliendData({});
-                            closeFormPopup();
-                            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-                        }
-                    })
-                    .catch((error: any) => {
-                        setCliendData({});
-                        ToasterService.show(error, CONSTANTS.ERROR);
-                    });
-            } else {
-                const formData: any = new FormData();
-
-                const updatePayload = { ...obj, clientId: cliendData?.id };
-
-                Object.entries(updatePayload).forEach(([key, value]: any) => {
-                    formData.set(key, value);
-                });
-
-                if (attachments?.length) {
-                    formData.set("msaFile", attachments[0]);
-                }
-
-                if (digitalSign?.length) {
-                    formData.set("ndaFile", digitalSign[0]);
-                }
-
-                invoiceService
-                    .updateInvoice(formData)
-                    .then((response: any) => {
-                        if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-                            setCliendData({});
-                            closeFormPopup();
-                            ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-                        }
-                    })
-                    .catch((error: any) => {
-                        setCliendData({});
-                        ToasterService.show(error, CONSTANTS.ERROR);
-                    });
+            if (attachments?.length) {
+                formData.set("msaFile", attachments[0]);
             }
-        } else {
-            ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+
+            if (digitalSign?.length) {
+                formData.set("ndaFile", digitalSign[0]);
+            }
+
+            invoiceService
+                .updateInvoice(formData)
+                .then((response: any) => {
+                    if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+                        setCliendData({});
+                        closeFormPopup();
+                        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+                    }
+                })
+                .catch((error: any) => {
+                    setCliendData({});
+                    ToasterService.show(error, CONSTANTS.ERROR);
+                });
         }
     };
 
@@ -1972,24 +1588,6 @@ const InvoiceMaster = () => {
                                 </div>
 
                                 <div style={{ float: "right", padding: "10px", width: "230px" }}>
-                                    {/* <h4>Tax Details</h4> */}
-                                    {/* {selectedApplicableTaxes.map((tax: any, index: any) => (
-                                        <div key={index}>
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedTaxes.includes(tax)}
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedTaxes([...selectedTaxes, tax]);
-                                                    } else {
-                                                        setSelectedTaxes(selectedTaxes.filter((t: any) => t.taxFieldName !== tax.taxFieldName));
-                                                    }
-                                                }}
-                                            />
-                                            {tax.taxFieldName} ({tax.taxPercentage}%)
-                                        </div>
-                                    ))} */}
-
                                     <h6>Total: {totalAmount.toFixed(2)}</h6>
                                     {taxCalculations.map((tax: any, index: any) => (
                                         <h6 key={index}>{tax.taxFieldName}@{tax.taxPercentage}%: {tax.calculatedAmount.toFixed(2)}</h6>
