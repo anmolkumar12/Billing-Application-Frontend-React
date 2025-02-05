@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import * as _ from 'lodash'
 import './Form.scss'
 // import classes from './Form.module.scss'
@@ -98,7 +98,22 @@ const FormComponent: React.FC<{
     }
   }, [updateOptions])
 
+ 
+    const debounceFormUpdateEventHandler = useCallback(_.debounce((updatedForm:FormType) => {
+      formUpdateEvent(_.cloneDeep(updatedForm));
+      },300),[])  
+
   const inputChangedHandler = (newValue: any, fieldKey: string) => {
+    setState((prevState) => {
+      const updatedForm = { ...prevState.currentForm };
+      if (updatedForm[fieldKey].value !== newValue) {
+        updatedForm[fieldKey].value = newValue;
+        debounceFormUpdateEventHandler(updatedForm);
+      }
+      return { currentForm: updatedForm };
+    });
+  }
+  const singleSelectChangeHandler = (newValue: any, fieldKey: string) => {
     setState((prevState) => {
       const updatedForm = { ...prevState.currentForm };
       if (updatedForm[fieldKey].value !== newValue) {
@@ -372,7 +387,7 @@ const FormComponent: React.FC<{
                       key={key + 'input'}
                       value={value.value}
                       id={key}
-                      changed={inputChangedHandler}
+                      changed={singleSelectChangeHandler}
                       blurred={blurHandler}
                       options={value.options || []}
                       formName={formName || 'form1'}
