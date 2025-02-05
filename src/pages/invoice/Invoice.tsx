@@ -993,7 +993,7 @@ const InvoiceMaster = () => {
 
             // clientFormFieldsStructure.po_number.disable = true;
             // clientFormFieldsStructure.po_amount.disable = true;
-            // clientFormFieldsStructure.remain_po_amount.disable = true;
+            clientFormFieldsStructure.invoice_amount.disable = true;
             clientFormFieldsStructure.contract_name.disable = true;
 
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
@@ -1489,7 +1489,7 @@ const InvoiceMaster = () => {
                 }}
             >
                 <ButtonComponent
-                    label="Add New Client"
+                    label="Add New Invoice"
                     icon="pi pi-check"
                     iconPos="right"
                     submitEvent={openSaveForm}
@@ -1526,7 +1526,7 @@ const InvoiceMaster = () => {
                                 }}
                             >
                                 <i className="pi pi-angle-left"></i>
-                                <h4 className="popup-heading">{isEditClient ? 'Update' : 'Add New'} Client</h4>
+                                <h4 className="popup-heading">{isEditClient ? 'Update' : 'Add New'} Invoice</h4>
                             </div>
                             <div
                                 className="popup-right-close"
@@ -1546,32 +1546,114 @@ const InvoiceMaster = () => {
 
 
                             <div>
-                                <div>
-                                    <h6>Add Invoice Items Detail</h6>
-                                    <DataTable value={invoiceItems} responsiveLayout="scroll">
-                                        <Column field="description" header="Description" body={(rowData, { rowIndex }) => (
-                                            <InputText value={rowData.description} onChange={(e) => handleInputChange(e, rowIndex, "description")} />
-                                        )} />
-                                        <Column field="sacCode" header="SAC Code" body={(rowData, { rowIndex }) => (
-                                            <InputText value={rowData.sacCode} onChange={(e) => handleInputChange(e, rowIndex, "sacCode")} />
-                                        )} />
-                                        <Column field="amount" header="Amount" body={(rowData, { rowIndex }) => (
-                                            <InputNumber value={rowData.amount} onValueChange={(e) => handleAmountChange(e, rowIndex)} mode="decimal" />
-                                        )} />
-                                    </DataTable>
-                                    <Button onClick={addRow} label="Add Row" style={{ marginTop: 10, padding: "2px 10px" }} />
+                                {/* Header with Button */}
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                                    <h5 style={{ margin: 0, fontWeight: "600", color: "#333" }}>Add Invoice Items Detail</h5>
+                                    <Button
+                                        onClick={addRow}
+                                        label="Add Row"
+                                        style={{
+                                            backgroundColor: "#007bff",
+                                            color: "white",
+                                            padding: "4px 12px",
+                                            borderRadius: "5px",
+                                            fontSize: "14px",
+                                            fontWeight: "500",
+                                            border: "none"
+                                        }}
+                                    />
                                 </div>
 
-                                <div style={{ float: "right", padding: "10px", width: "230px" }}>
-                                    <h6>Total: {totalAmount.toFixed(2)}</h6>
-                                    {taxCalculations.map((tax: any, index: any) => (
-                                        <h6 key={index}>{tax.taxFieldName}@{tax.taxPercentage}%: {tax.calculatedAmount.toFixed(2)}</h6>
-                                    ))}
-                                    <h6>Total GST: {gstTotal.toFixed(2)}</h6>
-                                    <h6>Total Amount: {(totalAmount + gstTotal).toFixed(2)}</h6>
+                                {/* Styled Table */}
+                                <DataTable
+                                    value={invoiceItems}
+                                    responsiveLayout="scroll"
+                                    style={{
+                                        border: "1px solid #ddd",
+                                        borderRadius: "5px",
+                                        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
+                                        overflow: "hidden"
+                                    }}
+                                >
+                                    <Column field="description" header="Description" body={(rowData, { rowIndex }) => (
+                                        <InputText
+                                            value={rowData.description}
+                                            onChange={(e) => handleInputChange(e, rowIndex, "description")}
+                                            style={{
+                                                height: "28px",
+                                                fontSize: "14px",
+                                                padding: "4px 8px",
+                                                borderRadius: "4px",
+                                                border: "1px solid #ccc",
+                                                width: "100%"
+                                            }}
+                                        />
+                                    )} />
+                                    <Column field="sacCode" header="SAC Code" body={(rowData, { rowIndex }) => (
+                                        <InputText
+                                            value={rowData.sacCode}
+                                            onChange={(e) => handleInputChange(e, rowIndex, "sacCode")}
+                                            style={{
+                                                height: "28px",
+                                                fontSize: "14px",
+                                                padding: "4px 8px",
+                                                borderRadius: "4px",
+                                                border: "1px solid #ccc",
+                                                width: "100%"
+                                            }}
+                                        />
+                                    )} />
+                                    <Column field="amount" header="Amount" body={(rowData, { rowIndex }) => (
+                                        <InputNumber
+                                            value={rowData.amount}
+                                            onValueChange={(e) => handleAmountChange(e, rowIndex)}
+                                            mode="decimal"
+                                            style={{
+                                                width: "100%",
+                                                height: "28px",
+                                                fontSize: "14px",
+                                                padding: "6px 10px",
+                                                textAlign: "right",
+                                                border: "1px solid #ccc",
+                                                borderRadius: "4px",
+                                                backgroundColor: "#fff",
+                                                outline: "none",
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                transition: "border-color 0.2s ease-in-out"
+                                            }}
+                                            inputStyle={{
+                                                width: "100%",
+                                                height: "28px",
+                                                padding: "0px",
+                                                border: "none", // Ensures only one border is applied
+                                                outline: "none",
+                                                backgroundColor: "transparent"
+                                            }}
+                                        />
+                                    )} />
+                                </DataTable>
 
+                                {/* Total Calculation UI */}
+                                <div style={{
+                                    textAlign: "right",
+                                    padding: "15px",
+                                    marginTop: "10px",
+                                    backgroundColor: "#f8f9fa",
+                                    borderRadius: "5px",
+                                    boxShadow: "0px 1px 4px rgba(0,0,0,0.1)"
+                                }}>
+                                    <h6 style={{ marginBottom: "5px", fontWeight: "600" }}>Total: {totalAmount.toFixed(2)}</h6>
+                                    {taxCalculations.map((tax: any, index: any) => (
+                                        <h6 key={index} style={{ marginBottom: "5px", fontSize: "14px", color: "#555" }}>
+                                            {tax.taxFieldName}@{tax.taxPercentage}%: {tax.calculatedAmount.toFixed(2)}
+                                        </h6>
+                                    ))}
+                                    <h6 style={{ marginBottom: "5px", fontWeight: "600", color: "#333" }}>Total GST: {gstTotal.toFixed(2)}</h6>
+                                    <h6 style={{ fontWeight: "700", fontSize: "16px", color: "#222" }}>Total Amount: {(totalAmount + gstTotal).toFixed(2)}</h6>
                                 </div>
                             </div>
+
 
                         </div>
 
