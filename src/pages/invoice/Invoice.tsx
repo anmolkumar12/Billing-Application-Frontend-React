@@ -41,7 +41,7 @@ const InvoiceMaster = () => {
             label: "Client",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
         contract_name: {
@@ -49,7 +49,7 @@ const InvoiceMaster = () => {
             label: "Contract",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
 
@@ -57,6 +57,7 @@ const InvoiceMaster = () => {
             inputType: "inputtext",
             label: "PO Number",
             value: null,
+            disable: true,
             validation: { required: false },
             fieldWidth: "col-md-4",
         },
@@ -64,6 +65,7 @@ const InvoiceMaster = () => {
             inputType: "inputtext",
             label: "PO Amount",
             value: null,
+            disable: true,
             validation: { required: false },
             fieldWidth: "col-md-4",
         },
@@ -71,6 +73,7 @@ const InvoiceMaster = () => {
             inputType: "inputtext",
             label: "Remain PO Amount",
             value: null,
+            disable: true,
             validation: { required: false },
             fieldWidth: "col-md-4",
         },
@@ -78,7 +81,7 @@ const InvoiceMaster = () => {
             inputType: "singleDatePicker",
             label: "Invoice Date",
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
         clientBillTo: {
@@ -86,7 +89,7 @@ const InvoiceMaster = () => {
             label: "Client Bill Address",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
         clientShipAddress: {
@@ -94,7 +97,7 @@ const InvoiceMaster = () => {
             label: "Client Ship Address",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
         clientContact: {
@@ -102,13 +105,14 @@ const InvoiceMaster = () => {
             label: "Contact",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
         company_name: {
             inputType: "inputtext",
             label: "Company Name",
             value: null,
+            disable: true,
             validation: { required: false },
             fieldWidth: "col-md-4",
         },
@@ -117,15 +121,17 @@ const InvoiceMaster = () => {
             label: "Bill From",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
-        contract_type: {
+        projectService: {
             inputType: "singleSelect",
-            label: "Contract Type",
+            label: "Service Type",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: {
+                required: true
+            },
             fieldWidth: "col-md-4",
         },
         tax_type: {
@@ -133,7 +139,7 @@ const InvoiceMaster = () => {
             label: "Tax Type",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
         tax_code: {
@@ -141,15 +147,15 @@ const InvoiceMaster = () => {
             label: "Tax Code",
             options: [],
             value: null,
-            validation: { required: false },
+            validation: { required: true },
             fieldWidth: "col-md-4",
         },
         invoice_amount: {
-            inputType: "inputNumber",
+            inputType: "inputtext",
             label: "Invoice Amount",
             value: null,
-            validation: { required: false },
-            fieldWidth: "col-md-6",
+            validation: { required: true },
+            fieldWidth: "col-md-4",
         },
         note_one: {
             inputType: "inputtextarea",
@@ -231,7 +237,10 @@ const InvoiceMaster = () => {
     const [taxMaster, setTaxMaster] = useState<any>([]);
     const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
     const [invoiceMasterData, setInvoiceMasterData] = useState<any>([]);
-
+    const [poMastersConfigData, setPoMastersConfigData] = useState<any>({});
+    const [invoiceItems, setInvoiceItems] = useState<any>([{ id: Date.now(), description: "", sacCode: "", amount: 0 }]);
+    const [selectedTaxes, setSelectedTaxes] = useState<any>([])
+    const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -408,15 +417,13 @@ const InvoiceMaster = () => {
             ),
         },
         {
-            label: "Contract Type",
-            fieldName: "contract_type",
+            label: "Project Service",
+            fieldName: "projectService",
             textAlign: "left",
+            frozen: false,
             sort: true,
             filter: true,
-            placeholder: "Contract Type",
-            body: (rowData: any) => (
-                <TooltipWrapper id={`contractTypeTooltip-${rowData.id}`} content={rowData.contract_type} />
-            ),
+            body: (rowData: any) => <span>{rowData?.projectService_names}</span>,
         },
         {
             label: "Tax Code",
@@ -529,6 +536,7 @@ const InvoiceMaster = () => {
             getPoContractConfiguration();
             getTaxMaster();
             getCompanyLocationMaster();
+            getPOContractMasterConfigData();
         };
         if (clientFormPopup == false && showConfirmDialogue == false) {
             fetchData();
@@ -584,6 +592,17 @@ const InvoiceMaster = () => {
         }
     };
 
+    const getPOContractMasterConfigData = async () => {
+        setLoader(true);
+        try {
+            const response = await poContractService.getPOContractMasterConfigData();
+            setPoMastersConfigData(response?.data?.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoader(false);
+        }
+    };
 
     const getTaxMaster = async () => {
         // setLoader(true);
@@ -859,12 +878,12 @@ const InvoiceMaster = () => {
 
     const openSaveForm = async () => {
         clientForm.client_name.options = clientListNames;
-        // objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
-        //   ? poMastersConfigData?.projectService.map((item: any) => ({
-        //     label: item?.name,
-        //     value: item.id.toString(),
-        //   }))
-        //   : [];
+        clientForm.projectService.options = Array.isArray(poMastersConfigData?.projectService)
+            ? poMastersConfigData?.projectService.map((item: any) => ({
+                label: item?.name,
+                value: item.id.toString(),
+            }))
+            : [];
 
         const taxDetails = taxMaster.map((item: any) => item?.taxType);
         clientForm.tax_type.options = taxDetails;
@@ -897,6 +916,7 @@ const InvoiceMaster = () => {
     const updateClientMaster = (data: any) => {
         try {
             clientFormFieldsStructure.client_name.options = clientListNames;
+            clientFormFieldsStructure.client_name.disable = true;
             clientFormFieldsStructure.client_name.options = clientListNames;
             const taxDetails = taxMaster.map((item: any) => item?.taxType);
             clientFormFieldsStructure.tax_type.options = taxDetails;
@@ -945,6 +965,14 @@ const InvoiceMaster = () => {
                 }
             });
 
+
+            clientFormFieldsStructure.projectService.options = Array.isArray(poMastersConfigData?.projectService)
+                ? poMastersConfigData?.projectService.map((item: any) => ({
+                    label: item?.name,
+                    value: item.id.toString(),
+                }))
+                : [];
+
             clientFormFieldsStructure.bill_from.options = tempData?.map((ele: any) => ele?.label) || [];
             clientFormFieldsStructure.bill_from.value = data?.bill_from ? data?.bill_from : "";
 
@@ -954,14 +982,30 @@ const InvoiceMaster = () => {
             clientFormFieldsStructure.po_amount.value = data?.po_amount || "";
             clientFormFieldsStructure.remain_po_amount.value = data?.remain_po_amount || "";
             clientFormFieldsStructure.invoice_date.value = data?.invoice_date ? parseDateString(data?.invoice_date) : null;
-            clientFormFieldsStructure.contract_type.value = data?.contract_type || "";
+            // clientFormFieldsStructure.contract_type.value = data?.contract_type || "";
             clientFormFieldsStructure.tax_type.value = data?.tax_type || "";
             clientFormFieldsStructure.tax_code.value = data?.tax_code ? data?.tax_code.split(",") : [];
             clientFormFieldsStructure.invoice_amount.value = data?.invoice_amount || "";
             clientFormFieldsStructure.note_one.value = data?.note_one || "";
             clientFormFieldsStructure.note_two.value = data?.note_two || "";
+            clientFormFieldsStructure.projectService.value = data?.projectService ? data?.projectService : "";
+
+
+            // clientFormFieldsStructure.po_number.disable = true;
+            // clientFormFieldsStructure.po_amount.disable = true;
+            // clientFormFieldsStructure.remain_po_amount.disable = true;
+            clientFormFieldsStructure.contract_name.disable = true;
+
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
-            
+
+            setInvoiceItems(data.invoiceInfo.map((item: any) => ({
+                description: item.description,
+                sacCode: item.sacCode,
+                amount: item.amount,
+                taxBreakdown: item.taxBreakdown
+            })));
+
+            setSelectedTaxes(data.invoiceInfo.flatMap((item: any) => item.taxBreakdown));
 
             console.log("Updated form data:", clientFormFieldsStructure);
         } catch (error) {
@@ -1094,7 +1138,8 @@ const InvoiceMaster = () => {
         setAttachments([]);
         setDigitalSign([]);
         setSignatureUrl('');
-        setLogoUrl('')
+        setLogoUrl('');
+        setInvoiceItems([{ id: Date.now(), description: "", sacCode: "", amount: 0 }])
     };
 
     const parseDateString = (dateString: any) => {
@@ -1155,7 +1200,7 @@ const InvoiceMaster = () => {
                     return {
                         label: concatAddresses(item.address1, item.address2, item.address3),
                         value: item.id.toString(),
-                        isDefault: concatAddresses(item.address1, item.address2, item.address3) == selectedContract?.masterNames?.clientBillTo ? 1 : 0
+                        isDefault: concatAddresses(item.address1, item.address2, item.address3) == selectedContract?.masterNames?.clientBillTo_names ? 1 : 0
                     }
                 })
                 const defaultBillItem = form.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
@@ -1225,11 +1270,6 @@ const InvoiceMaster = () => {
         setClientForm(form);
     };
 
-    const msaFormHandler = async (currentForm: FormType) => {
-        const form = _.cloneDeep(currentForm);
-        setMsaForm(form);
-    };
-
     const getNamesFromOptions = (field: any) => {
         if (!field?.options || !Array.isArray(field.value)) return '';
         return field.value
@@ -1295,12 +1335,12 @@ const InvoiceMaster = () => {
         }
 
         // Extract values from form
-        const poAmount = parseFloat(clientForm.po_amount.value) || 0;
+        const poAmount = parseFloat(clientForm.remain_po_amount.value) || 0;
         const invoiceAmount = parseFloat(clientForm.invoice_amount.value) || 0;
 
         // Validation checks
         if (invoiceAmount > poAmount) {
-            ToasterService.show("Invoice Amount cannot be greater than PO Amount!", CONSTANTS.ERROR);
+            ToasterService.show("Invoice Amount cannot be greater than remain PO Amount!", CONSTANTS.ERROR);
             return;
         }
 
@@ -1309,10 +1349,10 @@ const InvoiceMaster = () => {
             return;
         }
 
-        console.log('Processing with valid data:', clientForm);
+        console.log('Processing with valid data:', poContractsData, clientForm, poContractsData.find((item: any) => item.po_name === clientForm.contract_name.value));
 
         const clientId = poContractConfData.find((item: any) => item.client_name === clientForm.client_name.value)?.client_id || '';
-        const contractId = poContractsData.find((item: any) => item.po_name === clientForm.contract_name.value)?.client_id || '';
+        const contractId = poContractsData.find((item: any) => item.po_name === clientForm.contract_name.value)?.clientId || '';
         const invoiceBillFromId = companyLocationMaster.find((el: any) => concatAddresses(el.address1, el?.address2, el?.address3) == clientForm.bill_from.value)?.id ?? null;
         const taxTypeId = taxMaster.find((el: any) => el?.taxType == clientForm.tax_type.value)?.id ?? null;
 
@@ -1345,7 +1385,9 @@ const InvoiceMaster = () => {
             company_name: clientForm.company_name.value || '',
             bill_from: clientForm.bill_from.value || '',
             invoice_bill_from_id: invoiceBillFromId,
-            contract_type: clientForm.contract_type.value || '',
+            // contract_type: clientForm.contract_type.value || '',
+            projectService_names: clientForm.projectService.options.find((item: any) => item.value === clientForm.projectService.value)?.label || '',
+            projectService: clientForm.projectService.value || '',
             tax_type: clientForm.tax_type.value || '',
             tax_type_id: taxTypeId,
             tax_code: clientForm.tax_code.value?.toString() || '',
@@ -1355,7 +1397,8 @@ const InvoiceMaster = () => {
             note_two: clientForm.note_two.value || '',
             clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),
             clientShipAddress_name: getNamesFromOptions(clientForm.clientShipAddress),
-            clientContact_name: getNamesFromOptions(clientForm.clientContact),
+            // clientContact_name: getNamesFromOptions(clientForm.clientContact),
+            clientContact_name: clientForm.clientContact.options.find((item: any) => item.value === clientForm.clientContact.value)?.label || '',
             total_amount: invoiceData.totalAmount,
             final_amount: invoiceData.finalAmount,
             gst_total: invoiceData.gstTotal,
@@ -1368,7 +1411,7 @@ const InvoiceMaster = () => {
             formData.set(key, value);
         });
 
-        console.log("Final formData:", formData);
+        console.log("Final formData:", obj, formData);
 
         if (!cliendData?.id) {
             invoiceService
@@ -1385,19 +1428,11 @@ const InvoiceMaster = () => {
                     ToasterService.show(error, CONSTANTS.ERROR);
                 });
         } else {
-            const updatePayload = { ...obj, clientId: cliendData?.id };
+            const updatePayload = { ...obj, id: cliendData?.id, invoice_name: cliendData?.invoice_name };
 
             Object.entries(updatePayload).forEach(([key, value]: any) => {
                 formData.set(key, value);
             });
-
-            if (attachments?.length) {
-                formData.set("msaFile", attachments[0]);
-            }
-
-            if (digitalSign?.length) {
-                formData.set("ndaFile", digitalSign[0]);
-            }
 
             invoiceService
                 .updateInvoice(formData)
@@ -1414,66 +1449,6 @@ const InvoiceMaster = () => {
                 });
         }
     };
-
-
-    const updateCurrentMSA = async (event: FormEvent) => {
-        event.preventDefault();
-        let companyValidityFlag = true;
-        const companyFormValid: boolean[] = [];
-
-        _.each(msaForm, (item: any) => {
-            if (item?.validation?.required) {
-                // companyFormValid.push(item.valid);
-                companyValidityFlag = companyValidityFlag && item.value;
-            }
-        });
-
-        setIsFormValid(companyValidityFlag);
-
-        if (companyValidityFlag) {
-
-            const formData: any = new FormData();
-
-            const obj = {
-                clientId: cliendData?.id,
-                start_date: formatDate(msaForm?.start_date?.value),
-                end_date: formatDate(msaForm?.end_date?.value),
-                updated_by: loggedInUserId,
-            };
-
-
-            Object.entries(obj).forEach(([key, value]: any) => {
-                formData.set(key, value);
-            });
-
-
-            if (attachments?.length) {
-                formData.set("msaFile", attachments[0]);
-            }
-            console.log('createClientForm : ', clientForm, obj);
-
-            clientService
-                .updateMSAFile(formData)
-                .then((response: any) => {
-                    if (response?.statusCode === HTTP_RESPONSE.CREATED) {
-                        setCliendData({});
-                        closeFormPopup();
-                        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-                    }
-                })
-                .catch((error: any) => {
-                    setCliendData({});
-                    ToasterService.show(error, CONSTANTS.ERROR);
-                });
-
-        } else {
-            ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-        }
-    };
-
-    const [invoiceItems, setInvoiceItems] = useState<any>([]);
-    const [selectedTaxes, setSelectedTaxes] = useState<any>([])
-    const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
 
     const addRow = () => {
         setInvoiceItems([...invoiceItems, { id: Date.now(), description: "", sacCode: "", amount: 0 }]);
