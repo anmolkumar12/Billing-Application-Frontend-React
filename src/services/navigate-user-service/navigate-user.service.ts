@@ -20,7 +20,10 @@ export class NavigateUserService {
         path === ROUTE_CONSTANTS.AGGREGATOR_WALLET_INFO ||
         path === ROUTE_CONSTANTS.GENERATE_INVOICE ||
         path === ROUTE_CONSTANTS.CLIENT ||
-        path === ROUTE_CONSTANTS.INVOICE)
+        path === ROUTE_CONSTANTS.INVOICE 
+        // || 
+        // path === ROUTE_CONSTANTS.CREDIT_NOTE
+      )
     ) {
       return path
     } else {
