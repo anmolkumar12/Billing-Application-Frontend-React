@@ -255,4 +255,9 @@ export const APIURLS = {
   GET_CLIENT_GROUPS: '/api/masters/getClientGroups',
   UPDATE_MSA_FILE: '/api/masters/updateMSAFile',
 
+    // CREDIT NOTE
+    GET_CREDIT_NOTE: '/api/masters/getCreditNote',
+    CREATE_CREDIT_NOTE: '/api/masters/insertCreditNote',
+    UPDATE_CREDIT_NOTE: '/api/masters/updateCreditNote',
+    TOGGLE_CREDIT_NOTE_STATUS: '/api/masters/activateDeactivateCreditNote',
 }

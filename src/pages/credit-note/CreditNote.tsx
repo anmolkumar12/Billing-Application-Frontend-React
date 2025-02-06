@@ -32,8 +32,9 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import moment from "moment";
 import { InvoiceService } from "../../services/invoice/invoice.service";
+import { CreditNoteService } from "../../services/credit-note/credit-note.service";
 
-const InvoiceMaster = () => {
+const CreditNoteMaster = () => {
 
     const clientFormFields: any = {
         client_name: {
@@ -79,7 +80,7 @@ const InvoiceMaster = () => {
         },
         invoice_date: {
             inputType: "singleDatePicker",
-            label: "Invoice Date",
+            label: "Credit Date",
             value: null,
             validation: { required: true },
             fieldWidth: "col-md-4",
@@ -152,7 +153,7 @@ const InvoiceMaster = () => {
         },
         invoice_amount: {
             inputType: "inputtext",
-            label: "Invoice Amount",
+            label: "Credit Amount",
             value: null,
             validation: { required: true },
             fieldWidth: "col-md-4",
@@ -260,6 +261,7 @@ const InvoiceMaster = () => {
     const invoiceService = new InvoiceService();
     const accountService = new AccountMasterService();
     const accountsService = new AccountsMasterService();
+    const creditNoteService = new CreditNoteService();
 
     const cookies = new Cookies();
     const userInfo = cookies.get("userInfo");
@@ -300,12 +302,12 @@ const InvoiceMaster = () => {
             ),
         },
         {
-            label: "Invoice Name",
+            label: "Credit Note Name",
             fieldName: "invoice_name",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Invoice Name",
+            placeholder: "Credit Name",
             body: (rowData: any) => (
                 <TooltipWrapper id={`clientTooltip-${rowData.id}`} content={rowData.invoice_name} />
             ),
@@ -366,12 +368,12 @@ const InvoiceMaster = () => {
             ),
         },
         {
-            label: "Invoice Date",
+            label: "Credit Date",
             fieldName: "invoice_date",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Invoice Date",
+            placeholder: "Credit Date",
             body: (rowData: any) => (
                 <TooltipWrapper id={`invoiceDateTooltip-${rowData.id}`} content={new Date(rowData.invoice_date).toLocaleDateString()} />
             ),
@@ -437,12 +439,12 @@ const InvoiceMaster = () => {
             ),
         },
         {
-            label: "Invoice Amount",
+            label: "Credit Amount",
             fieldName: "invoice_amount",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Invoice Amount",
+            placeholder: "Credit Amount",
             body: (rowData: any) => (
                 <TooltipWrapper id={`invoiceAmountTooltip-${rowData.id}`} content={rowData.invoice_amount} />
             ),
@@ -547,7 +549,7 @@ const InvoiceMaster = () => {
     const getInvoiceData = async () => {
         setLoader(true);
         try {
-            const response = await invoiceService.getInvoicesData();
+            const response = await creditNoteService.getCreditNoteData();
             response.invoices.forEach((item: any) => item.invoiceInfo = JSON.parse(item.invoiceInfo))
 
             const parsedData = response.invoices.map((invoice: any) => ({
@@ -1340,12 +1342,12 @@ const InvoiceMaster = () => {
 
         // Validation checks
         if (invoiceAmount > poAmount) {
-            ToasterService.show("Invoice Amount cannot be greater than remain PO Amount!", CONSTANTS.ERROR);
+            ToasterService.show("Credit Amount cannot be greater than remain PO Amount!", CONSTANTS.ERROR);
             return;
         }
 
         if (parseFloat(invoiceData.totalAmount) !== invoiceAmount) {
-            ToasterService.show("Total Amount must match Invoice Amount!", CONSTANTS.ERROR);
+            ToasterService.show("Total Amount must match Credit Amount!", CONSTANTS.ERROR);
             return;
         }
 
@@ -1399,7 +1401,7 @@ const InvoiceMaster = () => {
             clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),
             clientShipAddress_name: getNamesFromOptions(clientForm.clientShipAddress),
             // clientContact_name: getNamesFromOptions(clientForm.clientContact),
-            clientContact_name: clientForm.clientContact.options.find((item: any) => item.value === clientForm.clientContact.value[0])?.label || '',
+            clientContact_name: clientForm.clientContact.options.find((item: any) => item.value === clientForm.clientContact.value)?.label || '',
             total_amount: invoiceData.totalAmount,
             final_amount: invoiceData.finalAmount,
             gst_total: invoiceData.gstTotal,
@@ -1415,8 +1417,8 @@ const InvoiceMaster = () => {
         console.log("Final formData:", obj, formData);
 
         if (!cliendData?.id) {
-            invoiceService
-                .createInvoice(formData)
+          creditNoteService
+                .createCreditNote(formData)
                 .then((response: any) => {
                     if (response?.statusCode === HTTP_RESPONSE.CREATED) {
                         setCliendData({});
@@ -1435,8 +1437,8 @@ const InvoiceMaster = () => {
                 formData.set(key, value);
             });
 
-            invoiceService
-                .updateInvoice(formData)
+            creditNoteService
+                .updateCreditNote(formData)
                 .then((response: any) => {
                     if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
                         setCliendData({});
@@ -1490,7 +1492,7 @@ const InvoiceMaster = () => {
                 }}
             >
                 <ButtonComponent
-                    label="Add New Invoice"
+                    label="Add New Credit Note"
                     icon="pi pi-check"
                     iconPos="right"
                     submitEvent={openSaveForm}
@@ -1527,7 +1529,7 @@ const InvoiceMaster = () => {
                                 }}
                             >
                                 <i className="pi pi-angle-left"></i>
-                                <h4 className="popup-heading">{isEditClient ? 'Update' : 'Add New'} Invoice</h4>
+                                <h4 className="popup-heading">{isEditClient ? 'Update' : 'Add'} Credit Note</h4>
                             </div>
                             <div
                                 className="popup-right-close"
@@ -1549,7 +1551,7 @@ const InvoiceMaster = () => {
                             <div>
                                 {/* Header with Button */}
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                                    <h5 style={{ margin: 0, fontWeight: "600", color: "#333" }}>Add Invoice Items Detail</h5>
+                                    <h5 style={{ margin: 0, fontWeight: "600", color: "#333" }}>Add Credit Note Items Detail</h5>
                                     <Button
                                         onClick={addRow}
                                         label="Add Row"
@@ -1673,5 +1675,5 @@ const InvoiceMaster = () => {
     );
 };
 
-export default InvoiceMaster;
+export default CreditNoteMaster;
 
