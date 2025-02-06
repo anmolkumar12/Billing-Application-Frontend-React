@@ -19,7 +19,8 @@ export class NavigateUserService {
         path === ROUTE_CONSTANTS.AGGREGATOR_CLENT_INFO ||
         path === ROUTE_CONSTANTS.AGGREGATOR_WALLET_INFO ||
         path === ROUTE_CONSTANTS.GENERATE_INVOICE ||
-        path === ROUTE_CONSTANTS.CLIENT)
+        path === ROUTE_CONSTANTS.CLIENT ||
+        path === ROUTE_CONSTANTS.INVOICE)
     ) {
       return path
     } else {
@@ -35,7 +36,9 @@ export class NavigateUserService {
       return ROUTE_CONSTANTS.AGGREGATOR_DASHBOARD
     } else if (userRole === 'Client') {
       return ROUTE_CONSTANTS.SUPERADMIN_DASHBOARD
-    } else {
+    } else if (userRole === 'Invoice') {
+      return ROUTE_CONSTANTS.SUPERADMIN_DASHBOARD
+    }  else {
       return ROUTE_CONSTANTS.LAYOUT
     }
   }
