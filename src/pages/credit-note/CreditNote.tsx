@@ -80,7 +80,7 @@ const CreditNoteMaster = () => {
         },
         invoice_date: {
             inputType: "singleDatePicker",
-            label: "Invoice Date",
+            label: "Credit Date",
             value: null,
             validation: { required: true },
             fieldWidth: "col-md-4",
@@ -302,12 +302,12 @@ const CreditNoteMaster = () => {
             ),
         },
         {
-            label: "Invoice Name",
+            label: "Credit Note Name",
             fieldName: "invoice_name",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Invoice Name",
+            placeholder: "Credit Name",
             body: (rowData: any) => (
                 <TooltipWrapper id={`clientTooltip-${rowData.id}`} content={rowData.invoice_name} />
             ),
@@ -368,12 +368,12 @@ const CreditNoteMaster = () => {
             ),
         },
         {
-            label: "Invoice Date",
+            label: "Credit Date",
             fieldName: "invoice_date",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Invoice Date",
+            placeholder: "Credit Date",
             body: (rowData: any) => (
                 <TooltipWrapper id={`invoiceDateTooltip-${rowData.id}`} content={new Date(rowData.invoice_date).toLocaleDateString()} />
             ),
@@ -439,12 +439,12 @@ const CreditNoteMaster = () => {
             ),
         },
         {
-            label: "Invoice Amount",
+            label: "Credit Amount",
             fieldName: "invoice_amount",
             textAlign: "left",
             sort: true,
             filter: true,
-            placeholder: "Invoice Amount",
+            placeholder: "Credit Amount",
             body: (rowData: any) => (
                 <TooltipWrapper id={`invoiceAmountTooltip-${rowData.id}`} content={rowData.invoice_amount} />
             ),
@@ -1378,7 +1378,8 @@ const CreditNoteMaster = () => {
             contract_name: clientForm.contract_name.value || '',
             contract_id: contractId,
             po_number: clientForm.po_number.value || '',
-            po_amount: poAmount.toFixed(2),
+            // po_amount: poAmount.toFixed(2),
+            po_amount: clientForm.po_amount.value || '',
             remain_po_amount: clientForm.remain_po_amount.value || '',
             invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
@@ -1550,7 +1551,7 @@ const CreditNoteMaster = () => {
                             <div>
                                 {/* Header with Button */}
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                                    <h5 style={{ margin: 0, fontWeight: "600", color: "#333" }}>Add Invoice Items Detail</h5>
+                                    <h5 style={{ margin: 0, fontWeight: "600", color: "#333" }}>Add Credit Note Items Detail</h5>
                                     <Button
                                         onClick={addRow}
                                         label="Add Row"

@@ -21,8 +21,7 @@ export class NavigateUserService {
         path === ROUTE_CONSTANTS.GENERATE_INVOICE ||
         path === ROUTE_CONSTANTS.CLIENT ||
         path === ROUTE_CONSTANTS.INVOICE 
-        // || 
-        // path === ROUTE_CONSTANTS.CREDIT_NOTE
+        // || path === ROUTE_CONSTANTS.CREDIT_NOTE
       )
     ) {
       return path
