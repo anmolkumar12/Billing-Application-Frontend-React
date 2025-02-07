@@ -108,21 +108,22 @@ const FormComponent: React.FC<{
       const updatedForm = { ...prevState.currentForm };
       if (updatedForm[fieldKey].value !== newValue) {
         updatedForm[fieldKey].value = newValue;
-        debounceFormUpdateEventHandler(updatedForm);
-      }
-      return { currentForm: updatedForm };
-    });
-  }
-  const singleSelectChangeHandler = (newValue: any, fieldKey: string) => {
-    setState((prevState) => {
-      const updatedForm = { ...prevState.currentForm };
-      if (updatedForm[fieldKey].value !== newValue) {
-        updatedForm[fieldKey].value = newValue;
+        // debounceFormUpdateEventHandler(updatedForm);
         formUpdateEvent(updatedForm);
       }
       return { currentForm: updatedForm };
     });
   }
+  // const singleSelectChangeHandler = (newValue: any, fieldKey: string) => {
+  //   setState((prevState) => {
+  //     const updatedForm = { ...prevState.currentForm };
+  //     if (updatedForm[fieldKey].value !== newValue) {
+  //       updatedForm[fieldKey].value = newValue;
+  //       formUpdateEvent(updatedForm);
+  //     }
+  //     return { currentForm: updatedForm };
+  //   });
+  // }
 
   // default handle blur
   const handleBlur = (fieldKey: string) => {
@@ -387,7 +388,7 @@ const FormComponent: React.FC<{
                       key={key + 'input'}
                       value={value.value}
                       id={key}
-                      changed={singleSelectChangeHandler}
+                      changed={inputChangedHandler}
                       blurred={blurHandler}
                       options={value.options || []}
                       formName={formName || 'form1'}

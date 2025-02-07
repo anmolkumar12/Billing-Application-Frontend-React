@@ -22,7 +22,7 @@ const IndustryMaster = () => {
       label: "Sub-Industry Name",
       value: null,
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },

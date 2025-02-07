@@ -61,7 +61,7 @@ const ClientContactMaster = () => {
             label: "Last Name",
             value: null,
             validation: {
-                required: true,
+                required: false,
             },
             fieldWidth: "col-md-6",
         },
@@ -70,7 +70,7 @@ const ClientContactMaster = () => {
             label: "Email",
             value: null,
             validation: {
-                required: true,
+                required: false,
                 // pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             },
             fieldWidth: "col-md-6",
@@ -80,7 +80,7 @@ const ClientContactMaster = () => {
             label: "Phone Number",
             value: null,
             validation: {
-                required: true,
+                required: false,
                 // pattern: /^\d{10}$/,
             },
             fieldWidth: "col-md-6",
