@@ -560,9 +560,11 @@ const ClientBillToMaster = () => {
     await clientBillFormHandler(clientBillFieldsStructure);
   };
 
-  const clientBillFormHandler = async (currentForm: FormType) => {
-    const form = _.cloneDeep(currentForm);
-    console.log('bbbbbbbbbb', form?.client_name?.value, ClientBillForm?.client_name?.value);
+  const clientBillFormHandler = async (form: FormType) => {
+    setClientBillForm(form);
+
+    // const form = _.cloneDeep(currentForm);
+    // console.log('bbbbbbbbbb', form, ClientBillForm);
 
     if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
       const selectedClient = clientMaster?.find(

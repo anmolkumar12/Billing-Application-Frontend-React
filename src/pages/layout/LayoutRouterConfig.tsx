@@ -28,6 +28,12 @@ const InvoiceLazyComponent = React.lazy(() => {
   }).then(() => import('../../pages/invoice/Invoice'))
 })
 
+const CreditNoteLazyComponent = React.lazy(() => {
+  return new Promise<void>((resolve) => {
+    resolve()
+  }).then(() => import('../../pages/credit-note/CreditNote'))
+})
+
 const routes = [
   {
     path: ROUTE_CONSTANTS.MASTER,
@@ -50,6 +56,12 @@ const routes = [
   {
     path: ROUTE_CONSTANTS.INVOICE,
     component: InvoiceLazyComponent,
+    exact: true,
+    isProtected: true,
+  },
+  {
+    path: ROUTE_CONSTANTS.CREDIT_NOTE,
+    component: CreditNoteLazyComponent,
     exact: true,
     isProtected: true,
   },
