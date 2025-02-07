@@ -517,7 +517,7 @@ const Contract: React.FC = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      frozen: false,
+      frozen: true,
       sort: false,
       filter: false,
       body: (rowData: any) => (

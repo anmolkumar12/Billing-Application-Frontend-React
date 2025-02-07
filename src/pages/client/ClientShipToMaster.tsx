@@ -48,6 +48,45 @@ const ClientShipToMaster = () => {
       },
       fieldWidth: "col-md-6",
     },
+    state_name: {
+      inputType: "singleSelect",
+      label: "State Name",
+      options: [],
+      value: null,
+      disable: false,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
+    state_code:{
+      inputType: "inputtext",
+      label: "State Code",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+
+    },
+    gstIn: {
+      inputType: "inputtext",
+      label: "GSTN",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
+    placeOfSupply: {
+      inputType: "inputtext",
+      label: "Place of Supply",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
     address1: {
       inputType: "inputtext",
       label: "Address 1",
@@ -114,6 +153,8 @@ const ClientShipToMaster = () => {
   const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
   const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
 
+  const [defaultBillingAddress,setDefaultBillingAddress] = useState<any>();
+
 
 
   const [clientBillFieldsStructure, setClientBillFieldsStructure]: any =
@@ -143,7 +184,7 @@ const ClientShipToMaster = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      frozen: false,
+      frozen: true,
       sort: false,
       filter: false,
       body: (rowData: any) => (
@@ -187,6 +228,7 @@ const ClientShipToMaster = () => {
         </div>
       ),
     },
+    
     {
       label: "Address 1",
       fieldName: "address1",
@@ -284,6 +326,102 @@ const ClientShipToMaster = () => {
       ),
     },
     {
+          label: "State Name",
+          fieldName: "state_name",
+          textAlign: "left",
+          sort: true,
+          filter: true,
+          fieldValue: "state_name",
+          changeFilter: true,
+          placeholder: "State Name",
+          body: (rowData: any) => (
+            <div>
+              <span
+                id={`companyNameTooltip-${rowData.id}`}
+              // data-pr-tooltip={rowData.state_name}
+              >
+                {rowData.state_name}
+              </span>
+              <Tooltip
+                target={`#companyNameTooltip-${rowData.id}`}
+                position="top"
+              />
+            </div>
+          ),
+        },
+        {
+          label: "State Code",
+          fieldName: "state_code",
+          textAlign: "left",
+          sort: true,
+          filter: true,
+          fieldValue: "state_code",
+          changeFilter: true,
+          placeholder: "State Code",
+          body: (rowData: any) => (
+            <div>
+              <span
+                id={`companyNameTooltip-${rowData.id}`}
+              // data-pr-tooltip={rowData.state_code}
+              >
+                {rowData.state_code}
+              </span>
+              <Tooltip
+                target={`#companyNameTooltip-${rowData.id}`}
+                position="top"
+              />
+            </div>
+          ),
+        },
+        {
+          label: "GSTN",
+          fieldName: "gstIn",
+          textAlign: "left",
+          sort: true,
+          filter: true,
+          fieldValue: "gstIn",
+          changeFilter: true,
+          placeholder: "gstn",
+          body: (rowData: any) => (
+            <div>
+              <span
+                id={`companyNameTooltip-${rowData.id}`}
+              // data-pr-tooltip={rowData.gstIn}
+              >
+                {rowData.gstIn}
+              </span>
+              <Tooltip
+                target={`#companyNameTooltip-${rowData.id}`}
+                position="top"
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Place Of Supply",
+          fieldName: "placeOfSupply",
+          textAlign: "left",
+          sort: true,
+          filter: true,
+          fieldValue: "placeOfSupply",
+          changeFilter: true,
+          placeholder: "place of supply",
+          body: (rowData: any) => (
+            <div>
+              <span
+                id={`companyNameTooltip-${rowData.id}`}
+              // data-pr-tooltip={rowData.placeOfSupply}
+              >
+                {rowData.placeOfSupply}
+              </span>
+              <Tooltip
+                target={`#companyNameTooltip-${rowData.id}`}
+                position="top"
+              />
+            </div>
+          ),
+        },
+    {
       label: "Default Address",
       fieldName: "isDefaultAddress",
       textAlign: "left",
@@ -350,6 +488,7 @@ const ClientShipToMaster = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await getClientShipToMaster();
       await getClientBillToMaster();
       const clients = await getClientMaster();
       const countries = await getCountryMaster();
@@ -363,7 +502,7 @@ const ClientShipToMaster = () => {
     }
   }, [clientFormPopup, showConfirmDialogue]);
 
-  const getClientBillToMaster = async () => {
+  const getClientShipToMaster = async () => {
     setLoader(true);
     try {
       const response = await clientService.getClientShipToMaster();
@@ -375,6 +514,20 @@ const ClientShipToMaster = () => {
       setLoader(false);
     }
   };
+  const getClientBillToMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientBillToMaster();
+      setClientBillToMaster(response?.data);
+      setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const getCountryMaster = async () => {
     setLoader(true);
     try {
@@ -413,7 +566,7 @@ const ClientShipToMaster = () => {
 
   const formatState_ClientDetails = async (states: any = stateMaster) => {
     const statelist = states.map((state: any) => state.state_name);
-    // clientBillFieldsStructure.state_name.options = statelist;
+    clientBillFieldsStructure.state_name.options = statelist;
     await setClientBillFieldsStructure(clientBillFieldsStructure);
     await clientBillFormHandler(clientBillFieldsStructure);
   };
@@ -425,47 +578,86 @@ const ClientShipToMaster = () => {
     await clientBillFormHandler(clientBillFieldsStructure);
   };
 
-  const clientBillFormHandler = async (form: FormType) => {
-    setClientBillForm(form);
-    // if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
-    const selectedClient = clientMaster?.find(
-      (item: any) => item?.client_name == form?.client_name?.value
-    );
-    const selectedCountry = countryMaster?.find(
-      (item: any) => item?.name == selectedClient?.countryName
-    );
-    if (selectedCountry) {
-      form.country_name.value = selectedClient?.countryName;
-      // const stateList = await getStateMaster(selectedCountry?.id);
-      // if (stateList) {
-      //   const stateNames = stateList?.map((state: any) => state.stateName);
-      //   form.state_name.options = stateNames || [];
-      //   form.state_name.value = null;
-      // }
+   const clientBillFormHandler = async (currentForm: FormType) => {
+     const form = _.cloneDeep(currentForm);
+     console.log('bbbbbbbbbb', form?.client_name?.value, ClientBillForm?.client_name?.value);
+ 
+     if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
+       const selectedClient = clientMaster?.find(
+         (item: any) => item?.client_name == form?.client_name?.value
+       );
 
-      const addressDetails = JSON.parse(
-        selectedCountry?.addressAdditionalFields
-      );
-      const detailsForm = Object.keys(addressDetails)?.reduce(
-        (acc: any, item: any, index: any) => {
-          acc[index] = {
-            inputType: "inputtext",
-            label: addressDetails[item],
-            value: null,
-            validation: {
-              required: true,
+       const selectedCountry = countryMaster?.find(
+         (item: any) => item?.name == selectedClient?.countryName
+       );
+       if (selectedCountry) {
+         form.country_name.value = selectedClient?.countryName;
+         // const stateList = await getStateMaster();
+         // console.log('stateList---------------->',stateList);
+         if (stateMaster) {
+           // console.log('state-master',stateMaster)
+           const stateNames = stateMaster?.map((state: any) => state.stateName);
+           form.state_name.options = stateNames || [];
+           form.state_name.value = null;
+         }
+        }
+         console.log("defaultBillingAddress ----->",defaultBillingAddress);
+        if(defaultBillingAddress?.id){
+          form.address1.value = defaultBillingAddress?.address1;
+          form.address2.value = defaultBillingAddress?.address2;
+          form.address3.value = defaultBillingAddress?.address3;
+          form.state_name.value = defaultBillingAddress?.state_name;
+          form.placeOfSupply.value = defaultBillingAddress?.placeOfSupply;
+          form.state_code.value = defaultBillingAddress?.state_code;
+          form.gstIn.value = defaultBillingAddress?.gstIn;
+          // form.country_name.value = defaultBillingAddress?.countryName;  
+          const addressDetails = JSON.parse(
+            selectedCountry?.addressAdditionalFields
+          );
+          const detailsForm = Object.keys(addressDetails)?.reduce(
+            (acc: any, item: any, index: any) => {
+              acc[index] = {
+                inputType: "inputtext",
+                label: addressDetails[item],
+                value: null,
+                validation: {
+                  required: true,
+                },
+                fieldWidth: "col-md-4",
+              };
+              return acc;
             },
-            fieldWidth: "col-md-4",
-          };
-          return acc;
-        },
-        {}
-      );
-      setAdditionalDetailsForm(detailsForm);
-    }
-    // }
+            {}
+          );
+          setAdditionalDetailsForm(detailsForm);
+     
+         } 
 
-  };
+         else {
+         const addressDetails = JSON.parse(
+           selectedCountry?.addressAdditionalFields
+         );
+         const detailsForm = Object.keys(addressDetails)?.reduce(
+           (acc: any, item: any, index: any) => {
+             acc[index] = {
+               inputType: "inputtext",
+               label: addressDetails[item],
+               value: null,
+               validation: {
+                 required: true,
+               },
+               fieldWidth: "col-md-4",
+             };
+             return acc;
+           },
+           {}
+         );
+         setAdditionalDetailsForm(detailsForm);
+        }
+       }
+
+     setClientBillForm(form);
+   };
 
   const additionalDetailsFormHandler = async (form: FormType) => {
     setAdditionalDetailsForm(form);
@@ -525,19 +717,28 @@ const ClientShipToMaster = () => {
   };
 
   const updateClientBillToMaster = async (data: any) => {
+    console.log('data------->',data);
     try {
-      clientBillFieldsStructure.client_name.value = data?.client_name;
-      clientBillFieldsStructure.address1.value = data?.address1;
-      clientBillFieldsStructure.address2.value = data?.address2;
-      clientBillFieldsStructure.address3.value = data?.address3;
-      // clientBillFieldsStructure.pin.value = data?.pin;
-      clientBillFieldsStructure.country_name.value = data?.country_name;
-      clientBillFieldsStructure.isDefaultAddress.value = data?.isDefaultAddress == 1 ? true : false;
-      // clientBillFieldsStructure.state_name.value = data?.state_name;
+      ClientBillForm.client_name.value = data?.client_name;
+      ClientBillForm.address1.value = data?.address1;
+      ClientBillForm.address2.value = data?.address2;
+      ClientBillForm.address3.value = data?.address3;
+      ClientBillForm.state_name.options = stateMaster?.map((state: any) => state.stateName) || []
+      ClientBillForm.state_code.value = data?.state_code;
+      ClientBillForm.gstIn.value = data?.gstIn;
+      ClientBillForm.placeOfSupply.value = data?.placeOfSupply;
+      ClientBillForm.state_name.value = data?.state_name;
+      // ClientBillForm.pin.value = data?.pin;
+      ClientBillForm.country_name.value = data?.countryName;
+      ClientBillForm.isDefaultAddress.value = data?.isDefaultAddress == 1 ? true : false;
 
-      setClientBillFieldsStructure(_.cloneDeep(clientBillFieldsStructure));
+      // ClientBillForm.state_name.value = data?.state_name;
 
+      // setClientBillForm(_.cloneDeep(clientBillFieldsStructure)); 
       const addressDetails = JSON.parse(data?.additionalAddressDetails);
+
+      if(Object.keys(addressDetails)?.length){
+
       const addressForm = Object.keys(addressDetails)?.reduce(
         (acc: any, item: any, index: any) => {
           acc[index] = {
@@ -554,6 +755,32 @@ const ClientShipToMaster = () => {
         {}
       );
       setAdditionalDetailsForm(addressForm);
+    }
+    else{
+      const selectedCountry = countryMaster?.find(
+        (item: any) => item?.name == data?.countryName
+      );
+      const addressDetails = JSON.parse(
+        selectedCountry?.addressAdditionalFields
+      );
+      const detailsForm = Object.keys(addressDetails)?.reduce(
+        (acc: any, item: any, index: any) => {
+          acc[index] = {
+            inputType: "inputtext",
+            label: addressDetails[item],
+            value: null,
+            validation: {
+              required: true,
+            },
+            fieldWidth: "col-md-4",
+          };
+          return acc;
+        },
+        {}
+      );
+      setAdditionalDetailsForm(detailsForm);
+
+    }
     } catch (error) {
       console.log("error", error);
     }
@@ -665,6 +892,10 @@ const ClientShipToMaster = () => {
       const obj = {
         clientId: clientId,
         countryId: countryId,
+        state_name:ClientBillForm?.state_name?.value,
+        state_code:ClientBillForm?.state_code?.value,
+        gstIn:ClientBillForm?.gstIn?.value,
+        placeOfSupply:ClientBillForm?.placeOfSupply?.value,
         address1: ClientBillForm?.address1?.value,
         address2: ClientBillForm?.address2?.value,
         address3: ClientBillForm?.address3?.value,
