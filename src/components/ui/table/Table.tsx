@@ -493,6 +493,7 @@ const DataTableBasicDemo = (props: TableProps) => {
       flexGrow: flexGrow,
       flexBasis: flexBasis,
       height: height,
+      minWidth:column[0].label == "Action" ? "110px":"" 
     }
     const onFilterChange = (e: any) => {
       if (dt.current != null) {

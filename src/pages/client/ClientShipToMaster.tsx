@@ -153,6 +153,8 @@ const ClientShipToMaster = () => {
   const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
   const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
 
+  const [defaultBillingAddress,setDefaultBillingAddress] = useState<any>();
+
 
 
   const [clientBillFieldsStructure, setClientBillFieldsStructure]: any =
@@ -182,7 +184,7 @@ const ClientShipToMaster = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      frozen: false,
+      frozen: true,
       sort: false,
       filter: false,
       body: (rowData: any) => (
@@ -486,6 +488,7 @@ const ClientShipToMaster = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await getClientShipToMaster();
       await getClientBillToMaster();
       const clients = await getClientMaster();
       const countries = await getCountryMaster();
@@ -499,7 +502,7 @@ const ClientShipToMaster = () => {
     }
   }, [clientFormPopup, showConfirmDialogue]);
 
-  const getClientBillToMaster = async () => {
+  const getClientShipToMaster = async () => {
     setLoader(true);
     try {
       const response = await clientService.getClientShipToMaster();
@@ -511,6 +514,20 @@ const ClientShipToMaster = () => {
       setLoader(false);
     }
   };
+  const getClientBillToMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientBillToMaster();
+      setClientBillToMaster(response?.data);
+      setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const getCountryMaster = async () => {
     setLoader(true);
     try {
@@ -569,6 +586,7 @@ const ClientShipToMaster = () => {
        const selectedClient = clientMaster?.find(
          (item: any) => item?.client_name == form?.client_name?.value
        );
+
        const selectedCountry = countryMaster?.find(
          (item: any) => item?.name == selectedClient?.countryName
        );
@@ -582,7 +600,40 @@ const ClientShipToMaster = () => {
            form.state_name.options = stateNames || [];
            form.state_name.value = null;
          }
- 
+        }
+         console.log("defaultBillingAddress ----->",defaultBillingAddress);
+        if(defaultBillingAddress?.id){
+          form.address1.value = defaultBillingAddress?.address1;
+          form.address2.value = defaultBillingAddress?.address2;
+          form.address3.value = defaultBillingAddress?.address3;
+          form.state_name.value = defaultBillingAddress?.state_name;
+          form.placeOfSupply.value = defaultBillingAddress?.placeOfSupply;
+          form.state_code.value = defaultBillingAddress?.state_code;
+          form.gstIn.value = defaultBillingAddress?.gstIn;
+          // form.country_name.value = defaultBillingAddress?.countryName;  
+          const addressDetails = JSON.parse(
+            selectedCountry?.addressAdditionalFields
+          );
+          const detailsForm = Object.keys(addressDetails)?.reduce(
+            (acc: any, item: any, index: any) => {
+              acc[index] = {
+                inputType: "inputtext",
+                label: addressDetails[item],
+                value: null,
+                validation: {
+                  required: true,
+                },
+                fieldWidth: "col-md-4",
+              };
+              return acc;
+            },
+            {}
+          );
+          setAdditionalDetailsForm(detailsForm);
+     
+         } 
+
+         else {
          const addressDetails = JSON.parse(
            selectedCountry?.addressAdditionalFields
          );
@@ -602,8 +653,9 @@ const ClientShipToMaster = () => {
            {}
          );
          setAdditionalDetailsForm(detailsForm);
+        }
        }
-     }
+
      setClientBillForm(form);
    };
 
@@ -683,8 +735,10 @@ const ClientShipToMaster = () => {
       // ClientBillForm.state_name.value = data?.state_name;
 
       // setClientBillForm(_.cloneDeep(clientBillFieldsStructure)); 
-
       const addressDetails = JSON.parse(data?.additionalAddressDetails);
+
+      if(Object.keys(addressDetails)?.length){
+
       const addressForm = Object.keys(addressDetails)?.reduce(
         (acc: any, item: any, index: any) => {
           acc[index] = {
@@ -701,6 +755,32 @@ const ClientShipToMaster = () => {
         {}
       );
       setAdditionalDetailsForm(addressForm);
+    }
+    else{
+      const selectedCountry = countryMaster?.find(
+        (item: any) => item?.name == data?.countryName
+      );
+      const addressDetails = JSON.parse(
+        selectedCountry?.addressAdditionalFields
+      );
+      const detailsForm = Object.keys(addressDetails)?.reduce(
+        (acc: any, item: any, index: any) => {
+          acc[index] = {
+            inputType: "inputtext",
+            label: addressDetails[item],
+            value: null,
+            validation: {
+              required: true,
+            },
+            fieldWidth: "col-md-4",
+          };
+          return acc;
+        },
+        {}
+      );
+      setAdditionalDetailsForm(detailsForm);
+
+    }
     } catch (error) {
       console.log("error", error);
     }

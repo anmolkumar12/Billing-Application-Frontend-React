@@ -182,8 +182,10 @@ const ClientBillToMaster = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      frozen: false,
+      frozen: true,
+      width:"200px",
       sort: false,
+
       filter: false,
       body: (rowData: any) => (
         <div style={{ display: "flex", gap: "10px", marginLeft: "20px" }}>
