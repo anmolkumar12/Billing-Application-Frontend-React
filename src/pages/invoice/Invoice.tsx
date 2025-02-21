@@ -105,7 +105,7 @@ const InvoiceMaster = () => {
             label: "Contact",
             options: [],
             value: null,
-            validation: { required: true },
+            validation: { required: false },
             fieldWidth: "col-md-4",
         },
         company_name: {
@@ -576,21 +576,57 @@ const InvoiceMaster = () => {
             // setLoader(false);
         }
     };
+    // const getPoContractConfiguration = async () => {
+    //     // setLoader(true);
+    //     try {
+    //         const response = await poContractService.getPoContractConfiguration();
+    //         setPoContractConfData(response?.data);
+    //         setClientListNames(response?.data?.map((item: any) => {
+    //             return item.client_name
+    //         }))
+    //         return response?.data
+    //     } catch (error) {
+    //         console.error(error);
+    //     } finally {
+    //         // setLoader(false);
+    //     }
+    // };
+
     const getPoContractConfiguration = async () => {
-        // setLoader(true);
+        setLoader(true);
         try {
-            const response = await poContractService.getPoContractConfiguration();
-            setPoContractConfData(response?.data);
-            setClientListNames(response?.data?.map((item: any) => {
-                return item.client_name
-            }))
-            return response?.data
+          const response = await poContractService.getPoContractConfiguration();
+      
+          if (!response || !response.data) {
+            throw new Error("Invalid response from API");
+          }
+      
+          const data = Array.isArray(response.data) ? response.data : [];
+      
+          console.log("Response Data:", data);
+      
+          // Ensure unique clients based on client_id
+          const uniqueClients = Array.from(
+            new Map(data.map((item: any) => [item.client_id, item])).values()
+          );
+      
+          setPoContractConfData(uniqueClients);
+      
+          setClientListNames(
+            uniqueClients.map((item: any) => item.client_name || "Unknown Client")
+          );
+      
+          return uniqueClients;
         } catch (error) {
-            console.error(error);
+          console.error("Error fetching PO contract configuration:", error);
+      
+          // Set an empty array in case of an error to prevent React rendering issues
+          setPoContractConfData([]);
+          setClientListNames([]);
         } finally {
-            // setLoader(false);
+          setLoader(false);
         }
-    };
+      };
 
     const getPOContractMasterConfigData = async () => {
         setLoader(true);

@@ -489,7 +489,7 @@ const ClientShipToMaster = () => {
   useEffect(() => {
     const fetchData = async () => {
       await getClientShipToMaster();
-      await getClientBillToMaster();
+      // await getClientBillToMaster();
       const clients = await getClientMaster();
       const countries = await getCountryMaster();
       const states = await getStateMaster();
@@ -507,6 +507,7 @@ const ClientShipToMaster = () => {
     try {
       const response = await clientService.getClientShipToMaster();
       setClientBillToMaster(response?.data);
+      // setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
       return response?.data;
     } catch (error) {
       console.error(error);
@@ -514,19 +515,19 @@ const ClientShipToMaster = () => {
       setLoader(false);
     }
   };
-  const getClientBillToMaster = async () => {
-    setLoader(true);
-    try {
-      const response = await clientService.getClientBillToMaster();
-      setClientBillToMaster(response?.data);
-      setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
-      return response?.data;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoader(false);
-    }
-  };
+  // const getClientBillToMaster = async () => {
+  //   setLoader(true);
+  //   try {
+  //     const response = await clientService.getClientBillToMaster();
+  //     setClientBillToMaster(response?.data);
+  //     setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
+  //     return response?.data;
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoader(false);
+  //   }
+  // };
 
   const getCountryMaster = async () => {
     setLoader(true);
@@ -601,6 +602,9 @@ const ClientShipToMaster = () => {
            form.state_name.value = null;
          }
         }
+
+        const parsedAdditionalAddress = defaultBillingAddress?.additionalAddressDetails && JSON.parse(defaultBillingAddress?.additionalAddressDetails)
+
          console.log("defaultBillingAddress ----->",defaultBillingAddress);
         if(defaultBillingAddress?.id){
           form.address1.value = defaultBillingAddress?.address1;
@@ -616,10 +620,13 @@ const ClientShipToMaster = () => {
           );
           const detailsForm = Object.keys(addressDetails)?.reduce(
             (acc: any, item: any, index: any) => {
+              const fieldLabel = addressDetails[item]; // Get label from addressAdditionalFields
+              const matchedValue = parsedAdditionalAddress[fieldLabel]; // Match with parsedAdditionalAddress
+    
               acc[index] = {
                 inputType: "inputtext",
-                label: addressDetails[item],
-                value: null,
+                label: fieldLabel,
+                value: matchedValue || null, // Patch value if match found
                 validation: {
                   required: true,
                 },

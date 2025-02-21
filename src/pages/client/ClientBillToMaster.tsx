@@ -152,6 +152,7 @@ const ClientBillToMaster = () => {
 
   const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
   const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
+  const [defaultBillingAddress,setDefaultBillingAddress] = useState<any>();
 
 
 
@@ -505,6 +506,9 @@ const ClientBillToMaster = () => {
     try {
       const response = await clientService.getClientBillToMaster();
       setClientBillToMaster(response?.data);
+    console.log('bbbbbbbbbb', response?.data);
+
+      setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1) || {}); 
       return response?.data;
     } catch (error) {
       console.error(error);
@@ -562,11 +566,11 @@ const ClientBillToMaster = () => {
     await clientBillFormHandler(clientBillFieldsStructure);
   };
 
-  const clientBillFormHandler = async (form: FormType) => {
-    setClientBillForm(form);
+  const clientBillFormHandler = async (currentForm: FormType) => {
+    // setClientBillForm(form);
+     const form = _.cloneDeep(currentForm);
 
     // const form = _.cloneDeep(currentForm);
-    // console.log('bbbbbbbbbb', form, ClientBillForm);
 
     if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
       const selectedClient = clientMaster?.find(
@@ -586,25 +590,85 @@ const ClientBillToMaster = () => {
           form.state_name.value = null;
         }
 
-        const addressDetails = JSON.parse(
-          selectedCountry?.addressAdditionalFields
-        );
-        const detailsForm = Object.keys(addressDetails)?.reduce(
-          (acc: any, item: any, index: any) => {
-            acc[index] = {
-              inputType: "inputtext",
-              label: addressDetails[item],
-              value: null,
-              validation: {
-                required: true,
-              },
-              fieldWidth: "col-md-4",
-            };
-            return acc;
-          },
-          {}
-        );
-        setAdditionalDetailsForm(detailsForm);
+        console.log('gggggggggg', defaultBillingAddress);
+        
+        const parsedAdditionalAddress = defaultBillingAddress?.additionalAddressDetails && JSON.parse(defaultBillingAddress?.additionalAddressDetails)
+
+        if(defaultBillingAddress?.id){
+          form.address1.value = defaultBillingAddress?.address1;
+          form.address2.value = defaultBillingAddress?.address2;
+          form.address3.value = defaultBillingAddress?.address3;
+          form.state_name.value = defaultBillingAddress?.state_name;
+          form.placeOfSupply.value = defaultBillingAddress?.placeOfSupply;
+          form.state_code.value = defaultBillingAddress?.state_code;
+          form.gstIn.value = defaultBillingAddress?.gstIn;
+          // form.country_name.value = defaultBillingAddress?.countryName;  
+          
+          const addressDetails = JSON.parse(
+            selectedCountry?.addressAdditionalFields
+          );
+          console.log("defaultBillingAddress ----->",addressDetails);
+          // const detailsForm = Object.keys(addressDetails)?.reduce(
+          //   (acc: any, item: any, index: any) => {
+          //     acc[index] = {
+          //       inputType: "inputtext",
+          //       label: addressDetails[item],
+          //       value: null,
+          //       validation: {
+          //         required: true,
+          //       },
+          //       fieldWidth: "col-md-4",
+          //     };
+          //     return acc;
+          //   },
+          //   {}
+          // );
+          
+
+          const detailsForm = Object.keys(addressDetails)?.reduce(
+            (acc: any, item: any, index: any) => {
+              const fieldLabel = addressDetails[item]; // Get label from addressAdditionalFields
+              const matchedValue = parsedAdditionalAddress[fieldLabel]; // Match with parsedAdditionalAddress
+    
+              acc[index] = {
+                inputType: "inputtext",
+                label: fieldLabel,
+                value: matchedValue || null, // Patch value if match found
+                validation: {
+                  required: true,
+                },
+                fieldWidth: "col-md-4",
+              };
+              return acc;
+            },
+            {}
+          );
+          
+          setAdditionalDetailsForm(detailsForm);
+     
+         } else{
+
+           const addressDetails = JSON.parse(
+             selectedCountry?.addressAdditionalFields
+           );
+           const detailsForm = Object.keys(addressDetails)?.reduce(
+             (acc: any, item: any, index: any) => {
+               acc[index] = {
+                 inputType: "inputtext",
+                 label: addressDetails[item],
+                 value: null,
+                 validation: {
+                   required: true,
+                 },
+                 fieldWidth: "col-md-4",
+               };
+               return acc;
+             },
+             {}
+           );
+           setAdditionalDetailsForm(detailsForm);
+         }
+
       }
     }
     setClientBillForm(form);

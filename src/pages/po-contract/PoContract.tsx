@@ -35,7 +35,7 @@ const Contract: React.FC = () => {
       options: [],
       value: null,
       validation: {
-        required: false
+        required: true
       },
       fieldWidth: "col-md-4",
     },
@@ -105,7 +105,7 @@ const Contract: React.FC = () => {
       label: "P.O Name",
       value: null,
       validation: {
-        required: false
+        required: true
       },
       fieldWidth: "col-md-4",
     },
@@ -115,7 +115,7 @@ const Contract: React.FC = () => {
 
       value: null,
       validation: {
-        required: false
+        required: true
       },
       fieldWidth: "col-md-4",
     },
@@ -125,7 +125,7 @@ const Contract: React.FC = () => {
       // options: [],
       value: null,
       validation: {
-        required: false
+        required: true
       },
       fieldWidth: "col-md-4",
     },
@@ -136,7 +136,7 @@ const Contract: React.FC = () => {
       disable: true,
       value: null,
       validation: {
-        required: false
+        required: true
       },
       fieldWidth: "col-md-4",
     },
@@ -379,25 +379,65 @@ const Contract: React.FC = () => {
       setLoader(false);
     }
   };
+
+
+  // const getPoContractConfiguration = async () => {
+  //   setLoader(true);
+  //   try {
+  //     const response = await poContractService.getPoContractConfiguration();
+  //     setPoContractConfData(response?.data);
+  //     setClientListNames(response?.data?.map((item: any) => {
+  //       return item.client_name
+  //       // return {
+  //       //      label:item?.client_name,
+  //       //      value:item?.id?.toString()
+  //       // }
+  //     }))
+  //     return response?.data
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoader(false);
+  //   }
+  // };
+
+
   const getPoContractConfiguration = async () => {
     setLoader(true);
     try {
       const response = await poContractService.getPoContractConfiguration();
-      setPoContractConfData(response?.data);
-      setClientListNames(response?.data?.map((item: any) => {
-        return item.client_name
-        // return {
-        //      label:item?.client_name,
-        //      value:item?.id?.toString()
-        // }
-      }))
-      return response?.data
+  
+      if (!response || !response.data) {
+        throw new Error("Invalid response from API");
+      }
+  
+      const data = Array.isArray(response.data) ? response.data : [];
+  
+      console.log("Response Data:", data);
+  
+      // Ensure unique clients based on client_id
+      const uniqueClients = Array.from(
+        new Map(data.map((item: any) => [item.client_id, item])).values()
+      );
+  
+      setPoContractConfData(uniqueClients);
+  
+      setClientListNames(
+        uniqueClients.map((item: any) => item.client_name || "Unknown Client")
+      );
+  
+      return uniqueClients;
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching PO contract configuration:", error);
+  
+      // Set an empty array in case of an error to prevent React rendering issues
+      setPoContractConfData([]);
+      setClientListNames([]);
     } finally {
       setLoader(false);
     }
   };
+  
 
   const getPOContractMasterConfigData = async () => {
     setLoader(true);
@@ -464,7 +504,7 @@ const Contract: React.FC = () => {
 
   const openSaveForm = () => {
     setRowData(null);
-    console.log('objFormState', objFormState);
+    console.log('objFormState', objFormState, clientListNames);
 
     objFormState.client_name.options = clientListNames;
     objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
@@ -836,6 +876,7 @@ const Contract: React.FC = () => {
           }
         })
         objFormState.clientShipAddress.value = rowData?.clientShipAddress ? rowData?.clientShipAddress.split(",") : [];
+        
         objFormState.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
           return {
             label: item.name,
@@ -1097,6 +1138,9 @@ const Contract: React.FC = () => {
         else {
           currentForm.clientShipAddress.value = null;
         }
+
+        console.log('configData?.contacts', configData?.contacts);
+
         currentForm.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
           return {
             label: item.name,
