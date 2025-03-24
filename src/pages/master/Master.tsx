@@ -4056,9 +4056,9 @@ const Master: React.FC = () => {
         <TabPanel header="Currency">
           <CurrencyMaster />
         </TabPanel>
-        <TabPanel header="Client Type">
+        {/* <TabPanel header="Client Type">
           <ClientTypeMaster />
-        </TabPanel>
+        </TabPanel> */}
         <TabPanel header="Country">
           <CountryMaster />
         </TabPanel>
@@ -4077,9 +4077,9 @@ const Master: React.FC = () => {
         <TabPanel header="Region Head">
           <RegionHeadMaster />
         </TabPanel>
-        <TabPanel header="Bank Account Type">
+        {/* <TabPanel header="Bank Account Type">
           <AccountTypeMaster />
-        </TabPanel>
+        </TabPanel> */}
         <TabPanel header="Bank Accounts">
           <AccountMaster />
         </TabPanel>
