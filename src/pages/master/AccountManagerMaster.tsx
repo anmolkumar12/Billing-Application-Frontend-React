@@ -22,7 +22,7 @@ const AccountManagerMaster = () => {
   const AccountFormFields = {
     name: {
       inputType: "inputtext",
-      label: "Account Manager Name",
+      label: "Name",
       value: null,
       validation: {
         required: true,
@@ -33,7 +33,7 @@ const AccountManagerMaster = () => {
     },
     code: {
       inputType: "inputtext",
-      label: "Account Manager Ecode",
+      label: "Ecode",
       value: null,
       validation: {
         required: true,
@@ -42,7 +42,7 @@ const AccountManagerMaster = () => {
     },
     account_manager_email: {
       inputType: "inputtext",
-      label: "Account Manager Email",
+      label: "Email",
       value: null,
       validation: {
         required: true,
@@ -337,8 +337,8 @@ const AccountManagerMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
           // data-pr-tooltip={rowData.fromDate}
           >
-            {/* {rowData.fromDate} */}
-            {moment(rowData.fromDate).format("YYYY-MM-DD")}
+            {rowData.fromDate}
+            {/* {moment(rowData.fromDate).format("YYYY-MM-DD")} */}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -417,7 +417,8 @@ const AccountManagerMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-            {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+            {rowData.updated_at}
+            {/* {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')} */}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -463,6 +464,11 @@ const AccountManagerMaster = () => {
     try {
       const response = await accountService.getAccountMaster();
       // const temp = response?.accountManagers?.filter((item: any) => item?.isactive || item?.isActive)
+      response?.accountManagers?.forEach((el: any) => {
+        el.fromDate = el?.fromDate ? moment(el?.fromDate).format("YYYY-MM-DD") : null;
+        el.deactivationDate = el?.deactivationDate ? moment(el?.deactivationDate).format("YYYY-MM-DD") : null
+        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("YYYY-MM-DD") : null
+      })
       setAccountMaster(response?.accountManagers);
       return response?.accountManagers;
     } catch (error) {

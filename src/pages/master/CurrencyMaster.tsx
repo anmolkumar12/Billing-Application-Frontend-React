@@ -166,7 +166,8 @@ const CurrencyMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.description}
           >
-            {getExchangeRateValueWithOneUnit(rowData)}
+            {rowData?.exchangeRateInINR || 'NA'}
+            {/* {getExchangeRateValueWithOneUnit(rowData)} */}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -270,7 +271,8 @@ const CurrencyMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
             // data-pr-tooltip={rowData.description}
           >
-            {getExchangeRateValueWithOneUnit(rowData)}
+            {rowData?.exchangeRateInINR || 'NA'}
+            {/* {getExchangeRateValueWithOneUnit(rowData)} */}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -306,7 +308,13 @@ const CurrencyMaster = () => {
       const response = await currencyService.getCurrencyMasterData();
       if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
         closeFormPopup();
-        setCurrencyMaster(response.data);
+        response.data.forEach((element: any) => {
+          element.exchangeRateInINR = (1 / element?.exchangeRate).toFixed(4);
+          element.updated_at = moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss');
+        });
+        const formattedDataForExcel = response?.data.map(({ exchangeRate, ...rest }: any) => rest);
+        console.log('response.data', formattedDataForExcel);
+        setCurrencyMaster(formattedDataForExcel);
       }
     } catch (error: any) {
       ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
@@ -432,6 +440,7 @@ const CurrencyMaster = () => {
           paginator
           sortable
           headerRequired
+          downloadedfileName={"Currency_Table"}
         />
         {showConfirmDialogue && (
           <ConfirmDialogue

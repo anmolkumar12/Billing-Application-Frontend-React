@@ -22,7 +22,7 @@ const SalesMaster = () => {
   const SalesFormFields = {
     name: {
       inputType: "inputtext",
-      label: "Sales Manager Name",
+      label: "Name",
       value: null,
       validation: {
         required: true,
@@ -33,7 +33,7 @@ const SalesMaster = () => {
     },
     code: {
       inputType: "inputtext",
-      label: "Sales Manager Ecode",
+      label: "Ecode",
       value: null,
       validation: {
         required: true,
@@ -42,7 +42,7 @@ const SalesMaster = () => {
     },
     sales_manager_email: {
       inputType: "inputtext",
-      label: "Sales Manager Email",
+      label: "Email",
       value: null,
       validation: {
         required: true,
@@ -334,8 +334,8 @@ const SalesMaster = () => {
             id={`companyNameTooltip-${rowData.id}`}
           // data-pr-tooltip={rowData.fromDate}
           >
-            {/* {rowData.fromDate} */}
-            {moment(rowData.fromDate).format("YYYY-MM-DD")}
+            {rowData.fromDate}
+            {/* {moment(rowData.fromDate).format("YYYY-MM-DD")} */}
           </span>
           <Tooltip
             target={`#companyNameTooltip-${rowData.id}`}
@@ -414,7 +414,8 @@ const SalesMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-            {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+            {rowData.updated_at}
+            {/* {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')} */}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -459,6 +460,11 @@ const SalesMaster = () => {
     setLoader(true);
     try {
       const response = await salesService.getSalesMaster();
+      response.salesManagers?.forEach((el: any) => {
+        el.fromDate = el?.fromDate ? moment(el?.fromDate).format("YYYY-MM-DD") : null;
+        el.deactivationDate = el?.deactivationDate ? moment(el?.deactivationDate).format("YYYY-MM-DD") : null
+        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("YYYY-MM-DD") : null
+      })
       setSalesMaster(response?.salesManagers);
       return response?.salesManagers;
     } catch (error) {
@@ -736,7 +742,7 @@ const SalesMaster = () => {
           sortable={true}
           headerRequired={true}
           scrollHeight={"calc(100vh - 200px)"}
-          downloadedfileName={"Brandwise_Denomination_table"}
+          downloadedfileName={"Sales_Manager_Table"}
         />
         {showConfirmDialogue ? (
           <ConfirmDialogue

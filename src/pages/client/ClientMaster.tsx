@@ -57,7 +57,7 @@ const ClientMaster = () => {
         client_type: {
             inputType: "singleSelect",
             label: "Client Type",
-            options: ["PVT", "LLP", "Public", "Proprietorship"],
+            options: ["PVT", "LLP", "Public", "Proprietorship", "Others"],
             value: null,
             validation: {
                 required: true,

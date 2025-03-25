@@ -157,6 +157,13 @@ const InvoiceMaster = () => {
             validation: { required: true },
             fieldWidth: "col-md-4",
         },
+        billed_hours: {
+            inputType: "inputtext",
+            label: "Billed Hours",
+            value: null,
+            validation: { required: false },
+            fieldWidth: "col-md-4",
+        },
         note_one: {
             inputType: "inputtextarea",
             label: "Note 1",
@@ -1022,13 +1029,14 @@ const InvoiceMaster = () => {
             clientFormFieldsStructure.tax_type.value = data?.tax_type || "";
             clientFormFieldsStructure.tax_code.value = data?.tax_code ? data?.tax_code.split(",") : [];
             clientFormFieldsStructure.invoice_amount.value = data?.invoice_amount || "";
+            clientFormFieldsStructure.billed_hours.value = data?.billed_hours || "";
             clientFormFieldsStructure.note_one.value = data?.note_one || "";
             clientFormFieldsStructure.note_two.value = data?.note_two || "";
             clientFormFieldsStructure.projectService.value = data?.projectService ? data?.projectService : "";
 
 
             // clientFormFieldsStructure.po_number.disable = true;
-            // clientFormFieldsStructure.po_amount.disable = true;
+            clientFormFieldsStructure.billed_hours.disable = true;
             clientFormFieldsStructure.invoice_amount.disable = true;
             clientFormFieldsStructure.contract_name.disable = true;
 
@@ -1430,6 +1438,7 @@ const InvoiceMaster = () => {
             tax_code: clientForm.tax_code.value?.toString() || '',
             tax_code_id: taxCodeId,
             invoice_amount: invoiceAmount.toFixed(2),
+            billed_hours: clientForm?.billed_hours?.value || '',
             note_one: clientForm.note_one.value || '',
             note_two: clientForm.note_two.value || '',
             clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),

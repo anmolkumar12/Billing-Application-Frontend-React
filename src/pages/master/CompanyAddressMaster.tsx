@@ -385,6 +385,24 @@ const CompanyAddressMaster = () => {
         </div>
       ),
     },
+    {
+      label: "Deactivated At",
+      fieldName: "deactivationDate",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "deactivationDate",
+      changeFilter: true,
+      placeholder: "Description",
+      body: (rowData: any) => (
+        <div>
+          <span id={`descriptionTooltip-${rowData.id}`}>
+            {rowData.deactivationDate ? moment(rowData.deactivationDate).format('YYYY-MM-DD') : 'NA'}
+          </span>
+          <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
+        </div>
+      ),
+    },
   ];
 
   useEffect(() => {
@@ -697,14 +715,15 @@ const CompanyAddressMaster = () => {
         } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
+      askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (deactivationDate?: Date) => {
     setLoader(true);
     companyService
-      .deactivateCompanyLocationMaster({ ...patchData, loggedInUserId })
+      .deactivateCompanyLocationMaster({ ...patchData, loggedInUserId, deactivationDate: deactivationDate ? formatDate(deactivationDate) : null  })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
@@ -718,6 +737,25 @@ const CompanyAddressMaster = () => {
         setLoader(false);
         return false;
       });
+  };
+
+  const formatDate = (dateString: any) => {
+    const date: any = new Date(dateString);
+    if (isNaN(date)) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
+  };
+
+  const parseDateString = (dateString: any) => {
+    if (!dateString) return new Date();
+    const date: any = new Date(dateString);
+    if (isNaN(date)) return new Date();
+    const year = date.getFullYear();
+    const month: any = String(date.getMonth() + 1).padStart(2, "0");
+    const day: any = String(date.getDate()).padStart(2, "0");
+    return new Date(year, month - 1, day);
   };
 
   const closeFormPopup = () => {

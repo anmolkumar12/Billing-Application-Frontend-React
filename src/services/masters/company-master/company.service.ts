@@ -1,6 +1,7 @@
 import { APIURLS } from "../../../constants/ApiUrls";
 import { HTTPService } from "../../http-service/http-service";
 import { AuthService } from "../../../services/auth-service/auth.service";
+import moment from "moment";
 
 export class CompanyMasterService {
   getCompanyMaster = async () => {
@@ -100,6 +101,7 @@ export class CompanyMasterService {
         locationId: data.id,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
+        deactivationDate:data?.deactivationDate?moment(new Date(data?.deactivationDate)).format('YYYY-MM-DD'): null
       };
       const response = await HTTPService.postRequest(
         APIURLS.TOGGLE_COMPANY_LOCATION_STATUS,
