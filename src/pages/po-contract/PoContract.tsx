@@ -160,7 +160,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     projectService: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Service Type",
       options: [],
       value: null,
@@ -170,7 +170,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     technolgyGroup: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Technology Group",
       options: [],
       value: null,
@@ -180,7 +180,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     technolgySubGroup: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Technology Sub Group",
       options: [],
       value: null,
@@ -190,7 +190,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     technolgy: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Technology",
       options: [],
       value: null,
@@ -200,7 +200,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     oem: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "OEM",
       options: [],
       value: null,
@@ -210,7 +210,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     product: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Product",
       options: [],
       value: null,
@@ -1347,12 +1347,12 @@ const Contract: React.FC = () => {
       dueAmount: objFormState.dueAmount.value || '',
       start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
       end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
-      projectService: objFormState.projectService.value?.toString() || '',
-      technolgyGroup: objFormState.technolgyGroup.value?.toString() || '',
-      technolgySubGroup: objFormState.technolgySubGroup.value?.toString() || '',
-      technolgy: objFormState.technolgy.value?.toString() || '',
-      oem: objFormState.oem.value?.toString() || '',
-      product: objFormState.product.value?.toString() || '',
+      projectService: objFormState.projectService.value || '',
+      technolgyGroup: objFormState.technolgyGroup.value || '',
+      technolgySubGroup: objFormState.technolgySubGroup.value || '',
+      technolgy: objFormState.technolgy.value || '',
+      oem: objFormState.oem.value || '',
+      product: objFormState.product.value || '',
       docType: objFormState.docType.value || '',
       poNumber: objFormState.poNumber.value || '',
       srNumber: objFormState.srNumber.value || '',
@@ -1368,7 +1368,7 @@ const Contract: React.FC = () => {
 
 
     console.log('Names Object ----->', getAllMasterNames);
-    console.log('obj ---------------->', obj);
+    console.log('Data ---------------->', tableData, rowData);
 
     Object.entries(obj).forEach(([key, value]: any) => {
       formData.set(key, value);
