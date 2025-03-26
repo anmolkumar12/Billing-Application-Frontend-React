@@ -370,15 +370,32 @@ const Contract: React.FC = () => {
 
   // Function to update the end_date min value dynamically
   useEffect(() => {
-    console.log('start date changed', objFormState?.start_date?.value, objFormState?.end_date?.value);
-    setobjFormState((prevForm: any) => ({
-      ...prevForm,
-      end_date: {
-        ...prevForm.end_date,
-        min: prevForm.start_date?.value || null, // Set min as start_date value
-      },
-    }));
+    console.log(
+      'start date changed', 
+      objFormState?.start_date?.value, 
+      objFormState?.end_date?.value
+    );
+  
+    if (objFormState?.start_date?.value) {
+      // Calculate po_creation_date (3 months before start_date)
+      const startDate = new Date(objFormState.start_date.value);
+      const poCreationDate = new Date(startDate);
+      poCreationDate.setMonth(poCreationDate.getMonth() - 3); // Subtract 3 months
+  
+      setobjFormState((prevForm: any) => ({
+        ...prevForm,
+        end_date: {
+          ...prevForm.end_date,
+          min: prevForm.start_date?.value || null, // Set min as start_date value
+        },
+        po_creation_date: {
+          ...prevForm.po_creation_date,
+          min: poCreationDate, // Format as YYYY-MM-DD
+        },
+      }));
+    }
   }, [objFormState?.start_date?.value]);
+  
 
   useEffect(() => {
 
