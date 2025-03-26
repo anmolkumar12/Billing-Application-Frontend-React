@@ -743,7 +743,7 @@ const SalesMaster = () => {
           sortable={true}
           headerRequired={true}
           scrollHeight={"calc(100vh - 200px)"}
-          downloadedfileName={"Sales_Manager_Table"}
+          downloadedfileName={"Sales_Manager"}
         />
         {showConfirmDialogue ? (
           <ConfirmDialogue

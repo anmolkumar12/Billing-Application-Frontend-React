@@ -429,7 +429,7 @@ const FinancialYearMaster = () => {
           sortable={true}
           headerRequired={true}
           scrollHeight={"calc(100vh - 200px)"}
-          downloadedfileName={"FinancialYear_Master_Table"}
+          downloadedfileName={"Financial_Year"}
         />
         {showConfirmDialogue ? (
           <ConfirmDialogue

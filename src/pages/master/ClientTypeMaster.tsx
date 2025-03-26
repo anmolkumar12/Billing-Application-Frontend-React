@@ -275,7 +275,7 @@ const ClientTypeMaster = () => {
           sortable={true}
           headerRequired={true}
           scrollHeight={"calc(100vh - 200px)"}
-          downloadedfileName={"Brandwise_Denomination_table"}
+          downloadedfileName={"Client_Type"}
         />
         {showConfirmDialogue ? (
           <ConfirmDialogue
