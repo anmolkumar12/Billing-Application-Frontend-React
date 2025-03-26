@@ -316,6 +316,8 @@ const FinancialYearMaster = () => {
   }
 
   const formatDate = (dateString: any) => {
+    console.log("dateString",dateString)
+    if(!dateString)return null
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -352,7 +354,7 @@ const FinancialYearMaster = () => {
 
     // Calculate financialYearName and format endYear if startYear is provided
     let financialYearName = "";
-    let endYear = "";
+    let endYear:any = "";
 
     if (startYear) {
       const startYearDate = new Date(startYear); // Convert to Date object
