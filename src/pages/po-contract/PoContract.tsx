@@ -159,6 +159,15 @@ const Contract: React.FC = () => {
       },
       fieldWidth: "col-md-4",
     },
+    po_creation_date: {
+      inputType: "singleDatePicker",
+      label: "PO Creation Date",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
     projectService: {
       inputType: "multiSelect",
       label: "Service Type",
@@ -713,6 +722,15 @@ const Contract: React.FC = () => {
       body: (rowData: any) => <span>{rowData.end_date != "null" ? moment(rowData.end_date).format('DD-MM-YYYY') : 'NA'}</span>,
     },
     {
+      label: "PO Creation Date",
+      fieldName: "po_creation_date",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => <span>{rowData.po_creation_date != "null" ? moment(rowData.po_creation_date).format('DD-MM-YYYY') : 'NA'}</span>,
+    },
+    {
       label: "Project Service",
       fieldName: "projectService",
       textAlign: "left",
@@ -970,6 +988,7 @@ const Contract: React.FC = () => {
       objFormState.dueAmount.value = rowData.dueAmount;
       objFormState.end_date.value = rowData.end_date ? new Date(rowData.end_date) : '';
       objFormState.start_date.value = rowData.start_date ? new Date(rowData.start_date) : '';
+      objFormState.po_creation_date.value = rowData.po_creation_date ? new Date(rowData.po_creation_date) : '';
       objFormState.noOfResources.value = rowData.noOfResources;
       if (rowData.poNumber) {
         objFormState.poNumber.value = rowData.poNumber;
@@ -1362,6 +1381,7 @@ const Contract: React.FC = () => {
       dueAmount: +objFormState.dueAmount.value || null,
       start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
       end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
+      po_creation_date: objFormState.po_creation_date.value ? formatDate(objFormState.po_creation_date.value) : null,
       projectService: objFormState.projectService.value?.toString() || '',
       technolgyGroup: objFormState.technolgyGroup.value?.toString() || '',
       technolgySubGroup: objFormState.technolgySubGroup.value?.toString() || '',

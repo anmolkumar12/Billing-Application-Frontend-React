@@ -76,7 +76,7 @@ const AccountManagerMaster = () => {
       label: "From Date",
       value: null,
       validation: {
-        required: false,
+        required: true,
       },
       fieldWidth: "col-md-6",
     },
