@@ -150,10 +150,11 @@ const ClientShipToMaster = () => {
   const [clientMaster, setClientMaster] = useState<any>([]);
   const [clientContactMaster, setClientContactMaster] = useState<any>([]);
 
+  const [clientShipToMaster, setClientShipToMaster] = useState<any>([]);
   const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
   const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
 
-  const [defaultBillingAddress,setDefaultBillingAddress] = useState<any>();
+  // const [defaultBillingAddress,setDefaultBillingAddress] = useState<any>();
 
 
 
@@ -489,7 +490,7 @@ const ClientShipToMaster = () => {
   useEffect(() => {
     const fetchData = async () => {
       await getClientShipToMaster();
-      // await getClientBillToMaster();
+      await getClientBillToMaster();
       const clients = await getClientMaster();
       const countries = await getCountryMaster();
       const states = await getStateMaster();
@@ -506,7 +507,7 @@ const ClientShipToMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientShipToMaster();
-      setClientBillToMaster(response?.data);
+      setClientShipToMaster(response?.data);
       // setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
       return response?.data;
     } catch (error) {
@@ -515,19 +516,19 @@ const ClientShipToMaster = () => {
       setLoader(false);
     }
   };
-  // const getClientBillToMaster = async () => {
-  //   setLoader(true);
-  //   try {
-  //     const response = await clientService.getClientBillToMaster();
-  //     setClientBillToMaster(response?.data);
-  //     setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
-  //     return response?.data;
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoader(false);
-  //   }
-  // };
+  const getClientBillToMaster = async () => {
+    // setLoader(true);
+    try {
+      const response = await clientService.getClientBillToMaster();
+      setClientBillToMaster(response?.data);
+      // setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1) || {}); 
+      // return response?.data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // setLoader(false);
+    }
+  };
 
   const getCountryMaster = async () => {
     setLoader(true);
@@ -602,6 +603,10 @@ const ClientShipToMaster = () => {
            form.state_name.value = null;
          }
         }
+
+      // console.log('bbbbbbbbbb', response?.data, response?.data?.find((item:any) => item.isDefaultAddress == 1));
+      const defaultBillingAddress = clientBillToMaster?.find((item:any) => item.client_name == form?.client_name?.value)
+      console.log('bbbbbbbbbb', defaultBillingAddress);
 
         const parsedAdditionalAddress = defaultBillingAddress?.additionalAddressDetails && JSON.parse(defaultBillingAddress?.additionalAddressDetails)
 
@@ -864,7 +869,7 @@ const ClientShipToMaster = () => {
 
       if (ClientBillForm?.isDefaultAddress?.value == true) {
         let defaultAccountFlag = false;
-        clientBillToMaster
+        clientShipToMaster
           ?.filter(
             (acc: any) => acc?.client_name == ClientBillForm.client_name.value
           )
@@ -967,7 +972,7 @@ const ClientShipToMaster = () => {
       </div>
       <p className="m-0">
         <DataTableBasicDemo
-          data={clientBillToMaster}
+          data={clientShipToMaster}
           column={ClientBillToMasterColumns}
           showGridlines={true}
           resizableColumns={true}

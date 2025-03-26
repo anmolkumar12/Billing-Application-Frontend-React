@@ -355,6 +355,22 @@ const Contract: React.FC = () => {
   const contractService = new ContractMasterService();
   const clientService = new ClientMasterService();
 
+  const [objFormState, setobjFormState] = useState<any>(
+    _.cloneDeep(objForm)
+  );
+
+  // Function to update the end_date min value dynamically
+  useEffect(() => {
+    console.log('start date changed', objFormState?.start_date?.value, objFormState?.end_date?.value);
+    setobjFormState((prevForm: any) => ({
+      ...prevForm,
+      end_date: {
+        ...prevForm.end_date,
+        min: prevForm.start_date?.value || null, // Set min as start_date value
+      },
+    }));
+  }, [objFormState?.start_date?.value]);
+
   useEffect(() => {
 
     getContractMaster();
@@ -406,30 +422,30 @@ const Contract: React.FC = () => {
     setLoader(true);
     try {
       const response = await poContractService.getPoContractConfiguration();
-  
+
       if (!response || !response.data) {
         throw new Error("Invalid response from API");
       }
-  
+
       const data = Array.isArray(response.data) ? response.data : [];
-  
+
       console.log("Response Data:", data);
-  
+
       // Ensure unique clients based on client_id
       const uniqueClients = Array.from(
         new Map(data.map((item: any) => [item.client_id, item])).values()
       );
-  
+
       setPoContractConfData(uniqueClients);
-  
+
       setClientListNames(
         uniqueClients.map((item: any) => item.client_name || "Unknown Client")
       );
-  
+
       return uniqueClients;
     } catch (error) {
       console.error("Error fetching PO contract configuration:", error);
-  
+
       // Set an empty array in case of an error to prevent React rendering issues
       setPoContractConfData([]);
       setClientListNames([]);
@@ -437,7 +453,7 @@ const Contract: React.FC = () => {
       setLoader(false);
     }
   };
-  
+
 
   const getPOContractMasterConfigData = async () => {
     setLoader(true);
@@ -685,7 +701,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{ rowData.start_date != "null" ? moment(rowData.start_date).format('DD-MM-YYYY') : 'NA'}</span>,
+      body: (rowData: any) => <span>{rowData.start_date != "null" ? moment(rowData.start_date).format('DD-MM-YYYY') : 'NA'}</span>,
     },
     {
       label: "End Date",
@@ -694,7 +710,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{ rowData.end_date != "null" ? moment(rowData.end_date).format('DD-MM-YYYY') : 'NA'}</span>,
+      body: (rowData: any) => <span>{rowData.end_date != "null" ? moment(rowData.end_date).format('DD-MM-YYYY') : 'NA'}</span>,
     },
     {
       label: "Project Service",
@@ -889,7 +905,7 @@ const Contract: React.FC = () => {
           }
         })
         objFormState.clientShipAddress.value = rowData?.clientShipAddress ? rowData?.clientShipAddress.split(",") : [];
-        
+
         objFormState.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
           return {
             label: item.name,
@@ -898,7 +914,7 @@ const Contract: React.FC = () => {
           }
         }) : []
 
-        objFormState.clientContact.value = rowData?.clientContact ? rowData?.clientContact.split(",") : [];
+        objFormState.clientContact.value = rowData?.clientContact ? rowData?.clientContact : null;
 
         objFormState.companyName.value = configData?.companyInfo.companyName;
         objFormState.companyName.disable = false;
@@ -910,8 +926,7 @@ const Contract: React.FC = () => {
       }
       // }
 
-      console.log('rowDataaaaaa', rowData, objFormState);
-      
+
       objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
         ? poMastersConfigData?.projectService.map((item: any) => ({
           label: item?.name,
@@ -964,9 +979,12 @@ const Contract: React.FC = () => {
         objFormState.srNumber.hideField = false;
       }
 
-      objFormState.projectService.value = rowData.projectService ? rowData.projectService?.split(",") : "";
-      objFormState.oem.value = rowData.oem ? rowData.oem?.split(",") : "";
-      objFormState.product.value = rowData.product ? rowData.product?.split(",") : "";
+      objFormState.projectService.value = rowData.projectService ? rowData.projectService?.split(",") : [];
+      objFormState.oem.value = rowData.oem ? rowData.oem?.split(",") : [];
+      objFormState.product.value = rowData.product ? rowData.product?.split(",") : [];
+
+      console.log('rowDataaaaaa', rowData, objFormState);
+
 
       if (rowData?.technolgyGroup) {
         objFormState.technolgyGroup.value = rowData.technolgyGroup?.split(",");
@@ -1095,7 +1113,7 @@ const Contract: React.FC = () => {
 
 
   const formatDate = (dateString: any) => {
-    if(!dateString)return null;
+    if (!dateString) return null;
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -1103,11 +1121,6 @@ const Contract: React.FC = () => {
     return `${year}/${month}/${day}`;
   };
 
-
-
-  const [objFormState, setobjFormState] = useState<any>(
-    _.cloneDeep(objForm)
-  );
 
   const closeFormPopup = () => {
     setFormPopup(false);
@@ -1288,7 +1301,7 @@ const Contract: React.FC = () => {
           value: manager.accountManagerId.toString(),
         }));
     }
-
+    
     setobjFormState(currentForm);
   };
 
@@ -1347,8 +1360,8 @@ const Contract: React.FC = () => {
       companyLocation: objFormState.companyLocation.value || '',
       creditPeriod: objFormState.creditPeriod.value,
       po_name: objFormState.po_name.value,
-      poAmount: objFormState.poAmount.value || '',
-      dueAmount: objFormState.dueAmount.value || '',
+      poAmount: +objFormState.poAmount.value || null,
+      dueAmount: +objFormState.dueAmount.value || null,
       start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
       end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
       projectService: objFormState.projectService.value?.toString() || '',

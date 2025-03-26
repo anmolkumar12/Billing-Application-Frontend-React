@@ -695,8 +695,9 @@ const ClientBillToMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientMaster();
-      setClientMaster(response?.clients);
-      return response?.clients;
+      const temp = response?.clients?.filter((item: any) => item?.isactive || item?.isActive)
+      setClientMaster(temp);
+      return temp;
     } catch (error) {
       console.error(error);
     } finally {

@@ -177,7 +177,6 @@ const ClientMaster = () => {
             inputType: "singleDatePicker",
             label: "MSA Start Date",
             value: null,
-            disable: true,
             validation: {
                 required: false,
             },
@@ -187,7 +186,6 @@ const ClientMaster = () => {
             inputType: "singleDatePicker",
             label: "MSA End Date",
             value: null,
-            disable: true,
             validation: {
                 required: false,
             },
@@ -639,6 +637,18 @@ const ClientMaster = () => {
         </div>
     );
 
+      // Function to update the end_date min value dynamically
+    useEffect(() => {
+      console.log('start date changed', clientForm?.msa_start_date?.value, clientForm?.msa_end_date?.value);
+      // clientForm.msa_end_date.value = null;
+      setClientForm((prevForm: any) => ({
+        ...prevForm,
+        msa_end_date: {
+          ...prevForm.msa_end_date,
+          min: prevForm.msa_start_date?.value || null, // Set min as msa_start_date value
+        },
+      }));
+    }, [clientForm?.msa_start_date?.value]);
 
 
     useEffect(() => {
