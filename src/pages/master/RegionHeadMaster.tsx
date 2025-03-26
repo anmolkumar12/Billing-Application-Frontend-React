@@ -640,6 +640,7 @@ const RegionHeadMaster = () => {
 
 
   const formatDate = (dateString: any) => {
+    if(!dateString)return null;
     const date: any = new Date(dateString);
     if (isNaN(date)) return "";
     const year = date.getFullYear();
