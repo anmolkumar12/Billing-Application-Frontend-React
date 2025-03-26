@@ -588,7 +588,7 @@ const SalesMaster = () => {
     _.each(SalesForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
 
@@ -673,6 +673,7 @@ const SalesMaster = () => {
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
       askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
+      minDate: data?.fromDate,
     });
     setShowConfirmDialogue(true);
   };

@@ -129,6 +129,7 @@ const IndustryHeadMaster = () => {
       validation: {
         required: false,
       },
+      disable: true,
       fieldWidth: "col-md-4",
     },
   };
@@ -506,6 +507,19 @@ const IndustryHeadMaster = () => {
     },
   ];
 
+  // Function to update the end_date min value dynamically
+useEffect(() => {
+  console.log('start date changed', IndustryHeadForm?.start_date?.value, IndustryHeadForm?.end_date?.value);
+  // IndustryHeadForm.end_date.value = null;
+  setIndustryHeadForm((prevForm: any) => ({
+    ...prevForm,
+    end_date: {
+      ...prevForm.end_date,
+      min: prevForm.start_date?.value || null, // Set min as start_date value
+    },
+  }));
+}, [IndustryHeadForm?.start_date?.value]);
+
   useEffect(() => {
     const fetchData = async () => {
       await getIndustryHeadMaster();
@@ -737,8 +751,7 @@ const IndustryHeadMaster = () => {
           form.region_code.options = regionNames || [];
         // form.state_name.value = null;
       }
-    console.log('form------->',form);
-
+      
     }
 
 
@@ -852,9 +865,9 @@ const IndustryHeadMaster = () => {
       industryHeadFieldsStructure.start_date.value = parseDateString(
         data?.startDate
       );
-      industryHeadFieldsStructure.end_date.value = parseDateString(
+      industryHeadFieldsStructure.end_date.value = data?.endDate ? parseDateString(
         data?.endDate
-      );
+      ) : null;
       setIndustryHeadForm(_.cloneDeep(industryHeadFieldsStructure));
     } catch (error) {
       console.log("error", error);
@@ -1005,6 +1018,8 @@ const IndustryHeadMaster = () => {
 
   const onDelete = (data: any) => {
     patchData = data;
+    console.log('eeeeeeeeeeeee', data);
+    
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
@@ -1016,6 +1031,7 @@ const IndustryHeadMaster = () => {
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
       askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
+      minDate: data?.startDate,
     });
     setShowConfirmDialogue(true);
   };

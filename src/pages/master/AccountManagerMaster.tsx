@@ -686,6 +686,7 @@ const AccountManagerMaster = () => {
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
       askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
+      minDate: data?.fromDate,
     });
     setShowConfirmDialogue(true);
   };

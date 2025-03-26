@@ -100,12 +100,12 @@ const StateMaster = () => {
             title="Update"
             onClick={() => onUpdate(rowData)}
           ></span>
-          <span
+          {/* <span
             className={`pi pi-${rowData.isactive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isactive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
-          ></span>
+          ></span> */}
         </div>
       ),
     },

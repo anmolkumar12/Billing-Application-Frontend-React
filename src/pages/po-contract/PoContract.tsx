@@ -160,7 +160,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     projectService: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Service Type",
       options: [],
       value: null,
@@ -170,7 +170,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     technolgyGroup: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Technology Group",
       options: [],
       value: null,
@@ -180,7 +180,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     technolgySubGroup: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Technology Sub Group",
       options: [],
       value: null,
@@ -190,7 +190,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     technolgy: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Technology",
       options: [],
       value: null,
@@ -200,7 +200,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     oem: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "OEM",
       options: [],
       value: null,
@@ -210,7 +210,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     product: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Product",
       options: [],
       value: null,
@@ -909,6 +909,9 @@ const Contract: React.FC = () => {
 
       }
       // }
+
+      console.log('rowDataaaaaa', rowData, objFormState);
+      
       objFormState.projectService.options = Array.isArray(poMastersConfigData?.projectService)
         ? poMastersConfigData?.projectService.map((item: any) => ({
           label: item?.name,
@@ -961,12 +964,12 @@ const Contract: React.FC = () => {
         objFormState.srNumber.hideField = false;
       }
 
-      objFormState.projectService.value = rowData.projectService ? rowData.projectService : "";
-      objFormState.oem.value = rowData.oem ? rowData.oem : "";
-      objFormState.product.value = rowData.product ? rowData.product : "";
+      objFormState.projectService.value = rowData.projectService ? rowData.projectService?.split(",") : "";
+      objFormState.oem.value = rowData.oem ? rowData.oem?.split(",") : "";
+      objFormState.product.value = rowData.product ? rowData.product?.split(",") : "";
 
       if (rowData?.technolgyGroup) {
-        objFormState.technolgyGroup.value = rowData.technolgyGroup;
+        objFormState.technolgyGroup.value = rowData.technolgyGroup?.split(",");
 
         objFormState.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
           ? poMastersConfigData?.technolgySubGroup.filter((item: any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
@@ -976,7 +979,7 @@ const Contract: React.FC = () => {
           : [];
 
         if (rowData.technolgySubGroup) {
-          objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
+          objFormState.technolgySubGroup.value = rowData.technolgySubGroup?.split(",");
 
           objFormState.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
             ? poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
@@ -985,7 +988,7 @@ const Contract: React.FC = () => {
             }))
             : [];
 
-          objFormState.technolgy.value = rowData.technolgy;
+          objFormState.technolgy.value = rowData.technolgy?.split(",");
 
         }
 
@@ -993,7 +996,7 @@ const Contract: React.FC = () => {
       }
 
       if (rowData?.technolgyGroup) {
-        objFormState.technolgyGroup.value = rowData.technolgyGroup;
+        objFormState.technolgyGroup.value = rowData.technolgyGroup?.split(",");
 
         objFormState.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
           ? poMastersConfigData?.technolgySubGroup.filter((item: any) => Number(item.techGroupIds) == Number(rowData?.technolgyGroup)).map((item: any) => ({
@@ -1003,7 +1006,7 @@ const Contract: React.FC = () => {
           : [];
 
         if (rowData.technolgySubGroup) {
-          objFormState.technolgySubGroup.value = rowData.technolgySubGroup;
+          objFormState.technolgySubGroup.value = rowData.technolgySubGroup?.split(",");
 
           objFormState.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
             ? poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(rowData?.technolgySubGroup)).map((item: any) => ({
@@ -1347,12 +1350,12 @@ const Contract: React.FC = () => {
       dueAmount: objFormState.dueAmount.value || '',
       start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
       end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
-      projectService: objFormState.projectService.value || '',
-      technolgyGroup: objFormState.technolgyGroup.value || '',
-      technolgySubGroup: objFormState.technolgySubGroup.value || '',
-      technolgy: objFormState.technolgy.value || '',
-      oem: objFormState.oem.value || '',
-      product: objFormState.product.value || '',
+      projectService: objFormState.projectService.value?.toString() || '',
+      technolgyGroup: objFormState.technolgyGroup.value?.toString() || '',
+      technolgySubGroup: objFormState.technolgySubGroup.value?.toString() || '',
+      technolgy: objFormState.technolgy.value?.toString() || '',
+      oem: objFormState.oem.value?.toString() || '',
+      product: objFormState.product.value?.toString() || '',
       docType: objFormState.docType.value || '',
       poNumber: objFormState.poNumber.value || '',
       srNumber: objFormState.srNumber.value || '',
@@ -1368,7 +1371,7 @@ const Contract: React.FC = () => {
 
 
     console.log('Names Object ----->', getAllMasterNames);
-    console.log('Data ---------------->', tableData, rowData);
+    console.log('obj ---------------->', obj);
 
     Object.entries(obj).forEach(([key, value]: any) => {
       formData.set(key, value);

@@ -1059,7 +1059,7 @@ const ClientMaster = () => {
     const confirmDelete = (deactivationDate?: Date) => {
         setLoader(true);
         console.log('deactivationDate', deactivationDate);
-    
+
         clientService
             .deactivateClientMaster({ ...patchData, loggedInUserId, deactivationDate: deactivationDate ? formatDate(deactivationDate) : null, })
             .then(() => {
@@ -1200,10 +1200,10 @@ const ClientMaster = () => {
             setShowNDAAttacment(false);
         }
         console.log('hhhhh', form);
-        
+
         if (form?.is_same_alias?.value == true) {
             form.vega_client_name.value = form?.client_name?.value;
-        } 
+        }
 
         if (form?.is_msa_missing?.value == true) {
             setShowMSAAttacment(true);
@@ -1301,7 +1301,17 @@ const ClientMaster = () => {
 
 
         setIsFormValid(companyValidityFlag);
-        console.log('clientForm', clientForm, companyValidityFlag);
+        console.log('clientForm', clientForm, clientForm?.account_manager?.value?.length , clientForm?.sales_person
+            ?.value?.length);
+
+        if (!clientForm?.account_manager?.value?.length && !clientForm?.sales_person
+            ?.value?.length) {
+            ToasterService.show(
+                `Account Manager or Sales Mnager is mandatory`,
+                "error"
+            );
+            return;
+        }
 
         if (companyValidityFlag) {
             const industry_id =
@@ -1396,7 +1406,7 @@ const ClientMaster = () => {
                 countryId: countryId,
                 companyId: companyId,
                 accountId: bankId,
-                industryId: industry_id ?  industry_id : null,
+                industryId: industry_id ? industry_id : null,
                 IndustryHeadId: IndustryHeadId,
                 IndustryGroupId: IndustryGroupId,
                 // IndustrySubGroupId: IndustrySubGroupId,
@@ -1418,20 +1428,20 @@ const ClientMaster = () => {
             });
 
 
-                // Check for msaFile and ndaFile requirements
-    if (clientForm?.is_msa_missing?.value && (!attachments || !attachments.length)) {
-        ToasterService.show("MSA file is required!", CONSTANTS.ERROR);
-        return;
-    } else if (attachments?.length) {
-        formData.set("msaFile", attachments[0]);
-    }
+            // Check for msaFile and ndaFile requirements
+            if (clientForm?.is_msa_missing?.value && (!attachments || !attachments.length)) {
+                ToasterService.show("MSA file is required!", CONSTANTS.ERROR);
+                return;
+            } else if (attachments?.length) {
+                formData.set("msaFile", attachments[0]);
+            }
 
-    if (clientForm?.nda_flag?.value && (!digitalSign || !digitalSign.length)) {
-        ToasterService.show("NDA file is required!", CONSTANTS.ERROR);
-        return;
-    } else if (digitalSign?.length) {
-        formData.set("ndaFile", digitalSign[0]);
-    }
+            if (clientForm?.nda_flag?.value && (!digitalSign || !digitalSign.length)) {
+                ToasterService.show("NDA file is required!", CONSTANTS.ERROR);
+                return;
+            } else if (digitalSign?.length) {
+                formData.set("ndaFile", digitalSign[0]);
+            }
 
             // if (attachments?.length) {
             //     formData.set("msaFile", attachments[0]);

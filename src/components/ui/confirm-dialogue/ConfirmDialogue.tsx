@@ -18,7 +18,8 @@ interface ConfirmDialogueInterface {
       | 'warning';
     rejectFunction?: any;
     acceptFunction?: any;
-    askForDeactivationDate?: boolean; // New property to enable/disable date picker
+    askForDeactivationDate?: boolean; // New property to enable/disable date picker,
+    minDate?: any;
   };
   onCloseFunction: any;
   loading?: boolean;
@@ -28,6 +29,9 @@ const ConfirmDialogue: React.FC<ConfirmDialogueInterface> = (props: any) => {
   const { actionPopupToggle, onCloseFunction, loading } = props;
   const [deactivationDate, setDeactivationDate] = useState<Date | null>(null); // State for Calendar
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error message
+
+  const defaultMinDate = new Date();
+  defaultMinDate.setMonth(defaultMinDate.getMonth() - 3);
 
   const handleConfirmClick = () => {
     if (actionPopupToggle.askForDeactivationDate && !deactivationDate) {
@@ -82,6 +86,7 @@ const ConfirmDialogue: React.FC<ConfirmDialogueInterface> = (props: any) => {
             onChange={(e: any) => setDeactivationDate(e.value)}
             dateFormat="yy-mm-dd"
             placeholder="Select Deactivation Date"
+            minDate={actionPopupToggle?.minDate ? new Date(actionPopupToggle.minDate) : defaultMinDate}
             style={{
               height: '30px',
               width: '250px',
