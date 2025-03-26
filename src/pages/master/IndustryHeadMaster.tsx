@@ -725,106 +725,68 @@ useEffect(() => {
   };
 
   const industryHeadFormHandler = async (form: FormType) => {
-    console.log('form------->',form);
-    // if (form?.isRegionWise?.value != IndustryHeadForm?.isRegionWise?.value) {
-    //   form.country_name.value = null;
-    // }
-
+    console.log("Form Update Triggered:", form, stateMaster, regionMaster);
+  
     const selectedCompany = companyMaster?.find(
-      (item: any) => item?.companyName == form?.companyName?.value
+      (item: any) => item?.companyName === form?.companyName?.value
     );
     const selectedCountry = countryMaster?.find(
-      (item: any) => item?.name == selectedCompany?.countryName
+      (item: any) => item?.name === selectedCompany?.countryName
     );
-    
+  
     if (selectedCountry) {
       form.country_name.value = selectedCompany?.countryName;
-      const regionList = await getRegionMaster(selectedCountry?.id);
-      const stateList = await getStateMaster(selectedCountry?.id);
-        if (stateList) {
-          const stateNames = stateList?.map((state: any) => state.stateName);
-          form.state_name.options = stateNames || [];
-          // form.state_name.value = null;
-        }
-        if (regionList) {
-          const regionNames = regionList?.map((state: any) => state.regionCode);
-          form.region_code.options = regionNames || [];
-        // form.state_name.value = null;
-      }
-      
+  
+      // if (stateMaster.length === 0) {
+        const stateList = await getStateMaster(selectedCountry?.id);
+        form.state_name.options = stateList?.map((state: any) => state.stateName) || [];
+      // } else{
+      //   form.state_name.options = stateMaster?.map((state: any) => state.stateName) || [];
+      // }
+  
+      // if (regionMaster.length === 0) {
+        const regionList = await getRegionMaster(selectedCountry?.id);
+        form.region_code.options = regionList?.map((region: any) => region.regionCode) || [];
+      // } else{
+      //   form.region_code.options = regionMaster?.map((region: any) => region.regionCode) || [];
+      // }
     }
-
-
-    // if (form?.isRegionWise?.value == true) {
-    //   form.region_code.disable = false;
-    //   if (form.region_code.validation) {
-    //     form.region_code.validation.required = true;
-    //   }
-    //   form.state_name.value = null;
-    //   form.state_name.disable = true;
-    //   if (form.state_name.validation) {
-    //     form.state_name.validation.required = false;
-    //   }
-    //   console.log('IndustryHeadForm?.country_name?.value----------->',IndustryHeadForm?.country_name?.value)
-    //   // const countryAreUnequal =
-    //   //   JSON.stringify(form?.country_name?.value) !==
-    //   //   JSON.stringify(IndustryHeadForm?.country_name?.value);
-    //   //   console.log('form.country_name.value--------->',form.country_name.value)
-    //   // if (countryAreUnequal && form.country_name.value != null) {
-    //   //   const [regionCodesList, regionList]: any = await modifyFormRegionWise(
-    //   //     form?.country_name?.value
-    //   //   );
-    //   //   console.log('regionCodesList-->',regionCodesList)
-    //   //   form.region_code.options = regionCodesList;
-    //   //   form.region_code.value = null;
-    //   // }
-    // } else {
-    //   form.state_name.disable = false;
-    //   if (form.state_name.validation) {
-    //     form.state_name.validation.required = true;
-    //   }
-    //   form.region_code.value = null;
-    //   form.region_code.disable = true;
-    //   if (form.region_code.validation) {
-    //     form.region_code.validation.required = false;
-    //   }
-    //   // const countryAreUnequal =
-    //   //   JSON.stringify(form?.country_name?.value) !==
-    //   //   JSON.stringify(IndustryHeadForm?.country_name?.value);
-    //   // if (countryAreUnequal && form.country_name.value != null) {
-    //   //   const stateNamesList: any = await modifyFormStateWise(
-    //   //     form?.country_name?.value
-    //   //   );
-    //   //   form.state_name.options = stateNamesList;
-    //   //   form.state_name.value = null;
-    //   // }
-    // }
+  
     setIndustryHeadForm(form);
   };
+  
 
   const onUpdate = async (data: any) => {
     setStateData(data);
+    console.log("Form Update Triggeredddddddddddd:", data, stateMaster, regionMaster);
+  
     let regionCodeList = [];
     let regionList: any = [];
     let regionNamesList = [];
     let stateList = [];
+  
     const countries = data?.countryNames?.split(",");
+  
     if (data?.isRegionWise == 1) {
-      [regionCodeList, regionList] = await modifyFormRegionWise(countries);
+      if (regionMaster.length === 0) {
+        [regionCodeList, regionList] = await modifyFormRegionWise(countries);
+      }
       const regionNamesArray = data?.regionNames?.split(",") || [];
       regionNamesList = regionNamesArray.map((regionName: any) => {
-        const region = regionList?.find(
-          (regionItem: any) => regionItem.regionName === regionName
-        );
+        const region = regionList?.find((regionItem: any) => regionItem.regionName === regionName);
         return region ? region.regionCode : null;
       });
     } else {
-      stateList = await modifyFormStateWise(countries);
+      if (stateMaster.length === 0) {
+        stateList = await modifyFormStateWise(countries);
+      }
     }
+  
     updateIndustryHeadMaster(data, regionCodeList, regionNamesList, stateList);
     setFormPopup(true);
     setIsEditIndustryHead(true);
   };
+  
 
   const onPopUpClose = (e?: any) => {
     setShowConfirmDialogue(false);
