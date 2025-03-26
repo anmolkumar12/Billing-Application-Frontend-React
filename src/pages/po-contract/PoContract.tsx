@@ -1479,7 +1479,7 @@ const Contract: React.FC = () => {
           sortable={true}
           headerRequired={true}
           scrollHeight={"calc(100vh - 80px)"}
-          downloadedfileName={"Brandwise_Denomination_table"}
+          downloadedfileName={"PO"}
         />
         {showConfirmDialogue ? (
           <ConfirmDialogue

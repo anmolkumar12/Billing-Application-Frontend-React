@@ -145,7 +145,7 @@ const DataTableBasicDemo = (props: TableProps) => {
     remove = true,
     buttonArr: buttonArr = undefined,
     selectorArr,
-    downloadedfileName = 'table',
+    downloadedfileName = 'Currency',
     pdfStyles = undefined,
     rowsOptions,
     stripedRows,

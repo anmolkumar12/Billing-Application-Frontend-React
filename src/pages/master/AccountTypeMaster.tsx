@@ -412,7 +412,7 @@ const AccountTypeMaster = () => {
           sortable={true}
           headerRequired={true}
           scrollHeight={"calc(100vh - 200px)"}
-          downloadedfileName={"Brandwise_Denomination_table"}
+          downloadedfileName={"Bank_Account_Type"}
         />
         {showConfirmDialogue ? (
           <ConfirmDialogue
