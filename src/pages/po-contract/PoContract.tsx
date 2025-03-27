@@ -1021,9 +1021,9 @@ const Contract: React.FC = () => {
         objFormState.srNumber.hideField = false;
       }
 
-      objFormState.projectService.value = rowData.projectService ? rowData.projectService?.split(",") : "";
-      objFormState.oem.value = rowData.oem ? rowData.oem?.split(",") : "";
-      objFormState.product.value = rowData.product ? rowData.product?.split(",") : "";
+      objFormState.projectService.value = rowData.projectService ? rowData.projectService?.split(",") : [];
+      objFormState.oem.value = rowData.oem ? rowData.oem?.split(",") : [];
+      objFormState.product.value = rowData.product ? rowData.product?.split(",") : [];
 
       if (rowData?.technolgyGroup) {
         objFormState.technolgyGroup.value = rowData.technolgyGroup?.split(",");
