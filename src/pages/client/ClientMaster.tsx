@@ -688,11 +688,17 @@ const ClientMaster = () => {
         try {
             const response = await clientService.getClientMaster();
             console.log(`this is client datat `,response?.clients)
-             response?.clients?.forEach((el: any) => {
-                el.msa_start_date = el.msa_start_date ?  moment(el.msa_start_date).format("DD-MM-YYYY") : null;
-                el.msa_end_date = el.msa_end_date ?  moment(el.msa_end_date).format("DD-MM-YYYY") : null;
-                el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
-                });
+            response?.clients?.forEach((el:any) => {
+                el.msa_start_date = el.msa_start_date && moment(el.msa_start_date).isValid()
+                    ? moment(el.msa_start_date).format("DD-MM-YYYY")
+                    : null;
+                el.msa_end_date = el.msa_end_date && moment(el.msa_end_date).isValid()
+                    ? moment(el.msa_end_date).format("DD-MM-YYYY")
+                    : null;
+                el.updated_at = el.updated_at && moment(el.updated_at).isValid()
+                    ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss")
+                    : null;
+            });          
                 console.log(`this is client datat after`,response?.clients)
             setClientMaster(response?.clients);
             return response?.clients;
