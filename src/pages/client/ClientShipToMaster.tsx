@@ -609,7 +609,7 @@ const ClientShipToMaster = () => {
         }
 
       // console.log('bbbbbbbbbb', response?.data, response?.data?.find((item:any) => item.isDefaultAddress == 1));
-      const defaultBillingAddress = clientBillToMaster?.find((item:any) => item.client_name == form?.client_name?.value)
+      const defaultBillingAddress = clientBillToMaster?.find((item:any) => item.client_name == form?.client_name?.value && item?.isDefaultAddress == 1)
       console.log('bbbbbbbbbb', defaultBillingAddress);
 
         const parsedAdditionalAddress = defaultBillingAddress?.additionalAddressDetails && JSON.parse(defaultBillingAddress?.additionalAddressDetails)

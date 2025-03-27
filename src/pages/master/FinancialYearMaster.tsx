@@ -323,7 +323,7 @@ const FinancialYearMaster = () => {
 
   const formatDate = (dateString: any) => {
     console.log("dateString",dateString)
-    if(!dateString)return null
+    if(!dateString)return null;
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
