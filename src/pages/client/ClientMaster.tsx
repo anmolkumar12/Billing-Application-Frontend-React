@@ -969,8 +969,8 @@ const ClientMaster = () => {
             clientFormFieldsStructure.industry_name.value = data?.industryGroupNames;
             clientFormFieldsStructure.industry_group.value = data?.industryName;
             // clientFormFieldsStructure.industry_sub_group.value = data?.industrySubGroupNames;
-            clientFormFieldsStructure.sales_person.value = data?.salesMangerName?.split(',');
-            clientFormFieldsStructure.account_manager.value = data?.accountManagerNames?.split(',');
+            clientFormFieldsStructure.sales_person.value = data?.salesMangerName ? data?.salesMangerName?.split(',') : [];
+            clientFormFieldsStructure.account_manager.value = data?.accountManagerNames ? data?.accountManagerNames?.split(',') : [];
             clientFormFieldsStructure.msa_start_date.value = parseDateString(data?.msa_start_date);
             clientFormFieldsStructure.msa_end_date.value = parseDateString(data?.msa_end_date);
             clientFormFieldsStructure.is_msa_missing.value = data?.msa_flag ? true : false;
