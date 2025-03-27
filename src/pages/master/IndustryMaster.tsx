@@ -178,7 +178,7 @@ const IndustryMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+             {rowData.updated_at}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -201,6 +201,9 @@ const IndustryMaster = () => {
     setLoader(true);
     try {
       const response = await industryService.getIndustryMaster();
+      response.industryMasters?.forEach((el: any) => {
+       el.updated_at = el?.updated_at ? moment(el?.updated_at).format("DD-MM-YYYY HH:mm:ss") : null
+      })
       setIndustryMaster(response?.industryMasters);
       return response?.industryMasters;
     } catch (error) {

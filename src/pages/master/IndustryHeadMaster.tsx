@@ -554,11 +554,11 @@ useEffect(() => {
     try {
       const response = await industryService.getIndustryHeadMaster();
       response.industryHeads?.forEach((el: any) => {
-        el.viewStartDate = moment(el?.startDate).format("YYYY-MM-DD")
-        el.viewEndDate = el?.endDate ? moment(el?.endDate).format("YYYY-MM-DD") : null
-        el.startDate = moment(el?.startDate).format("YYYY-MM-DD")
-        el.endDate = el?.endDate ? moment(el?.endDate).format("YYYY-MM-DD") : null
-        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("YYYY-MM-DD") : null
+        el.viewStartDate = moment(el?.startDate).format("DD-MM-YYYY")
+        el.viewEndDate = el?.endDate ? moment(el?.endDate).format("DD-MM-YYYY") : null
+        el.startDate = moment(el?.startDate).format("DD-MM-YYYY")
+        el.endDate = el?.endDate ? moment(el?.endDate).format("DD-MM-YYYY") : null
+        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("DD-MM-YYYY HH:mm:ss") : null
       })
       
       // const formattedDataForExcel = response?.industryHeads.map(({ startDate, endDate, ...rest }: any) => rest);

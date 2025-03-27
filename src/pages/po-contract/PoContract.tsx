@@ -413,7 +413,12 @@ const Contract: React.FC = () => {
     setLoader(true);
     try {
       const response = await poContractService.getPoContractsData();
-
+    response?.subgroups?.forEach((el: any) => {
+      el.start_date = el.start_date ?  moment(el.start_date).format("DD-MM-YYYY HH:mm:ss") : null;
+      el.end_date = el.end_date ?  moment(el.end_date).format("DD-MM-YYYY HH:mm:ss") : null;
+      el.created_at = el.created_at ?  moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") : null;
+      el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+      });
       setPoContractData(response?.poContracts);
     } catch (error) {
       console.error(error);
@@ -727,7 +732,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{rowData.start_date != "null" ? moment(rowData.start_date).format('DD-MM-YYYY') : 'NA'}</span>,
+      body: (rowData: any) => <span>{rowData.start_date && rowData.start_date != "null" ? rowData.start_date : 'NA'}</span>,
     },
     {
       label: "End Date",
@@ -736,7 +741,7 @@ const Contract: React.FC = () => {
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{rowData.end_date != "null" ? moment(rowData.end_date).format('DD-MM-YYYY') : 'NA'}</span>,
+      body: (rowData: any) => <span>{rowData.end_date && rowData.end_date !== "null" ? rowData.end_date : "NA"}</span>
     },
     {
       label: "PO Creation Date",
@@ -877,7 +882,7 @@ const Contract: React.FC = () => {
       filter: true,
       body: (rowData: any) => (
         <span>
-          {rowData.created_at ? moment(rowData.created_at).format('DD-MM-YYYY') : null}
+        {rowData?.created_at && rowData.created_at !== "null" ? rowData.created_at : "NA"}
         </span>
       ),
     },

@@ -23,6 +23,7 @@ import { ImageUrl } from "../../utils/ImageUrl";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
 import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
+import moment from "moment";
 
 
 const ClientMaster = () => {
@@ -480,7 +481,8 @@ const ClientMaster = () => {
             filter: true,
             placeholder: "MSA Start Date",
             body: (rowData: any) => (
-                <TooltipWrapper id={`msaStartTooltip-${rowData.id}`} content={new Date(rowData.msa_start_date).toLocaleDateString()} />
+                <span>{rowData.msa_start_date}</span>
+                // <TooltipWrapper id={`msaStartTooltip-${rowData.id}`} content={new Date(rowData.msa_start_date).toLocaleDateString()} />
             ),
         },
         {
@@ -491,7 +493,8 @@ const ClientMaster = () => {
             filter: true,
             placeholder: "MSA End Date",
             body: (rowData: any) => (
-                <TooltipWrapper id={`msaEndTooltip-${rowData.id}`} content={new Date(rowData.msa_end_date).toLocaleDateString()} />
+                <span>{rowData.msa_end_date}</span>
+                // <TooltipWrapper id={`msaEndTooltip-${rowData.id}`} content={new Date(rowData.msa_end_date).toLocaleDateString()} />
             ),
         },
         {
@@ -607,7 +610,8 @@ const ClientMaster = () => {
             filter: true,
             placeholder: "Updated At",
             body: (rowData: any) => (
-                <TooltipWrapper id={`updatedAtTooltip-${rowData.id}`} content={new Date(rowData.updated_at).toLocaleString()} />
+                <span>{rowData.updated_at}</span>
+                // <TooltipWrapper id={`updatedAtTooltip-${rowData.id}`} content={new Date(rowData.updated_at).toLocaleString()} />
             ),
         }
     ];
@@ -683,6 +687,13 @@ const ClientMaster = () => {
         setLoader(true);
         try {
             const response = await clientService.getClientMaster();
+            console.log(`this is client datat `,response?.clients)
+             response?.clients?.forEach((el: any) => {
+                el.msa_start_date = el.msa_start_date ?  moment(el.msa_start_date).format("DD-MM-YYYY") : null;
+                el.msa_end_date = el.msa_end_date ?  moment(el.msa_end_date).format("DD-MM-YYYY") : null;
+                el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+                });
+                console.log(`this is client datat after`,response?.clients)
             setClientMaster(response?.clients);
             return response?.clients;
         } catch (error) {

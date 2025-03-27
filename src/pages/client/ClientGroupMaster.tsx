@@ -23,6 +23,7 @@ import { ImageUrl } from "../../utils/ImageUrl";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
 import { ClientContactMasterService } from "../../services/clients/client-contact-master/clientContactMaster.service";
+import moment from "moment";
 
 
 const ClientGroupMaster = () => {
@@ -211,6 +212,9 @@ const ClientGroupMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientGroupsMaster();
+       response?.groups?.forEach((el: any) => {
+       el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+       });
       setClientBillToMaster(response?.groups);
       return response?.groups;
     } catch (error) {

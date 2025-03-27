@@ -23,6 +23,7 @@ import { ImageUrl } from "../../utils/ImageUrl";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
 import { ClientContactMasterService } from "../../services/clients/client-contact-master/clientContactMaster.service";
+import moment from "moment";
 
 
 const ClientShipToMaster = () => {
@@ -507,6 +508,9 @@ const ClientShipToMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientShipToMaster();
+      response?.data?.forEach((el: any) => {
+      el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+      });
       setClientShipToMaster(response?.data);
       // setDefaultBillingAddress(response?.data?.find((item:any) => item.isDefaultAddress == 1)); 
       return response?.data;

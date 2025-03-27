@@ -461,9 +461,9 @@ const SalesMaster = () => {
     try {
       const response = await salesService.getSalesMaster();
       response.salesManagers?.forEach((el: any) => {
-        el.fromDate = el?.fromDate ? moment(el?.fromDate).format("YYYY-MM-DD") : null;
-        el.deactivationDate = el?.deactivationDate ? moment(el?.deactivationDate).format("YYYY-MM-DD") : null
-        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("YYYY-MM-DD") : null
+        el.fromDate = el?.fromDate ? moment(el?.fromDate).format("DD-MM-YYYY") : null;
+        el.deactivationDate = el?.deactivationDate ? moment(el?.deactivationDate).format("DD-MM-YYYY") : null
+        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("DD-MM-YYYY HH:mm:ss") : null
       })
       setSalesMaster(response?.salesManagers);
       return response?.salesManagers;

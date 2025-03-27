@@ -23,6 +23,7 @@ import { ImageUrl } from "../../utils/ImageUrl";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
 import { ClientContactMasterService } from "../../services/clients/client-contact-master/clientContactMaster.service";
+import moment from "moment";
 
 
 const ClientContactMaster = () => {
@@ -281,7 +282,8 @@ const ClientContactMaster = () => {
             placeholder: "Updated At",
             body: (rowData: any) => (
                 <div>
-                    <span>{new Date(rowData.updated_at).toLocaleString()}</span>
+                    <span>{rowData.updated_at}</span>
+                    {/* <span>{new Date(rowData.updated_at).toLocaleString()}</span> */}
                 </div>
             ),
         }
@@ -304,6 +306,10 @@ const ClientContactMaster = () => {
         setLoader(true);
         try {
             const response = await clientContactService.getClientContactMaster();
+            console.log(`chwckdas`,)
+             response?.clientContacts?.forEach((el: any) => {
+             el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+             });
             setClientContactMaster(response?.clientContacts);
             return response?.clientContacts;
         } catch (error) {

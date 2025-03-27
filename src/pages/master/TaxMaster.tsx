@@ -220,7 +220,7 @@ const TaxMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+             {rowData.updated_at}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -260,6 +260,10 @@ const TaxMaster = () => {
       const response = await taxService.getTax();
       if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
         console.log('response data----> ',response.data);
+        response?.data?.forEach((el: any) => {
+          el.created_at = el.created_at ?  moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") : null;
+          el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+          });
         setTaxMaster(response.data);
         closeFormPopup();
       }
