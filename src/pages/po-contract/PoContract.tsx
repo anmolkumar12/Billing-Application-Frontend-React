@@ -1008,9 +1008,9 @@ const Contract: React.FC = () => {
       objFormState.docType.value = rowData.docType;
       objFormState.poAmount.value = rowData.poAmount;
       objFormState.dueAmount.value = rowData.dueAmount;
-      objFormState.end_date.value = rowData.end_date ? new Date(rowData.end_date) : '';
-      objFormState.start_date.value = rowData.start_date ? new Date(rowData.start_date) : '';
-      objFormState.po_creation_date.value = rowData.po_creation_date ? new Date(rowData.po_creation_date) : '';
+      objFormState.end_date.value = rowData.end_date ? parseDateString(rowData.end_date) : null;
+      objFormState.start_date.value = rowData.start_date ? parseDateString(rowData.start_date) : null;
+      objFormState.po_creation_date.value = rowData.po_creation_date ? parseDateString(rowData.po_creation_date) : null;
       objFormState.noOfResources.value = rowData.noOfResources;
       if (rowData.poNumber) {
         objFormState.poNumber.value = rowData.poNumber;
@@ -1160,6 +1160,16 @@ const Contract: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
+  const parseDateString = (dateString: any) => {
+    if (!dateString) return new Date();
+    const date: any = new Date(dateString);
+    if (isNaN(date)) return new Date();
+    const year = date.getFullYear();
+    const month: any = String(date.getMonth() + 1).padStart(2, "0");
+    const day: any = String(date.getDate()).padStart(2, "0");
+    return new Date(year, month - 1, day);
+  };
+
 
   const closeFormPopup = () => {
     setFormPopup(false);
@@ -1177,6 +1187,7 @@ const Contract: React.FC = () => {
     console.log('form----->', form);
     const currentForm = _.cloneDeep(form);
     if (currentForm.client_name.value !== objFormState.client_name.value) {
+      // currentForm.start_date.value = parseDateString(data?.fromDate);
       const configData = poContractConfData.find((item: any) => item.client_name == currentForm.client_name.value)
       if (configData) {
         currentForm.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
@@ -1386,7 +1397,7 @@ const Contract: React.FC = () => {
     const formData: any = new FormData();
 
     setIsFormValid(companyValidityFlag);
-    console.log('finalData---->', objFormState);
+    console.log('finalData---->', objFormState,objFormState.start_date.value, formatDate(objFormState.start_date.value));
     const getAllMasterNames = await returnNamesHandler(objFormState);
 
     const obj = {
