@@ -390,7 +390,7 @@ const RegionMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+             {rowData.updated_at}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -413,6 +413,10 @@ const RegionMaster = () => {
     setLoader(true);
     try {
       const response = await regionService.getRegionMaster();
+      response?.regions?.forEach((el: any) => {
+        el.fromDate = el?.fromDate ? moment(el?.fromDate).format("DD-MM-YYYY ") : null
+        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("DD-MM-YYYY HH:mm:ss") : null
+       })
       setRegionMaster(response?.regions);
       return response?.regions;
     } catch (error) {

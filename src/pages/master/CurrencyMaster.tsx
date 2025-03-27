@@ -187,7 +187,7 @@ const CurrencyMaster = () => {
       body: (rowData: any) => (
         <div>
           <span>
-          {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+          {rowData.updated_at}
           </span>
         </div>
       ),
@@ -222,7 +222,7 @@ const CurrencyMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+             {rowData.updated_at}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -310,7 +310,7 @@ const CurrencyMaster = () => {
         closeFormPopup();
         response.data.forEach((element: any) => {
           element.exchangeRateInINR = (1 / element?.exchangeRate).toFixed(4);
-          element.updated_at = moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss');
+          element.updated_at = moment(rowData.updated_at).format('DD-MM-YYYY HH:mm:ss');
         });
         const formattedDataForExcel = response?.data.map(({ exchangeRate, ...rest }: any) => rest);
         console.log('response.data', formattedDataForExcel);

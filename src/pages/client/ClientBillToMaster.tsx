@@ -23,6 +23,7 @@ import { ImageUrl } from "../../utils/ImageUrl";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { AccountsMasterService } from "../../services/masters/accounts-master/accounts.service";
 import { ClientContactMasterService } from "../../services/clients/client-contact-master/clientContactMaster.service";
+import moment from "moment";
 
 
 const ClientBillToMaster = () => {
@@ -505,6 +506,9 @@ const ClientBillToMaster = () => {
     setLoader(true);
     try {
       const response = await clientService.getClientBillToMaster();
+      response?.data?.forEach((el: any) => {
+       el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+       });
       setClientBillToMaster(response?.data);
     console.log('bbbbbbbbbb', response?.data);
 

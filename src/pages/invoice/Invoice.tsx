@@ -564,6 +564,11 @@ const InvoiceMaster = () => {
                     taxBreakdown: info.taxBreakdown ? JSON.parse(info.taxBreakdown) : []
                 }))
             }));
+            parsedData?.forEach((el: any) => {
+                el.invoice_date = el.invoice_date ?  moment(el.invoice_date).format("DD-MM-YYYY") : null;
+                el.created_at = el.created_at ?  moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") : null;
+                el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;    
+            });
             setInvoiceMasterData(parsedData);
         } catch (error) {
             console.error(error);

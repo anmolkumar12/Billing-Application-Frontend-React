@@ -465,9 +465,9 @@ const AccountManagerMaster = () => {
       const response = await accountService.getAccountMaster();
       // const temp = response?.accountManagers?.filter((item: any) => item?.isactive || item?.isActive)
       response?.accountManagers?.forEach((el: any) => {
-        el.fromDate = el?.fromDate ? moment(el?.fromDate).format("YYYY-MM-DD") : null;
-        el.deactivationDate = el?.deactivationDate ? moment(el?.deactivationDate).format("YYYY-MM-DD") : null
-        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("YYYY-MM-DD") : null
+        el.fromDate = el?.fromDate ? moment(el?.fromDate).format("DD-MM-YYYY") : null;
+        el.deactivationDate = el?.deactivationDate ? moment(el?.deactivationDate).format("DD-MM-YYYY") : null
+        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("DD-MM-YYYY HH:mm:ss") : null
       })
       setAccountMaster(response?.accountManagers);
       return response?.accountManagers;

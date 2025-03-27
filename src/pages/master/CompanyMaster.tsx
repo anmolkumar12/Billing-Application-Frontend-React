@@ -427,7 +427,7 @@ const CompanyMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+             { rowData.updated_at}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -451,6 +451,9 @@ const CompanyMaster = () => {
     setLoader(true);
     try {
       const response = await companyService.getCompanyMaster();
+      response?.companies?.forEach((el: any) => {
+        el.updated_at = el?.updated_at ? moment(el?.updated_at).format("DD-MM-YYYY HH:mm:ss") : null
+       })
       setCompanyMaster(response?.companies);
       return response?.companies;
     } catch (error) {

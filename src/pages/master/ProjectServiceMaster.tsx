@@ -146,7 +146,7 @@ const ProjectServiceMaster = () => {
       body: (rowData: any) => (
         <div>
           <span id={`descriptionTooltip-${rowData.id}`}>
-             {moment(rowData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+             {rowData.updated_at}
           </span>
           <Tooltip target={`#descriptionTooltip-${rowData.id}`} position="top" />
         </div>
@@ -178,6 +178,9 @@ const ProjectServiceMaster = () => {
       const response = await projectService.getProjectServiceMasterData();
       if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
         closeFormPopup();
+        response?.records?.forEach((el: any) => {
+          el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+          });
         setProjectServiceMaster(response.records);
       }
     } catch (error: any) {
