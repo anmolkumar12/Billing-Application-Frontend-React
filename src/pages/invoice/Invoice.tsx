@@ -32,6 +32,8 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import moment from "moment";
 import { InvoiceService } from "../../services/invoice/invoice.service";
+import InvoiceDownload  from "../invoice/taxInvoicePDF/invoiceDownload";
+import ExportInvoiceDownload from "../invoice/exportInvoice/exportInvoiceDownload";
 
 const InvoiceMaster = () => {
 
@@ -248,6 +250,8 @@ const InvoiceMaster = () => {
     const [invoiceItems, setInvoiceItems] = useState<any>([{ id: Date.now(), description: "", sacCode: "", amount: 0 }]);
     const [selectedTaxes, setSelectedTaxes] = useState<any>([])
     const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
+    const [downloadPDF, setDownloadPDF] = useState<any>(false)
+    const [downloadExportPDF, setDownloadExportPDF] = useState<any>(false)
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -302,7 +306,15 @@ const InvoiceMaster = () => {
                         style={{ cursor: "pointer" }}
                         title="Generate PDF"
                     //   onClick={() => onDelete(rowData)}
+                    onClick={()=> setDownloadPDF(true)}
                     ></span>
+                    <span
+                        className={`pi pi-ellipsis-v`}
+                        style={{ cursor: "pointer" }}
+                        title="Generate PDF"
+                    onClick={()=> setDownloadExportPDF(true)}
+                    ></span>
+                    
                 </div>
             ),
         },
@@ -1532,6 +1544,13 @@ const InvoiceMaster = () => {
     return loader ? (
         <Loader />
     ) : (
+        downloadPDF ?   
+        <>
+        <InvoiceDownload setDownloadPDF={setDownloadPDF}/>
+        </>
+        : downloadExportPDF ?
+        <ExportInvoiceDownload setDownloadExportPDF={setDownloadExportPDF}/>
+        :
         <>
             <div
                 style={{
