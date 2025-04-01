@@ -1,5 +1,5 @@
 import { APIURLS } from '../../../constants/ApiUrls'
-import { AuthService } from '../../auth-service/auth.service'
+// import { AuthService } from '../../auth-service/auth.service'
 import { HTTPService } from '../../http-service/http-service'
 
 export class TechnologyMasterService {
