@@ -34,6 +34,7 @@ import moment from "moment";
 import { InvoiceService } from "../../services/invoice/invoice.service";
 import InvoiceDownload from "../invoice/taxInvoicePDF/invoiceDownload";
 import ExportInvoiceDownload from "../invoice/exportInvoice/exportInvoiceDownload";
+import zIndex from "@material-ui/core/styles/zIndex";
 
 const InvoiceMaster = () => {
 
@@ -304,14 +305,22 @@ const InvoiceMaster = () => {
                     <span
                         className={`pi pi-ellipsis-v`}
                         style={{ cursor: "pointer" }}
-                        title="Generate PDF"
+                        title="generateInvoicePDFHandler"
+                        //   onClick={() => onDelete(rowData)}
+                        onClick={()=> generateInvoicePDFHandler(rowData)}
+                        // onClick={() => setDownloadPDF(true)}
+                    ></span>
+                    <span
+                        className={`pi pi-ellipsis-v`}
+                        style={{ cursor: "pointer" }}
+                        title="DownloadPDF"
                         //   onClick={() => onDelete(rowData)}
                         onClick={() => setDownloadPDF(true)}
                     ></span>
                     <span
                         className={`pi pi-ellipsis-v`}
                         style={{ cursor: "pointer" }}
-                        title="Generate PDF"
+                        title="DownloadExportPDF"
                         onClick={() => setDownloadExportPDF(true)}
                     ></span>
 
@@ -976,6 +985,21 @@ const InvoiceMaster = () => {
         await setClientFormPopup(true);
         await setIsEditClient(true);
     };
+    const generateInvoicePDFHandler = async (data: any) => {
+        invoiceService
+                .UpdateInvoicePDF(data?.invoice_name)
+                .then((response: any) => {
+                    if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+                        console.log(response)
+                        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+                    }
+                })
+                .catch((error: any) => {
+                    console.log(error)
+                    ToasterService.show(error, CONSTANTS.ERROR);
+                });
+    };
+    
     const onMSAUpdate = (data: any) => {
         setShowMsaUpdatePopup(true);
         setCliendData(data);
@@ -1556,14 +1580,14 @@ const InvoiceMaster = () => {
     return loader ? (
         <Loader />
     ) : (
-        downloadPDF ?
-            <>
-                <InvoiceDownload setDownloadPDF={setDownloadPDF} />
-            </>
-            : downloadExportPDF ?
-                <ExportInvoiceDownload setDownloadExportPDF={setDownloadExportPDF} />
-                :
-                <>
+        <>
+        <div style={{ zIndex: 10 }}>
+        {downloadPDF ? (
+            <InvoiceDownload setDownloadPDF={setDownloadPDF} />
+        ) : downloadExportPDF ? (
+            <ExportInvoiceDownload setDownloadExportPDF={setDownloadExportPDF} />
+        ) : null}
+        </div>
                     <div
                         style={{
                             display: "flex",

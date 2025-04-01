@@ -61,6 +61,28 @@ export class InvoiceService {
     }
   };
 
+  UpdateInvoicePDF = async (invoiceNumber: any) => {
+    try {
+        const response = await HTTPService.postRequest(
+            APIURLS.POST_GENERATE_INVOICE_PDF,  
+            { invoice_number: invoiceNumber } 
+        );
+
+        return response?.data;
+    } catch (err) {
+        return {};
+    }
+};
+
+GetInvoiceDownloadPDF = async () => {
+    try {
+        const response = await HTTPService.getRequest(APIURLS.GET_GENERATE_INVOICE_PDF)
+        return response?.data
+    } catch (err) {
+        return {}
+    }
+}
+
 }
 
 

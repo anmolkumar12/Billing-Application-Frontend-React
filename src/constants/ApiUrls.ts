@@ -260,4 +260,8 @@ export const APIURLS = {
     CREATE_CREDIT_NOTE: '/api/masters/insertCreditNote',
     UPDATE_CREDIT_NOTE: '/api/masters/updateCreditNote',
     TOGGLE_CREDIT_NOTE_STATUS: '/api/masters/activateDeactivateCreditNote',
+
+    //PDF INVOICE
+    POST_GENERATE_INVOICE_PDF: '/api/generateInvoicePDFHandler',
+    GET_GENERATE_INVOICE_PDF: '/api/downloadInvoicePDFHandler', 
 }

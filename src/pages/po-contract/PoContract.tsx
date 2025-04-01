@@ -119,6 +119,16 @@ const Contract: React.FC = () => {
       },
       fieldWidth: "col-md-4",
     },
+    poNumber: {
+      inputType: "inputtext",
+      label: "PO Number",
+      value: null,
+      // hideField: true,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
     poAmount: {
       inputType: "inputNumber",
       label: "Po Amount",
@@ -287,16 +297,6 @@ const Contract: React.FC = () => {
       value: null,
       validation: {
         required: false
-      },
-      fieldWidth: "col-md-4",
-    },
-    poNumber: {
-      inputType: "inputtext",
-      label: "PO Number",
-      value: null,
-      hideField: true,
-      validation: {
-        required: false,
       },
       fieldWidth: "col-md-4",
     },
