@@ -1307,7 +1307,7 @@ const InvoiceMaster = () => {
                 }) : []
                 const defaultContact = form.clientContact?.options?.find((ele: any) => ele.isDefault == 1);
                 if (defaultContact && defaultContact?.value) {
-                    form.clientContact.value = [defaultContact?.value.toString()];
+                    form.clientContact.value = defaultContact?.value.toString();
                 }
                 else {
                     form.clientContact.value = null;
