@@ -262,6 +262,6 @@ export const APIURLS = {
     TOGGLE_CREDIT_NOTE_STATUS: '/api/masters/activateDeactivateCreditNote',
 
     //PDF INVOICE
-    POST_GENERATE_INVOICE_PDF: '/api/generateInvoicePDFHandler',
+    POST_GENERATE_INVOICE_PDF: '/api/masters/generateInvoicePDFHandler',
     GET_GENERATE_INVOICE_PDF: '/api/downloadInvoicePDFHandler', 
 }
