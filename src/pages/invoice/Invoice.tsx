@@ -32,6 +32,8 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import moment from "moment";
 import { InvoiceService } from "../../services/invoice/invoice.service";
+import InvoiceDownload from "../invoice/taxInvoicePDF/invoiceDownload";
+import ExportInvoiceDownload from "../invoice/exportInvoice/exportInvoiceDownload";
 
 const InvoiceMaster = () => {
 
@@ -62,7 +64,7 @@ const InvoiceMaster = () => {
             fieldWidth: "col-md-4",
         },
         po_amount: {
-            inputType: "inputtext",
+            inputType: "inputNumber",
             label: "PO Amount",
             value: null,
             disable: true,
@@ -70,7 +72,7 @@ const InvoiceMaster = () => {
             fieldWidth: "col-md-4",
         },
         remain_po_amount: {
-            inputType: "inputtext",
+            inputType: "inputNumber",
             label: "Remain PO Amount",
             value: null,
             disable: true,
@@ -248,6 +250,8 @@ const InvoiceMaster = () => {
     const [invoiceItems, setInvoiceItems] = useState<any>([{ id: Date.now(), description: "", sacCode: "", amount: 0 }]);
     const [selectedTaxes, setSelectedTaxes] = useState<any>([])
     const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
+    const [downloadPDF, setDownloadPDF] = useState<any>(false)
+    const [downloadExportPDF, setDownloadExportPDF] = useState<any>(false)
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -301,8 +305,16 @@ const InvoiceMaster = () => {
                         className={`pi pi-ellipsis-v`}
                         style={{ cursor: "pointer" }}
                         title="Generate PDF"
-                    //   onClick={() => onDelete(rowData)}
+                        //   onClick={() => onDelete(rowData)}
+                        onClick={() => setDownloadPDF(true)}
                     ></span>
+                    <span
+                        className={`pi pi-ellipsis-v`}
+                        style={{ cursor: "pointer" }}
+                        title="Generate PDF"
+                        onClick={() => setDownloadExportPDF(true)}
+                    ></span>
+
                 </div>
             ),
         },
@@ -380,7 +392,19 @@ const InvoiceMaster = () => {
             filter: true,
             placeholder: "Invoice Date",
             body: (rowData: any) => (
-                <TooltipWrapper id={`invoiceDateTooltip-${rowData.id}`} content={new Date(rowData.invoice_date).toLocaleDateString()} />
+                <div>
+                    <span
+                        id={`companyNameTooltip-${rowData.id}`}
+                    // data-pr-tooltip={rowData.fromDate}
+                    >
+                        {/* {rowData.fromDate} */}
+                        {rowData?.invoice_date}
+                    </span>
+                    <Tooltip
+                        target={`#companyNameTooltip-${rowData.id}`}
+                        position="top"
+                    />
+                </div>
             ),
         },
         {
@@ -565,9 +589,9 @@ const InvoiceMaster = () => {
                 }))
             }));
             parsedData?.forEach((el: any) => {
-                el.invoice_date = el.invoice_date ?  moment(el.invoice_date).format("DD-MM-YYYY") : null;
-                el.created_at = el.created_at ?  moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") : null;
-                el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;    
+                el.invoice_date = el.invoice_date ? moment(el.invoice_date).format("DD-MM-YYYY") : null;
+                el.created_at = el.created_at ? moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") : null;
+                el.updated_at = el.updated_at ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
             });
             setInvoiceMasterData(parsedData);
         } catch (error) {
@@ -607,38 +631,38 @@ const InvoiceMaster = () => {
     const getPoContractConfiguration = async () => {
         setLoader(true);
         try {
-          const response = await poContractService.getPoContractConfiguration();
-      
-          if (!response || !response.data) {
-            throw new Error("Invalid response from API");
-          }
-      
-          const data = Array.isArray(response.data) ? response.data : [];
-      
-          console.log("Response Data:", data);
-      
-          // Ensure unique clients based on client_id
-          const uniqueClients = Array.from(
-            new Map(data.map((item: any) => [item.client_id, item])).values()
-          );
-      
-          setPoContractConfData(uniqueClients);
-      
-          setClientListNames(
-            uniqueClients.map((item: any) => item.client_name || "Unknown Client")
-          );
-      
-          return uniqueClients;
+            const response = await poContractService.getPoContractConfiguration();
+
+            if (!response || !response.data) {
+                throw new Error("Invalid response from API");
+            }
+
+            const data = Array.isArray(response.data) ? response.data : [];
+
+            console.log("Response Data:", data);
+
+            // Ensure unique clients based on client_id
+            const uniqueClients = Array.from(
+                new Map(data.map((item: any) => [item.client_id, item])).values()
+            );
+
+            setPoContractConfData(uniqueClients);
+
+            setClientListNames(
+                uniqueClients.map((item: any) => item.client_name || "Unknown Client")
+            );
+
+            return uniqueClients;
         } catch (error) {
-          console.error("Error fetching PO contract configuration:", error);
-      
-          // Set an empty array in case of an error to prevent React rendering issues
-          setPoContractConfData([]);
-          setClientListNames([]);
+            console.error("Error fetching PO contract configuration:", error);
+
+            // Set an empty array in case of an error to prevent React rendering issues
+            setPoContractConfData([]);
+            setClientListNames([]);
         } finally {
-          setLoader(false);
+            setLoader(false);
         }
-      };
+    };
 
     const getPOContractMasterConfigData = async () => {
         setLoader(true);
@@ -1202,12 +1226,12 @@ const InvoiceMaster = () => {
     };
 
     const formatDate = (dateString: any) => {
-        if(!dateString)return null;
+        if (!dateString) return null;
         const date = new Date(dateString);
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
-        return `${day}/${month}/${year}`;
+        return `${year}/${month}/${day}`;
     };
 
     function concatAddresses(address1: string, address2: string, address3: string) {
@@ -1283,7 +1307,7 @@ const InvoiceMaster = () => {
                 }) : []
                 const defaultContact = form.clientContact?.options?.find((ele: any) => ele.isDefault == 1);
                 if (defaultContact && defaultContact?.value) {
-                    form.clientContact.value = [defaultContact?.value.toString()];
+                    form.clientContact.value = defaultContact?.value.toString();
                 }
                 else {
                     form.clientContact.value = null;
@@ -1532,195 +1556,202 @@ const InvoiceMaster = () => {
     return loader ? (
         <Loader />
     ) : (
-        <>
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "end",
-                    marginBottom: "0.5em",
-                }}
-            >
-                <ButtonComponent
-                    label="Add New Invoice"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    submitEvent={openSaveForm}
-                />
-            </div>
-            <p className="m-0">
-                <DataTableBasicDemo
-                    data={invoiceMasterData}
-                    column={clientMasterColumns}
-                    showGridlines={true}
-                    resizableColumns={true}
-                    rows={20}
-                    paginator={true}
-                    sortable={true}
-                    headerRequired={true}
-                    scrollHeight={"calc(100vh - 200px)"}
-                    downloadedfileName={"Invoice"}
-                />
-                {showConfirmDialogue ? (
-                    <ConfirmDialogue
-                        actionPopupToggle={actionPopupToggle}
-                        onCloseFunction={onPopUpClose}
-                    />
-                ) : null}
-            </p>
-            {clientFormPopup ? (
-                <div className="popup-overlay md-popup-overlay">
-                    <div className="popup-body md-popup-body stretchLeft">
-                        <div className="popup-header ">
-                            <div
-                                className="popup-close"
-                                onClick={() => {
-                                    closeFormPopup();
-                                }}
-                            >
-                                <i className="pi pi-angle-left"></i>
-                                <h4 className="popup-heading">{isEditClient ? 'Update' : 'Add New'} Invoice</h4>
-                            </div>
-                            <div
-                                className="popup-right-close"
-                                onClick={() => {
-                                    closeFormPopup();
-                                }}
-                            >
-                                &times;
-                            </div>
-                        </div>
-                        <div className="popup-content" style={{ padding: "1rem 2rem" }}>
-                            <FormComponent
-                                form={_.cloneDeep(clientForm)}
-                                formUpdateEvent={clientFormHandler}
-                                isFormValidFlag={isFormValid}
-                            ></FormComponent>
-
-
-                            <div>
-                                {/* Header with Button */}
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                                    <h5 style={{ margin: 0, fontWeight: "600", color: "#333" }}>Add Invoice Items Detail</h5>
-                                    <Button
-                                        onClick={addRow}
-                                        label="Add Row"
-                                        style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "4px 12px",
-                                            borderRadius: "5px",
-                                            fontSize: "14px",
-                                            fontWeight: "500",
-                                            border: "none"
+        downloadPDF ?
+            <>
+                <InvoiceDownload setDownloadPDF={setDownloadPDF} />
+            </>
+            : downloadExportPDF ?
+                <ExportInvoiceDownload setDownloadExportPDF={setDownloadExportPDF} />
+                :
+                <>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "end",
+                            marginBottom: "0.5em",
+                        }}
+                    >
+                        <ButtonComponent
+                            label="Add New Invoice"
+                            icon="pi pi-check"
+                            iconPos="right"
+                            submitEvent={openSaveForm}
+                        />
+                    </div>
+                    <p className="m-0">
+                        <DataTableBasicDemo
+                            data={invoiceMasterData}
+                            column={clientMasterColumns}
+                            showGridlines={true}
+                            resizableColumns={true}
+                            rows={20}
+                            paginator={true}
+                            sortable={true}
+                            headerRequired={true}
+                            scrollHeight={"calc(100vh - 200px)"}
+                            downloadedfileName={"Invoice"}
+                        />
+                        {showConfirmDialogue ? (
+                            <ConfirmDialogue
+                                actionPopupToggle={actionPopupToggle}
+                                onCloseFunction={onPopUpClose}
+                            />
+                        ) : null}
+                    </p>
+                    {clientFormPopup ? (
+                        <div className="popup-overlay md-popup-overlay">
+                            <div className="popup-body md-popup-body stretchLeft">
+                                <div className="popup-header ">
+                                    <div
+                                        className="popup-close"
+                                        onClick={() => {
+                                            closeFormPopup();
                                         }}
+                                    >
+                                        <i className="pi pi-angle-left"></i>
+                                        <h4 className="popup-heading">{isEditClient ? 'Update' : 'Add New'} Invoice</h4>
+                                    </div>
+                                    <div
+                                        className="popup-right-close"
+                                        onClick={() => {
+                                            closeFormPopup();
+                                        }}
+                                    >
+                                        &times;
+                                    </div>
+                                </div>
+                                <div className="popup-content" style={{ padding: "1rem 2rem" }}>
+                                    <FormComponent
+                                        form={_.cloneDeep(clientForm)}
+                                        formUpdateEvent={clientFormHandler}
+                                        isFormValidFlag={isFormValid}
+                                    ></FormComponent>
+
+
+                                    <div>
+                                        {/* Header with Button */}
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                                            <h5 style={{ margin: 0, fontWeight: "600", color: "#333" }}>Add Invoice Items Detail</h5>
+                                            <Button
+                                                onClick={addRow}
+                                                label="Add Row"
+                                                style={{
+                                                    backgroundColor: "#007bff",
+                                                    color: "white",
+                                                    padding: "4px 12px",
+                                                    borderRadius: "5px",
+                                                    fontSize: "14px",
+                                                    fontWeight: "500",
+                                                    border: "none"
+                                                }}
+                                            />
+                                        </div>
+
+                                        {/* Styled Table */}
+                                        <DataTable
+                                            value={invoiceItems}
+                                            responsiveLayout="scroll"
+                                            style={{
+                                                border: "1px solid #ddd",
+                                                borderRadius: "5px",
+                                                boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
+                                                overflow: "hidden"
+                                            }}
+                                        >
+                                            <Column field="description" header="Description" body={(rowData, { rowIndex }) => (
+                                                <InputText
+                                                    value={rowData.description}
+                                                    onChange={(e) => handleInputChange(e, rowIndex, "description")}
+                                                    style={{
+                                                        height: "28px",
+                                                        fontSize: "14px",
+                                                        padding: "4px 8px",
+                                                        borderRadius: "4px",
+                                                        border: "1px solid #ccc",
+                                                        width: "100%"
+                                                    }}
+                                                />
+                                            )} />
+                                            <Column field="sacCode" header="SAC Code" body={(rowData, { rowIndex }) => (
+                                                <InputText
+                                                    value={rowData.sacCode}
+                                                    onChange={(e) => handleInputChange(e, rowIndex, "sacCode")}
+                                                    style={{
+                                                        height: "28px",
+                                                        fontSize: "14px",
+                                                        padding: "4px 8px",
+                                                        borderRadius: "4px",
+                                                        border: "1px solid #ccc",
+                                                        width: "100%"
+                                                    }}
+                                                />
+                                            )} />
+                                            <Column field="amount" header="Amount" body={(rowData, { rowIndex }) => (
+                                                <InputNumber
+                                                    value={rowData.amount}
+                                                    onValueChange={(e) => handleAmountChange(e, rowIndex)}
+                                                    mode="decimal"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "28px",
+                                                        fontSize: "14px",
+                                                        padding: "6px 10px",
+                                                        textAlign: "right",
+                                                        border: "1px solid #ccc",
+                                                        borderRadius: "4px",
+                                                        backgroundColor: "#fff",
+                                                        outline: "none",
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        transition: "border-color 0.2s ease-in-out"
+                                                    }}
+                                                    inputStyle={{
+                                                        width: "100%",
+                                                        height: "28px",
+                                                        padding: "0px",
+                                                        border: "none", // Ensures only one border is applied
+                                                        outline: "none",
+                                                        backgroundColor: "transparent"
+                                                    }}
+                                                />
+                                            )} />
+                                        </DataTable>
+
+                                        {/* Total Calculation UI */}
+                                        <div style={{
+                                            textAlign: "right",
+                                            padding: "15px",
+                                            marginTop: "10px",
+                                            backgroundColor: "#f8f9fa",
+                                            borderRadius: "5px",
+                                            boxShadow: "0px 1px 4px rgba(0,0,0,0.1)"
+                                        }}>
+                                            <h6 style={{ marginBottom: "5px", fontWeight: "600" }}>Total: {totalAmount.toFixed(2)}</h6>
+                                            {taxCalculations.map((tax: any, index: any) => (
+                                                <h6 key={index} style={{ marginBottom: "5px", fontSize: "14px", color: "#555" }}>
+                                                    {tax.taxFieldName}@{tax.taxPercentage}%: {tax.calculatedAmount.toFixed(2)}
+                                                </h6>
+                                            ))}
+                                            <h6 style={{ marginBottom: "5px", fontWeight: "600", color: "#333" }}>Total GST: {gstTotal.toFixed(2)}</h6>
+                                            <h6 style={{ fontWeight: "700", fontSize: "16px", color: "#222" }}>Total Amount: {(totalAmount + gstTotal).toFixed(2)}</h6>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div className="popup-lower-btn">
+                                    <ButtonComponent
+                                        label="Submit"
+                                        icon="pi pi-check"
+                                        iconPos="right"
+                                        submitEvent={createNewClient}
                                     />
                                 </div>
-
-                                {/* Styled Table */}
-                                <DataTable
-                                    value={invoiceItems}
-                                    responsiveLayout="scroll"
-                                    style={{
-                                        border: "1px solid #ddd",
-                                        borderRadius: "5px",
-                                        boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
-                                        overflow: "hidden"
-                                    }}
-                                >
-                                    <Column field="description" header="Description" body={(rowData, { rowIndex }) => (
-                                        <InputText
-                                            value={rowData.description}
-                                            onChange={(e) => handleInputChange(e, rowIndex, "description")}
-                                            style={{
-                                                height: "28px",
-                                                fontSize: "14px",
-                                                padding: "4px 8px",
-                                                borderRadius: "4px",
-                                                border: "1px solid #ccc",
-                                                width: "100%"
-                                            }}
-                                        />
-                                    )} />
-                                    <Column field="sacCode" header="SAC Code" body={(rowData, { rowIndex }) => (
-                                        <InputText
-                                            value={rowData.sacCode}
-                                            onChange={(e) => handleInputChange(e, rowIndex, "sacCode")}
-                                            style={{
-                                                height: "28px",
-                                                fontSize: "14px",
-                                                padding: "4px 8px",
-                                                borderRadius: "4px",
-                                                border: "1px solid #ccc",
-                                                width: "100%"
-                                            }}
-                                        />
-                                    )} />
-                                    <Column field="amount" header="Amount" body={(rowData, { rowIndex }) => (
-                                        <InputNumber
-                                            value={rowData.amount}
-                                            onValueChange={(e) => handleAmountChange(e, rowIndex)}
-                                            mode="decimal"
-                                            style={{
-                                                width: "100%",
-                                                height: "28px",
-                                                fontSize: "14px",
-                                                padding: "6px 10px",
-                                                textAlign: "right",
-                                                border: "1px solid #ccc",
-                                                borderRadius: "4px",
-                                                backgroundColor: "#fff",
-                                                outline: "none",
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                transition: "border-color 0.2s ease-in-out"
-                                            }}
-                                            inputStyle={{
-                                                width: "100%",
-                                                height: "28px",
-                                                padding: "0px",
-                                                border: "none", // Ensures only one border is applied
-                                                outline: "none",
-                                                backgroundColor: "transparent"
-                                            }}
-                                        />
-                                    )} />
-                                </DataTable>
-
-                                {/* Total Calculation UI */}
-                                <div style={{
-                                    textAlign: "right",
-                                    padding: "15px",
-                                    marginTop: "10px",
-                                    backgroundColor: "#f8f9fa",
-                                    borderRadius: "5px",
-                                    boxShadow: "0px 1px 4px rgba(0,0,0,0.1)"
-                                }}>
-                                    <h6 style={{ marginBottom: "5px", fontWeight: "600" }}>Total: {totalAmount.toFixed(2)}</h6>
-                                    {taxCalculations.map((tax: any, index: any) => (
-                                        <h6 key={index} style={{ marginBottom: "5px", fontSize: "14px", color: "#555" }}>
-                                            {tax.taxFieldName}@{tax.taxPercentage}%: {tax.calculatedAmount.toFixed(2)}
-                                        </h6>
-                                    ))}
-                                    <h6 style={{ marginBottom: "5px", fontWeight: "600", color: "#333" }}>Total GST: {gstTotal.toFixed(2)}</h6>
-                                    <h6 style={{ fontWeight: "700", fontSize: "16px", color: "#222" }}>Total Amount: {(totalAmount + gstTotal).toFixed(2)}</h6>
-                                </div>
                             </div>
-
-
                         </div>
-
-                        <div className="popup-lower-btn">
-                            <ButtonComponent
-                                label="Submit"
-                                icon="pi pi-check"
-                                iconPos="right"
-                                submitEvent={createNewClient}
-                            />
-                        </div>
-                    </div>
-                </div>
-            ) : null}
-        </>
+                    ) : null}
+                </>
     );
 };
 
