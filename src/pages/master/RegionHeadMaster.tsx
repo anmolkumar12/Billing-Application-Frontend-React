@@ -89,6 +89,8 @@ const RegionHeadMaster = () => {
       inputType: "singleDatePicker",
       label: "From Date",
       value: null,
+      min: new Date(new Date().setMonth(new Date().getMonth() - 3)), // 3 months before today
+      max: new Date(new Date().setMonth(new Date().getMonth() + 3)), // 3 months after today
       validation: {
         required: true,
       },
@@ -546,6 +548,7 @@ const RegionHeadMaster = () => {
 
   const companyLocationFormHandler = async (currentForm: FormType) => {
     const form = _.cloneDeep(currentForm);
+    console.log('form------->', form);
     if (form?.companyName?.value != CompanyLocationForm?.companyName?.value) {
       const selectedCompany = companyMaster?.find(
         (item: any) => item?.companyName == form?.companyName?.value
@@ -553,7 +556,6 @@ const RegionHeadMaster = () => {
       const selectedCountry = countryMaster?.find(
         (item: any) => item?.name == selectedCompany?.countryName
       );
-    console.log('form------->',selectedCompany, selectedCountry);
 
       if (selectedCountry) {
         form.country_name.value = selectedCompany?.countryName;

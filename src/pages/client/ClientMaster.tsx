@@ -66,7 +66,7 @@ const ClientMaster = () => {
             fieldWidth: "col-md-4",
         },
         credit_period: {
-            inputType: "inputtext",
+            inputType: "inputNumber",
             label: "Credit Period (No. of Days)",
             value: null,
             validation: {
@@ -154,6 +154,15 @@ const ClientMaster = () => {
         //     },
         //     fieldWidth: "col-md-4",
         // },
+        isApplicableAM: {
+            inputType: "inputSwitch",
+            label: "Is SM or AM Applicable?",
+            value: null,
+            validation: {
+              required: false,
+            },
+            fieldWidth: "col-md-4",
+        },
         sales_person: {
             inputType: "multiSelect",
             label: "Sales Person",
@@ -698,6 +707,7 @@ const ClientMaster = () => {
                 el.updated_at = el.updated_at && moment(el.updated_at).isValid()
                     ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss")
                     : null;
+                el.client_status = el?.client_status == "1" ? "New" : "Existing";
             });          
                 console.log(`this is client datat after`,response?.clients)
             setClientMaster(response?.clients);
@@ -972,9 +982,10 @@ const ClientMaster = () => {
             clientFormFieldsStructure.account_name.value = data?.bankName?.split(',');
             clientFormFieldsStructure.industryHeadNames.value = data?.industryHeadName;
 
-            clientFormFieldsStructure.industry_name.value = data?.industryGroupNames;
-            clientFormFieldsStructure.industry_group.value = data?.industryName;
+            clientFormFieldsStructure.industry_name.value = data?.currentIndustryGroupNames;
+            clientFormFieldsStructure.industry_group.value = data?.currentIndustryName;
             // clientFormFieldsStructure.industry_sub_group.value = data?.industrySubGroupNames;
+            clientFormFieldsStructure.isApplicableAM.value = data?.isApplicableAM == "true" ? true : false;
             clientFormFieldsStructure.sales_person.value = data?.salesMangerName ? data?.salesMangerName?.split(',') : [];
             clientFormFieldsStructure.account_manager.value = data?.accountManagerNames ? data?.accountManagerNames?.split(',') : [];
             clientFormFieldsStructure.msa_start_date.value = parseDateString(data?.msa_start_date);
@@ -1255,7 +1266,17 @@ const ClientMaster = () => {
             form.msa_end_date.disable = true;
         }
 
-        // console.log('form handler checking ---->>> ', form, clientForm);
+        console.log('form handler checking ---->>> ', form, clientForm);
+
+        if(form?.isApplicableAM?.value){
+            form.sales_person.disable = false;
+            form.account_manager.disable = false;
+        } else{
+            form.sales_person.value = null;
+            form.account_manager.value = null;
+            form.sales_person.disable = true;
+            form.account_manager.disable = true;
+        }
 
         if (form.companyName?.value !== clientForm?.companyName?.value) {
             const selectedCompany = form.companyName?.value
@@ -1332,8 +1353,8 @@ const ClientMaster = () => {
         console.log('clientForm', clientForm, clientForm?.account_manager?.value?.length , clientForm?.sales_person
             ?.value?.length);
 
-        if (!clientForm?.account_manager?.value?.length && !clientForm?.sales_person
-            ?.value?.length) {
+        if (clientForm?.isApplicableAM?.value && (!clientForm?.account_manager?.value?.length && !clientForm?.sales_person
+            ?.value?.length)) {
             ToasterService.show(
                 `Account Manager or Sales Mnager is mandatory`,
                 "error"
@@ -1437,6 +1458,7 @@ const ClientMaster = () => {
                 industryId: industry_id ? industry_id : null,
                 IndustryHeadId: IndustryHeadId,
                 IndustryGroupId: IndustryGroupId,
+                isApplicableAM: clientForm?.isApplicableAM?.value,
                 // IndustrySubGroupId: IndustrySubGroupId,
                 salesMangerId: salesManagerId,
                 accountManagerId: accountManagerId,
