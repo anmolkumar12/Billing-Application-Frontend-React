@@ -184,7 +184,7 @@ const ClientBillToMaster = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      frozen: true,
+      // // frozen: true,
       width:"200px",
       sort: false,
 

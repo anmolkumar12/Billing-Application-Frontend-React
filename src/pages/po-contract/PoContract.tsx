@@ -413,11 +413,22 @@ const Contract: React.FC = () => {
     setLoader(true);
     try {
       const response = await poContractService.getPoContractsData();
-    response?.subgroups?.forEach((el: any) => {
-      el.start_date = el.start_date ?  moment(el.start_date).format("DD-MM-YYYY HH:mm:ss") : null;
-      el.end_date = el.end_date ?  moment(el.end_date).format("DD-MM-YYYY HH:mm:ss") : null;
-      el.created_at = el.created_at ?  moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") : null;
-      el.updated_at = el.updated_at ?  moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
+    response?.poContracts?.forEach((el: any) => {
+      el.start_date = el.start_date && el.start_date !== "null" 
+    ? moment(el.start_date).format("DD-MM-YYYY") 
+    : null;
+
+el.end_date = el.end_date && el.end_date !== "null" 
+    ? moment(el.end_date).format("DD-MM-YYYY") 
+    : null;
+
+el.created_at = el.created_at && el.created_at !== "null" 
+    ? moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") 
+    : null;
+
+el.updated_at = el.updated_at && el.updated_at !== "null" 
+    ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") 
+    : null;
       });
       setPoContractData(response?.poContracts);
     } catch (error) {
@@ -604,7 +615,7 @@ const Contract: React.FC = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      frozen: true,
+      // frozen: true,
       sort: false,
       filter: false,
       body: (rowData: any) => (
