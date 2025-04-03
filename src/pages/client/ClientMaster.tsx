@@ -74,16 +74,17 @@ const ClientMaster = () => {
             },
             fieldWidth: "col-md-4",
         },
-        // client_status: {
-        //     inputType: "singleSelect",
-        //     label: "Client Status",
-        //     options: ["Existing", "New"],
-        //     value: null,
-        //     validation: {
-        //         required: true,
-        //     },
-        //     fieldWidth: "col-md-4",
-        // },
+        client_status: {
+            inputType: "singleSelect",
+            label: "Client Status",
+            options: ["Existing", "New"],
+            value: null,
+            validation: {
+                required: false,
+            },
+            hideField:true,
+            fieldWidth: "col-md-4",
+        },
         country_name: {
             inputType: "singleSelect",
             label: "Country",
@@ -142,7 +143,7 @@ const ClientMaster = () => {
             validation: {
                 required: false,
             },
-            fieldWidth: "col-md-4",
+            fieldWidth: "col-md-4 ",
         },
         // industry_sub_group: {
         //     inputType: "singleSelect",
@@ -323,7 +324,7 @@ const ClientMaster = () => {
             label: "Action",
             fieldName: "action",
             textAlign: "left",
-            frozen: true,
+            // // frozen: true,
             sort: false,
             filter: false,
             body: (rowData: any) => (
@@ -703,7 +704,7 @@ const ClientMaster = () => {
                     : null;
                 el.msa_end_date = el.msa_end_date && moment(el.msa_end_date).isValid()
                     ? moment(el.msa_end_date).format("DD-MM-YYYY")
-                    : null;
+                    : el.msa_flag==1 ? "Not Applicable" : null;
                 el.updated_at = el.updated_at && moment(el.updated_at).isValid()
                     ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss")
                     : null;
@@ -976,7 +977,7 @@ const ClientMaster = () => {
             clientFormFieldsStructure.vega_client_name.value = data?.vega_client_name;
             clientFormFieldsStructure.client_type.value = data?.client_type;
             clientFormFieldsStructure.credit_period.value = data?.credit_period;
-            // clientFormFieldsStructure.client_status.value = data?.client_status;
+            clientFormFieldsStructure.client_status.value = data?.client_status;
             clientFormFieldsStructure.country_name.value = data?.countryName;
             clientFormFieldsStructure.companyName.value = data?.companyName;
             clientFormFieldsStructure.account_name.value = data?.bankName?.split(',');
@@ -1233,6 +1234,12 @@ const ClientMaster = () => {
         // const selectedCountry = countryMaster?.find(
         //     (item: any) => item?.name == selectedCompany?.countryName
         // );
+        if(!isEditClient){
+            form.client_status.hideField = true;
+        }
+        else{
+            form.client_status.hideField = false;
+        }
         if (form.nda_flag.value == true) {
             setShowNDAAttacment(true);
         } else if (form.nda_flag.value == false) {
@@ -1250,7 +1257,7 @@ const ClientMaster = () => {
                 form.msa_start_date.validation.required = true;
             }
             if (form.msa_end_date.validation) {
-                form.msa_end_date.validation.required = true;
+                form.msa_end_date.validation.required = false;
             }
             form.msa_start_date.disable = false;
             form.msa_end_date.disable = false;
@@ -1451,7 +1458,7 @@ const ClientMaster = () => {
                 vega_client_name: clientForm?.vega_client_name?.value,
                 client_type: clientForm?.client_type?.value,
                 credit_period: clientForm?.credit_period?.value,
-                client_status: 1,
+                client_status: isEditClient ? (clientForm?.client_status?.value=="Existing" ? 0: 1) : 1,
                 countryId: countryId,
                 companyId: companyId,
                 accountId: bankId,

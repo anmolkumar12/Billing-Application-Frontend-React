@@ -624,3 +624,10 @@ button:focus:not(:focus-visible) {
     padding-top: 0px;
 
 }
+.mg-12-t{
+  margin-top: 3.2%;
+}
+
+th:first-child, td:first-child {
+  position: sticky !important;
+}

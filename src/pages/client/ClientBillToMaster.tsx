@@ -70,9 +70,27 @@ const ClientBillToMaster = () => {
       fieldWidth: "col-md-6",
 
     },
+    // iec_code: {
+    //   inputType: "inputtext",
+    //   label: "IEC Code",
+    //   value: null,
+    //   validation: {
+    //     required: false,
+    //   },
+    //   fieldWidth: "col-md-6",
+    // },
     gstIn: {
       inputType: "inputtext",
       label: "GSTN",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-6",
+    },
+    iec_code: {
+      inputType: "inputtext",
+      label: "IEC Code",
       value: null,
       validation: {
         required: false,
@@ -184,7 +202,7 @@ const ClientBillToMaster = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      frozen: true,
+      // // frozen: true,
       width:"200px",
       sort: false,
 
@@ -398,6 +416,24 @@ const ClientBillToMaster = () => {
         </div>
       ),
     },
+
+    // {
+    //   label: "IEC Code",
+    //   fieldName: "iec_code",
+    //   textAlign: "left",
+    //   sort: true,
+    //   filter: true,
+    //   fieldValue: "iec_code",
+    //   changeFilter: true,
+    //   placeholder: "IEC Code",
+    //   body: (rowData: any) => (
+    //     <div>
+    //       <span>
+    //         {rowData.iec_code}
+    //       </span>
+    //     </div>
+    //   ),
+    // },
     {
       label: "Place Of Supply",
       fieldName: "placeOfSupply",
@@ -594,7 +630,7 @@ const ClientBillToMaster = () => {
           form.state_name.value = null;
         }
 
-        console.log('gggggggggg', defaultBillingAddress);
+        console.log('gggggggggg', form);
         
         const parsedAdditionalAddress = defaultBillingAddress?.additionalAddressDetails && JSON.parse(defaultBillingAddress?.additionalAddressDetails)
 
@@ -745,6 +781,7 @@ const ClientBillToMaster = () => {
       ClientBillForm.state_name.options = stateMaster?.map((state: any) => state.stateName) || []
       ClientBillForm.state_code.value = data?.state_code;
       ClientBillForm.gstIn.value = data?.gstIn;
+      ClientBillForm.iec_code.value = data?.iec_code || "";
       ClientBillForm.placeOfSupply.value = data?.placeOfSupply;
       ClientBillForm.state_name.value = data?.state_name;
       // ClientBillForm.pin.value = data?.pin;
@@ -890,6 +927,7 @@ const ClientBillToMaster = () => {
         state_name:ClientBillForm?.state_name?.value,
         state_code:ClientBillForm?.state_code?.value,
         gstIn:ClientBillForm?.gstIn?.value,
+        iec_code:ClientBillForm?.iec_code?.value,
         placeOfSupply:ClientBillForm?.placeOfSupply?.value,
         address1: ClientBillForm?.address1?.value,
         address2: ClientBillForm?.address2?.value,

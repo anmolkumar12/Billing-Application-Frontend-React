@@ -75,6 +75,15 @@ const CompanyMaster = () => {
   };
 
   const ParentFormFields: FormType = {
+    pan_number: {
+      inputType: "inputtext",
+      label: "Pan",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
     independent: {
       inputType: "inputSwitch",
       label: "Is It Independent Company?",
@@ -281,6 +290,21 @@ const CompanyMaster = () => {
             target={`#companyNameTooltip-${rowData.id}`}
             position="top"
           />
+        </div>
+      ),
+    },
+    {
+      label: "Pan",
+      fieldName: "pan_number",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span>
+            {rowData.pan_number}
+          </span>
         </div>
       ),
     },
@@ -645,6 +669,8 @@ const CompanyMaster = () => {
         console.log('company list',companyNamesList);
       companyFieldStructure.companyName.value = data?.companyName;
       companyFieldStructure.country_name.value = data?.countryName;
+      parentFieldStructure.pan_number.value = data?.pan_number;
+      console.log(`this is pan number`,data?.pan_number)
       companyFieldStructure.Email.value = data?.Email;
       companyFieldStructure.companyCode.value = data?.companyCode;
       companyFieldStructure.Website.value = data?.Website;
@@ -736,6 +762,7 @@ const CompanyMaster = () => {
       const obj = {
         companyName: CompanyForm?.companyName?.value,
         countryId: countryId,
+        pan_number: ParentForm?.pan_number?.value,
         Email: CompanyForm?.Email?.value,
         companyCode: CompanyForm?.companyCode?.value,
         Website: CompanyForm?.Website?.value,
