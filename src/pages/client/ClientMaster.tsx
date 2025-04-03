@@ -142,7 +142,7 @@ const ClientMaster = () => {
             validation: {
                 required: false,
             },
-            fieldWidth: "col-md-4",
+            fieldWidth: "col-md-4 ",
         },
         // industry_sub_group: {
         //     inputType: "singleSelect",

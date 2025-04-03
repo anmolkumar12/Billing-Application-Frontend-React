@@ -63,7 +63,7 @@ const CreditNoteMaster = () => {
             fieldWidth: "col-md-4",
         },
         po_amount: {
-            inputType: "inputtext",
+            inputType: "inputNumber",
             label: "PO Amount",
             value: null,
             disable: true,
@@ -71,7 +71,7 @@ const CreditNoteMaster = () => {
             fieldWidth: "col-md-4",
         },
         remain_po_amount: {
-            inputType: "inputtext",
+            inputType: "inputNumber",
             label: "Remain PO Amount",
             value: null,
             disable: true,
@@ -83,6 +83,7 @@ const CreditNoteMaster = () => {
             label: "Credit Date",
             value: null,
             validation: { required: true },
+            min:null,
             fieldWidth: "col-md-4",
         },
         clientBillTo: {
@@ -106,7 +107,7 @@ const CreditNoteMaster = () => {
             label: "Contact",
             options: [],
             value: null,
-            validation: { required: true },
+            validation: { required: false },
             fieldWidth: "col-md-4",
         },
         company_name: {
@@ -131,7 +132,7 @@ const CreditNoteMaster = () => {
             options: [],
             value: null,
             validation: {
-                required: true
+                required: false
             },
             fieldWidth: "col-md-4",
         },
@@ -140,7 +141,7 @@ const CreditNoteMaster = () => {
             label: "Tax Type",
             options: [],
             value: null,
-            validation: { required: true },
+            validation: { required: false },
             fieldWidth: "col-md-4",
         },
         tax_code: {
@@ -148,7 +149,7 @@ const CreditNoteMaster = () => {
             label: "Tax Code",
             options: [],
             value: null,
-            validation: { required: true },
+            validation: { required: false },
             fieldWidth: "col-md-4",
         },
         invoice_amount: {
@@ -231,7 +232,6 @@ const CreditNoteMaster = () => {
     const [salesMaster, setSalesMaster] = useState<any>([]);
     const [showMsaUpdatePopup, setShowMsaUpdatePopup] = useState<boolean>(false);
 
-
     const [poContractsData, setPoContractData] = useState<any>([]);
     const [clientListNames, setClientListNames] = useState<any>([]);
     const [poContractConfData, setPoContractConfData] = useState<any>([]);
@@ -242,6 +242,7 @@ const CreditNoteMaster = () => {
     const [invoiceItems, setInvoiceItems] = useState<any>([{ id: Date.now(), description: "", sacCode: "", amount: 0 }]);
     const [selectedTaxes, setSelectedTaxes] = useState<any>([])
     const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
+    const [selectedContractData,setSelectedContractData] = useState<any>([])
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -293,9 +294,10 @@ const CreditNoteMaster = () => {
                         onClick={() => onUpdate(rowData)}
                     ></span>
                     <span
-                        className={`pi pi-ellipsis-v`}
+                        className={`pi pi-download`}
                         style={{ cursor: "pointer" }}
                         title="Generate PDF"
+                        onClick={()=> generatePDFHandler(rowData)}
                     //   onClick={() => onDelete(rowData)}
                     ></span>
                 </div>
@@ -506,16 +508,16 @@ const CreditNoteMaster = () => {
         },
     ];
 
-    const downloadFile = (filePath: any) => {
-        const fileUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
-        // Create an anchor element and trigger the download
-        const link = document.createElement("a");
-        link.href = fileUrl;
-        link.download = filePath.split("/").pop(); // Extracts file name from the path
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
+    // const downloadFile = (filePath: any) => {
+    //     const fileUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
+    //     // Create an anchor element and trigger the download
+    //     const link = document.createElement("a");
+    //     link.href = fileUrl;
+    //     link.download = filePath.split("/").pop(); // Extracts file name from the path
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+    // };
 
     const viewMSAFile = (filePath: any) => {
         const signatureUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
@@ -545,6 +547,67 @@ const CreditNoteMaster = () => {
         }
     }, [clientFormPopup, showConfirmDialogue]);
 
+    useEffect(() => {
+        if (!selectedContractData?.po_creation_date) return;
+   
+        console.log(
+            'Start date changed:',
+            clientForm?.invoice_date?.value,
+            selectedContractData
+        );
+   
+        const startDate = new Date(selectedContractData.po_creation_date);
+       
+        if (isNaN(startDate.getTime())) {
+            console.error('Invalid po_creation_date:', selectedContractData.po_creation_date);
+            return; 
+        }
+   
+        setClientForm((prevForm: any) => ({
+            ...prevForm,
+            invoice_date: {
+                ...prevForm.invoice_date,
+                min: startDate, 
+            },
+        }));
+    }, [selectedContractData]); 
+
+    const generatePDFHandler = async (data: any) => {
+        creditNoteService
+            .UpdatePDFCreditNote(data?.invoice_name)
+            .then(async (response: any) => {
+                if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+                    ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+                    
+                    // Extract filename from the response
+                    const fileName = response?.pdfPath.split('\\').pop(); // Extract "DIPL-25-26-0001.pdf"
+                    const pdfUrl = `http://localhost:3000/public/${fileName}`; // Public URL
+    
+                    console.log("Downloading PDF from:", pdfUrl);
+    
+                    // Fetch the PDF file as a blob
+                    const fileResponse = await fetch(pdfUrl);
+                    const blob = await fileResponse.blob();
+    
+                    // Create a download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = fileName; // Download with the correct filename
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }
+            })
+            .catch((error: any) => {
+                console.error("Error downloading PDF:", error);
+                ToasterService.show(error.message || "Error downloading PDF", CONSTANTS.ERROR);
+            });
+    };
+    
+
+    
 
     const getInvoiceData = async () => {
         setLoader(true);
@@ -582,11 +645,26 @@ const CreditNoteMaster = () => {
         // setLoader(true);
         try {
             const response = await poContractService.getPoContractConfiguration();
-            setPoContractConfData(response?.data);
-            setClientListNames(response?.data?.map((item: any) => {
-                return item.client_name
-            }))
-            return response?.data
+            if (!response || !response.data) {
+                throw new Error("Invalid response from API");
+            }
+ 
+            const data = Array.isArray(response.data) ? response.data : [];
+ 
+            console.log("Response Data:", data);
+ 
+            // Ensure unique clients based on client_id
+            const uniqueClients = Array.from(
+                new Map(data.map((item: any) => [item.client_id, item])).values()
+            );
+ 
+            setPoContractConfData(uniqueClients);
+ 
+            setClientListNames(
+                uniqueClients.map((item: any) => item.client_name || "Unknown Client")
+            );
+ 
+            return uniqueClients;
         } catch (error) {
             console.error(error);
         } finally {
@@ -1193,7 +1271,7 @@ const CreditNoteMaster = () => {
             form.po_amount.value = selectedContract?.poAmount;
             form.remain_po_amount.value = selectedContract?.dueAmount;
             form.company_name.value = selectedContract?.companyName;
-
+            setSelectedContractData(selectedContract)
             const configData = poContractConfData.find((item: any) => item.client_name == form.client_name.value)
             console.log('configData', configData, selectedContract, form.company_name.value);
 

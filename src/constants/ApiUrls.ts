@@ -264,4 +264,7 @@ export const APIURLS = {
     //PDF INVOICE
     POST_GENERATE_INVOICE_PDF: '/api/masters/generateInvoicePDFHandler',
     GET_GENERATE_INVOICE_PDF: '/api/downloadInvoicePDFHandler', 
+
+    //PDF Credit Note
+    POST_GENERATE_CREDIT_NOTE_PDF : '/api/masters/generateCreditNotePDF',
 }

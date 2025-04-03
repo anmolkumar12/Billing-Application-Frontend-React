@@ -61,6 +61,19 @@ export class CreditNoteService {
     }
   };
 
+  UpdatePDFCreditNote = async (invoiceNumber: any) => {
+    try {
+        const response = await HTTPService.postRequest(
+            APIURLS.POST_GENERATE_CREDIT_NOTE_PDF,  
+            { invoice_number: invoiceNumber } 
+        );
+
+        return response?.data;
+    } catch (err) {
+        return {};
+    }
+};
+
 }
 
 
