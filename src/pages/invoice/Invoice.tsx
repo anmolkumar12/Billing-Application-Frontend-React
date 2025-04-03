@@ -303,14 +303,14 @@ const InvoiceMaster = () => {
                         onClick={() => onUpdate(rowData)}
                     ></span>
                     <span
-                        className={`pi pi-ellipsis-v`}
+                        className={`pi pi-download`}
                         style={{ cursor: "pointer" }}
                         title="generateInvoicePDFHandler"
                         //   onClick={() => onDelete(rowData)}
                         onClick={()=> generateInvoicePDFHandler(rowData)}
                         // onClick={() => setDownloadPDF(true)}
                     ></span>
-                    <span
+                    {/* <span
                         className={`pi pi-ellipsis-v`}
                         style={{ cursor: "pointer" }}
                         title="DownloadPDF"
@@ -322,7 +322,7 @@ const InvoiceMaster = () => {
                         style={{ cursor: "pointer" }}
                         title="DownloadExportPDF"
                         onClick={() => setDownloadExportPDF(true)}
-                    ></span>
+                    ></span> */}
 
                 </div>
             ),

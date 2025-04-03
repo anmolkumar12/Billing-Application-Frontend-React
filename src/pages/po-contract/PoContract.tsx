@@ -356,7 +356,7 @@ const Contract: React.FC = () => {
   const userInfo = cookies.get("userInfo");
   const [logoUrl, setLogoUrl] = useState('');
   const [attachments, setAttachments]: any = useState([]);
-
+   const [isEditState, setIsEditState] = useState<boolean>(false);
   const loggedInUserId = userInfo?.userId;
 
   let patchData: any;
@@ -370,27 +370,27 @@ const Contract: React.FC = () => {
 
   // Function to update the end_date min value dynamically
   useEffect(() => {
-    console.log(
-      'start date changed', 
-      objFormState?.start_date?.value, 
-      objFormState?.end_date?.value
-    );
-  
     if (objFormState?.start_date?.value) {
-      // Calculate po_creation_date (3 months before start_date)
       const startDate = new Date(objFormState.start_date.value);
-      const poCreationDate = new Date(startDate);
-      poCreationDate.setMonth(poCreationDate.getMonth() - 3); // Subtract 3 months
-  
+     
+      // Calculate min (3 months before start_date)
+      const poCreationDateMin = new Date(startDate);
+      poCreationDateMin.setMonth(poCreationDateMin.getMonth() - 3);
+ 
+      // Calculate max (3 months after start_date)
+      const poCreationDateMax = new Date(startDate);
+      poCreationDateMax.setMonth(poCreationDateMax.getMonth() + 3);
+ 
       setobjFormState((prevForm: any) => ({
         ...prevForm,
         end_date: {
           ...prevForm.end_date,
-          min: prevForm.start_date?.value || null, // Set min as start_date value
+          min: prevForm.start_date?.value || null,
         },
         po_creation_date: {
           ...prevForm.po_creation_date,
-          min: poCreationDate, // Format as YYYY-MM-DD
+          min: poCreationDateMin,
+          max: poCreationDateMax,
         },
       }));
     }
@@ -918,7 +918,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   const onUpdate = (data: any) => {
     console.log('rowData---->', data);
     setRowData(data)
-
+    setIsEditState(true);
     updatePoContactMasterData(data);
     // setFormPopup(true);
   };
@@ -1184,6 +1184,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
   const closeFormPopup = () => {
     setFormPopup(false);
+    setIsEditState(false);
     setobjFormState(_.cloneDeep(objForm));
   };
 
@@ -1579,7 +1580,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">Add New PO (Contract)</h4>
+                <h4 className="popup-heading"> {isEditState ? 'Update' : 'Add New'} PO (Contract)</h4>
               </div>
               <div
                 className="popup-right-close"

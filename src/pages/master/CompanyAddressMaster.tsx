@@ -88,6 +88,15 @@ const CompanyAddressMaster = () => {
       },
       fieldWidth: "col-md-4",
     },
+    gst_number: {
+      inputType: "inputtext",
+      label: "GSTN",
+      value: null,
+      validation: {
+        required: false,
+      },
+      fieldWidth: "col-md-4",
+    },
     isDefaultAddress: {
       inputType: "inputSwitch",
       label: "Is It Default Address",
@@ -95,7 +104,7 @@ const CompanyAddressMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
   };
   const [companyMaster, setCompanyMaster] = useState<any>([]);
@@ -285,6 +294,21 @@ const CompanyAddressMaster = () => {
             target={`#companyNameTooltip-${rowData.id}`}
             position="top"
           />
+        </div>
+      ),
+    },
+    {
+      label: "GSTN",
+      fieldName: "gst_number",
+      textAlign: "left",
+      frozen: false,
+      sort: true,
+      filter: true,
+      body: (rowData: any) => (
+        <div>
+          <span>
+            {rowData.gst_number}
+          </span>
         </div>
       ),
     },
@@ -569,10 +593,11 @@ const CompanyAddressMaster = () => {
       companyLocationFieldStructure.country_name.value = data?.countryName;
       companyLocationFieldStructure.state_name.options = stateNames;
       companyLocationFieldStructure.state_name.value = data?.stateName;
-      companyLocationFieldStructure.address1.value = data?.address1;
+      companyLocationFieldStructure.address1.value = data?.address1;     
       // companyLocationFieldStructure.companyCode.value = data?.companyCode;
       companyLocationFieldStructure.address2.value = data?.address2;
       companyLocationFieldStructure.address3.value = data?.address3;
+      companyLocationFieldStructure.gst_number.value = data?.gst_number;
       companyLocationFieldStructure.isDefaultAddress.value = data?.isDefaultAddress == 1 ? true : false;
       setCompanyLocationForm(_.cloneDeep(companyLocationFieldStructure));
       const addressDetails = JSON.parse(data?.additionalAddressDetails);
@@ -665,6 +690,7 @@ const CompanyAddressMaster = () => {
         address1: CompanyLocationForm?.address1?.value,
         address2: CompanyLocationForm?.address2?.value,
         address3: CompanyLocationForm?.address3?.value,
+        gst_number: CompanyLocationForm?.gst_number?.value,
         // companyCode: CompanyLocationForm?.companyCode?.value,
         additionalAddressDetails: addressData,
         isDefaultAddress: CompanyLocationForm?.isDefaultAddress?.value == true ? 1 : 0,
