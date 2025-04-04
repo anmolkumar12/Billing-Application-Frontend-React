@@ -1470,7 +1470,7 @@ const CreditNoteMaster = () => {
             projectService_names: clientForm.projectService.options.find((item: any) => item.value === clientForm.projectService.value)?.label || '',
             projectService: clientForm.projectService.value || '',
             tax_type: clientForm.tax_type.value || '',
-            tax_type_id: taxTypeId,
+            tax_type_id: taxTypeId || 0,
             tax_code: clientForm.tax_code.value?.toString() || '',
             tax_code_id: taxCodeId,
             invoice_amount: invoiceAmount.toFixed(2),
