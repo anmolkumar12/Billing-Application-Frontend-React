@@ -104,7 +104,7 @@ const CompanyAddressMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4  mg-12-t",
     },
   };
   const [companyMaster, setCompanyMaster] = useState<any>([]);

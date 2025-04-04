@@ -291,7 +291,7 @@ const InvoiceMaster = () => {
             label: "Action",
             fieldName: "action",
             textAlign: "left",
-            frozen: false,
+            frozen: true,
             sort: false,
             filter: false,
             body: (rowData: any) => (
@@ -305,10 +305,16 @@ const InvoiceMaster = () => {
                     <span
                         className={`pi pi-download`}
                         style={{ cursor: "pointer" }}
-                        title="generateInvoicePDFHandler"
+                        title="generateTaxInvoicePDFHandler"
                         //   onClick={() => onDelete(rowData)}
                         onClick={()=> generateInvoicePDFHandler(rowData)}
                         // onClick={() => setDownloadPDF(true)}
+                    ></span>
+                    <span
+                        className={`pi pi-download`}
+                        style={{ cursor: "pointer" }}
+                        title="generateInvoicePDFHandler" 
+                        onClick={()=> generateTaxInvoicePDFHandler(rowData)}
                     ></span>
                     {/* <span
                         className={`pi pi-ellipsis-v`}
@@ -999,6 +1005,21 @@ const InvoiceMaster = () => {
                     ToasterService.show(error, CONSTANTS.ERROR);
                 });
     };
+    const generateTaxInvoicePDFHandler = async (data: any) => {
+        invoiceService
+                .UpdateTaxInvoicePDF(data?.invoice_name)
+                .then((response: any) => {
+                    if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+                        console.log(response)
+                        ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+                    }
+                })
+                .catch((error: any) => {
+                    console.log(error)
+                    ToasterService.show(error, CONSTANTS.ERROR);
+                });
+    };
+    
     
     const onMSAUpdate = (data: any) => {
         setShowMsaUpdatePopup(true);

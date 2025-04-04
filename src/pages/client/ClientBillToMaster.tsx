@@ -140,7 +140,7 @@ const ClientBillToMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-6  mg-12-t",
     },
   };
 

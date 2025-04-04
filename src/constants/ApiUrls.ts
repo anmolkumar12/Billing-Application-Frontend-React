@@ -263,6 +263,7 @@ export const APIURLS = {
 
     //PDF INVOICE
     POST_GENERATE_INVOICE_PDF: '/api/masters/generateInvoicePDFHandler',
+    POST_GENETARE_TAX_PDF: '/api/masters/generateTaxInvoicePDF',
     GET_GENERATE_INVOICE_PDF: '/api/downloadInvoicePDFHandler', 
 
     //PDF Credit Note

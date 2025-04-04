@@ -85,7 +85,7 @@ const AccountMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4  mg-12-t",
     },
   };
   const [countryMaster, setCountryMaster] = useState<any>([]);

@@ -91,7 +91,7 @@ const CompanyMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-4",
+      fieldWidth: "col-md-4  mg-12-t",
     },
     parent_comp: {
       inputType: "singleSelect",

@@ -73,6 +73,18 @@ export class InvoiceService {
         return {};
     }
 };
+UpdateTaxInvoicePDF = async (invoiceNumber: any) => {
+  try {
+      const response = await HTTPService.postRequest(
+          APIURLS.POST_GENETARE_TAX_PDF,  
+          { invoice_number: invoiceNumber } 
+      );
+
+      return response?.data;
+  } catch (err) {
+      return {};
+  }
+};
 
 GetInvoiceDownloadPDF = async () => {
     try {
