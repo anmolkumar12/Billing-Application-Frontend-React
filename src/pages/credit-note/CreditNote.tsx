@@ -53,6 +53,14 @@ const CreditNoteMaster = () => {
             validation: { required: true },
             fieldWidth: "col-md-4",
         },
+        invoice_number: {
+            inputType: "singleSelect",
+            label: "Invoice Number",
+            options: [],
+            value: null,
+            validation: { required: false },
+            fieldWidth: "col-md-4",
+        },
 
         po_number: {
             inputType: "inputtext",
@@ -243,6 +251,7 @@ const CreditNoteMaster = () => {
     const [selectedTaxes, setSelectedTaxes] = useState<any>([])
     const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
     const [selectedContractData,setSelectedContractData] = useState<any>([])
+    const [invoiceNumberList,setInvoiceNumberList] = useState<any>([])
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -296,7 +305,7 @@ const CreditNoteMaster = () => {
                     <span
                         className={`pi pi-download`}
                         style={{ cursor: "pointer" }}
-                        title="Generate PDF"
+                        title="Download Credit Note"
                         onClick={()=> generatePDFHandler(rowData)}
                     //   onClick={() => onDelete(rowData)}
                     ></span>
@@ -336,6 +345,7 @@ const CreditNoteMaster = () => {
                 <TooltipWrapper id={`contractTooltip-${rowData.id}`} content={rowData.contract_name} />
             ),
         },
+
         {
             label: "PO Number",
             fieldName: "po_number",
@@ -378,6 +388,17 @@ const CreditNoteMaster = () => {
             placeholder: "Credit Date",
             body: (rowData: any) => (
                 <TooltipWrapper id={`invoiceDateTooltip-${rowData.id}`} content={new Date(rowData.invoice_date).toLocaleDateString()} />
+            ),
+        },
+        {
+            label: "Invoice Number",
+            fieldName: "invoice_number",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Invoice Number",
+            body: (rowData: any) => (
+                <TooltipWrapper id={`contractTooltip-${rowData.id}`} content={rowData.invoice_number || 'NA'} />
             ),
         },
         {
@@ -535,7 +556,8 @@ const CreditNoteMaster = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            getInvoiceData()
+            getInvoiceData();
+            getInvoiceNumberData();
             getContractMaster();
             getPoContractConfiguration();
             getTaxMaster();
@@ -572,32 +594,66 @@ const CreditNoteMaster = () => {
         }));
     }, [selectedContractData]); 
 
+    // const generatePDFHandler = async (data: any) => {
+    //     creditNoteService
+    //         .UpdatePDFCreditNote(data?.invoice_name)
+    //         .then(async (response: any) => {
+    //             if (response?.statusCode === HTTP_RESPONSE.CREATED) {
+    //                 ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+                    
+    //                 // Extract filename from the response
+    //                 const fileName = response?.pdfPath.split('\\').pop(); // Extract "DIPL-25-26-0001.pdf"
+    //                 const pdfUrl = `http://localhost:3000/public/${fileName}`; // Public URL
+    
+    //                 console.log("Downloading PDF from:", pdfUrl);
+    
+    //                 // Fetch the PDF file as a blob
+    //                 const fileResponse = await fetch(pdfUrl);
+    //                 const blob = await fileResponse.blob();
+    
+    //                 // Create a download link
+    //                 const url = window.URL.createObjectURL(blob);
+    //                 const a = document.createElement("a");
+    //                 a.href = url;
+    //                 a.download = fileName; // Download with the correct filename
+    //                 document.body.appendChild(a);
+    //                 a.click();
+    //                 document.body.removeChild(a);
+    //                 window.URL.revokeObjectURL(url);
+    //             }
+    //         })
+    //         .catch((error: any) => {
+    //             console.error("Error downloading PDF:", error);
+    //             ToasterService.show(error.message || "Error downloading PDF", CONSTANTS.ERROR);
+    //         });
+    // };
+    
+
     const generatePDFHandler = async (data: any) => {
         creditNoteService
             .UpdatePDFCreditNote(data?.invoice_name)
             .then(async (response: any) => {
                 if (response?.statusCode === HTTP_RESPONSE.CREATED) {
                     ToasterService.show(response?.message, CONSTANTS.SUCCESS);
-                    
-                    // Extract filename from the response
-                    const fileName = response?.pdfPath.split('\\').pop(); // Extract "DIPL-25-26-0001.pdf"
-                    const pdfUrl = `http://localhost:3000/public/${fileName}`; // Public URL
     
-                    console.log("Downloading PDF from:", pdfUrl);
+                    const fileUrl = `${process.env.REACT_APP_API_BASEURL}/creditnotes/${data.invoice_name}.pdf`;
+                    console.log("Downloading PDF from:", fileUrl);
     
-                    // Fetch the PDF file as a blob
-                    const fileResponse = await fetch(pdfUrl);
-                    const blob = await fileResponse.blob();
-    
-                    // Create a download link
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = fileName; // Download with the correct filename
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
+                    fetch(fileUrl)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.setAttribute("download", `${data.invoice_name}.pdf`); // Forces download
+                            document.body.appendChild(link);
+                            link.click();
+                            link.remove();
+                        })
+                        .catch(error => {
+                            console.error("Error downloading PDF:", error);
+                            ToasterService.show("Error downloading PDF", CONSTANTS.ERROR);
+                        });
                 }
             })
             .catch((error: any) => {
@@ -606,7 +662,18 @@ const CreditNoteMaster = () => {
             });
     };
     
-
+      
+        const getInvoiceNumberData = async () => {
+            setLoader(true);
+            try {
+                const response = await invoiceService.getInvoicesData();
+                setInvoiceNumberList(response.invoices);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoader(false);
+            }
+        };
     
 
     const getInvoiceData = async () => {
@@ -1053,11 +1120,19 @@ const CreditNoteMaster = () => {
                 }))
                 : [];
 
+                clientFormFieldsStructure.invoice_number.options = invoiceNumberList?.filter((item: any) => item.contract_name == data?.contract_name).map((item: any, index: number) => {
+                    return {
+                        label: item.invoice_name,
+                        value: item.id.toString(),
+                    }
+                })
+
             clientFormFieldsStructure.bill_from.options = tempData?.map((ele: any) => ele?.label) || [];
             clientFormFieldsStructure.bill_from.value = data?.bill_from ? data?.bill_from : "";
 
             clientFormFieldsStructure.client_name.value = data?.client_name || "";
             clientFormFieldsStructure.contract_name.value = data?.contract_name || "";
+            clientFormFieldsStructure.invoice_number.value = data?.invoice_number_id || "";
             clientFormFieldsStructure.po_number.value = data?.po_number || "";
             clientFormFieldsStructure.po_amount.value = data?.po_amount || "";
             clientFormFieldsStructure.remain_po_amount.value = data?.remain_po_amount || "";
@@ -1253,7 +1328,7 @@ const CreditNoteMaster = () => {
         const form = _.cloneDeep(currentForm);
 
 
-        console.log('form handler checking ---->>> ', form);
+        // console.log('form handler checking ---->>> ', form, invoiceNumberList);
 
         // if (form.client_name?.value !== clientForm?.client_name?.value) {
         const selectedClient = form.client_name?.value
@@ -1273,9 +1348,22 @@ const CreditNoteMaster = () => {
             form.company_name.value = selectedContract?.companyName;
             setSelectedContractData(selectedContract)
             const configData = poContractConfData.find((item: any) => item.client_name == form.client_name.value)
-            console.log('configData', configData, selectedContract, form.company_name.value);
+            console.log('configData', configData, selectedContract, invoiceNumberList);
 
             if (configData) {
+                form.invoice_number.options = invoiceNumberList?.filter((item: any) => item.contract_name == selectedContract?.po_name).map((item: any, index: number) => {
+                    return {
+                        label: item.invoice_name,
+                        value: item.id.toString(),
+                    }
+                })
+                form.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
+                    return {
+                        label: concatAddresses(item.address1, item.address2, item.address3),
+                        value: item.id.toString(),
+                        isDefault: concatAddresses(item.address1, item.address2, item.address3) == selectedContract?.masterNames?.clientBillTo_names ? 1 : 0
+                    }
+                })
                 form.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
                     return {
                         label: concatAddresses(item.address1, item.address2, item.address3),
@@ -1465,6 +1553,8 @@ const CreditNoteMaster = () => {
             clientContact: clientForm.clientContact.value?.toString() || '',
             company_name: clientForm.company_name.value || '',
             bill_from: clientForm.bill_from.value || '',
+            invoice_number_id: clientForm.invoice_number.value || '',
+            invoice_number: clientForm.invoice_number.options.find((item: any) => item.value === clientForm.invoice_number.value)?.label || '',
             invoice_bill_from_id: invoiceBillFromId,
             // contract_type: clientForm.contract_type.value || '',
             projectService_names: clientForm.projectService.options.find((item: any) => item.value === clientForm.projectService.value)?.label || '',
