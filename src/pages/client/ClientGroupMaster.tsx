@@ -106,7 +106,7 @@ const ClientGroupMaster = () => {
       label: "Action",
       fieldName: "action",
       textAlign: "left",
-      // // frozen: true,
+     frozen: true,
       sort: false,
       filter: false,
       body: (rowData: any) => (
