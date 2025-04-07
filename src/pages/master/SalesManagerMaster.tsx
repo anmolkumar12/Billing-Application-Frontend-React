@@ -95,6 +95,7 @@ const SalesMaster = () => {
   const [salesMaster, setSalesMaster] = useState<any>([]);
   const [loader, setLoader] = useState(false);
   const [storeFormPopup, setFormPopup] = useState(false);
+  const [deactivatePopupIndustryHead, setDeactivatePopupIndustryHead] = useState(false);
   const [deactivatePopup, setDeactivatePopup] = useState(false);
   const [rowData, setRowData] = useState<any>(null);
   const [isEditSalesManager, setIsEditSalesManager] = useState(false);
@@ -103,6 +104,7 @@ const SalesMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [deactivateIndustryHead, setDeactivateIndustryHead] = useState<any>([]);
   const [salesFieldsStructure, setSalesFieldsStructure] = useState<any>(
     _.cloneDeep(SalesFormFields)
   );
@@ -110,6 +112,19 @@ const SalesMaster = () => {
     _.cloneDeep(salesFieldsStructure)
   );
 
+  // const deactivateFormObject: any = {
+  //   deactivationDate: {
+  //     inputType: "singleDatePicker",
+  //     label: "Select Deactivation Date",
+  //     value: null,
+  //     min: new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
+  //     max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
+  //     validation: {
+  //       required: true,
+  //     },
+  //     fieldWidth: "col-md-12",
+  //   },
+  // }
   const deactivateFormObject: any = {
     deactivationDate: {
       inputType: "singleDatePicker",
@@ -119,6 +134,16 @@ const SalesMaster = () => {
       max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
         required: true,
+      },
+      fieldWidth: "col-md-12",
+    },
+    country_name: {
+      inputType: "singleSelect",
+      label: "Industry Head Name",
+      options: [],
+      value: null,
+      validation: {
+        required: false,
       },
       fieldWidth: "col-md-12",
     },
@@ -147,6 +172,19 @@ const SalesMaster = () => {
     }
   }
 
+  const handleDeactivate = (rowData: any) => {
+    setDeactivatePopupIndustryHead(true);
+    console.log('this is rowdata', rowData);
+    
+    // Get industry head names from rowData
+    const industryHeadNames = rowData.industryHeadNames?.split(',') || [];
+    
+    // Update the deactivate form with industry head names as options
+    const updatedForm = _.cloneDeep(deactForm);
+    updatedForm.country_name.options = industryHeadNames;
+    setDeactivateForm(updatedForm);
+  };
+  
 
   const SalesMasterColumns = [
     {
@@ -168,8 +206,14 @@ const SalesMaster = () => {
             className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
-            onClick={() => onDelete(rowData)}
+            onClick={() => handleDeactivate(rowData)}
           ></span>
+          {/* <span
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
+            style={{ cursor: "pointer" }}
+            title={rowData.isActive ? "Deactivate" : "Activate"}
+            onClick={() => onDelete(rowData)}
+          ></span> */}
         </div>
       ),
     },
@@ -529,6 +573,11 @@ const SalesMaster = () => {
   const deactivationFormHandler = async (form: FormType) => {
     setDeactivateForm(form);
   }
+  
+  const submitDeactivateHeadFormHandler = (event: FormEvent) => {
+    setDeactivateIndustryHead(false);
+  }
+
   const submitDeactivateFormHandler = (event: FormEvent) => {
     event.preventDefault();
     let validity = true;
@@ -794,6 +843,49 @@ const SalesMaster = () => {
           </div>
         </div>
       ) : null}
+       {deactivatePopupIndustryHead ? (
+      <div className="popup-overlay md-popup-overlay">
+        <div style={{maxWidth:'360px'}} className="popup-body md-popup-body stretchLeft">
+          <div className="popup-header">
+            <div
+              className="popup-close"
+              onClick={() => {
+   
+                setDeactivatePopupIndustryHead(false);
+              }}
+            >
+              <i className="pi pi-angle-left"></i>
+              <h4 className="popup-heading">Deactivate Industry Head</h4>
+            </div>
+            <div
+              className="popup-right-close"
+              onClick={() => {
+                setDeactivatePopupIndustryHead(false);
+            
+              }}
+            >
+              &times;
+            </div>
+          </div>
+          <div className="popup-content"  style={{paddingBottom:'0rem',maxHeight:"calc(100vh - 452px)" }}>
+            <FormComponent
+              form={_.cloneDeep(deactForm)}
+              formUpdateEvent={deactivationFormHandler}
+              isFormValidFlag={isDeactivateFormValid}
+            ></FormComponent>
+          </div>
+
+          <div className="popup-lower-btn">
+            <ButtonComponent
+              label="Submit"
+              icon="pi pi-check"
+              iconPos="right"
+              submitEvent={submitDeactivateHeadFormHandler}
+            />
+          </div>
+        </div>
+      </div>
+    ) : null}
       {/* {deactivatePopup ? (
       <div className="popup-overlay md-popup-overlay">
         <div style={{maxWidth:'360px'}} className="popup-body md-popup-body stretchLeft">

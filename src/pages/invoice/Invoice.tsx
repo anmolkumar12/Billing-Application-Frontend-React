@@ -35,6 +35,7 @@ import { InvoiceService } from "../../services/invoice/invoice.service";
 import InvoiceDownload from "../invoice/taxInvoicePDF/invoiceDownload";
 import ExportInvoiceDownload from "../invoice/exportInvoice/exportInvoiceDownload";
 import zIndex from "@material-ui/core/styles/zIndex";
+import CurrencyMasterService from "../../services/masters/currency-master/currency.service";
 
 const InvoiceMaster = () => {
 
@@ -55,7 +56,15 @@ const InvoiceMaster = () => {
             validation: { required: true },
             fieldWidth: "col-md-4",
         },
-
+        currency: {
+            inputType: "singleSelect",
+            label: "Currency",
+            options: [],
+            value: null,
+            disabled: true,
+            validation: { required: true },
+            fieldWidth: "col-md-4",
+        },        
         po_number: {
             inputType: "inputtext",
             label: "PO Number",
@@ -85,6 +94,13 @@ const InvoiceMaster = () => {
             label: "Invoice Date",
             value: null,
             validation: { required: true },
+            fieldWidth: "col-md-4",
+        },
+        terms_of_payment: {
+            inputType: "inputNumber",
+            label: "Terms of Payment (In Days)",
+            value: null,
+            validation: { required: false },
             fieldWidth: "col-md-4",
         },
         clientBillTo: {
@@ -142,6 +158,7 @@ const InvoiceMaster = () => {
             label: "Tax Type",
             options: [],
             value: null,
+            disabled: true,
             validation: { required: true },
             fieldWidth: "col-md-4",
         },
@@ -239,6 +256,8 @@ const InvoiceMaster = () => {
     const [clientMaster, setClientMaster] = useState<any>([]);
     const [salesMaster, setSalesMaster] = useState<any>([]);
     const [showMsaUpdatePopup, setShowMsaUpdatePopup] = useState<boolean>(false);
+    const [clientNameCountry,setClientNameCountry] = useState<any>("");
+    const [currencyList,setCurrencyList] = useState<any>([]);
 
 
     const [poContractsData, setPoContractData] = useState<any>([]);
@@ -269,6 +288,7 @@ const InvoiceMaster = () => {
 
     const companyService = new CompanyMasterService();
     const clientService = new ClientMasterService();
+    const currencyService = new CurrencyMasterService();
     const invoiceService = new InvoiceService();
     const accountService = new AccountMasterService();
     const accountsService = new AccountsMasterService();
@@ -414,6 +434,28 @@ const InvoiceMaster = () => {
                     >
                         {/* {rowData.fromDate} */}
                         {rowData?.invoice_date}
+                    </span>
+                    <Tooltip
+                        target={`#companyNameTooltip-${rowData.id}`}
+                        position="top"
+                    />
+                </div>
+            ),
+        },
+        {
+            label: "Due Date",
+            fieldName: "due_date",
+            textAlign: "left",
+            sort: true,
+            filter: true,
+            placeholder: "Due Date",
+            body: (rowData: any) => (
+                <div>
+                    <span
+                        id={`companyNameTooltip-${rowData.id}`}
+                    >
+                        
+                        {/* {rowData?.invoice_date} */}
                     </span>
                     <Tooltip
                         target={`#companyNameTooltip-${rowData.id}`}
@@ -583,12 +625,59 @@ const InvoiceMaster = () => {
             getTaxMaster();
             getCompanyLocationMaster();
             getPOContractMasterConfigData();
+            getClientMasterData();
+            getCurrencyMaster();   
         };
         if (clientFormPopup == false && showConfirmDialogue == false) {
             fetchData();
         }
     }, [clientFormPopup, showConfirmDialogue]);
 
+    const getCurrencyMaster = async () => {
+        try {
+            const response = await currencyService.getCurrencyMasterData();
+            if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+                const uniqueMap = new Map();
+        
+                response.data.forEach((item: { currencyCode: string }) => {
+                    if (!uniqueMap.has(item.currencyCode)) {
+                        uniqueMap.set(item.currencyCode, {
+                            label: item.currencyCode,
+                            value: item.currencyCode
+                        });
+                    }
+                });
+        
+                const currencyOptions = Array.from(uniqueMap.values());
+        
+                const form = _.cloneDeep(clientForm);
+                form.currency.options = currencyOptions;
+                setClientForm(form);
+        
+                console.log("Currency options (deduplicated):", currencyOptions);
+            }
+        } catch (error) {
+            console.error("Failed to fetch currency data", error);
+        }        
+    };
+    const getClientMasterData = async () => {
+        try {
+            const response = await clientService.getClientMaster();     
+            if (!response) {
+                console.error('No client data received from API');
+                setClientMaster([]);
+                return [];
+            }
+            console.log('Client data received:', response?.clients);
+            const activeClients = response?.clients?.filter((client: any) => client?.isactive || client?.isActive) || [];
+            setClientMaster(activeClients);
+            return activeClients;
+        } catch (error) {
+            console.error('Error fetching client master data:', error);
+            setClientMaster([]);
+            return [];
+        }
+    };
 
     const getInvoiceData = async () => {
         setLoader(true);
@@ -974,6 +1063,7 @@ const InvoiceMaster = () => {
 
         const taxDetails = taxMaster.map((item: any) => item?.taxType);
         clientForm.tax_type.options = taxDetails;
+        console.log(`this is form options`,taxDetails)
         setClientFormPopup(true);
     };
 
@@ -1166,8 +1256,10 @@ const InvoiceMaster = () => {
             clientFormFieldsStructure.po_amount.value = data?.po_amount || "";
             clientFormFieldsStructure.remain_po_amount.value = data?.remain_po_amount || "";
             clientFormFieldsStructure.invoice_date.value = data?.invoice_date ? parseDateString(data?.invoice_date) : null;
+            clientFormFieldsStructure.terms_of_payment.value = data?.terms_of_payment || '';
             // clientFormFieldsStructure.contract_type.value = data?.contract_type || "";
             clientFormFieldsStructure.tax_type.value = data?.tax_type || "";
+            clientFormFieldsStructure.currency.value = data?.currency || "";
             clientFormFieldsStructure.tax_code.value = data?.tax_code ? data?.tax_code.split(",") : [];
             clientFormFieldsStructure.invoice_amount.value = data?.invoice_amount || "";
             clientFormFieldsStructure.billed_hours.value = data?.billed_hours || "";
@@ -1354,6 +1446,32 @@ const InvoiceMaster = () => {
     const filterTaxes = (taxMaster: any, taxTypes: any) => {
         return taxMaster.filter((tax: any) => taxTypes.includes(tax.taxFieldName));
     };
+    useEffect(() => {
+        console.log(`this is country`, clientNameCountry)
+        if (clientNameCountry.toLowerCase() !== "india") {
+            const form = _.cloneDeep(clientForm);
+            form.tax_type.value = 'Export';
+            form.tax_type.disable = true;
+            form.tax_code.value = null;
+            form.tax_code.disable = true;
+            form.tax_code.validation.required = false;
+            setClientForm(form);
+        } else {
+            const form = _.cloneDeep(clientForm);
+            const taxDetails = taxMaster.map((item: any) => ({
+                label: item?.taxType,
+                value: item?.taxType
+            }));
+            form.tax_type.options = taxDetails;
+            form.tax_type.disable = false;
+            form.tax_type.value = null;
+            form.tax_code.disable = false;
+            form.tax_code.value = null;
+            form.tax_code.validation.required = true;
+            setClientForm(form);
+        }
+    }, [clientNameCountry]);
+    
 
     const clientFormHandler = async (currentForm: FormType) => {
         const form = _.cloneDeep(currentForm);
@@ -1364,12 +1482,20 @@ const InvoiceMaster = () => {
         // if (form.client_name?.value !== clientForm?.client_name?.value) {
         const selectedClient = form.client_name?.value
         if (selectedClient) {
+            console.log(`this is client datata`,selectedClient)
             const tempData = poContractsData
                 ?.filter((item: any) => item?.client_name === selectedClient)
                 .map((ele: any) => ele?.po_name)
                 .filter((name: any) => name !== null && name !== undefined); // Remove null/undefined values
 
             form.contract_name.options = tempData || [];
+            const clientData = clientMaster.find((client: any) => client.client_name === selectedClient);
+             if (clientData) {
+          console.log("Country Name:", clientData.countryName,form);
+          setClientNameCountry(clientData.countryName);
+           } else {
+              console.log("Country Name not found for the selected client.");
+         }
         }
         if ((form.contract_name?.value != clientForm?.contract_name?.value) && form.contract_name?.value) {
             const selectedContract = poContractsData?.filter((item: any) => item?.client_name === selectedClient)?.find((ele: any) => ele?.po_name == form.contract_name?.value)
@@ -1484,6 +1610,12 @@ const InvoiceMaster = () => {
         return clientName.split(" ").map((word: any) => word[0]).join("").toUpperCase();
     };
 
+    const calculateDueDate = (invoiceDate: Date, days: number) => {
+        const dueDate = new Date(invoiceDate);
+        dueDate.setDate(dueDate.getDate() + days);
+        return dueDate;
+    };
+
     const createNewClient = async (event: FormEvent) => {
         event.preventDefault();
         let companyValidityFlag = true;
@@ -1555,6 +1687,11 @@ const InvoiceMaster = () => {
         const financialYear = getFinancialYear(clientForm.invoice_date.value);
         const invoiceName = `${clientAbbr}/${financialYear}`;
 
+        // Calculate due date
+        const invoiceDate = clientForm.invoice_date.value;
+        const termsOfPayment = parseInt(clientForm.terms_of_payment.value) || 0;
+        const dueDate = calculateDueDate(invoiceDate, termsOfPayment);
+
         const obj = {
             client_name: clientForm.client_name.value || '',
             client_id: clientId,
@@ -1566,6 +1703,8 @@ const InvoiceMaster = () => {
             po_amount: clientForm.po_amount.value || '',
             remain_po_amount: clientForm.remain_po_amount.value || '',
             invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
+            due_date: formatDate(dueDate),
+            // terms_of_payment: clientForm.terms_of_payment.value || '',
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
             clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
             clientContact: clientForm.clientContact.value?.toString() || '',
@@ -1576,6 +1715,7 @@ const InvoiceMaster = () => {
             projectService_names: clientForm.projectService.options.find((item: any) => item.value === clientForm.projectService.value)?.label || '',
             projectService: clientForm.projectService.value || '',
             tax_type: clientForm.tax_type.value || '',
+            currency: clientForm.currency.value?.value || clientForm.currency.value || '',
             tax_type_id: taxTypeId,
             tax_code: clientForm.tax_code.value?.toString() || '',
             tax_code_id: taxCodeId,
