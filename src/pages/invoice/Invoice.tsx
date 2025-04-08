@@ -272,6 +272,8 @@ const InvoiceMaster = () => {
     const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
     const [downloadPDF, setDownloadPDF] = useState<any>(false)
     const [downloadExportPDF, setDownloadExportPDF] = useState<any>(false)
+    const [idForBillTOiecCode, setIdForBillTOiecCode] = useState<any>()
+    const [iecCodeSubmit, setIecCodeSubmit] = useState<any>()
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -451,16 +453,9 @@ const InvoiceMaster = () => {
             placeholder: "Due Date",
             body: (rowData: any) => (
                 <div>
-                    <span
-                        id={`companyNameTooltip-${rowData.id}`}
-                    >
-                        
-                        {/* {rowData?.invoice_date} */}
+                    <span>                      
+                        {rowData?.due_date}
                     </span>
-                    <Tooltip
-                        target={`#companyNameTooltip-${rowData.id}`}
-                        position="top"
-                    />
                 </div>
             ),
         },
@@ -685,15 +680,21 @@ const InvoiceMaster = () => {
             const response = await invoiceService.getInvoicesData();
             response.invoices.forEach((item: any) => item.invoiceInfo = JSON.parse(item.invoiceInfo))
 
-            const parsedData = response.invoices.map((invoice: any) => ({
-                ...invoice,
-                invoiceInfo: invoice.invoiceInfo.map((info: any) => ({
-                    ...info,
-                    taxBreakdown: info.taxBreakdown ? JSON.parse(info.taxBreakdown) : []
-                }))
-            }));
+            const parsedData = response.invoices.map((invoice: any) => {
+                // Remove pdf_path from the invoice object
+                const { pdf_path, ...invoiceWithoutPDF } = invoice;
+                
+                return {
+                    ...invoiceWithoutPDF,
+                    invoiceInfo: invoice.invoiceInfo.map((info: any) => ({
+                        ...info,
+                        taxBreakdown: info.taxBreakdown ? JSON.parse(info.taxBreakdown) : []
+                    }))
+                };
+            });
             parsedData?.forEach((el: any) => {
                 el.invoice_date = el.invoice_date ? moment(el.invoice_date).format("DD-MM-YYYY") : null;
+                el.due_date = el.due_date ? moment(el.due_date).format("DD-MM-YYYY") : null;
                 el.created_at = el.created_at ? moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") : null;
                 el.updated_at = el.updated_at ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") : null;
             });
@@ -1507,14 +1508,41 @@ const InvoiceMaster = () => {
             const configData = poContractConfData.find((item: any) => item.client_name == form.client_name.value)
             console.log('configData', configData, selectedContract, form.company_name.value);
 
-            if (configData) {
-                form.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
-                    return {
-                        label: concatAddresses(item.address1, item.address2, item.address3),
-                        value: item.id.toString(),
-                        isDefault: concatAddresses(item.address1, item.address2, item.address3) == selectedContract?.masterNames?.clientBillTo_names ? 1 : 0
+                if (configData) {
+                const seenIds = new Set();
+
+                const seen = new Set();
+
+                form.clientBillTo.options = configData.clientBill
+                ?.filter((item: any) => {
+                    const address = concatAddresses(item.address1, item.address2, item.address3);
+                    const key = `${item.id}-${address}`;
+                    if (item.id && !seen.has(key)) {
+                    seen.add(key);
+                    return true;
                     }
+                    return false;
                 })
+                .map((item: any) => {
+                    const address = concatAddresses(item.address1, item.address2, item.address3);
+                    setIdForBillTOiecCode(item.id.toString());
+                    console.log(`ajidhsiahwiasnjkdaw`, item.id.toString());
+
+                    return {
+                    label: address,
+                    value: item.id.toString(),
+                    isDefault: address === selectedContract?.masterNames?.clientBillTo_names ? 1 : 0
+                    };
+                });
+                console.log(`adsasdasdasdasda`,configData,idForBillTOiecCode)
+                configData?.clientBill?.map((item: any) => {
+                    if (item.id?.toString() === idForBillTOiecCode) {
+                        setIecCodeSubmit( item.iec_code);
+                      console.log("Matched IEC Code:", item.iec_code);
+                    }
+                    return null; // or just don't return anything if you don't need to collect results
+                  });
+                  
                 const defaultBillItem = form.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
                 if (defaultBillItem && defaultBillItem?.value) {
                     form.clientBillTo.value = [defaultBillItem?.value.toString()];
@@ -1566,6 +1594,7 @@ const InvoiceMaster = () => {
             }
 
         }
+        
 
         if (form?.tax_type?.value) {
             const taxCodeOptions = taxMaster?.filter((tax: any) => tax?.taxType == form?.tax_type?.value)?.map((item: any) => item?.taxFieldName);
@@ -1704,7 +1733,8 @@ const InvoiceMaster = () => {
             remain_po_amount: clientForm.remain_po_amount.value || '',
             invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
             due_date: formatDate(dueDate),
-            // terms_of_payment: clientForm.terms_of_payment.value || '',
+            terms_of_payment: clientForm.terms_of_payment.value || '',
+            iec_code: iecCodeSubmit || '',
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
             clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
             clientContact: clientForm.clientContact.value?.toString() || '',

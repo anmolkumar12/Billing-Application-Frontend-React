@@ -32,7 +32,7 @@ const IndustryGroupMaster = () => {
       value: null,
       options: [],
       validation: {
-        required: true,
+        required: false,
       },
       fieldWidth: "col-md-6",
     },
@@ -258,7 +258,7 @@ const IndustryGroupMaster = () => {
     try {
       industryGroupFieldsStructure.industryGroupName.value =
         data?.groupIndustryName;
-      industryGroupFieldsStructure.industryNames.value = data?.industryNames?.split(",");
+      industryGroupFieldsStructure.industryNames.value = data?.industryNames?.split(",") || [];
       setIndustryGroupForm(_.cloneDeep(industryGroupFieldsStructure));
     } catch (error) {
       console.log("error", error);

@@ -105,6 +105,8 @@ const SalesMaster = () => {
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
   const [deactivateIndustryHead, setDeactivateIndustryHead] = useState<any>([]);
+  const [industriesData, setIndustriesData] = useState<any>([]);
+  const [currRowData, setCurrRowData] = useState<any>([]);
   const [salesFieldsStructure, setSalesFieldsStructure] = useState<any>(
     _.cloneDeep(SalesFormFields)
   );
@@ -138,7 +140,7 @@ const SalesMaster = () => {
       fieldWidth: "col-md-12",
     },
     country_name: {
-      inputType: "singleSelect",
+      inputType: "multiSelect",
       label: "Industry Head Name",
       options: [],
       value: null,
@@ -172,17 +174,36 @@ const SalesMaster = () => {
     }
   }
 
-  const handleDeactivate = (rowData: any) => {
-    setDeactivatePopupIndustryHead(true);
-    console.log('this is rowdata', rowData);
-    
-    // Get industry head names from rowData
-    const industryHeadNames = rowData.industryHeadNames?.split(',') || [];
-    
-    // Update the deactivate form with industry head names as options
-    const updatedForm = _.cloneDeep(deactForm);
-    updatedForm.country_name.options = industryHeadNames;
-    setDeactivateForm(updatedForm);
+  const handleDeactivate = (data: any) => {
+    console.log(`dasdasdasdas`,data)
+    setCurrRowData(data);
+    if(data?.isActive == 1){
+      setDeactivatePopupIndustryHead(true);
+      console.log('this is rowdata', data);
+      
+      // Get industry head names from rowData
+      const industryHeadNames = data.industryHeadNames?.split(',') || [];
+      
+      // Update the deactivate form with industry head names as options
+      const updatedForm = _.cloneDeep(deactForm);
+      updatedForm.country_name.options = industryHeadNames;
+      setDeactivateForm(updatedForm); 
+      console.log(`dasdawdas`,updatedForm)
+    }
+    else{
+      patchData = data;
+      console.log(`dasdasdasdasas`,data)
+      setActionPopupToggle({
+        displayToggle: false,
+        title: "Delete",
+        message: `Are you sure you want to activate this record?`,
+        acceptFunction: confirmDelete,
+        rejectFunction: onPopUpClose,
+        askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
+        minDate: data?.fromDate,
+      });
+      setShowConfirmDialogue(true);
+      }
   };
   
 
@@ -472,6 +493,7 @@ const SalesMaster = () => {
     const fetchData = async () => {
       await getSalesMaster();
       const industries = await getIndustryHeadMaster();
+      setIndustriesData(industries)
       await formatIndustryHeadDetails(industries);
       const companies = await getCompanyMaster();
       await formatCompanyDetails(companies);
@@ -571,12 +593,46 @@ const SalesMaster = () => {
     setSalesForm(form);
   };
   const deactivationFormHandler = async (form: FormType) => {
+    // deactivateFormObject.deactivationDate.value = form.deactivationDate.value;
+    // deactivateFormObject.country_name.value = form.country_name.value;
+    // console.log(`asdasdasdasa`,deactivateFormObject.deactivationDate.value,deactivateFormObject.country_name.value);
     setDeactivateForm(form);
   }
   
   const submitDeactivateHeadFormHandler = (event: FormEvent) => {
-    setDeactivateIndustryHead(false);
-  }
+    event.preventDefault();
+    const selectedHeadNames = deactForm.country_name.value;
+    let selectedHeadIds: number[] = [];
+  
+    if (selectedHeadNames && Array.isArray(selectedHeadNames)) {
+      selectedHeadIds = selectedHeadNames.map((headName: string) => {
+        const matchedHead = industryHeadMaster.find(
+          (head: any) => head.industryHeadName === headName
+        );
+        return matchedHead ? matchedHead.id : null;
+      }).filter(id => id !== null);
+    } else if (selectedHeadNames) {
+      const matchedHead = industryHeadMaster.find(
+        (head: any) => head.industryHeadName === selectedHeadNames
+      );
+      if (matchedHead) {
+        selectedHeadIds = [matchedHead.id];
+      }
+    }
+  
+    // Clone the CurrRowData object
+    const updatedRowData = {
+      ...currRowData,
+      deactivationDate: deactForm.deactivationDate.value,
+      industryHeadIds: selectedHeadIds
+    };
+  
+    console.log(`Submitting updated row data:`, updatedRowData);
+    confirmDelete(updatedRowData);
+    setDeactivatePopupIndustryHead(false);
+    setDeactivateForm(_.cloneDeep(deactivateFormObject));
+  };
+  
 
   const submitDeactivateFormHandler = (event: FormEvent) => {
     event.preventDefault();
@@ -712,7 +768,7 @@ const SalesMaster = () => {
   };
 
   const onDelete = (data: any) => {
-    patchData = data;
+    // patchData = data;
     setActionPopupToggle({
       displayToggle: false,
       title: "Delete",
@@ -728,19 +784,23 @@ const SalesMaster = () => {
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = (deactivationDate?: Date) => {
+  const confirmDelete = (patchData:any) => {
     setLoader(true);
+    console.log(`dasdasdasdasdas`,currRowData,patchData)
     salesService
-      // .deactivateSalesMaster({ ...patchData, loggedInUserId,deactivationDate:deactForm.deactivationDate.value })
-      .deactivateSalesMaster({ ...patchData, loggedInUserId, deactivationDate: deactivationDate ? formatDate(deactivationDate) : null })
+      .deactivateSalesMaster({ 
+        ...currRowData, 
+        loggedInUserId, 
+        deactivationDate: patchData?.deactivationDate ? formatDate(patchData.deactivationDate) : null,
+        industryHeadIds: patchData?.industryHeadIds ? patchData.industryHeadIds : [0]
+      })
       .then((response) => {
         setLoader(false);
         setShowConfirmDialogue(false);
         if (response.statusCode === 200) {
           closeDeactivation();
           ToasterService.show(
-            `Sales Manager record ${patchData?.isActive ? "deactivated" : "activated"
-            } successfully`,
+            `Sales Manager record ${patchData?.isActive ? "deactivated" : "activated"} successfully`,
             CONSTANTS.SUCCESS
           );
         }

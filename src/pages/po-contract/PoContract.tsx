@@ -627,7 +627,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ? "check-circle" : "ban"}`}
+            className={`pi pi-${rowData.isActive ?"ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -1293,7 +1293,8 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         value: item.id.toString(),
       })));
     }
-    if (currentForm.poAmount.value != objFormState.poAmount.value) {
+    console.log(`rohit jhosi `,currentForm.poAmount.value,objFormState.poAmount.value)
+    if (currentForm.poAmount.value) {
       currentForm.dueAmount.value = currentForm.poAmount.value;
     }
     const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
