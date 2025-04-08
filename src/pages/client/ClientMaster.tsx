@@ -517,7 +517,7 @@ const ClientMaster = () => {
             body: (rowData: any) => (
                 <div>
                     <span>
-                        {rowData?.msa_flag == 1 ? "Yes" : "No"}
+                        {rowData?.msa_flag}
                     </span>
                 </div>
             ),
@@ -562,7 +562,7 @@ const ClientMaster = () => {
             body: (rowData: any) => (
                 <div>
                     <span>
-                        {rowData?.nda_flag == 1 ? "Yes" : "No"}
+                        {rowData?.nda_flag}
                     </span>
                 </div>
             ),
@@ -709,6 +709,8 @@ const ClientMaster = () => {
                     ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss")
                     : null;
                 el.client_status = el?.client_status == "1" ? "New" : "Existing";
+                el.msa_flag = el?.msa_flag == 1 ? "Yes" : "No";
+                el.nda_flag = el?.nda_flag == 1 ? "Yes" : "No";
             });          
                 console.log(`this is client datat after`,response?.clients)
             setClientMaster(response?.clients);

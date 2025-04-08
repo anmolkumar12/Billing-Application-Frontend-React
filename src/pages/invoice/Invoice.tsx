@@ -305,7 +305,7 @@ const InvoiceMaster = () => {
                     <span
                         className={`pi pi-download`}
                         style={{ cursor: "pointer" }}
-                        title="generateTaxInvoicePDFHandler"
+                        title="Download Invoice"
                         //   onClick={() => onDelete(rowData)}
                         onClick={()=> generateInvoicePDFHandler(rowData)}
                         // onClick={() => setDownloadPDF(true)}
@@ -313,7 +313,7 @@ const InvoiceMaster = () => {
                     <span
                         className={`pi pi-download`}
                         style={{ cursor: "pointer" }}
-                        title="generateInvoicePDFHandler" 
+                        title="Download Tax Invoice" 
                         onClick={()=> generateTaxInvoicePDFHandler(rowData)}
                     ></span>
                     {/* <span
@@ -991,34 +991,101 @@ const InvoiceMaster = () => {
         await setClientFormPopup(true);
         await setIsEditClient(true);
     };
+    // const generateInvoicePDFHandler = async (data: any) => {
+    //     invoiceService
+    //             .UpdateInvoicePDF(data?.invoice_name)
+    //             .then((response: any) => {
+    //                 if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+    //                     console.log(response)
+    //                     ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+    //                 }
+    //             })
+    //             .catch((error: any) => {
+    //                 console.log(error)
+    //                 ToasterService.show(error, CONSTANTS.ERROR);
+    //             });
+    // };
+    // const generateTaxInvoicePDFHandler = async (data: any) => {
+    //     invoiceService
+    //             .UpdateTaxInvoicePDF(data?.invoice_name)
+    //             .then((response: any) => {
+    //                 if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+    //                     console.log(response)
+    //                     ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+    //                 }
+    //             })
+    //             .catch((error: any) => {
+    //                 console.log(error)
+    //                 ToasterService.show(error, CONSTANTS.ERROR);
+    //             });
+    // };
+
+
     const generateInvoicePDFHandler = async (data: any) => {
         invoiceService
                 .UpdateInvoicePDF(data?.invoice_name)
-                .then((response: any) => {
-                    if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-                        console.log(response)
+                .then(async (response: any) => {
+                    if (response?.statusCode === HTTP_RESPONSE.CREATED) {
                         ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+        
+                        const fileUrl = `${process.env.REACT_APP_API_BASEURL}/invoices/${data.invoice_name}.pdf`;
+                        console.log("Downloading PDF from:", fileUrl);
+        
+                        fetch(fileUrl)
+                            .then(res => res.blob())
+                            .then(blob => {
+                                const url = window.URL.createObjectURL(blob);
+                                const link = document.createElement("a");
+                                link.href = url;
+                                link.setAttribute("download", `${data.invoice_name}.pdf`); // Forces download
+                                document.body.appendChild(link);
+                                link.click();
+                                link.remove();
+                            })
+                            .catch(error => {
+                                console.error("Error downloading PDF:", error);
+                                ToasterService.show("Error downloading PDF", CONSTANTS.ERROR);
+                            });
                     }
                 })
                 .catch((error: any) => {
-                    console.log(error)
-                    ToasterService.show(error, CONSTANTS.ERROR);
+                    console.error("Error downloading PDF:", error);
+                    ToasterService.show(error.message || "Error downloading PDF", CONSTANTS.ERROR);
                 });
-    };
+        };
+
     const generateTaxInvoicePDFHandler = async (data: any) => {
         invoiceService
                 .UpdateTaxInvoicePDF(data?.invoice_name)
-                .then((response: any) => {
-                    if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-                        console.log(response)
+                .then(async (response: any) => {
+                    if (response?.statusCode === HTTP_RESPONSE.CREATED) {
                         ToasterService.show(response?.message, CONSTANTS.SUCCESS);
+        
+                        const fileUrl = `${process.env.REACT_APP_API_BASEURL}/taxinvoices/${data.invoice_name}.pdf`;
+                        console.log("Downloading PDF from:", fileUrl);
+        
+                        fetch(fileUrl)
+                            .then(res => res.blob())
+                            .then(blob => {
+                                const url = window.URL.createObjectURL(blob);
+                                const link = document.createElement("a");
+                                link.href = url;
+                                link.setAttribute("download", `${data.invoice_name}.pdf`); // Forces download
+                                document.body.appendChild(link);
+                                link.click();
+                                link.remove();
+                            })
+                            .catch(error => {
+                                console.error("Error downloading PDF:", error);
+                                ToasterService.show("Error downloading PDF", CONSTANTS.ERROR);
+                            });
                     }
                 })
                 .catch((error: any) => {
-                    console.log(error)
-                    ToasterService.show(error, CONSTANTS.ERROR);
+                    console.error("Error downloading PDF:", error);
+                    ToasterService.show(error.message || "Error downloading PDF", CONSTANTS.ERROR);
                 });
-    };
+        };
     
     
     const onMSAUpdate = (data: any) => {
