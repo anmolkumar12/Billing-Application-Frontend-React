@@ -76,7 +76,7 @@ const SalesMaster = () => {
       label: "From Date",
       value: null,
       validation: {
-        required: false,
+        required: true,
       },
       fieldWidth: "col-md-4",
     },
@@ -132,20 +132,20 @@ const SalesMaster = () => {
       inputType: "singleDatePicker",
       label: "Select Deactivation Date",
       value: null,
-      min: new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
+      min: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),
       max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
         required: true,
       },
       fieldWidth: "col-md-12",
     },
-    country_name: {
+    industry_head_name: {
       inputType: "multiSelect",
       label: "Industry Head Name",
       options: [],
       value: null,
       validation: {
-        required: false,
+        required: true,
       },
       fieldWidth: "col-md-12",
     },
@@ -175,11 +175,12 @@ const SalesMaster = () => {
   // }
 
   const handleDeactivate = (data: any) => {
-    console.log(`dasdasdasdas`,data)
+    // console.log(`active non active`,data)
     setPatchData(data)
     // patchData = data;
     // setCurrRowData(data);
     if(data?.isActive == 1){
+      console.log(`active non active 1`,data)
       setDeactivatePopupIndustryHead(true);
       console.log('this is rowdata', data);
       
@@ -188,19 +189,20 @@ const SalesMaster = () => {
       
       // Update the deactivate form with industry head names as options
       const updatedForm = _.cloneDeep(deactForm);
-      updatedForm.country_name.options = industryHeadNames;
+      updatedForm.industry_head_name.options = industryHeadNames;
       setDeactivateForm(updatedForm); 
       console.log(`dasdawdas`,updatedForm,patchData)
     }
     else{
       // patchData = data;
-      patchData.industryHeadIds = [0];
+      console.log(`active non active 2`,data)
+      data.industryHeadIds = [0];
       console.log(`asdasdasdasdasdas`,data,patchData)
       setActionPopupToggle({
         displayToggle: false,
         title: "Delete",
         message: `Are you sure you want to activate this record?`,
-        acceptFunction: () => confirmDelete(patchData),
+        acceptFunction: () => confirmDelete(data),
         rejectFunction: onPopUpClose,
         askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
         minDate: data?.fromDate,
@@ -501,10 +503,10 @@ const SalesMaster = () => {
       const companies = await getCompanyMaster();
       await formatCompanyDetails(companies);
     };
-    if (storeFormPopup == false && showConfirmDialogue == false) {
+    if (storeFormPopup == false && showConfirmDialogue == false && deactivatePopupIndustryHead == false) {
       fetchData();
     }
-  }, [storeFormPopup, showConfirmDialogue]);
+  }, [storeFormPopup, showConfirmDialogue,deactivatePopupIndustryHead]);
 
   const getCompanyMaster = async () => {
     setLoader(true);
@@ -605,7 +607,7 @@ const SalesMaster = () => {
   const submitDeactivateHeadFormHandler = (event: FormEvent) => {
     console.log(`Submitting updated row data:`,patchData);
     event.preventDefault();
-    const selectedHeadNames = deactForm.country_name.value;
+    const selectedHeadNames = deactForm.industry_head_name.value;
     let selectedHeadIds: number[] = [];
   
     if (selectedHeadNames && Array.isArray(selectedHeadNames)) {
@@ -635,6 +637,7 @@ const SalesMaster = () => {
     confirmDelete(updatedRowData);
     setDeactivatePopupIndustryHead(false);
     setDeactivateForm(_.cloneDeep(deactivateFormObject));
+    resetForm();
   };
   
 
@@ -675,7 +678,7 @@ const SalesMaster = () => {
       salesFieldsStructure.code.value = data?.code;
       salesFieldsStructure.sales_manager_email.value = data?.sales_manager_email;
       salesFieldsStructure.industryHeadNames.value =
-        data?.industryHeadNames?.split(",");
+        data?.industryHeadNames?.split(",") || [];
       salesFieldsStructure.description.value =
         data?.description != null && data?.description != "null"
           ? data?.description
@@ -793,7 +796,7 @@ const SalesMaster = () => {
     console.log(`datatattatatat`,currRowData,data,patchData)
     salesService
       .deactivateSalesMaster({ 
-        ...patchData, 
+        ...data, 
         loggedInUserId, 
         deactivationDate: data?.deactivationDate ? formatDate(data.deactivationDate) : null,
         industryHeadIds: data?.industryHeadIds ? data.industryHeadIds : [0]
@@ -813,6 +816,11 @@ const SalesMaster = () => {
         setLoader(false);
         return false;
       });
+  };
+
+  const resetForm = () => {
+    setSalesForm(_.cloneDeep(SalesFormFields));
+    setDeactivateForm(_.cloneDeep(deactivateFormObject));
   };
 
   const closeFormPopup = () => {
@@ -916,6 +924,7 @@ const SalesMaster = () => {
               onClick={() => {
    
                 setDeactivatePopupIndustryHead(false);
+                resetForm();
               }}
             >
               <i className="pi pi-angle-left"></i>
@@ -925,7 +934,7 @@ const SalesMaster = () => {
               className="popup-right-close"
               onClick={() => {
                 setDeactivatePopupIndustryHead(false);
-            
+                resetForm();
               }}
             >
               &times;
