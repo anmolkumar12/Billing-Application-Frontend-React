@@ -642,8 +642,8 @@ const InvoiceMaster = () => {
                         });
                     }
                 });
-        
                 const currencyOptions = Array.from(uniqueMap.values());
+                setCurrencyList(currencyOptions)
         
                 const form = _.cloneDeep(clientForm);
                 form.currency.options = currencyOptions;
@@ -1205,7 +1205,7 @@ const InvoiceMaster = () => {
                         isDefault: index == 0 ? 1 : 0
                     }
                 })
-                console.log('Updating client form fields:', clientFormFieldsStructure, data);
+                console.log('Updating client form fields:', clientFormFieldsStructure, data, currencyList);
 
                 clientFormFieldsStructure.clientBillTo.value = typeof data?.clientBillTo === "string"
                     ? data.clientBillTo.split(",").map((item: any) => item.trim())
@@ -1260,6 +1260,7 @@ const InvoiceMaster = () => {
             clientFormFieldsStructure.terms_of_payment.value = data?.terms_of_payment || '';
             // clientFormFieldsStructure.contract_type.value = data?.contract_type || "";
             clientFormFieldsStructure.tax_type.value = data?.tax_type || "";
+            clientFormFieldsStructure.currency.options = currencyList || [];
             clientFormFieldsStructure.currency.value = data?.currency || "";
             clientFormFieldsStructure.tax_code.value = data?.tax_code ? data?.tax_code.split(",") : [];
             clientFormFieldsStructure.invoice_amount.value = data?.invoice_amount || "";
