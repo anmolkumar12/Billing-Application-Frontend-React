@@ -175,8 +175,7 @@ const SalesMaster = () => {
   // }
 
   const handleDeactivate = (data: any) => {
-    // console.log(`active non active`,data)
-    setPatchData(data)
+    console.log(`jjjjjjj`,data)
     // patchData = data;
     // setCurrRowData(data);
     if(data?.isActive == 1){
@@ -194,9 +193,10 @@ const SalesMaster = () => {
       console.log(`dasdawdas`,updatedForm,patchData)
     }
     else{
-      // patchData = data;
-      console.log(`active non active 2`,data)
-      data.industryHeadIds = [0];
+      const temp = { ...data }; // Make a shallow copy if needed
+      data.industryHeadIds = temp?.deactivatedIndustryIds
+        ?.split(',')
+        .map(Number);
       console.log(`asdasdasdasdasdas`,data,patchData)
       setActionPopupToggle({
         displayToggle: false,
@@ -209,6 +209,7 @@ const SalesMaster = () => {
       });
       setShowConfirmDialogue(true);
       }
+    setPatchData(data)
   };
   
 

@@ -43,6 +43,7 @@ export class AccountMasterService {
 
   deactivateAccountMaster = async (data: any) => {
     try {
+      console.log(`master mastermaster`,data)
       const body = {
         accountManagerId: data.id,
         industryHeadIds: data.industryHeadIds,

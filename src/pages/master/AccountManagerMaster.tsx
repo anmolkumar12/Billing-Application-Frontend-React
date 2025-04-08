@@ -124,7 +124,7 @@ const AccountManagerMaster = () => {
       inputType: "singleDatePicker",
       label: "Select Deactivation Date",
       value: null,
-      min: new Date(new Date().getFullYear(), new Date().getMonth() - 6, new Date().getDate()),
+      min: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),
       max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
         required: true,
@@ -158,8 +158,7 @@ const AccountManagerMaster = () => {
   // }
 
 const handleDeactivate = (data: any) => {
-    console.log(`active non active`,data)
-    setPatchData(data)
+    console.log(`jjjjjjj`,data)
     // patchData = data;
     // setCurrRowData(data);
     if(data?.isActive == 1){
@@ -177,9 +176,10 @@ const handleDeactivate = (data: any) => {
       console.log(`dasdawdas`,updatedForm,patchData)
     }
     else{
-      // patchData = data;
-      console.log(`active non active 2`,data)
-      data.industryHeadIds = [0];
+      const temp = { ...data }; // Make a shallow copy if needed
+      data.industryHeadIds = temp?.deactivatedIndustryIds
+        ?.split(',')
+        .map(Number);
       console.log(`asdasdasdasdasdas`,data,patchData)
       setActionPopupToggle({
         displayToggle: false,
@@ -192,6 +192,7 @@ const handleDeactivate = (data: any) => {
       });
       setShowConfirmDialogue(true);
       }
+      setPatchData(data)
   };
 
   const loggedInUserId = userInfo?.userId;
@@ -644,7 +645,7 @@ const handleDeactivate = (data: any) => {
         industryHeadIds: selectedHeadIds
       };
     
-     
+      console.log(`updated row is `,updatedRowData)
       confirmDelete(updatedRowData);
       setDeactivatePopupIndustryHead(false);
       setDeactivateForm(_.cloneDeep(deactivateFormObject));
