@@ -43,8 +43,10 @@ export class AccountMasterService {
 
   deactivateAccountMaster = async (data: any) => {
     try {
+      console.log(`master mastermaster`,data)
       const body = {
-        salesManagerId: data.id,
+        accountManagerId: data.id,
+        industryHeadIds: data.industryHeadIds,
         isActive: !data.isActive,
         updatedBy: data?.loggedInUserId,
         deactivationDate:data?.deactivationDate?moment(new Date(data?.deactivationDate)).format('YYYY-MM-DD'): null
