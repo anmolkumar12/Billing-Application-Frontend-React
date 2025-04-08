@@ -157,26 +157,28 @@ const SalesMaster = () => {
   const userInfo = cookies.get("userInfo");
 
   const loggedInUserId = userInfo?.userId;
-  let patchData: any;
+  const [patchData, setPatchData] = useState<any>();
   const industryService = new IndustryMasterService();
   const salesService = new SalesMasterService();
   const [companyMaster, setCompanyMaster] = useState<any>([]);
   const companyService = new CompanyMasterService();
 
-  const onDeactivate = (rowData: any) => {
-    console.log('here we are')
-    setRowData(rowData);
-    if (rowData.isActive == 1) {
-      setDeactivatePopup(true);
-    }
-    else {
-      onDelete(rowData);
-    }
-  }
+  // const onDeactivate = (rowData: any) => {
+  //   console.log('here we are')
+  //   setRowData(rowData);
+  //   if (rowData.isActive == 1) {
+  //     setDeactivatePopup(true);
+  //   }
+  //   else {
+  //     onDelete(rowData);
+  //   }
+  // }
 
   const handleDeactivate = (data: any) => {
     console.log(`dasdasdasdas`,data)
-    setCurrRowData(data);
+    setPatchData(data)
+    // patchData = data;
+    // setCurrRowData(data);
     if(data?.isActive == 1){
       setDeactivatePopupIndustryHead(true);
       console.log('this is rowdata', data);
@@ -188,16 +190,17 @@ const SalesMaster = () => {
       const updatedForm = _.cloneDeep(deactForm);
       updatedForm.country_name.options = industryHeadNames;
       setDeactivateForm(updatedForm); 
-      console.log(`dasdawdas`,updatedForm)
+      console.log(`dasdawdas`,updatedForm,patchData)
     }
     else{
-      patchData = data;
-      console.log(`dasdasdasdasas`,data)
+      // patchData = data;
+      patchData.industryHeadIds = [0];
+      console.log(`asdasdasdasdasdas`,data,patchData)
       setActionPopupToggle({
         displayToggle: false,
         title: "Delete",
         message: `Are you sure you want to activate this record?`,
-        acceptFunction: confirmDelete,
+        acceptFunction: () => confirmDelete(patchData),
         rejectFunction: onPopUpClose,
         askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
         minDate: data?.fromDate,
@@ -600,6 +603,7 @@ const SalesMaster = () => {
   }
   
   const submitDeactivateHeadFormHandler = (event: FormEvent) => {
+    console.log(`Submitting updated row data:`,patchData);
     event.preventDefault();
     const selectedHeadNames = deactForm.country_name.value;
     let selectedHeadIds: number[] = [];
@@ -622,36 +626,36 @@ const SalesMaster = () => {
   
     // Clone the CurrRowData object
     const updatedRowData = {
-      ...currRowData,
+      ...patchData,
       deactivationDate: deactForm.deactivationDate.value,
       industryHeadIds: selectedHeadIds
     };
   
-    console.log(`Submitting updated row data:`, updatedRowData);
+   
     confirmDelete(updatedRowData);
     setDeactivatePopupIndustryHead(false);
     setDeactivateForm(_.cloneDeep(deactivateFormObject));
   };
   
 
-  const submitDeactivateFormHandler = (event: FormEvent) => {
-    event.preventDefault();
-    let validity = true;
-    const deactivateFolrmValidaity: boolean[] = [];
-    console.log('jjjjjjjjjjjj', deactForm);
+  // const submitDeactivateFormHandler = (event: FormEvent) => {
+  //   event.preventDefault();
+  //   let validity = true;
+  //   const deactivateFolrmValidaity: boolean[] = [];
+  //   console.log('jjjjjjjjjjjj', deactForm);
 
-    _.each(deactForm, (item: any) => {
-      if (item?.validation?.required) {
-        deactivateFolrmValidaity.push(item.valid);
-        validity = validity && item.valid;
-      }
-    });
+  //   _.each(deactForm, (item: any) => {
+  //     if (item?.validation?.required) {
+  //       deactivateFolrmValidaity.push(item.valid);
+  //       validity = validity && item.valid;
+  //     }
+  //   });
 
-    setIsDeactivateFormValid(validity);
-    if (validity) {
-      onDelete(rowData)
-    }
-  }
+  //   setIsDeactivateFormValid(validity);
+  //   if (validity) {
+  //     onDelete(rowData)
+  //   }
+  // }
 
   const onUpdate = (data: any) => {
     setStateData(data);
@@ -767,32 +771,32 @@ const SalesMaster = () => {
     }
   };
 
-  const onDelete = (data: any) => {
-    // patchData = data;
-    setActionPopupToggle({
-      displayToggle: false,
-      title: "Delete",
-      message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
-        ? "activate"
-        : "deactivate"
-        } this record?`,
-      acceptFunction: confirmDelete,
-      rejectFunction: onPopUpClose,
-      askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
-      minDate: data?.fromDate,
-    });
-    setShowConfirmDialogue(true);
-  };
+  // const onDelete = (data: any) => {
+  //   // patchData = data;
+  //   setActionPopupToggle({
+  //     displayToggle: false,
+  //     title: "Delete",
+  //     message: `Are you sure you want to ${!(data?.isactive || data?.is_active || data?.isActive)
+  //       ? "activate"
+  //       : "deactivate"
+  //       } this record?`,
+  //     acceptFunction: confirmDelete,
+  //     rejectFunction: onPopUpClose,
+  //     askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
+  //     minDate: data?.fromDate,
+  //   });
+  //   setShowConfirmDialogue(true);
+  // };
 
-  const confirmDelete = (patchData:any) => {
+  const confirmDelete = (data:any) => {
     setLoader(true);
-    console.log(`dasdasdasdasdas`,currRowData,patchData)
+    console.log(`datatattatatat`,currRowData,data,patchData)
     salesService
       .deactivateSalesMaster({ 
-        ...currRowData, 
+        ...patchData, 
         loggedInUserId, 
-        deactivationDate: patchData?.deactivationDate ? formatDate(patchData.deactivationDate) : null,
-        industryHeadIds: patchData?.industryHeadIds ? patchData.industryHeadIds : [0]
+        deactivationDate: data?.deactivationDate ? formatDate(data.deactivationDate) : null,
+        industryHeadIds: data?.industryHeadIds ? data.industryHeadIds : [0]
       })
       .then((response) => {
         setLoader(false);
@@ -800,7 +804,7 @@ const SalesMaster = () => {
         if (response.statusCode === 200) {
           closeDeactivation();
           ToasterService.show(
-            `Sales Manager record ${patchData?.isActive ? "deactivated" : "activated"} successfully`,
+            `Sales Manager record ${data?.isActive ? "deactivated" : "activated"} successfully`,
             CONSTANTS.SUCCESS
           );
         }
