@@ -175,8 +175,7 @@ const SalesMaster = () => {
   // }
 
   const handleDeactivate = (data: any) => {
-    console.log(`dasdasdasdas`,data)
-    setPatchData(data)
+    console.log(`jjjjjjj`,data)
     // patchData = data;
     // setCurrRowData(data);
     if(data?.isActive == 1){
@@ -193,20 +192,23 @@ const SalesMaster = () => {
       console.log(`dasdawdas`,updatedForm,patchData)
     }
     else{
-      // patchData = data;
-      patchData.industryHeadIds = [0];
+      const temp = { ...data }; // Make a shallow copy if needed
+      data.industryHeadIds = temp?.deactivatedIndustryIds
+        ?.split(',')
+        .map(Number);
       console.log(`asdasdasdasdasdas`,data,patchData)
       setActionPopupToggle({
         displayToggle: false,
         title: "Delete",
         message: `Are you sure you want to activate this record?`,
-        acceptFunction: () => confirmDelete(patchData),
+        acceptFunction: () => confirmDelete(data),
         rejectFunction: onPopUpClose,
         askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
         minDate: data?.fromDate,
       });
       setShowConfirmDialogue(true);
       }
+    setPatchData(data)
   };
   
 
@@ -793,7 +795,7 @@ const SalesMaster = () => {
     console.log(`datatattatatat`,currRowData,data,patchData)
     salesService
       .deactivateSalesMaster({ 
-        ...patchData, 
+        ...data, 
         loggedInUserId, 
         deactivationDate: data?.deactivationDate ? formatDate(data.deactivationDate) : null,
         industryHeadIds: data?.industryHeadIds ? data.industryHeadIds : [0]
