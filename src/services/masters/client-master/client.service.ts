@@ -6,10 +6,10 @@ export class ClientMasterService {
   getClientMaster = async (clientId?: any) => {
     try {
       const response = await HTTPService.postRequest(APIURLS.GET_CLIENT_MASTER, { clientId: clientId ? clientId : null })
-      
       return response?.data
     } catch (err) {
-      return {}
+      console.error('Error fetching client master:', err)
+      return null
     }
   }
 
