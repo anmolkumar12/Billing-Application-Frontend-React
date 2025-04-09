@@ -504,8 +504,11 @@ const SalesMaster = () => {
       const companies = await getCompanyMaster();
       await formatCompanyDetails(companies);
     };
-    if (storeFormPopup == false && showConfirmDialogue == false && deactivatePopupIndustryHead == false) {
-      fetchData();
+    if (storeFormPopup == false && showConfirmDialogue == false && deactivatePopupIndustryHead == false){
+      const timeoutId = setTimeout(() => {
+        fetchData();
+      }, 100);
+      return () => clearTimeout(timeoutId);
     }
   }, [storeFormPopup, showConfirmDialogue,deactivatePopupIndustryHead]);
 

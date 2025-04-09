@@ -1453,8 +1453,7 @@ const InvoiceMaster = () => {
             const form = _.cloneDeep(clientForm);
             form.tax_type.value = 'Export';
             form.tax_type.disable = true;
-            form.tax_code.value = null;
-            form.tax_code.disable = true;
+            form.tax_code.value = null; 
             form.tax_code.validation.required = false;
             setClientForm(form);
         } else {
@@ -1466,7 +1465,6 @@ const InvoiceMaster = () => {
             form.tax_type.options = taxDetails;
             form.tax_type.disable = false;
             form.tax_type.value = null;
-            form.tax_code.disable = false;
             form.tax_code.value = null;
             form.tax_code.validation.required = true;
             setClientForm(form);
@@ -1598,8 +1596,19 @@ const InvoiceMaster = () => {
 
         if (form?.tax_type?.value) {
             const taxCodeOptions = taxMaster?.filter((tax: any) => tax?.taxType == form?.tax_type?.value)?.map((item: any) => item?.taxFieldName);
-            form.tax_code.options = taxCodeOptions;
-        }
+            if (clientNameCountry.toLowerCase() !== "india") {
+                if (!taxCodeOptions.includes("Zero")) {
+                    taxCodeOptions.unshift("Zero");
+                }
+            
+                // Only default to "Zero" if nothing is selected
+                if (!form.tax_code.value ) {
+                    form.tax_code.value = ["Zero"];
+                }
+            }
+           form.tax_code.options = taxCodeOptions;
+           
+        }        
 
         if (form?.tax_code?.value) {
             const tempSelectedTaxes = filterTaxes(taxMaster, form?.tax_code?.value);
