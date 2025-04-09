@@ -61,7 +61,6 @@ const InvoiceMaster = () => {
             label: "Currency",
             options: [],
             value: null,
-            disabled: true,
             validation: { required: true },
             fieldWidth: "col-md-4",
         },        
@@ -97,9 +96,10 @@ const InvoiceMaster = () => {
             fieldWidth: "col-md-4",
         },
         terms_of_payment: {
-            inputType: "inputNumber",
+            inputType: "inputtext",
             label: "Terms of Payment (In Days)",
             value: null,
+            disable: true,
             validation: { required: false },
             fieldWidth: "col-md-4",
         },
@@ -307,6 +307,14 @@ const InvoiceMaster = () => {
 
     const poContractService = new PoContractService();
     const taxService = new TaxMasterService();
+
+    const countryCurrencyMap : any = {
+        india: "INR",
+        usa: "USD",
+        europe: "EUR",
+        australia: "AUD",
+        dubai: "AED"
+      };
 
     const clientMasterColumns = [
         {
@@ -1195,6 +1203,14 @@ const InvoiceMaster = () => {
             clientFormFieldsStructure.client_name.options = clientListNames;
             const taxDetails = taxMaster.map((item: any) => item?.taxType);
             clientFormFieldsStructure.tax_type.options = taxDetails;
+            console.log("ths is check field",data)
+            const clientData = clientMaster.find((client: any) => client.client_name === data?.client_name);
+            if (clientData) {
+            console.log("Country Name:", clientData?.countryName);
+            clientFormFieldsStructure.currency.value = countryCurrencyMap[clientData?.countryName] || " ";
+            } else {
+             console.log("Country Name not found for the selected client.");
+            }
 
             const configData = poContractConfData.find((item: any) => item.client_name == data?.client_name)
             if (configData) {
@@ -1240,7 +1256,7 @@ const InvoiceMaster = () => {
                 }
             });
 
-
+  
             clientFormFieldsStructure.projectService.options = Array.isArray(poMastersConfigData?.projectService)
                 ? poMastersConfigData?.projectService.map((item: any) => ({
                     label: item?.name,
@@ -1269,10 +1285,9 @@ const InvoiceMaster = () => {
             clientFormFieldsStructure.note_two.value = data?.note_two || "";
             clientFormFieldsStructure.projectService.value = data?.projectService ? data?.projectService : "";
 
-
             // clientFormFieldsStructure.po_number.disable = true;
             clientFormFieldsStructure.billed_hours.disable = true;
-            clientFormFieldsStructure.invoice_amount.disable = true;
+            // clientFormFieldsStructure.invoice_amount.disable = true;
             clientFormFieldsStructure.contract_name.disable = true;
 
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
@@ -1449,16 +1464,15 @@ const InvoiceMaster = () => {
         return taxMaster.filter((tax: any) => taxTypes.includes(tax.taxFieldName));
     };
     useEffect(() => {
+        const form = _.cloneDeep(clientForm);
         console.log(`this is country`, clientNameCountry)
         if (clientNameCountry.toLowerCase() !== "india") {
-            const form = _.cloneDeep(clientForm);
             form.tax_type.value = 'Export';
             form.tax_type.disable = true;
             form.tax_code.value = null; 
             form.tax_code.validation.required = false;
             setClientForm(form);
         } else {
-            const form = _.cloneDeep(clientForm);
             const taxDetails = taxMaster.map((item: any) => ({
                 label: item?.taxType,
                 value: item?.taxType
@@ -1482,7 +1496,7 @@ const InvoiceMaster = () => {
         // if (form.client_name?.value !== clientForm?.client_name?.value) {
         const selectedClient = form.client_name?.value
         if (selectedClient) {
-            console.log(`this is client datata`,selectedClient)
+            console.log(`this is client datata`,form)
             const tempData = poContractsData
                 ?.filter((item: any) => item?.client_name === selectedClient)
                 .map((ele: any) => ele?.po_name)
@@ -1491,8 +1505,10 @@ const InvoiceMaster = () => {
             form.contract_name.options = tempData || [];
             const clientData = clientMaster.find((client: any) => client.client_name === selectedClient);
              if (clientData) {
-          console.log("Country Name:", clientData.countryName,form);
+        //   console.log("Country Name:", clientData.countryName,form);
           setClientNameCountry(clientData.countryName);
+          const country = clientNameCountry?.toLowerCase();
+          form.currency.value = countryCurrencyMap[country] || " ";
            } else {
               console.log("Country Name not found for the selected client.");
          }
@@ -1501,6 +1517,7 @@ const InvoiceMaster = () => {
             const selectedContract = poContractsData?.filter((item: any) => item?.client_name === selectedClient)?.find((ele: any) => ele?.po_name == form.contract_name?.value)
             form.po_number.value = selectedContract?.poNumber;
             form.po_amount.value = selectedContract?.poAmount;
+            form.terms_of_payment.value = selectedContract?.creditPeriod?.toString() || "";
             form.remain_po_amount.value = selectedContract?.dueAmount;
             form.company_name.value = selectedContract?.companyName;
 
