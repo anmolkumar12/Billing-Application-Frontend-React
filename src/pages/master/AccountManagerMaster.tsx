@@ -124,7 +124,7 @@ const AccountManagerMaster = () => {
       inputType: "singleDatePicker",
       label: "Select Deactivation Date",
       value: null,
-      min: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),
+      min: new Date(new Date().getFullYear(), new Date().getMonth() - 3, new Date().getDate()),
       max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
         required: true,

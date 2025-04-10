@@ -132,7 +132,7 @@ const SalesMaster = () => {
       inputType: "singleDatePicker",
       label: "Select Deactivation Date",
       value: null,
-      min: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),
+      min: new Date(new Date().getFullYear(), new Date().getMonth() - 3, new Date().getDate()),
       max: new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate()),
       validation: {
         required: true,
@@ -540,6 +540,9 @@ const SalesMaster = () => {
         el.deactivationDate = el?.deactivationDate ? moment(el?.deactivationDate).format("DD-MM-YYYY") : null
         el.updated_at = el?.updated_at ? moment(el?.updated_at).format("DD-MM-YYYY HH:mm:ss") : null
       })
+
+      console.log('kkkkkkkkkkkkkkkk', response.salesManagers, industriesData);
+      
       setSalesMaster(response?.salesManagers);
       return response?.salesManagers;
     } catch (error) {
