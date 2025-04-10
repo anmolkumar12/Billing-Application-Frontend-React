@@ -1559,7 +1559,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
           paginator={true}
           sortable={true}
           headerRequired={true}
-          scrollHeight={"calc(100vh - 80px)"}
+          scrollHeight={"calc(100vh - 120px)"}
           downloadedfileName={"PO"}
         />
         {showConfirmDialogue ? (

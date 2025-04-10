@@ -451,7 +451,8 @@ const FormComponent: React.FC<{
             !value.hideField
           ) {
             return (
-              <div className={value.fieldWidth || 'col-md-3'} key={key + 'div'}>
+              <div className={`${value.fieldWidth || 'col-md-3'} inputSwitchAlign`}
+              key={key + 'div'}>
                 <div className="dynamic-common-form">
                   <div className="log-input">
                     <InputSwitchComponent

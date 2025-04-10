@@ -24,7 +24,7 @@ const TechGroupMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-12",
     },
     description: {
       inputType: "inputtextarea",
