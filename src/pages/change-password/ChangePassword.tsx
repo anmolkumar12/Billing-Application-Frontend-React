@@ -111,6 +111,7 @@ const ChangePassword: React.FC = () => {
   }
 
   const resetPasswordFormHandler = (event?: FormEvent) => {
+    console.log(`hdsjadsddas`)
     event?.preventDefault()
     if (checkFormValidity()) {
       const formData: { [key: string]: any } = {}      
@@ -122,7 +123,7 @@ const ChangePassword: React.FC = () => {
         .then((response: any) => {
           if (
             response &&
-            response?.statusCode === HTTP_RESPONSE.REQUEST_SUCCESS
+            response?.statusCode === HTTP_RESPONSE.SUCCESS
           ) {
             ToasterService.show(response.message, CONSTANTS.SUCCESS)
             TokenService().clearAllToken()

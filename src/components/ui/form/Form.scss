@@ -61,3 +61,9 @@
 .cstm-number-cls .p-inputnumber {
   width: 100% !important;
 }
+
+.inputSwitchAlign{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

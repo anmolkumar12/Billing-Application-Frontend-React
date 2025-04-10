@@ -122,7 +122,7 @@ const ClientShipToMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-6  mg-12-t",
+      fieldWidth: "col-md-6",
     },
   };
 

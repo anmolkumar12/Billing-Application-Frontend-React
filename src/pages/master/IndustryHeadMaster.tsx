@@ -40,7 +40,7 @@ const IndustryHeadMaster = () => {
       validation: {
         required: true,
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     industry_head_email: {
       inputType: "inputtext",
@@ -50,7 +50,7 @@ const IndustryHeadMaster = () => {
         required: true,
         email:true
       },
-      fieldWidth: "col-md-6",
+      fieldWidth: "col-md-4",
     },
     industryNames: {
       inputType: "multiSelect",
@@ -69,7 +69,7 @@ const IndustryHeadMaster = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-4  mg-12-t",
+      fieldWidth: "col-md-4 ",
     },
     companyName: {
       inputType: "singleSelect",

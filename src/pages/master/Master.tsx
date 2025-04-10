@@ -3106,7 +3106,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-3  mg-12-t",
+      fieldWidth: "col-md-3",
     },
     msa_flag: {
       inputType: "inputSwitch",
@@ -3115,7 +3115,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-3  mg-12-t",
+      fieldWidth: "col-md-3",
     },
     non_solicitation_clause: {
       inputType: "inputSwitch",
@@ -3124,7 +3124,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-3  mg-12-t",
+      fieldWidth: "col-md-3",
     },
     use_logo_permission: {
       inputType: "inputSwitch",
@@ -3133,7 +3133,7 @@ const Master: React.FC = () => {
       validation: {
         required: false,
       },
-      fieldWidth: "col-md-3  mg-12-t",
+      fieldWidth: "col-md-3 ",
     },
   };
 

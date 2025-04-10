@@ -1503,6 +1503,7 @@ const InvoiceMaster = () => {
                 .filter((name: any) => name !== null && name !== undefined); // Remove null/undefined values
 
             form.contract_name.options = tempData || [];
+            console.log(`this is data to check`,clientMaster,selectedClient)
             const clientData = clientMaster.find((client: any) => client.client_name === selectedClient);
              if (clientData) {
         //   console.log("Country Name:", clientData.countryName,form);
@@ -1897,7 +1898,7 @@ const InvoiceMaster = () => {
                             paginator={true}
                             sortable={true}
                             headerRequired={true}
-                            scrollHeight={"calc(100vh - 200px)"}
+                            scrollHeight={"calc(100vh - 120px)"}
                             downloadedfileName={"Invoice"}
                         />
                         {showConfirmDialogue ? (
@@ -1945,7 +1946,7 @@ const InvoiceMaster = () => {
                                                 onClick={addRow}
                                                 label="Add Row"
                                                 style={{
-                                                    backgroundColor: "#007bff",
+                                                    background: "linear-gradient(rgb(70, 97, 255) 1%, rgb(46, 68, 173) 86%)",
                                                     color: "white",
                                                     padding: "4px 12px",
                                                     borderRadius: "5px",

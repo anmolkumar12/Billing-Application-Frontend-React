@@ -44,7 +44,7 @@ const ClientMaster = () => {
             validation: {
                 required: false,
             },
-            fieldWidth: "col-md-4 mg-12-t",
+            fieldWidth: "col-md-4",
         },
         vega_client_name: {
             inputType: "inputtext",
@@ -162,7 +162,7 @@ const ClientMaster = () => {
             validation: {
               required: false,
             },
-            fieldWidth: "col-md-4 mg-12-t",
+            fieldWidth: "col-md-4 ",
         },
         sales_person: {
             inputType: "multiSelect",
@@ -209,7 +209,7 @@ const ClientMaster = () => {
             validation: {
                 required: false,
             },
-            fieldWidth: "col-md-4 mg-12-t",
+            fieldWidth: "col-md-4 ",
         },
         nda_flag: {
             inputType: "inputSwitch",
@@ -218,7 +218,7 @@ const ClientMaster = () => {
             validation: {
                 required: false,
             },
-            fieldWidth: "col-md-4 mg-12-t",
+            fieldWidth: "col-md-4 ",
         },
         non_solicitation_clause: {
             inputType: "inputSwitch",
@@ -227,7 +227,7 @@ const ClientMaster = () => {
             validation: {
                 required: false,
             },
-            fieldWidth: "col-md-4 mg-12-t",
+            fieldWidth: "col-md-4 ",
         },
         use_logo_permission: {
             inputType: "inputSwitch",
@@ -236,7 +236,7 @@ const ClientMaster = () => {
             validation: {
                 required: false,
             },
-            fieldWidth: "col-md-4 mg-12-t",
+            fieldWidth: "col-md-4 ",
         },
     };
 

@@ -125,8 +125,8 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
                           ></span>
                           {!isCollapseSideMenu ? (
                             <>
-                              <span>{menuItem.name}</span>
-                            </>
+                            {menuItem.name === 'Credit Note' ?<span>{'Credit\u00A0Note'}</span> : <span>{menuItem.name}</span>}
+                          </>
                           ) : (
                             <></>
                           )}

@@ -438,6 +438,7 @@ const CurrencyMaster = () => {
           resizableColumns
           rows={20}
           paginator
+          scrollHeight={"calc(100vh - 150px)"}
           sortable
           headerRequired
           downloadedfileName={"Currency_Table"}

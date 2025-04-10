@@ -33,6 +33,7 @@ import { Button } from "primereact/button";
 import moment from "moment";
 import { InvoiceService } from "../../services/invoice/invoice.service";
 import { CreditNoteService } from "../../services/credit-note/credit-note.service";
+import CurrencyMasterService from "../../services/masters/currency-master/currency.service";
 
 const CreditNoteMaster = () => {
 
@@ -53,6 +54,14 @@ const CreditNoteMaster = () => {
             validation: { required: true },
             fieldWidth: "col-md-4",
         },
+        currency: {
+            inputType: "singleSelect",
+            label: "Currency",
+            options: [],
+            value: null,
+            validation: { required: true },
+            fieldWidth: "col-md-4",
+        }, 
         invoice_number: {
             inputType: "singleSelect",
             label: "Invoice Number",
@@ -81,6 +90,14 @@ const CreditNoteMaster = () => {
         remain_po_amount: {
             inputType: "inputNumber",
             label: "Remain PO Amount",
+            value: null,
+            disable: true,
+            validation: { required: false },
+            fieldWidth: "col-md-4",
+        },
+        terms_of_payment: {
+            inputType: "inputtext",
+            label: "Terms of Payment (In Days)",
             value: null,
             disable: true,
             validation: { required: false },
@@ -189,7 +206,13 @@ const CreditNoteMaster = () => {
         },
     };
 
-
+    const countryCurrencyMap : any = {
+        india: "INR",
+        usa: "USD",
+        europe: "EUR",
+        australia: "AUD",
+        dubai: "AED"
+      };
 
     const msaFormFields = {
         start_date: {
@@ -239,6 +262,8 @@ const CreditNoteMaster = () => {
     const [clientMaster, setClientMaster] = useState<any>([]);
     const [salesMaster, setSalesMaster] = useState<any>([]);
     const [showMsaUpdatePopup, setShowMsaUpdatePopup] = useState<boolean>(false);
+    const [currencyList,setCurrencyList] = useState<any>([]);
+    const [clientNameCountry,setClientNameCountry] = useState<any>("");
 
     const [poContractsData, setPoContractData] = useState<any>([]);
     const [clientListNames, setClientListNames] = useState<any>([]);
@@ -272,6 +297,7 @@ const CreditNoteMaster = () => {
     const accountService = new AccountMasterService();
     const accountsService = new AccountsMasterService();
     const creditNoteService = new CreditNoteService();
+    const currencyService = new CurrencyMasterService();
 
     const cookies = new Cookies();
     const userInfo = cookies.get("userInfo");
@@ -563,11 +589,60 @@ const CreditNoteMaster = () => {
             getTaxMaster();
             getCompanyLocationMaster();
             getPOContractMasterConfigData();
+            getClientMasterData();
+            getCurrencyMaster(); 
         };
         if (clientFormPopup == false && showConfirmDialogue == false) {
             fetchData();
         }
     }, [clientFormPopup, showConfirmDialogue]);
+
+    const getClientMasterData = async () => {
+        try {
+            const response = await clientService.getClientMaster();     
+            if (!response) {
+                console.error('No client data received from API');
+                setClientMaster([]);
+                return [];
+            }
+            console.log('Client data received:', response?.clients);
+            const activeClients = response?.clients?.filter((client: any) => client?.isactive || client?.isActive) || [];
+            setClientMaster(activeClients);
+            return activeClients;
+        } catch (error) {
+            console.error('Error fetching client master data:', error);
+            setClientMaster([]);
+            return [];
+        }
+    };
+
+    const getCurrencyMaster = async () => {
+            try {
+                const response = await currencyService.getCurrencyMasterData();
+                if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+                    const uniqueMap = new Map();
+            
+                    response.data.forEach((item: { currencyCode: string }) => {
+                        if (!uniqueMap.has(item.currencyCode)) {
+                            uniqueMap.set(item.currencyCode, {
+                                label: item.currencyCode,
+                                value: item.currencyCode
+                            });
+                        }
+                    });
+                    const currencyOptions = Array.from(uniqueMap.values());
+                    setCurrencyList(currencyOptions)
+            
+                    const form = _.cloneDeep(clientForm);
+                    form.currency.options = currencyOptions;
+                    setClientForm(form);
+            
+                    console.log("Currency options (deduplicated):", currencyOptions);
+                }
+            } catch (error) {
+                console.error("Failed to fetch currency data", error);
+            }        
+        };
 
     useEffect(() => {
         if (!selectedContractData?.po_creation_date) return;
@@ -1067,6 +1142,14 @@ const CreditNoteMaster = () => {
             clientFormFieldsStructure.client_name.options = clientListNames;
             const taxDetails = taxMaster.map((item: any) => item?.taxType);
             clientFormFieldsStructure.tax_type.options = taxDetails;
+            console.log("ths is check field",data,clientMaster.client_name,data?.client_name)
+            const clientData = clientMaster.find((client: any) => client.client_name === data?.client_name);
+            if (clientData) {
+            console.log("Country Name:", clientData?.countryName);
+            clientFormFieldsStructure.currency.value = countryCurrencyMap[clientData?.countryName] || " ";
+            } else {
+             console.log("Country Name not found for the selected client.");
+            }
 
             const configData = poContractConfData.find((item: any) => item.client_name == data?.client_name)
             if (configData) {
@@ -1137,8 +1220,11 @@ const CreditNoteMaster = () => {
             clientFormFieldsStructure.po_amount.value = data?.po_amount || "";
             clientFormFieldsStructure.remain_po_amount.value = data?.remain_po_amount || "";
             clientFormFieldsStructure.invoice_date.value = data?.invoice_date ? parseDateString(data?.invoice_date) : null;
+            clientFormFieldsStructure.terms_of_payment.value = data?.terms_of_payment || '';
             // clientFormFieldsStructure.contract_type.value = data?.contract_type || "";
             clientFormFieldsStructure.tax_type.value = data?.tax_type || "";
+            clientFormFieldsStructure.currency.options = currencyList || [];
+            clientFormFieldsStructure.currency.value = data?.currency || "";
             clientFormFieldsStructure.tax_code.value = data?.tax_code ? data?.tax_code.split(",") : [];
             clientFormFieldsStructure.invoice_amount.value = data?.invoice_amount || "";
             clientFormFieldsStructure.note_one.value = data?.note_one || "";
@@ -1148,7 +1234,7 @@ const CreditNoteMaster = () => {
 
             // clientFormFieldsStructure.po_number.disable = true;
             // clientFormFieldsStructure.po_amount.disable = true;
-            clientFormFieldsStructure.invoice_amount.disable = true;
+            // clientFormFieldsStructure.invoice_amount.disable = true;
             clientFormFieldsStructure.contract_name.disable = true;
 
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
@@ -1339,11 +1425,21 @@ const CreditNoteMaster = () => {
                 .filter((name: any) => name !== null && name !== undefined); // Remove null/undefined values
 
             form.contract_name.options = tempData || [];
+            const clientData = clientMaster.find((client: any) => client.client_name === selectedClient);
+             if (clientData) {
+        //   console.log("Country Name:", clientData.countryName,form);
+          setClientNameCountry(clientData.countryName);
+          const country = clientNameCountry?.toLowerCase();
+          form.currency.value = countryCurrencyMap[country] || " ";
+           } else {
+              console.log("Country Name not found for the selected client.");
+         }
         }
         if ((form.contract_name?.value != clientForm?.contract_name?.value) && form.contract_name?.value) {
             const selectedContract = poContractsData?.filter((item: any) => item?.client_name === selectedClient)?.find((ele: any) => ele?.po_name == form.contract_name?.value)
             form.po_number.value = selectedContract?.poNumber;
             form.po_amount.value = selectedContract?.poAmount;
+            form.terms_of_payment.value = selectedContract?.creditPeriod?.toString() || "";
             form.remain_po_amount.value = selectedContract?.dueAmount;
             form.company_name.value = selectedContract?.companyName;
             setSelectedContractData(selectedContract)
@@ -1466,6 +1562,12 @@ const CreditNoteMaster = () => {
         return clientName.split(" ").map((word: any) => word[0]).join("").toUpperCase();
     };
 
+    const calculateDueDate = (invoiceDate: Date, days: number) => {
+        const dueDate = new Date(invoiceDate);
+        dueDate.setDate(dueDate.getDate() + days);
+        return dueDate;
+    };
+
     const createNewClient = async (event: FormEvent) => {
         event.preventDefault();
         let companyValidityFlag = true;
@@ -1537,6 +1639,10 @@ const CreditNoteMaster = () => {
         const financialYear = getFinancialYear(clientForm.invoice_date.value);
         const invoiceName = `${clientAbbr}/${financialYear}`;
 
+        const invoiceDate = clientForm.invoice_date.value;
+        const termsOfPayment = parseInt(clientForm.terms_of_payment.value) || 0;
+        const dueDate = calculateDueDate(invoiceDate, termsOfPayment);
+
         const obj = {
             client_name: clientForm.client_name.value || '',
             client_id: clientId,
@@ -1548,6 +1654,8 @@ const CreditNoteMaster = () => {
             po_amount: clientForm.po_amount.value || '',
             remain_po_amount: clientForm.remain_po_amount.value || '',
             invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
+            due_date: formatDate(dueDate),
+            terms_of_payment: clientForm.terms_of_payment.value || '',
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
             clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
             clientContact: clientForm.clientContact.value?.toString() || '',
@@ -1560,6 +1668,7 @@ const CreditNoteMaster = () => {
             projectService_names: clientForm.projectService.options.find((item: any) => item.value === clientForm.projectService.value)?.label || '',
             projectService: clientForm.projectService.value || '',
             tax_type: clientForm.tax_type.value || '',
+            currency: clientForm.currency.value?.value || clientForm.currency.value || '',
             tax_type_id: taxTypeId || 0,
             tax_code: clientForm.tax_code.value?.toString() || '',
             tax_code_id: taxCodeId,
@@ -1676,7 +1785,7 @@ const CreditNoteMaster = () => {
                     paginator={true}
                     sortable={true}
                     headerRequired={true}
-                    scrollHeight={"calc(100vh - 200px)"}
+                    scrollHeight={"calc(100vh - 120px)"}
                     downloadedfileName={"Brandwise_Denomination_table"}
                 />
                 {showConfirmDialogue ? (
@@ -1724,7 +1833,7 @@ const CreditNoteMaster = () => {
                                         onClick={addRow}
                                         label="Add Row"
                                         style={{
-                                            backgroundColor: "#007bff",
+                                            background: "linear-gradient(rgb(70, 97, 255) 1%, rgb(46, 68, 173) 86%)",
                                             color: "white",
                                             padding: "4px 12px",
                                             borderRadius: "5px",

@@ -631,3 +631,7 @@ button:focus:not(:focus-visible) {
 th:first-child, td:first-child {
   position: sticky !important;
 }
+
+InputSwitch{
+  display: flex;
+}
