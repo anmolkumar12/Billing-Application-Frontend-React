@@ -117,8 +117,8 @@ const Login: React.FC = () => {
             cookies.set('userRole', response?.data?.role)
             AuthService.userInfo.next(userInfo)
             AuthService.currentRole.next(response?.data?.role)
+            ToasterService.show('Logged In Successfully.', CONSTANTS.SUCCESS)
           }
-          ToasterService.show('Logged In Successfully.', CONSTANTS.SUCCESS)
           history.push(ROUTE_CONSTANTS.LAYOUT)
           console.log('login page only')
           // }
