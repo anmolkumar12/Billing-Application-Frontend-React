@@ -795,7 +795,8 @@ const InvoiceMaster = () => {
             const response = await taxService.getTax();
             if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
                 console.log('getTaxMaster ', response.data);
-                setTaxMaster(response.data);
+                const temp = response.data?.filter((el: any) => el?.isActive == 1);
+                setTaxMaster(temp);
                 closeFormPopup();
             }
         } catch (error: any) {
@@ -1631,6 +1632,8 @@ const InvoiceMaster = () => {
 
         if (form?.tax_code?.value) {
             const tempSelectedTaxes = filterTaxes(taxMaster, form?.tax_code?.value);
+            console.log('tempSelectedTaxes', tempSelectedTaxes, taxMaster, form?.tax_code?.value);
+            
             setSelectedTaxes(tempSelectedTaxes)
         }
 
@@ -1855,6 +1858,9 @@ const InvoiceMaster = () => {
     const totalAmount = invoiceItems.reduce((sum: any, item: any) => sum + (parseFloat(item.amount) || 0), 0);
 
     const gstAmount = selectedTaxes.reduce((sum: any, tax: any) => sum + (totalAmount * (tax.taxPercentage / 100)), 0);
+
+    console.log('selectedTaxes', selectedTaxes);
+    
 
     const taxCalculations = selectedTaxes.map((tax: any) => ({
         ...tax,
