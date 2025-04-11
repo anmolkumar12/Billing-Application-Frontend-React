@@ -1745,6 +1745,7 @@ const CreditNoteMaster = () => {
             clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),
             clientShipAddress_name: getNamesFromOptions(clientForm.clientShipAddress),
             // clientContact_name: getNamesFromOptions(clientForm.clientContact),
+            
             clientContact_name: clientForm.clientContact.options.find((item: any) => item.value === clientForm.clientContact.value)?.label || '',
             total_amount: invoiceData.totalAmount,
             final_amount: invoiceData.finalAmount,
