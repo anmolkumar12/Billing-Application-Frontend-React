@@ -1434,7 +1434,7 @@ const CreditNoteMaster = () => {
                 form.tax_type.value = 'Export';
                 form.tax_type.disable = true;
                 form.tax_code.value = null; 
-                form.tax_code.validation.required = false;
+                // form.tax_code.validation.required = false;
                 setClientForm(form);
             } else {
                 const taxDetails = taxMaster.map((item: any) => ({
@@ -1445,7 +1445,7 @@ const CreditNoteMaster = () => {
                 form.tax_type.disable = false;
                 form.tax_type.value = null;
                 form.tax_code.value = null;
-                form.tax_code.validation.required = true;
+                // form.tax_code.validation.required = true;
                 setClientForm(form);
             }
         }, [clientNameCountry]); 
@@ -1722,6 +1722,7 @@ const CreditNoteMaster = () => {
             invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
             due_date: formatDate(dueDate),
             terms_of_payment: clientForm.terms_of_payment.value || '',
+            iec_code: iecCodeSubmit || '',
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
             clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
             clientContact: clientForm.clientContact.value?.toString() || '',
@@ -1937,8 +1938,9 @@ const CreditNoteMaster = () => {
                                     )} />
                                     <Column field="sacCode" header="SAC Code" body={(rowData, { rowIndex }) => (
                                         <InputText
-                                            value={rowData.sacCode}
+                                            value={clientNameCountry !== "India" ? '' : rowData.sacCode}
                                             onChange={(e) => handleInputChange(e, rowIndex, "sacCode")}
+                                            disabled={clientNameCountry !== "India"}
                                             style={{
                                                 height: "28px",
                                                 fontSize: "14px",
