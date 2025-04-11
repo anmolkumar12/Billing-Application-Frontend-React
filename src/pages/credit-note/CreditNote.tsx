@@ -1722,7 +1722,7 @@ const CreditNoteMaster = () => {
             invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
             due_date: formatDate(dueDate),
             terms_of_payment: clientForm.terms_of_payment.value || '',
-            iec_code: iecCodeSubmit || '',
+            iec_code: iecCodeSubmit || '' ,
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
             clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
             clientContact: clientForm.clientContact.value?.toString() || '',
