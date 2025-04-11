@@ -264,6 +264,8 @@ const CreditNoteMaster = () => {
     const [showMsaUpdatePopup, setShowMsaUpdatePopup] = useState<boolean>(false);
     const [currencyList,setCurrencyList] = useState<any>([]);
     const [clientNameCountry,setClientNameCountry] = useState<any>("");
+    const [clientBillToMaster,setClientBillToMaster] = useState<any>([]);
+    const [iecCodeSubmit, setIecCodeSubmit] = useState<any>(null)
 
     const [poContractsData, setPoContractData] = useState<any>([]);
     const [clientListNames, setClientListNames] = useState<any>([]);
@@ -589,6 +591,7 @@ const CreditNoteMaster = () => {
             getTaxMaster();
             getCompanyLocationMaster();
             getPOContractMasterConfigData();
+            getClientBillToMaster();
             getClientMasterData();
             getCurrencyMaster(); 
         };
@@ -596,6 +599,20 @@ const CreditNoteMaster = () => {
             fetchData();
         }
     }, [clientFormPopup, showConfirmDialogue]);
+
+    const getClientBillToMaster = async () => {
+        setLoader(true);
+        try {
+          const response = await clientService.getClientBillToMaster();
+          setClientBillToMaster(response?.data);
+        console.log('bbbbbbbbbb', response?.data);
+          return response?.data;
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoader(false);
+        }
+      };
 
     const getClientMasterData = async () => {
         try {
@@ -1410,6 +1427,29 @@ const CreditNoteMaster = () => {
         return taxMaster.filter((tax: any) => taxTypes.includes(tax.taxFieldName));
     };
 
+    useEffect(() => {
+            const form = _.cloneDeep(clientForm);
+            console.log(`this is country`, clientNameCountry)
+            if (clientNameCountry.toLowerCase() !== "india") {
+                form.tax_type.value = 'Export';
+                form.tax_type.disable = true;
+                form.tax_code.value = null; 
+                form.tax_code.validation.required = false;
+                setClientForm(form);
+            } else {
+                const taxDetails = taxMaster.map((item: any) => ({
+                    label: item?.taxType,
+                    value: item?.taxType
+                }));
+                form.tax_type.options = taxDetails;
+                form.tax_type.disable = false;
+                form.tax_type.value = null;
+                form.tax_code.value = null;
+                form.tax_code.validation.required = true;
+                setClientForm(form);
+            }
+        }, [clientNameCountry]); 
+
     const clientFormHandler = async (currentForm: FormType) => {
         const form = _.cloneDeep(currentForm);
 
@@ -1426,6 +1466,17 @@ const CreditNoteMaster = () => {
 
             form.contract_name.options = tempData || [];
             const clientData = clientMaster.find((client: any) => client.client_name === selectedClient);
+            const matchedClient = clientBillToMaster?.find(
+                (item: any) => item?.client_name === selectedClient
+              );
+            
+              if (matchedClient) {
+                setIecCodeSubmit(matchedClient.iec_code);
+              }
+              else{
+                setIecCodeSubmit(null);
+              }
+              console.log(`this is iec code`,iecCodeSubmit)
              if (clientData) {
         //   console.log("Country Name:", clientData.countryName,form);
           setClientNameCountry(clientData.countryName);
@@ -1519,10 +1570,25 @@ const CreditNoteMaster = () => {
 
         }
 
+        // if (form?.tax_type?.value) {
+        //     const taxCodeOptions = taxMaster?.filter((tax: any) => tax?.taxType == form?.tax_type?.value)?.map((item: any) => item?.taxFieldName);
+        //     form.tax_code.options = taxCodeOptions;
+        // }
         if (form?.tax_type?.value) {
             const taxCodeOptions = taxMaster?.filter((tax: any) => tax?.taxType == form?.tax_type?.value)?.map((item: any) => item?.taxFieldName);
-            form.tax_code.options = taxCodeOptions;
-        }
+            if (clientNameCountry.toLowerCase() !== "india") {
+                if (!taxCodeOptions.includes("Zero")) {
+                    taxCodeOptions.unshift("Zero");
+                }
+            
+                // Only default to "Zero" if nothing is selected
+                if (!form.tax_code.value ) {
+                    form.tax_code.value = ["Zero"];
+                }
+            }
+           form.tax_code.options = taxCodeOptions;
+           
+        }  
 
         if (form?.tax_code?.value) {
             const tempSelectedTaxes = filterTaxes(taxMaster, form?.tax_code?.value);

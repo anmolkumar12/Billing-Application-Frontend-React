@@ -258,6 +258,7 @@ const InvoiceMaster = () => {
     const [showMsaUpdatePopup, setShowMsaUpdatePopup] = useState<boolean>(false);
     const [clientNameCountry,setClientNameCountry] = useState<any>("");
     const [currencyList,setCurrencyList] = useState<any>([]);
+    const [clientBillToMaster,setClientBillToMaster] = useState<any>([]);
 
 
     const [poContractsData, setPoContractData] = useState<any>([]);
@@ -273,7 +274,7 @@ const InvoiceMaster = () => {
     const [downloadPDF, setDownloadPDF] = useState<any>(false)
     const [downloadExportPDF, setDownloadExportPDF] = useState<any>(false)
     const [idForBillTOiecCode, setIdForBillTOiecCode] = useState<any>()
-    const [iecCodeSubmit, setIecCodeSubmit] = useState<any>()
+    const [iecCodeSubmit, setIecCodeSubmit] = useState<any>(null)
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -629,12 +630,27 @@ const InvoiceMaster = () => {
             getCompanyLocationMaster();
             getPOContractMasterConfigData();
             getClientMasterData();
+            getClientBillToMaster();
             getCurrencyMaster();   
         };
         if (clientFormPopup == false && showConfirmDialogue == false) {
             fetchData();
         }
     }, [clientFormPopup, showConfirmDialogue]);
+
+    const getClientBillToMaster = async () => {
+        setLoader(true);
+        try {
+          const response = await clientService.getClientBillToMaster();
+          setClientBillToMaster(response?.data);
+        console.log('bbbbbbbbbb', response?.data);
+          return response?.data;
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoader(false);
+        }
+      };
 
     const getCurrencyMaster = async () => {
         try {
@@ -1506,6 +1522,18 @@ const InvoiceMaster = () => {
             form.contract_name.options = tempData || [];
             console.log(`this is data to check`,clientMaster,selectedClient)
             const clientData = clientMaster.find((client: any) => client.client_name === selectedClient);
+            
+            const matchedClient = clientBillToMaster?.find(
+                (item: any) => item?.client_name === selectedClient
+              );
+            
+              if (matchedClient) {
+                setIecCodeSubmit(matchedClient.iec_code);
+              }
+              else{
+                setIecCodeSubmit(null);
+              }
+              console.log(`this is iec code`,iecCodeSubmit)
              if (clientData) {
         //   console.log("Country Name:", clientData.countryName,form);
           setClientNameCountry(clientData.countryName);
@@ -1553,13 +1581,14 @@ const InvoiceMaster = () => {
                     };
                 });
                 console.log(`adsasdasdasdasda`,configData,idForBillTOiecCode)
-                configData?.clientBill?.map((item: any) => {
-                    if (item.id?.toString() === idForBillTOiecCode) {
-                        setIecCodeSubmit( item.iec_code);
-                      console.log("Matched IEC Code:", item.iec_code);
-                    }
-                    return null; // or just don't return anything if you don't need to collect results
-                  });
+
+                // configData?.clientBill?.map((item: any) => {
+                //     if (item.id?.toString() === idForBillTOiecCode) {
+                //         setIecCodeSubmit( item.iec_code);
+                //       console.log("Matched IEC Code:", item.iec_code);
+                //     }
+                //     return null; // or just don't return anything if you don't need to collect results
+                //   });
                   
                 const defaultBillItem = form.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
                 if (defaultBillItem && defaultBillItem?.value) {
