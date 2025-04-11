@@ -611,6 +611,7 @@ const ClientBillToMaster = () => {
      const form = _.cloneDeep(currentForm);
 
     // const form = _.cloneDeep(currentForm);
+    console.log(`this is a check `,clientBillToMaster)
 
     if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
       const selectedClient = clientMaster?.find(
@@ -619,10 +620,27 @@ const ClientBillToMaster = () => {
       const selectedCountry = countryMaster?.find(
         (item: any) => item?.name == selectedClient?.countryName
       );
+      
       if (selectedCountry) {
         form.country_name.value = selectedClient?.countryName;
+        
+        form.iec_code.disable = selectedClient?.countryName.toLowerCase() === 'india';
+        
         // const stateList = await getStateMaster();
         // console.log('stateList---------------->',stateList);
+        if (form?.client_name?.value) {
+          const matchedClient = clientBillToMaster?.find(
+            (item: any) => item?.client_name === form?.client_name?.value
+          );
+        
+          if (matchedClient) {
+            form.iec_code.value = matchedClient.iec_code;
+            form.iec_code.disable= true;
+          }
+          else{
+            form.iec_code.value = null;
+          }
+        }
         if (stateMaster) {
           // console.log('state-master',stateMaster)
           const stateNames = stateMaster?.map((state: any) => state.stateName);
