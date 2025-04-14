@@ -275,6 +275,7 @@ const InvoiceMaster = () => {
     const [downloadExportPDF, setDownloadExportPDF] = useState<any>(false)
     const [idForBillTOiecCode, setIdForBillTOiecCode] = useState<any>()
     const [iecCodeSubmit, setIecCodeSubmit] = useState<any>(null)
+    const [placeOfSupply, setPlaceOfSupply] = useState<any>(null)
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -1529,8 +1530,10 @@ const InvoiceMaster = () => {
             
               if (matchedClient) {
                 setIecCodeSubmit(matchedClient.iec_code);
+                setPlaceOfSupply(matchedClient.placeOfSupply);
               }
               else{
+                setPlaceOfSupply(null);
                 setIecCodeSubmit(null);
               }
               console.log(`this is iec code`,iecCodeSubmit)
@@ -1572,16 +1575,12 @@ const InvoiceMaster = () => {
                 .map((item: any) => {
                     const address = concatAddresses(item.address1, item.address2, item.address3);
                     setIdForBillTOiecCode(item.id.toString());
-                    console.log(`ajidhsiahwiasnjkdaw`, item.id.toString());
-
                     return {
                     label: address,
                     value: item.id.toString(),
                     isDefault: address === selectedContract?.masterNames?.clientBillTo_names ? 1 : 0
                     };
                 });
-                console.log(`adsasdasdasdasda`,configData,idForBillTOiecCode)
-
                 // configData?.clientBill?.map((item: any) => {
                 //     if (item.id?.toString() === idForBillTOiecCode) {
                 //         setIecCodeSubmit( item.iec_code);
@@ -1795,6 +1794,8 @@ const InvoiceMaster = () => {
             due_date: formatDate(dueDate),
             terms_of_payment: clientForm.terms_of_payment.value || '',
             iec_code: iecCodeSubmit || '',
+            place_of_supply: placeOfSupply || '',
+            is_india : (clientNameCountry.toLowerCase() === "india") ? 1 : 0 ,
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
             clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
             clientContact: clientForm.clientContact.value?.toString() || '',

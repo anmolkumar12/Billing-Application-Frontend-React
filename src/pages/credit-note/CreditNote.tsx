@@ -266,6 +266,7 @@ const CreditNoteMaster = () => {
     const [clientNameCountry,setClientNameCountry] = useState<any>("");
     const [clientBillToMaster,setClientBillToMaster] = useState<any>([]);
     const [iecCodeSubmit, setIecCodeSubmit] = useState<any>(null)
+    const [placeOfSupply, setPlaceOfSupply] = useState<any>(null);
 
     const [poContractsData, setPoContractData] = useState<any>([]);
     const [clientListNames, setClientListNames] = useState<any>([]);
@@ -1472,9 +1473,11 @@ const CreditNoteMaster = () => {
             
               if (matchedClient) {
                 setIecCodeSubmit(matchedClient.iec_code);
+                setPlaceOfSupply(matchedClient.placeOfSupply);
               }
               else{
                 setIecCodeSubmit(null);
+                setPlaceOfSupply(null);
               }
               console.log(`this is iec code`,iecCodeSubmit)
              if (clientData) {
@@ -1723,6 +1726,8 @@ const CreditNoteMaster = () => {
             due_date: formatDate(dueDate),
             terms_of_payment: clientForm.terms_of_payment.value || '',
             iec_code: iecCodeSubmit || '',
+            place_of_supply: placeOfSupply || '',
+            is_india : (clientNameCountry.toLowerCase() === "india") ? 1 : 0 ,
             clientBillTo: clientForm.clientBillTo.value?.toString() || '',
             clientShipAddress: clientForm.clientShipAddress.value?.toString() || '',
             clientContact: clientForm.clientContact.value?.toString() || '',
