@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { ButtonComponent } from "../../components/ui/button/Button";
 import DataTableBasicDemo from "../../components/ui/table/Table";
 import ConfirmDialogue from "../../components/ui/confirm-dialogue/ConfirmDialogue";
@@ -34,6 +34,7 @@ import moment from "moment";
 import { InvoiceService } from "../../services/invoice/invoice.service";
 import { CreditNoteService } from "../../services/credit-note/credit-note.service";
 import CurrencyMasterService from "../../services/masters/currency-master/currency.service";
+import { InputComponent } from "../../components/ui/input/Input";
 
 const CreditNoteMaster = () => {
 
@@ -1810,6 +1811,7 @@ const CreditNoteMaster = () => {
     const handleInputChange = (e: any, index: any, field: any) => {
         const updatedItems = [...invoiceItems];
         updatedItems[index][field] = e.target.value;
+        console.log(`text`,e.target.value)
         setInvoiceItems(updatedItems);
     };
 
@@ -1929,33 +1931,27 @@ const CreditNoteMaster = () => {
                                     }}
                                 >
                                     <Column field="description" header="Description" body={(rowData, { rowIndex }) => (
-                                        <InputText
-                                            value={rowData.description}
-                                            onChange={(e) => handleInputChange(e, rowIndex, "description")}
-                                            style={{
-                                                height: "28px",
-                                                fontSize: "14px",
-                                                padding: "4px 8px",
-                                                borderRadius: "4px",
-                                                border: "1px solid #ccc",
-                                                width: "100%"
-                                            }}
-                                        />
+                                        <InputComponent
+                                        inputtype="inputtext"
+                                        label="Description"
+                                        key={`description-${rowIndex}`}
+                                        value={rowData.description}
+                                        id={`description-${rowIndex}`}
+                                        changed={(newValue: string) => handleInputChange({ target: { value: newValue } }, rowIndex, 'description')}
+                                        blurred={(id: string) => console.log(`Field ${id} blurred`)}
+                                      />
                                     )} />
                                     <Column field="sacCode" header="SAC Code" body={(rowData, { rowIndex }) => (
-                                        <InputText
-                                            value={clientNameCountry !== "India" ? '' : rowData.sacCode}
-                                            onChange={(e) => handleInputChange(e, rowIndex, "sacCode")}
-                                            disabled={clientNameCountry !== "India"}
-                                            style={{
-                                                height: "28px",
-                                                fontSize: "14px",
-                                                padding: "4px 8px",
-                                                borderRadius: "4px",
-                                                border: "1px solid #ccc",
-                                                width: "100%"
-                                            }}
-                                        />
+                                         <InputComponent
+                                         inputtype="inputtext"
+                                         label="SAC Code"
+                                         key={`sacCode-${rowIndex}`}
+                                         value={clientNameCountry !== "India" ? '' : rowData.sacCode}
+                                         id={`sacCode-${rowIndex}`}
+                                         changed={(newValue: string) => handleInputChange({ target: { value: newValue } }, rowIndex, 'sacCode')}
+                                         blurred={(id: string) => console.log(`Field ${id} blurred`)}
+                                         disable={clientNameCountry !== "India"}
+                                       />
                                     )} />
                                     <Column field="amount" header="Amount" body={(rowData, { rowIndex }) => (
                                         <InputNumber
@@ -1964,16 +1960,17 @@ const CreditNoteMaster = () => {
                                             mode="decimal"
                                             style={{
                                                 width: "100%",
-                                                height: "28px",
+                                                height: "35px",
                                                 fontSize: "14px",
                                                 padding: "6px 10px",
                                                 textAlign: "right",
-                                                border: "1px solid #ccc",
+                                                border: "1px solid #b3b3b3",
                                                 borderRadius: "4px",
                                                 backgroundColor: "#fff",
                                                 outline: "none",
                                                 display: 'flex',
                                                 alignItems: 'center',
+                                                marginTop: '20px',
                                                 transition: "border-color 0.2s ease-in-out"
                                             }}
                                             inputStyle={{
