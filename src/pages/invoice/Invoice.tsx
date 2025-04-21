@@ -1636,7 +1636,7 @@ const InvoiceMaster = () => {
                     console.log('tempData', tempData?.map((ele: any) => ele?.label), tempData?.find((ele: any) => ele?.isDefault));
 
                     form.bill_from.options = tempData?.map((ele: any) => ele?.label) || [];
-                    form.bill_from.value = tempData?.find((ele: any) => ele?.isDefault)?.label;
+                    form.bill_from.value = tempData?.find((ele: any) => ele?.isDefault)?.label || '';
                 }
             }
 
