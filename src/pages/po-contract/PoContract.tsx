@@ -24,6 +24,7 @@ import { PoContractService } from "../../services/po-contract/poContract.service
 import EditableTable from "./EditableTable";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import moment from "moment";
+import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 
 const Contract: React.FC = () => {
 
@@ -356,7 +357,9 @@ const Contract: React.FC = () => {
   const userInfo = cookies.get("userInfo");
   const [logoUrl, setLogoUrl] = useState('');
   const [attachments, setAttachments]: any = useState([]);
-   const [isEditState, setIsEditState] = useState<boolean>(false);
+  const [isEditState, setIsEditState] = useState<boolean>(false);
+  const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
+
   const loggedInUserId = userInfo?.userId;
 
   let patchData: any;
@@ -400,6 +403,7 @@ const Contract: React.FC = () => {
   useEffect(() => {
 
     getContractMaster();
+    getCompanyLocationMaster();
     getPoContractConfiguration();
     getPOContractMasterConfigData();
     getPOContractMasterCascadingData()
@@ -407,7 +411,20 @@ const Contract: React.FC = () => {
   }, []);
 
   const poContractService = new PoContractService()
+  const companyService = new CompanyMasterService();
 
+  const getCompanyLocationMaster = async () => {
+      setLoader(true);
+      try {
+        const response = await companyService.getCompanyLocationMaster();
+        setCompanyLocationMaster(response?.locations);
+        return response?.locations;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoader(false);
+      }
+    };
 
   const getContractMaster = async () => {
     setLoader(true);
@@ -698,7 +715,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{rowData?.masterNames?.companyLocation_names}</span>,
+      body: (rowData: any) => <span>{rowData?.companyLocation}</span>,
     },
     {
       label: "P.O Name",
@@ -970,9 +987,18 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         objFormState.companyName.value = configData?.companyInfo.companyName;
         objFormState.companyName.disable = false;
 
-
-        objFormState.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
-        objFormState.companyLocation.value = configData?.companyLocation?.id.toString()
+        objFormState.companyLocation.options = Array.isArray(companyLocationMaster) ? companyLocationMaster.filter((item) => item.companyName === configData?.companyInfo?.companyName)
+        .map((item, index) => {
+          return {
+            label: `${item.address1} ${item.address2} ${item.address3}`,
+            value: `${item.address1} ${item.address2} ${item.address3}`,
+            isDefaultAddress: item.isDefaultAddress,
+          };
+        }) : [];
+        objFormState.companyLocation.value = rowData?.companyLocation.toString();
+        console.log(`this is ssssssss`,rowData?.companyLocation.toString());
+        // objFormState.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
+        // objFormState.companyLocation.value = configData?.companyLocation?.id.toString()
 
       }
       // }
@@ -1200,6 +1226,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     const currentForm = _.cloneDeep(form);
     if (currentForm.client_name.value !== objFormState.client_name.value) {
       // currentForm.start_date.value = parseDateString(data?.fromDate);
+      console.log(`this issssssssssssssssss`,poContractConfData,companyLocationMaster)
       const configData = poContractConfData.find((item: any) => item.client_name == currentForm.client_name.value)
       if (configData) {
         currentForm.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
@@ -1231,7 +1258,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
           currentForm.clientShipAddress.value = null;
         }
 
-        console.log('configData?.contacts', configData?.contacts);
+        console.log('configData?.contacts', configData);
 
         currentForm.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
           return {
@@ -1256,9 +1283,24 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         currentForm.companyName.value = configData?.companyInfo.companyName;
         currentForm.companyName.disable = false;
 
-
-        currentForm.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
-        currentForm.companyLocation.value = configData?.companyLocation?.id.toString()
+       // Filter and map the company location options
+        currentForm.companyLocation.options = Array.isArray(companyLocationMaster) ? companyLocationMaster.filter((item) => item.companyName === configData?.companyInfo?.companyName)
+        .map((item, index) => {
+          return {
+            label: `${item.address1} ${item.address2} ${item.address3}`,
+            value:  `${item.address1} ${item.address2} ${item.address3}`, 
+            isDefaultAddress: item.isDefaultAddress,
+          };
+        }) : [];
+        const defaultContactLocation = currentForm.companyLocation.options.find((ele :any) => (ele.isDefaultAddress === 1));
+        if (defaultContactLocation && defaultContactLocation?.value) {
+          currentForm.companyLocation.value = defaultContactLocation?.value;
+          console.log(`this is check`,defaultContactLocation?.value)
+        } else {
+        currentForm.companyLocation.value = null; 
+        }
+        // currentForm.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
+        // currentForm.companyLocation.value = configData?.companyLocation?.id.toString()
 
       }
     }
@@ -1409,7 +1451,19 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     let companyValidityFlag = true;
     const formData: any = new FormData();
 
+    _.each(objFormState, (item: any) => {
+                if (item?.validation?.required) {
+                    companyValidityFlag = companyValidityFlag && item.value;
+                }
+            });
+
     setIsFormValid(companyValidityFlag);
+
+   if (!companyValidityFlag) {
+              ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+              return;
+          }
+
     console.log('finalData---->', objFormState,objFormState.start_date.value, formatDate(objFormState.start_date.value));
     const getAllMasterNames = await returnNamesHandler(objFormState);
 

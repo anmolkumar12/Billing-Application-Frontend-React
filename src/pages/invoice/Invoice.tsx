@@ -97,7 +97,7 @@ const InvoiceMaster = () => {
             fieldWidth: "col-md-4",
         },
         terms_of_payment: {
-            inputType: "inputtext",
+            inputType: "inputNumber",
             label: "Terms of Payment (In Days)",
             value: null,
             disable: true,
@@ -760,7 +760,7 @@ const InvoiceMaster = () => {
     // };
 
     const getPoContractConfiguration = async () => {
-        setLoader(true);
+        // setLoader(true);
         try {
             const response = await poContractService.getPoContractConfiguration();
 
@@ -1100,6 +1100,7 @@ const InvoiceMaster = () => {
     };
 
     const onUpdate = async (data: any) => {
+        ////
         await getContractMaster();
         await getPoContractConfiguration();
         await getTaxMaster();
@@ -1108,6 +1109,7 @@ const InvoiceMaster = () => {
         await updateClientMaster(data);
         await setClientFormPopup(true);
         await setIsEditClient(true);
+        ///
     };
     // const generateInvoicePDFHandler = async (data: any) => {
     //     invoiceService
@@ -1292,7 +1294,7 @@ const InvoiceMaster = () => {
             clientFormFieldsStructure.po_amount.value = data?.po_amount || "";
             clientFormFieldsStructure.remain_po_amount.value = data?.remain_po_amount || "";
             clientFormFieldsStructure.invoice_date.value = data?.invoice_date ? parseDateString(data?.invoice_date) : null;
-            clientFormFieldsStructure.terms_of_payment.value = data?.terms_of_payment || '';
+            clientFormFieldsStructure.terms_of_payment.value = parseInt(data?.terms_of_payment) || 0;
             // clientFormFieldsStructure.contract_type.value = data?.contract_type || "";
             clientFormFieldsStructure.tax_type.value = data?.tax_type || "";
             clientFormFieldsStructure.currency.options = currencyList || [];
@@ -1551,7 +1553,7 @@ const InvoiceMaster = () => {
             const selectedContract = poContractsData?.filter((item: any) => item?.client_name === selectedClient)?.find((ele: any) => ele?.po_name == form.contract_name?.value)
             form.po_number.value = selectedContract?.poNumber;
             form.po_amount.value = selectedContract?.poAmount;
-            form.terms_of_payment.value = selectedContract?.creditPeriod?.toString() || "";
+            form.terms_of_payment.value = selectedContract?.creditPeriod || '';
             form.remain_po_amount.value = selectedContract?.dueAmount;
             form.company_name.value = selectedContract?.companyName;
 
@@ -1793,7 +1795,7 @@ const InvoiceMaster = () => {
             remain_po_amount: clientForm.remain_po_amount.value || '',
             invoice_date: clientForm.invoice_date.value ? formatDate(clientForm.invoice_date.value) : null,
             due_date: formatDate(dueDate),
-            terms_of_payment: clientForm.terms_of_payment.value || '',
+            terms_of_payment: clientForm.terms_of_payment.value.toString() || '',
             iec_code: iecCodeSubmit || '',
             place_of_supply: placeOfSupply || '',
             is_india : (clientNameCountry.toLowerCase() === "india") ? 1 : 0 ,
