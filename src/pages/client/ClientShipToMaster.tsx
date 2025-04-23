@@ -586,7 +586,6 @@ const ClientShipToMaster = () => {
 
    const clientBillFormHandler = async (currentForm: FormType) => {
      const form = _.cloneDeep(currentForm);
-     console.log('bbbbbbbbbb', form?.client_name?.value, ClientBillForm?.client_name?.value);
  
      if (form?.client_name?.value != ClientBillForm?.client_name?.value) {
        const selectedClient = clientMaster?.find(
@@ -596,6 +595,9 @@ const ClientShipToMaster = () => {
        const selectedCountry = countryMaster?.find(
          (item: any) => item?.name == selectedClient?.countryName
        );
+
+     console.log('bbbbbbbbbb', selectedClient, countryMaster, selectedCountry);
+
        if (selectedCountry) {
          form.country_name.value = selectedClient?.countryName;
          // const stateList = await getStateMaster();
@@ -626,8 +628,9 @@ const ClientShipToMaster = () => {
           // form.country_name.value = defaultBillingAddress?.countryName;  
           const addressDetails = JSON.parse(
             selectedCountry?.addressAdditionalFields
-          );
-          const detailsForm = Object.keys(addressDetails)?.reduce(
+          ) || {};
+         console.log("addressDetails ----->",selectedCountry, addressDetails);
+          const detailsForm =  Object.keys(addressDetails)?.reduce(
             (acc: any, item: any, index: any) => {
               const fieldLabel = addressDetails[item]; // Get label from addressAdditionalFields
               const matchedValue = parsedAdditionalAddress[fieldLabel]; // Match with parsedAdditionalAddress

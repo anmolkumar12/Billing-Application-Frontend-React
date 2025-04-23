@@ -559,7 +559,7 @@ const AccountMaster = () => {
       accountFieldsStructure.account_type.value = data?.accountTypeName;
       accountFieldsStructure.bank_name.value = data?.bankName;
       accountFieldsStructure.bank_address.value = data?.bankAddress;
-      accountFieldsStructure.account_no.value = data?.accountNumber;
+      accountFieldsStructure.account_no.value = +data?.accountNumber;
       accountFieldsStructure.isDefaultAccount.value = data?.isDefaultAccount == 1 ? true : false;
       setAccountForm(_.cloneDeep(accountFieldsStructure));
       const bankDetails = data?.additionalFieldDetails;

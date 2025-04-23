@@ -726,7 +726,7 @@ const CompanyMaster = () => {
 
     _.each(CompanyForm, (item: any) => {
       if (item?.validation?.required) {
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
       if (
         CompanyForm?.independent?.value == false &&

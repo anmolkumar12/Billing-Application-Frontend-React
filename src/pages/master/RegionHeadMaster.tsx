@@ -183,7 +183,7 @@ const RegionHeadMaster = () => {
             className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
-            onClick={() => onDeactivate(rowData)}
+            onClick={() => onDelete(rowData)}
           ></span>
         </div>
       ),
@@ -778,14 +778,15 @@ const RegionHeadMaster = () => {
         } this record?`,
       acceptFunction: confirmDelete,
       rejectFunction: onPopUpClose,
+      askForDeactivationDate: data?.isactive || data?.is_active || data?.isActive,
     });
     setShowConfirmDialogue(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = (deactivationDate?: Date) => {
     setLoader(true);
     regionHeadMasterService
-      .deactivateRegionHeadMaster({ ...patchData, loggedInUserId,deactivationDate:deactForm.deactivationDate.value })
+      .deactivateRegionHeadMaster({ ...patchData, loggedInUserId,deactivationDate: deactivationDate ? formatDate(deactivationDate) : null, })
       .then((response) => {
         setLoader(false);
         setShowConfirmDialogue(false);
@@ -893,7 +894,7 @@ const RegionHeadMaster = () => {
         </div>
       ) : null}
 
-{deactivatePopup ? (
+{/* {deactivatePopup ? (
       <div className="popup-overlay md-popup-overlay">
         <div style={{maxWidth:'360px'}} className="popup-body md-popup-body stretchLeft">
           <div className="popup-header">
@@ -935,7 +936,7 @@ const RegionHeadMaster = () => {
           </div>
         </div>
       </div>
-    ) : null}
+    ) : null} */}
 
     </>
   );
