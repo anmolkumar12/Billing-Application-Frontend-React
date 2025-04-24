@@ -74,9 +74,13 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
         }
       >
         <div className={classes["left-menubar"]}>
-          <div className={classes["logo"]}>
-            <img src="./Polestar Logo.svg" />
-          </div>
+        <div className={classes["logo"]}>
+          <img 
+            className={isCollapseSideMenu ? classes["collapsed-img"] : classes["expanded-img"]} 
+            src={isCollapseSideMenu ? "./Star.svg" : "./Polestar Logo.svg"} 
+            alt="Logo"
+          />
+        </div>
 
           <ul>
             {menu.map(

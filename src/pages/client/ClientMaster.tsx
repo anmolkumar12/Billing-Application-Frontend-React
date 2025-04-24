@@ -1250,7 +1250,11 @@ const ClientMaster = () => {
         console.log('hhhhh', form);
 
         if (form?.is_same_alias?.value == true) {
-            form.vega_client_name.value = form?.client_name?.value;
+            form.vega_client_name.disable = true;
+            form.vega_client_name.value = form?.client_name?.value;         
+        }
+        else{
+            form.vega_client_name.disable = false;
         }
 
         if (form?.is_msa_missing?.value == true) {
