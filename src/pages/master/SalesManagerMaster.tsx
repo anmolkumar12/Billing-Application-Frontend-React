@@ -691,6 +691,7 @@ const SalesMaster = () => {
           ? data?.description
           : "";
       salesFieldsStructure.from_date.value = parseDateString(data?.fromDate);
+      salesFieldsStructure.companyName.disable = true;
       salesFieldsStructure.companyName.value = data?.companyName;
 
       setSalesForm(_.cloneDeep(salesFieldsStructure));

@@ -727,7 +727,6 @@ useEffect(() => {
 
   const industryHeadFormHandler = async (form: FormType) => {
     console.log("Form Update Triggered:", form, stateMaster, regionMaster);
-  
     const selectedCompany = companyMaster?.find(
       (item: any) => item?.companyName === form?.companyName?.value
     );
@@ -751,6 +750,7 @@ useEffect(() => {
       // } else{
       //   form.region_code.options = regionMaster?.map((region: any) => region.regionCode) || [];
       // }
+        form.region_code.disable = !form.isRegionWise.value;
     }
   
     setIndustryHeadForm(form);
@@ -802,6 +802,7 @@ useEffect(() => {
     console.log('llllllllllllllll', data);
     
     try {
+      industryHeadFieldsStructure.isRegionWise.value = data?.isRegionWise == 1 ? true : false;
       industryHeadFieldsStructure.companyName.value = data?.companyName;
       industryHeadFieldsStructure.industryHeadName.value =
         data?.industryHeadName;

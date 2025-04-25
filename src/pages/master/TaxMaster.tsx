@@ -295,6 +295,7 @@ const TaxMaster = () => {
   const updateTaxMaster = (data: any) => {
     formObjState.countryCode.options = countriesList;
     formObjState.countryCode.value = data.countryCode;
+    formObjState.taxType.disable = true;
     formObjState.taxType.value = data.taxType;
     formObjState.taxFieldName.value = data.taxFieldName;
     formObjState.taxPercentage.value = Number(data.taxPercentage);

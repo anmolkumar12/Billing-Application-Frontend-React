@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -26,19 +25,33 @@ interface PropsInterface {
 
 export const InputComponent: React.FC<PropsInterface> = (props) => {
   const [localValue, setLocalValue] = useState(props.value || '');
+  const hasFirstInputHappened = useRef(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setLocalValue(e.target.value);
+    const value = e.target.value;
+
+    if (!hasFirstInputHappened.current) {
+      hasFirstInputHappened.current = true;
+
+
+      if (props.formikChanged) {
+        props.formikChanged(e);
+      } else if (props.changed) {
+        props.changed(value, props.id);
+      }
+    } else {
+      setLocalValue(value);
+    }
   };
 
   const handleBlur = () => {
-    if (props.changed) {
-      props.changed(localValue, props.id);
+    if (hasFirstInputHappened.current) {
+      if (props.changed) props.changed(localValue, props.id);
     }
-    if (props.blurred) {
-      props.blurred(props.id);
-    }
+    if (props.blurred) props.blurred(props.id);
   };
+
+  const inputValue = hasFirstInputHappened.current ? localValue : props.value || '';
 
   let inputElement = null;
 
@@ -46,12 +59,12 @@ export const InputComponent: React.FC<PropsInterface> = (props) => {
     case 'inputtext':
       inputElement = (
         <InputText
-          id={props.id + (props.formName ? props.formName : '')}
-          value={localValue}
+          id={props.id + (props.formName || '')}
+          value={inputValue}
           onChange={handleChange}
           onBlur={handleBlur}
           disabled={props.disable}
-          onKeyPress={(e) => (e.key === 'Enter' ? e.preventDefault() : {})}
+          onKeyPress={(e) => e.key === 'Enter' && e.preventDefault()}
         />
       );
       break;
@@ -59,11 +72,11 @@ export const InputComponent: React.FC<PropsInterface> = (props) => {
     case 'password':
       inputElement = (
         <Password
-          id={props.id + props.formName}
-          value={localValue}
+          id={props.id + (props.formName || '')}
+          value={inputValue}
           onChange={handleChange}
           onBlur={handleBlur}
-          onKeyPress={(event) => (event.key === ' ' ? event.preventDefault() : {})}
+          onKeyPress={(e) => e.key === ' ' && e.preventDefault()}
           disabled={props.disable}
           feedback={props.feedback}
           toggleMask
@@ -74,8 +87,8 @@ export const InputComponent: React.FC<PropsInterface> = (props) => {
     case 'inputtextarea':
       inputElement = (
         <InputTextarea
-          id={props.id + props.formName}
-          value={localValue}
+          id={props.id + (props.formName || '')}
+          value={inputValue}
           rows={props.rows || 5}
           cols={props.cols || 30}
           onChange={handleChange}
@@ -92,33 +105,15 @@ export const InputComponent: React.FC<PropsInterface> = (props) => {
 
   return (
     <div className="input-custom-cls">
-      {props.inputtype !== 'inputtextarea' ? (
-        <>
-          {props.label && (
-            <Label label={props.label} required={props.requiredLabel} />
-          )}
-          <span
-            className={
-              'p-float-label ' + (props.requiredLabel ? 'required-label' : null)
-            }
-          >
-            {inputElement}
-          </span>
-        </>
-      ) : (
-        <>
-          {props.label && (
-            <Label label={props.label} required={props.requiredLabel} />
-          )}
-          <span
-            className={
-              'textarealabel ' + (props.requiredLabel ? 'required-label' : null)
-            }
-          >
-            {inputElement}
-          </span>
-        </>
-      )}
+      {props.label && <Label label={props.label} required={props.requiredLabel} />}
+      <span
+        className={
+          (props.inputtype === 'inputtextarea' ? 'textarealabel ' : 'p-float-label ') +
+          (props.requiredLabel ? 'required-label' : '')
+        }
+      >
+        {inputElement}
+      </span>
     </div>
   );
 };

@@ -288,7 +288,7 @@ const ProjectServiceMaster = () => {
         }}
       >
         <ButtonComponent
-          label="Add New Project/Service Master"
+          label="Add New Service type"
           icon="pi pi-check"
           iconPos="right"
           submitEvent={openSaveForm}
