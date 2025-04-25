@@ -802,7 +802,6 @@ useEffect(() => {
     console.log('llllllllllllllll', data);
     
     try {
-      industryHeadFieldsStructure.isRegionWise.value = data?.isRegionWise == 1 ? true : false;
       industryHeadFieldsStructure.companyName.disable = true;
       industryHeadFieldsStructure.companyName.value = data?.companyName;
       industryHeadFieldsStructure.industryHeadName.value =
