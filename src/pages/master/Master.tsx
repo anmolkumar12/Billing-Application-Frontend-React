@@ -4113,7 +4113,7 @@ const Master: React.FC = () => {
         <TabPanel header="Polestar Product Sales">
           <PolestarProductSalesMaster />
         </TabPanel>
-        <TabPanel header="Service type">
+        <TabPanel header="Service Type">
           <ProjectServiceMaster />
         </TabPanel>
         <TabPanel header="Tax">
