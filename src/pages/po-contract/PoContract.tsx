@@ -82,11 +82,10 @@ const Contract: React.FC = () => {
     //   fieldWidth: "col-md-4",
     // },
     companyName: {
-      inputType: "inputtext",
+      inputType: "singleSelect",
       label: "Company Name",
-      // options: [],
+      options: [],
       value: null,
-
       validation: {
         required: false
       },
@@ -606,7 +605,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     setLoader(true);
     try {
       const response = await poContractService.getPOContractMasterCascadingData();
-      console.log('------>', response?.data?.data)
+      console.log('chchchchc', response?.data?.data)
       setCascadingData(response?.data?.data);
 
       // setPoContractConfData(response?.data);
@@ -1031,6 +1030,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       // if(currentForm.client_name.value !== objFormState.client_name.value){
       const configData = poContractConfData.find((item: any) => item.client_name == rowData?.client_name)
       if (configData) {
+        console.log(`asasdasdas`,rowData)
         const uniqueClientBillTo = Array.from(new Set(
           configData.clientBill?.filter((item: any) => item.id)
             .map((item: any) => ({
@@ -1085,7 +1085,27 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
         objFormState.clientContact.value = rowData?.clientContact ? rowData?.clientContact : null;
 
-        objFormState.companyName.value = configData?.companyInfo.companyName;
+        const matchingClients = clientMaster.filter((client: { client_name: any; }) => client.client_name === rowData.client_name);
+
+        const companyNames = matchingClients.map((client: { companyName: any; }) => client.companyName);
+
+        if (companyNames.length > 0) {
+          objFormState.companyName.options = companyNames;
+          objFormState.companyName.value = companyNames[0];
+          console.log('Company Names:', companyNames);
+        } else {
+          console.log('No matching clients found.');
+        }
+        // objFormState.companyName.value = configData?.companyInfo.companyName;
+        // const companyName = configData?.companyInfo?.companyName;
+
+        // if (companyName) {
+        //   objFormState.companyName.options = objFormState.companyName.options || [];
+        //   if (!objFormState.companyName.options.includes(companyName)) {
+        //     objFormState.companyName.options.push(companyName);
+        //   }
+        //   objFormState.companyName.value = rowData?.companyName;
+        // }
         objFormState.companyName.disable = false;
 
         objFormState.companyLocation.options = Array.isArray(companyLocationMaster) ? companyLocationMaster.filter((item) => item.companyName === configData?.companyInfo?.companyName)
@@ -1344,41 +1364,53 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       console.log(`this issssssssssssssssss`,poContractConfData,companyLocationMaster)
       const configData = poContractConfData.find((item: any) => item.client_name == currentForm.client_name.value)
       if (configData) {
-        const uniqueClientBillTo = Array.from(new Set(configData.clientBill?.filter((item: any) => item.id).map((item: any) => ({
-          label: concatAddresses(item.address1, item.address2, item.address3),
-          value: item.id.toString(),
-          isDefault: item.isDefault || 0
-        })).map((item: { value: any; }) => item.value))).map(value => configData.clientBill.find((item: any) => item.id.toString() === value));
-  
+        const uniqueClientBillTo = Array.from(new Set(
+          configData.clientBill?.filter((item: any) => item.id)
+            .map((item: any) => ({
+              label: concatAddresses(item.address1, item.address2, item.address3),
+              value: item.id.toString(),
+              isDefault: item.isDefault || 0
+            }))
+            .map((item: { value: any }) => item.value)
+        )).map(value =>
+          configData.clientBill.find((item: any) => item.id.toString() === value)
+        );
+        
         currentForm.clientBillTo.options = uniqueClientBillTo.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        const defaultBillItem = currentForm.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
-        if (defaultBillItem && defaultBillItem?.value) {
-          currentForm.clientBillTo.value = defaultBillItem?.value.toString();
-        } else {
-          currentForm.clientBillTo.value = null;
-        }
-  
-        const uniqueClientShipAddress = Array.from(new Set(configData.clientShip?.filter((item: any) => item.id).map((item: any) => ({
-          label: concatAddresses(item.address1, item.address2, item.address3),
-          value: item.id.toString(),
-          isDefault: item.isDefault || 0
-        })).map((item: { value: any; }) => item.value))).map(value => configData.clientShip.find((item: any) => item.id.toString() === value));
-  
+        
+        const defaultBillItem = currentForm.clientBillTo.options.find((ele: any) => ele.isDefault == 1);
+        currentForm.clientBillTo.value = defaultBillItem?.value?.toString()
+          || currentForm.clientBillTo.options[0]?.value
+          || null;
+        
+        // --- Ship Address ---
+        const uniqueClientShipAddress = Array.from(new Set(
+          configData.clientShip?.filter((item: any) => item.id)
+            .map((item: any) => ({
+              label: concatAddresses(item.address1, item.address2, item.address3),
+              value: item.id.toString(),
+              isDefault: item.isDefault || 0
+            }))
+            .map((item: { value: any }) => item.value)
+        )).map(value =>
+          configData.clientShip.find((item: any) => item.id.toString() === value)
+        );
+        
         currentForm.clientShipAddress.options = uniqueClientShipAddress.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        const defaultShipItem = currentForm.clientShipAddress?.options?.find((ele: any) => ele.isDefault == 1);
-        if (defaultShipItem && defaultShipItem?.value) {
-          currentForm.clientShipAddress.value = defaultShipItem?.value.toString();
-        } else {
-          currentForm.clientShipAddress.value = null;
-        }
+        
+        const defaultShipItem = currentForm.clientShipAddress.options.find((ele: any) => ele.isDefault == 1);
+        currentForm.clientShipAddress.value = defaultShipItem?.value?.toString()
+          || currentForm.clientShipAddress.options[0]?.value
+          || null;
+        
       
         console.log('configData?.contacts', configData);
 
@@ -1402,7 +1434,34 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         //     value:item.id.toString()
         //   }
         // }):[]
-        currentForm.companyName.value = configData?.companyInfo.companyName;
+        console.log(`dasdqwdasdasa`,configData,clientMaster,currentForm.client_name.value)
+        const matchingClients = clientMaster.filter((client: { client_name: any; }) => client.client_name === currentForm.client_name.value);
+
+        const companyNames = matchingClients.map((client: { companyName: any; }) => client.companyName);
+
+        if (companyNames.length > 0) {
+          currentForm.companyName.options = companyNames;
+          // currentForm.companyName.value = companyNames[0];
+          console.log('Company Names:', companyNames);
+        } else {
+          console.log('No matching clients found.');
+        }
+
+        // const companyName = configData?.companyInfo?.companyName;
+
+        // if (companyName) {
+        //   // Ensure options array exists
+        //   currentForm.companyName.options = currentForm.companyName.options || [];
+
+        //   // Add company name only if it's not already in the list
+        //   if (!currentForm.companyName.options.includes(companyName)) {
+        //     currentForm.companyName.options.push(companyName);
+        //   }
+
+        //   // Then set it as the selected value
+        //   currentForm.companyName.value = companyName;
+        // }
+
         currentForm.companyName.disable = false;
 
        // Filter and map the company location options
@@ -1483,12 +1542,13 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             }))
         );
     }
-
+    console.log(`abcdefghijk1111`,industryHeadData)
     // 2. Filter Industry Heads Based on Selected Sub-Industries
     if (
       currentForm.subIndustries.value !== objFormState.subIndustries.value &&
       currentForm.subIndustries.value
     ) {
+      console.log(`abcdefghijk222`,industryHeadData)
       currentForm.industryHead.options = industryHeadData
         .filter((head: any) =>
           head.industryIds.split(',').includes(currentForm.subIndustries.value ? currentForm.subIndustries.value.toString() : '')
@@ -1499,7 +1559,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         }));
     }
 
-
+    console.log(`asdawdasdas`,salesManagerData)
     if (
       currentForm.industryHead.value !== objFormState.industryHead.value &&
       currentForm.industryHead.value
