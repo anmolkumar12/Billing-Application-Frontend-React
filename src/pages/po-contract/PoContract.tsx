@@ -1554,8 +1554,10 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       industryHead_names: getNamesFromOptions(objectFormState.industryHead),
       salesManager_names: getNamesFromOptions(objectFormState.salesManager),
       accountManager_names: getNamesFromOptions(objectFormState.accountManager),
-      clientBillTo_names: getNamesFromOptions(objectFormState.clientBillTo),
-      clientShipAddress_names: getNamesFromOptions(objectFormState.clientShipAddress),
+      clientShipAddress_names: objectFormState.clientShipAddress.options.find((item: any) => item.value === objectFormState.clientShipAddress.value)?.label || '',
+      clientBillTo_names: objectFormState.clientBillTo.options.find((item: any) => item.value === objectFormState.clientBillTo.value)?.label || '',
+      // clientBillTo_names: getNamesFromOptions(objectFormState.clientBillTo),
+      // clientShipAddress_names: getNamesFromOptions(objectFormState.clientShipAddress),
       clientContact_names: getNamesFromOptions(objectFormState.clientContact),
       companyName: objectFormState.companyName?.value || '',
       companyLocation_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || ''
