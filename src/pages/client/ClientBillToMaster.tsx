@@ -64,6 +64,7 @@ const ClientBillToMaster = () => {
       inputType: "inputtext",
       label: "State Code",
       value: null,
+      disable: true,
       validation: {
         required: false,
       },
@@ -172,6 +173,7 @@ const ClientBillToMaster = () => {
   const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
   const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
   const [defaultBillingAddress,setDefaultBillingAddress] = useState<any>();
+  const [stateDataWithCode,setStateDataWithCode] = useState<any>([]);
 
 
 
@@ -529,6 +531,7 @@ const ClientBillToMaster = () => {
       const clients = await getClientMaster();
       const countries = await getCountryMaster();
       const states = await getStateMaster();
+      setStateDataWithCode(states);
       await formatCountry_ClientDetails(countries);
       await formatState_ClientDetails(states);
       await formatClient_BillDetails(clients);
@@ -729,6 +732,11 @@ const ClientBillToMaster = () => {
 
       }
     }
+    if (form?.state_name?.value !== ClientBillForm?.state_name?.value) {
+      form.state_code.value = stateDataWithCode.find(
+        (state:any) => state.stateName === form?.state_name?.value
+      )?.stateCode;
+    }
     setClientBillForm(form);
   };
 
@@ -792,6 +800,7 @@ const ClientBillToMaster = () => {
   const updateClientBillToMaster = async (data: any) => {
     console.log('data------->',data);
     try {
+      ClientBillForm.client_name.disable = true;
       ClientBillForm.client_name.value = data?.client_name;
       ClientBillForm.address1.value = data?.address1;
       ClientBillForm.address2.value = data?.address2;

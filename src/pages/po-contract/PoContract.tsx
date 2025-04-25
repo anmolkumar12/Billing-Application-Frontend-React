@@ -25,6 +25,7 @@ import EditableTable from "./EditableTable";
 import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import moment from "moment";
 import { CompanyMasterService } from "../../services/masters/company-master/company.service";
+import CurrencyMasterService from "../../services/masters/currency-master/currency.service";
 
 const Contract: React.FC = () => {
 
@@ -41,7 +42,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     clientBillTo: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Client Bill To",
       options: [],
       value: null,
@@ -51,7 +52,7 @@ const Contract: React.FC = () => {
       fieldWidth: "col-md-4",
     },
     clientShipAddress: {
-      inputType: "multiSelect",
+      inputType: "singleSelect",
       label: "Client Shipping Address",
       options: [],
       value: null,
@@ -130,6 +131,14 @@ const Contract: React.FC = () => {
       },
       fieldWidth: "col-md-4",
     },
+    currency: {
+      inputType: "singleSelect",
+      label: "Currency",
+      options: [],
+      value: null,
+      validation: { required: true },
+      fieldWidth: "col-md-4",
+  }, 
     poAmount: {
       inputType: "inputNumber",
       label: "Po Amount",
@@ -359,6 +368,8 @@ const Contract: React.FC = () => {
   const [attachments, setAttachments]: any = useState([]);
   const [isEditState, setIsEditState] = useState<boolean>(false);
   const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
+  const [currencyList,setCurrencyList] = useState<any>([]);
+  const [clientMaster, setClientMaster] = useState<any>([]);
 
   const loggedInUserId = userInfo?.userId;
 
@@ -366,6 +377,15 @@ const Contract: React.FC = () => {
 
   const contractService = new ContractMasterService();
   const clientService = new ClientMasterService();
+  const currencyService = new CurrencyMasterService();
+
+  const countryCurrencyMap : any = {
+    india: "INR",
+    usa: "USD",
+    europe: "EUR",
+    australia: "AUD",
+    dubai: "AED"
+  };
 
   const [objFormState, setobjFormState] = useState<any>(
     _.cloneDeep(objForm)
@@ -406,8 +426,9 @@ const Contract: React.FC = () => {
     getCompanyLocationMaster();
     getPoContractConfiguration();
     getPOContractMasterConfigData();
-    getPOContractMasterCascadingData()
-
+    getPOContractMasterCascadingData();
+    getClientMasterData();
+    getCurrencyMaster();   
   }, []);
 
   const poContractService = new PoContractService()
@@ -425,7 +446,36 @@ const Contract: React.FC = () => {
         setLoader(false);
       }
     };
-
+    const getCurrencyMaster = async () => {
+      try {
+        const response = await currencyService.getCurrencyMasterData();
+        if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+          const uniqueMap = new Map();
+    
+          response.data.forEach((item: { currencyCode: string }) => {
+            if (!uniqueMap.has(item.currencyCode)) {
+              uniqueMap.set(item.currencyCode, {
+                label: item.currencyCode,
+                value: item.currencyCode
+              });
+            }
+          });
+          const currencyOptions = Array.from(uniqueMap.values());
+          setCurrencyList(currencyOptions); 
+          console.log(`before initiaze`,currencyOptions)
+    
+          // Update clientForm state with currency options
+          // const form = _.cloneDeep(objFormState);
+          // form.currency.options = currencyOptions;
+          // setobjFormState(form);
+    
+          console.log("Currency options (deduplicated):", currencyOptions);
+        }
+      } catch (error) {
+        console.error("Failed to fetch currency data", error);
+      }
+    };
+    
   const getContractMaster = async () => {
     setLoader(true);
     try {
@@ -513,6 +563,24 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     }
   };
 
+  const getClientMasterData = async () => {
+    try {
+        const response = await clientService.getClientMaster();     
+        if (!response) {
+            console.error('No client data received from API');
+            setClientMaster([]);
+            return [];
+        }
+        console.log('Client data received:', response?.clients);
+        const activeClients = response?.clients?.filter((client: any) => client?.isactive || client?.isActive) || [];
+        setClientMaster(activeClients);
+        return activeClients;
+    } catch (error) {
+        console.error('Error fetching client master data:', error);
+        setClientMaster([]);
+        return [];
+    }
+};
 
   const getPOContractMasterConfigData = async () => {
     setLoader(true);
@@ -952,27 +1020,60 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       // objFormState.client_name.value = 
       objFormState.client_name.options = clientListNames;
       objFormState.client_name.value = rowData.client_name
+      objFormState.currency.options = currencyList;
+      const clientData = clientMaster.find((client: any) => client.client_name === rowData?.client_name);
+            if (clientData) {
+            console.log("Country Name:", clientData?.countryName);
+            objFormState.currency.value = countryCurrencyMap[clientData?.countryName] || " ";
+            } else {
+             console.log("Country Name not found for the selected client.");
+            }
       // if(currentForm.client_name.value !== objFormState.client_name.value){
       const configData = poContractConfData.find((item: any) => item.client_name == rowData?.client_name)
       if (configData) {
-        objFormState.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
-          return {
-            label: concatAddresses(item.address1, item.address2, item.address3),
-            value: item.id.toString(),
-            isDefault: index == 0 ? 1 : 0
-          }
-        })
-
-        objFormState.clientBillTo.value = rowData?.clientBillTo ? rowData?.clientBillTo.split(",") : [];
-
-        objFormState.clientShipAddress.options = configData.clientShip?.filter((item: any) => item.id).map((item: any, index: number) => {
-          return {
-            label: concatAddresses(item.address1, item.address2, item.address3),
-            value: item.id.toString(),
-            isDefault: index == 0 ? 1 : 0
-          }
-        })
-        objFormState.clientShipAddress.value = rowData?.clientShipAddress ? rowData?.clientShipAddress.split(",") : [];
+        const uniqueClientBillTo = Array.from(new Set(
+          configData.clientBill?.filter((item: any) => item.id)
+            .map((item: any) => ({
+              label: concatAddresses(item.address1, item.address2, item.address3),
+              value: item.id.toString(),
+              isDefault: item.isDefault || 0
+            }))
+            .map((item: { value: any }) => item.value)
+        )).map(value => configData.clientBill.find((item: any) => item.id.toString() === value));
+        
+        let billOptions = uniqueClientBillTo.map((item: any) => ({
+          label: concatAddresses(item.address1, item.address2, item.address3),
+          value: item.id.toString(),
+          isDefault: item.isDefault || 0
+        }));
+        
+        billOptions = billOptions.sort((a, b) => b.isDefault - a.isDefault); // default at top
+        
+        objFormState.clientBillTo.options = billOptions;
+        objFormState.clientBillTo.value = rowData?.clientBillTo || billOptions.find(opt => opt.isDefault === 1)?.value || null;
+        
+        // --- Ship Address ---
+        const uniqueClientShipAddress = Array.from(new Set(
+          configData.clientShip?.filter((item: any) => item.id)
+            .map((item: any) => ({
+              label: concatAddresses(item.address1, item.address2, item.address3),
+              value: item.id.toString(),
+              isDefault: item.isDefault || 0
+            }))
+            .map((item: { value: any }) => item.value)
+        )).map(value => configData.clientShip.find((item: any) => item.id.toString() === value));
+        
+        let shipOptions = uniqueClientShipAddress.map((item: any) => ({
+          label: concatAddresses(item.address1, item.address2, item.address3),
+          value: item.id.toString(),
+          isDefault: item.isDefault || 0
+        }));
+        
+        shipOptions = shipOptions.sort((a, b) => b.isDefault - a.isDefault); // default at top
+        
+        objFormState.clientShipAddress.options = shipOptions;
+        objFormState.clientShipAddress.value = rowData?.clientShipAddress || shipOptions.find(opt => opt.isDefault === 1)?.value || null;
+        
 
         objFormState.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
           return {
@@ -1044,6 +1145,8 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       objFormState.po_name.value = rowData.po_name;
       objFormState.docType.value = rowData.docType;
       objFormState.poAmount.value = rowData.poAmount;
+      objFormState.currency.options = currencyList || [];
+      objFormState.currency.value = rowData?.currency || "";
       objFormState.dueAmount.value = rowData.dueAmount;
       objFormState.end_date.value = rowData.end_date ? parseDateString(rowData.end_date) : null;
       objFormState.start_date.value = rowData.start_date ? parseDateString(rowData.start_date) : null;
@@ -1224,40 +1327,59 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   const poContractHandler = async (form: FormType) => {
     console.log('form----->', form);
     const currentForm = _.cloneDeep(form);
+    currentForm.currency.options = currencyList;
     if (currentForm.client_name.value !== objFormState.client_name.value) {
+
+        const clientData = clientMaster.find((client: any) => client.client_name === currentForm.client_name.value);
+        if (clientData) {
+          //   console.log("Country Name:", clientData.countryName,form);
+            // setClientNameCountry(clientData.countryName);
+            const country = clientData.countryName?.toLowerCase();
+            console.log(`check hai bhai`,country,currentForm.client_name.value,currentForm.currency.options)
+            currentForm.currency.value = countryCurrencyMap[clientData.countryName?.toLowerCase()] || " ";
+             } else {
+                console.log("Country Name not found for the selected client.");
+             }
       // currentForm.start_date.value = parseDateString(data?.fromDate);
       console.log(`this issssssssssssssssss`,poContractConfData,companyLocationMaster)
       const configData = poContractConfData.find((item: any) => item.client_name == currentForm.client_name.value)
       if (configData) {
-        currentForm.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
-          return {
-            label: concatAddresses(item.address1, item.address2, item.address3),
-            value: item.id.toString(),
-            isDefault: index == 0 ? 1 : 0
-          }
-        })
+        const uniqueClientBillTo = Array.from(new Set(configData.clientBill?.filter((item: any) => item.id).map((item: any) => ({
+          label: concatAddresses(item.address1, item.address2, item.address3),
+          value: item.id.toString(),
+          isDefault: item.isDefault || 0
+        })).map((item: { value: any; }) => item.value))).map(value => configData.clientBill.find((item: any) => item.id.toString() === value));
+  
+        currentForm.clientBillTo.options = uniqueClientBillTo.map((item: any) => ({
+          label: concatAddresses(item.address1, item.address2, item.address3),
+          value: item.id.toString(),
+          isDefault: item.isDefault || 0
+        }));
         const defaultBillItem = currentForm.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
         if (defaultBillItem && defaultBillItem?.value) {
-          currentForm.clientBillTo.value = [defaultBillItem?.value.toString()];
-        }
-        else {
+          currentForm.clientBillTo.value = defaultBillItem?.value.toString();
+        } else {
           currentForm.clientBillTo.value = null;
         }
-        currentForm.clientShipAddress.options = configData.clientShip?.filter((item: any) => item.id).map((item: any, index: number) => {
-          return {
-            label: concatAddresses(item.address1, item.address2, item.address3),
-            value: item.id.toString(),
-            isDefault: index == 0 ? 1 : 0
-          }
-        })
+  
+        const uniqueClientShipAddress = Array.from(new Set(configData.clientShip?.filter((item: any) => item.id).map((item: any) => ({
+          label: concatAddresses(item.address1, item.address2, item.address3),
+          value: item.id.toString(),
+          isDefault: item.isDefault || 0
+        })).map((item: { value: any; }) => item.value))).map(value => configData.clientShip.find((item: any) => item.id.toString() === value));
+  
+        currentForm.clientShipAddress.options = uniqueClientShipAddress.map((item: any) => ({
+          label: concatAddresses(item.address1, item.address2, item.address3),
+          value: item.id.toString(),
+          isDefault: item.isDefault || 0
+        }));
         const defaultShipItem = currentForm.clientShipAddress?.options?.find((ele: any) => ele.isDefault == 1);
         if (defaultShipItem && defaultShipItem?.value) {
-          currentForm.clientShipAddress.value = [defaultShipItem?.value.toString()];
-        }
-        else {
+          currentForm.clientShipAddress.value = defaultShipItem?.value.toString();
+        } else {
           currentForm.clientShipAddress.value = null;
         }
-
+      
         console.log('configData?.contacts', configData);
 
         currentForm.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
@@ -1470,8 +1592,9 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     const obj = {
       clientId: poContractConfData.find((item: any) => item.client_name === objFormState.client_name.value)?.client_id || '',
       client_name: objFormState.client_name.value || '',
-      clientBillTo: objFormState.clientBillTo.value?.toString() || '',
-      clientShipAddress: objFormState.clientShipAddress.value?.toString() || '',
+      clientBillTo: objFormState.clientBillTo.value || '', 
+      clientShipAddress: objFormState.clientShipAddress.value || '',
+      currency: objFormState.currency.value?.value || objFormState.currency.value || '',
       clientContact: objFormState.clientContact.value?.toString() || '',
       companyName: objFormState.companyName.value || '',
       companyLocation: objFormState.companyLocation.value || '',

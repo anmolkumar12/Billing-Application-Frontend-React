@@ -699,10 +699,10 @@ const ClientMaster = () => {
             const response = await clientService.getClientMaster();
             console.log(`this is client datat `,response?.clients)
             response?.clients?.forEach((el:any) => {
-                el.msa_start_date = el.msa_start_date && moment(el.msa_start_date).isValid()
+                el.msa_start_date = el.msa_start_date && el.msa_start_date != "null" && moment(el.msa_start_date).isValid()
                     ? moment(el.msa_start_date).format("DD-MM-YYYY")
                     : null;
-                el.msa_end_date = el.msa_end_date && moment(el.msa_end_date).isValid()
+                el.msa_end_date = el.msa_end_date && el.msa_start_date != "null" && moment(el.msa_end_date).isValid()
                     ? moment(el.msa_end_date).format("DD-MM-YYYY")
                     : el.msa_flag==1 ? "Not Applicable" : null;
                 el.updated_at = el.updated_at && moment(el.updated_at).isValid()
@@ -992,6 +992,7 @@ const ClientMaster = () => {
             clientFormFieldsStructure.sales_person.value = data?.salesMangerName ? data?.salesMangerName?.split(',') : [];
             clientFormFieldsStructure.account_manager.value = data?.accountManagerNames ? data?.accountManagerNames?.split(',') : [];
             clientFormFieldsStructure.msa_start_date.value = parseDateString(data?.msa_start_date);
+            //.log(`this is date`,data?.msa_start_date,data?.msa_end_date )
             clientFormFieldsStructure.msa_end_date.value = parseDateString(data?.msa_end_date);
             clientFormFieldsStructure.is_msa_missing.value = data?.msa_flag ? true : false;
             clientFormFieldsStructure.nda_flag.value = data?.nda_flag ? true : false;
@@ -1133,7 +1134,7 @@ const ClientMaster = () => {
     };
 
     const parseDateString = (dateString: any) => {
-        if (!dateString) return new Date();
+        if (!dateString) return null;
         const date: any = new Date(dateString);
         if (isNaN(date)) return new Date();
         const year = date.getFullYear();

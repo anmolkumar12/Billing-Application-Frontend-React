@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -25,17 +24,16 @@ interface PropsInterface {
 }
 
 export const InputComponent: React.FC<PropsInterface> = (props) => {
-  // const controlledByFormikIds = ['company_name', 'financialYearName']; // Add all ids you want
-  // const isControlledByFormik = controlledByFormikIds.includes(props.id);
-  
-  // 1. when a input text field don't have props.disabled then focus out functionality in input text fiels will work which will not cause re-rendering and lag.
-  // 2  when a input text field have props.disabled means it need to patch the value when other field value change props.disable will make them to run wihtout focus off which will not create a issue of displaying input text patch value in add new time
   const [localValue, setLocalValue] = useState(props.value || '');
+  const hasFirstInputHappened = useRef(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value;
 
-    if (props.disable) {
+    if (!hasFirstInputHappened.current) {
+      hasFirstInputHappened.current = true;
+
+
       if (props.formikChanged) {
         props.formikChanged(e);
       } else if (props.changed) {
@@ -47,15 +45,13 @@ export const InputComponent: React.FC<PropsInterface> = (props) => {
   };
 
   const handleBlur = () => {
-    if (props.disable) {
-      if (props.blurred) props.blurred(props.id);
-    } else {
+    if (hasFirstInputHappened.current) {
       if (props.changed) props.changed(localValue, props.id);
-      if (props.blurred) props.blurred(props.id);
     }
+    if (props.blurred) props.blurred(props.id);
   };
 
-  const inputValue = props.disable ? props.value || '' : localValue;
+  const inputValue = hasFirstInputHappened.current ? localValue : props.value || '';
 
   let inputElement = null;
 

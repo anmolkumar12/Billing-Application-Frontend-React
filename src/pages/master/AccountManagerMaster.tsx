@@ -688,6 +688,7 @@ const handleDeactivate = (data: any) => {
           : "";
       accountFieldsStructure.from_date.value = parseDateString(data?.fromDate);
       // accountFieldsStructure.fromDate.value = parseDateString(data?.fromDate);
+      accountFieldsStructure.companyName.disable = true;
       accountFieldsStructure.companyName.value = data?.companyName;
       setAccountForm(_.cloneDeep(accountFieldsStructure));
     } catch (error) {
