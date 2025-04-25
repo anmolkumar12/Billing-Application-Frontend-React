@@ -509,7 +509,7 @@ const CountryMaster = () => {
     _.each(CountryForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
 
