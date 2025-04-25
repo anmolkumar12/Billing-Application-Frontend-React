@@ -48,7 +48,7 @@ export default class RegionHeadMasterService {
             regionHeadId: data.id,
             isActive: !data.isActive,
             updatedBy: data?.loggedInUserId,
-            deactivationDate:data?.deactivationDate?moment(new Date(data?.deactivationDate)).format('YYYY-MM-DD'): null
+            deactivationDate: data?.deactivationDate
           };
           const response = await HTTPService.postRequest(
             APIURLS.TOGGLE_REGION_HEAD_STATUS,
