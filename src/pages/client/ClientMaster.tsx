@@ -991,9 +991,9 @@ const ClientMaster = () => {
             clientFormFieldsStructure.isApplicableAM.value = data?.isApplicableAM == "true" ? true : false;
             clientFormFieldsStructure.sales_person.value = data?.salesMangerName ? data?.salesMangerName?.split(',') : [];
             clientFormFieldsStructure.account_manager.value = data?.accountManagerNames ? data?.accountManagerNames?.split(',') : [];
-            clientFormFieldsStructure.msa_start_date.value = parseDateString(data?.msa_start_date);
+            clientFormFieldsStructure.msa_start_date.value = parseCustomDate(data?.msa_start_date);
             //.log(`this is date`,data?.msa_start_date,data?.msa_end_date )
-            clientFormFieldsStructure.msa_end_date.value = parseDateString(data?.msa_end_date);
+            clientFormFieldsStructure.msa_end_date.value = parseCustomDate(data?.msa_end_date);
             clientFormFieldsStructure.is_msa_missing.value = data?.msa_flag==="Yes" ? true : false;
             clientFormFieldsStructure.nda_flag.value = data?.nda_flag==="Yes" ? true : false;
             clientFormFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause_flag ? true : false;
@@ -1136,11 +1136,17 @@ const ClientMaster = () => {
     const parseDateString = (dateString: any) => {
         if (!dateString) return null;
         const date: any = new Date(dateString);
+        console.log(`data asdasdasd`,dateString)
         if (isNaN(date)) return new Date();
         const year = date.getFullYear();
         const month: any = String(date.getMonth() + 1).padStart(2, "0");
         const day: any = String(date.getDate()).padStart(2, "0");
         return new Date(year, month - 1, day);
+    };
+
+    const parseCustomDate = (dateString: string) => {
+        const [day, month, year] = dateString.split("-");
+        return new Date(Number(year), Number(month) - 1, Number(day));
     };
 
     const formatDate = (dateString: any) => {

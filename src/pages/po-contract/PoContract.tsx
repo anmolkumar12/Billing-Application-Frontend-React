@@ -388,7 +388,7 @@ const Contract: React.FC = () => {
     australia: "AUD",
     dubai: "AED",
     uae: "AED"
-  };
+  };  
   
 
   const [objFormState, setobjFormState] = useState<any>(
@@ -1086,13 +1086,14 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       objFormState.client_name.options = clientListNames;
       objFormState.client_name.value = rowData.client_name
       objFormState.currency.options = currencyList;
-      const clientData = clientMaster.find((client: any) => client.client_name === rowData?.client_name);
-            if (clientData) {
-            console.log("Country Name:", clientData?.countryName);
-            objFormState.currency.value = countryCurrencyMap[clientData?.countryName] || " ";
-            } else {
-             console.log("Country Name not found for the selected client.");
-            }
+      objFormState.currency.value = rowData.currency;
+      // const clientData = clientMaster.find((client: any) => client.client_name === rowData?.client_name);
+      //       if (clientData) {
+      //       console.log("Country Name:", clientData?.countryName);
+      //       objFormState.currency.value = countryCurrencyMap[clientData?.countryName] || " ";
+      //       } else {
+      //        console.log("Country Name not found for the selected client.");
+      //       }
       // if(currentForm.client_name.value !== objFormState.client_name.value){
       const configData = poContractConfData.find((item: any) => item.client_name == rowData?.client_name)
       if (configData) {
