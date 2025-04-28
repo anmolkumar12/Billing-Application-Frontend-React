@@ -626,17 +626,42 @@ const ClientMaster = () => {
         }
     ];
 
-    const downloadFile = (filePath: any) => {
-        const fileUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
-        // Create an anchor element and trigger the download
-        const link = document.createElement("a");
-        link.href = fileUrl;
-        link.download = filePath.split("/").pop(); // Extracts file name from the path
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
+    // const downloadFile = (filePath: any) => {
+    //     console.log(`filePath`, filePath);
+        
+    //     const fileUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
+    //     // Create an anchor element and trigger the download
+    //     const link = document.createElement("a");
+    //     link.href = fileUrl;
+    //     link.download = filePath.split("/").pop(); // Extracts file name from the path
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+    // };
 
+    const downloadFile = (filePath: string) => {
+        const fileUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
+        fetch(fileUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = (filePath.split('/').pop() || 'file') + '.pdf'; // Force .pdf extension
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Download error:', error));
+    };
+    
+    
     const viewMSAFile = (filePath: any) => {
         const signatureUrl = `${process.env.REACT_APP_API_BASEURL}/${filePath}`;
         // Open the file in a new tab
