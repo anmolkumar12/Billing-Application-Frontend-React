@@ -1745,8 +1745,10 @@ const CreditNoteMaster = () => {
             invoice_amount: invoiceAmount.toFixed(2),
             note_one: clientForm.note_one.value || '',
             note_two: clientForm.note_two.value || '',
-            clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),
-            clientShipAddress_name: getNamesFromOptions(clientForm.clientShipAddress),
+            clientBillTo_name:clientForm.clientBillTo.options.find((item: any) => item.value === clientForm.clientBillTo.value)?.label || '',
+            clientShipAddress_name: clientForm.clientShipAddress.options.find((item: any) => item.value === clientForm.clientShipAddress.value)?.label || '',
+            // clientBillTo_name: getNamesFromOptions(clientForm.clientBillTo),
+            // clientShipAddress_name: getNamesFromOptions(clientForm.clientShipAddress),
             // clientContact_name: getNamesFromOptions(clientForm.clientContact),
             
             clientContact_name: clientForm.clientContact.options.find((item: any) => item.value === clientForm.clientContact.value)?.label || '',
