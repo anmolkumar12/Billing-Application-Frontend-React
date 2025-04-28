@@ -26,6 +26,9 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import moment from "moment";
 import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 import CurrencyMasterService from "../../services/masters/currency-master/currency.service";
+import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
+import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
+import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 
 const Contract: React.FC = () => {
 
@@ -82,11 +85,10 @@ const Contract: React.FC = () => {
     //   fieldWidth: "col-md-4",
     // },
     companyName: {
-      inputType: "inputtext",
+      inputType: "singleSelect",
       label: "Company Name",
-      // options: [],
+      options: [],
       value: null,
-
       validation: {
         required: false
       },
@@ -370,7 +372,7 @@ const Contract: React.FC = () => {
   const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
   const [currencyList,setCurrencyList] = useState<any>([]);
   const [clientMaster, setClientMaster] = useState<any>([]);
-
+  const [dataAIS, setDataAIS] = useState<any>({industryHeadDataa: [], salesManagerDataa: [], accountManagerDataa: [] })
   const loggedInUserId = userInfo?.userId;
 
   let patchData: any;
@@ -379,13 +381,15 @@ const Contract: React.FC = () => {
   const clientService = new ClientMasterService();
   const currencyService = new CurrencyMasterService();
 
-  const countryCurrencyMap : any = {
+  const countryCurrencyMap: any = {
     india: "INR",
     usa: "USD",
     europe: "EUR",
     australia: "AUD",
-    dubai: "AED"
+    dubai: "AED",
+    uae: "AED"
   };
+  
 
   const [objFormState, setobjFormState] = useState<any>(
     _.cloneDeep(objForm)
@@ -423,6 +427,9 @@ const Contract: React.FC = () => {
   useEffect(() => {
 
     getContractMaster();
+    getIndustryHeadMaster();
+    getSalesMaster();
+    getAccountMaster();
     getCompanyLocationMaster();
     getPoContractConfiguration();
     getPOContractMasterConfigData();
@@ -433,6 +440,65 @@ const Contract: React.FC = () => {
 
   const poContractService = new PoContractService()
   const companyService = new CompanyMasterService();
+  const industryService = new IndustryMasterService();
+  const salesService = new SalesMasterService();
+  const accountService = new AccountMasterService();
+
+  const getAccountMaster = async () => {
+      setLoader(true);
+      try {
+        const response = await accountService.getAccountMaster();
+        console.log(`account manager data`,response?.accountManagers)
+        if (response?.accountManagers) {
+          setDataAIS((prev: any) => ({
+            ...prev,
+            accountManagerDataa: response.accountManagers,
+          }));
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+  const getSalesMaster = async () => {
+      setLoader(true);
+      try {
+        const response = await salesService.getSalesMaster();
+        if (response?.salesManagers) {
+          setDataAIS((prev: any) => ({
+            ...prev,
+            salesManagerDataa: response.salesManagers,
+          }));
+        }
+        return response?.salesManagers;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+  const getIndustryHeadMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await industryService.getIndustryHeadMaster();
+      // const temp = response?.industryHeads?.filter((item: any) => item?.isactive || item?.isActive)
+      if (response?.industryHeads) {
+        setDataAIS((prev: any) => ({
+          ...prev,
+          industryHeadDataa: response.industryHeads,
+        }));
+      }
+      // setIndustryHeadMaster(response?.);
+      // return temp;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const getCompanyLocationMaster = async () => {
       setLoader(true);
@@ -606,7 +672,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     setLoader(true);
     try {
       const response = await poContractService.getPOContractMasterCascadingData();
-      console.log('------>', response?.data?.data)
+      console.log('chchchchc', response?.data?.data)
       setCascadingData(response?.data?.data);
 
       // setPoContractConfData(response?.data);
@@ -1014,7 +1080,6 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   };
 
 
-
   const updatePoContactMasterData = (rowData: any) => {
     try {
       // objFormState.client_name.value = 
@@ -1031,6 +1096,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       // if(currentForm.client_name.value !== objFormState.client_name.value){
       const configData = poContractConfData.find((item: any) => item.client_name == rowData?.client_name)
       if (configData) {
+        console.log(`asasdasdas`,rowData)
         const uniqueClientBillTo = Array.from(new Set(
           configData.clientBill?.filter((item: any) => item.id)
             .map((item: any) => ({
@@ -1085,7 +1151,27 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
         objFormState.clientContact.value = rowData?.clientContact ? rowData?.clientContact : null;
 
-        objFormState.companyName.value = configData?.companyInfo.companyName;
+        const matchingClients = clientMaster.filter((client: { client_name: any; }) => client.client_name === rowData.client_name);
+
+        const companyNames = matchingClients.map((client: { companyName: any; }) => client.companyName);
+
+        if (companyNames.length > 0) {
+          objFormState.companyName.options = companyNames;
+          objFormState.companyName.value = rowData?.companyName;
+          console.log('Company Names:', companyNames);
+        } else {
+          console.log('No matching clients found.');
+        }
+        // objFormState.companyName.value = configData?.companyInfo.companyName;
+        // const companyName = configData?.companyInfo?.companyName;
+
+        // if (companyName) {
+        //   objFormState.companyName.options = objFormState.companyName.options || [];
+        //   if (!objFormState.companyName.options.includes(companyName)) {
+        //     objFormState.companyName.options.push(companyName);
+        //   }
+        //   objFormState.companyName.value = rowData?.companyName;
+        // }
         objFormState.companyName.disable = false;
 
         objFormState.companyLocation.options = Array.isArray(companyLocationMaster) ? companyLocationMaster.filter((item) => item.companyName === configData?.companyInfo?.companyName)
@@ -1215,7 +1301,6 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         }
       }
 
-
       const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
 
       if (rowData?.industryGroups) {
@@ -1335,7 +1420,6 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
           //   console.log("Country Name:", clientData.countryName,form);
             // setClientNameCountry(clientData.countryName);
             const country = clientData.countryName?.toLowerCase();
-            console.log(`check hai bhai`,country,currentForm.client_name.value,currentForm.currency.options)
             currentForm.currency.value = countryCurrencyMap[clientData.countryName?.toLowerCase()] || " ";
              } else {
                 console.log("Country Name not found for the selected client.");
@@ -1344,41 +1428,53 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       console.log(`this issssssssssssssssss`,poContractConfData,companyLocationMaster)
       const configData = poContractConfData.find((item: any) => item.client_name == currentForm.client_name.value)
       if (configData) {
-        const uniqueClientBillTo = Array.from(new Set(configData.clientBill?.filter((item: any) => item.id).map((item: any) => ({
-          label: concatAddresses(item.address1, item.address2, item.address3),
-          value: item.id.toString(),
-          isDefault: item.isDefault || 0
-        })).map((item: { value: any; }) => item.value))).map(value => configData.clientBill.find((item: any) => item.id.toString() === value));
-  
+        const uniqueClientBillTo = Array.from(new Set(
+          configData.clientBill?.filter((item: any) => item.id)
+            .map((item: any) => ({
+              label: concatAddresses(item.address1, item.address2, item.address3),
+              value: item.id.toString(),
+              isDefault: item.isDefault || 0
+            }))
+            .map((item: { value: any }) => item.value)
+        )).map(value =>
+          configData.clientBill.find((item: any) => item.id.toString() === value)
+        );
+        
         currentForm.clientBillTo.options = uniqueClientBillTo.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        const defaultBillItem = currentForm.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
-        if (defaultBillItem && defaultBillItem?.value) {
-          currentForm.clientBillTo.value = defaultBillItem?.value.toString();
-        } else {
-          currentForm.clientBillTo.value = null;
-        }
-  
-        const uniqueClientShipAddress = Array.from(new Set(configData.clientShip?.filter((item: any) => item.id).map((item: any) => ({
-          label: concatAddresses(item.address1, item.address2, item.address3),
-          value: item.id.toString(),
-          isDefault: item.isDefault || 0
-        })).map((item: { value: any; }) => item.value))).map(value => configData.clientShip.find((item: any) => item.id.toString() === value));
-  
+        
+        const defaultBillItem = currentForm.clientBillTo.options.find((ele: any) => ele.isDefault == 1);
+        currentForm.clientBillTo.value = defaultBillItem?.value?.toString()
+          || currentForm.clientBillTo.options[0]?.value
+          || null;
+        
+        // --- Ship Address ---
+        const uniqueClientShipAddress = Array.from(new Set(
+          configData.clientShip?.filter((item: any) => item.id)
+            .map((item: any) => ({
+              label: concatAddresses(item.address1, item.address2, item.address3),
+              value: item.id.toString(),
+              isDefault: item.isDefault || 0
+            }))
+            .map((item: { value: any }) => item.value)
+        )).map(value =>
+          configData.clientShip.find((item: any) => item.id.toString() === value)
+        );
+        
         currentForm.clientShipAddress.options = uniqueClientShipAddress.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        const defaultShipItem = currentForm.clientShipAddress?.options?.find((ele: any) => ele.isDefault == 1);
-        if (defaultShipItem && defaultShipItem?.value) {
-          currentForm.clientShipAddress.value = defaultShipItem?.value.toString();
-        } else {
-          currentForm.clientShipAddress.value = null;
-        }
+        
+        const defaultShipItem = currentForm.clientShipAddress.options.find((ele: any) => ele.isDefault == 1);
+        currentForm.clientShipAddress.value = defaultShipItem?.value?.toString()
+          || currentForm.clientShipAddress.options[0]?.value
+          || null;
+        
       
         console.log('configData?.contacts', configData);
 
@@ -1402,7 +1498,34 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         //     value:item.id.toString()
         //   }
         // }):[]
-        currentForm.companyName.value = configData?.companyInfo.companyName;
+        console.log(`dasdqwdasdasa`,configData,clientMaster,currentForm.client_name.value)
+        const matchingClients = clientMaster.filter((client: { client_name: any; }) => client.client_name === currentForm.client_name.value);
+
+        const companyNames = matchingClients.map((client: { companyName: any; }) => client.companyName);
+
+        if (companyNames.length > 0) {
+          currentForm.companyName.options = companyNames;
+          // currentForm.companyName.value = companyNames[0];
+          console.log('Company Names:', companyNames);
+        } else {
+          console.log('No matching clients found.');
+        }
+
+        // const companyName = configData?.companyInfo?.companyName;
+
+        // if (companyName) {
+        //   // Ensure options array exists
+        //   currentForm.companyName.options = currentForm.companyName.options || [];
+
+        //   // Add company name only if it's not already in the list
+        //   if (!currentForm.companyName.options.includes(companyName)) {
+        //     currentForm.companyName.options.push(companyName);
+        //   }
+
+        //   // Then set it as the selected value
+        //   currentForm.companyName.value = companyName;
+        // }
+
         currentForm.companyName.disable = false;
 
        // Filter and map the company location options
@@ -1483,12 +1606,13 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             }))
         );
     }
-
+    console.log(`abcdefghijk1111`,industryHeadData)
     // 2. Filter Industry Heads Based on Selected Sub-Industries
     if (
       currentForm.subIndustries.value !== objFormState.subIndustries.value &&
       currentForm.subIndustries.value
     ) {
+      console.log(`abcdefghijk222`,industryHeadData)
       currentForm.industryHead.options = industryHeadData
         .filter((head: any) =>
           head.industryIds.split(',').includes(currentForm.subIndustries.value ? currentForm.subIndustries.value.toString() : '')
@@ -1499,7 +1623,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         }));
     }
 
-
+    console.log(`asdawdasdas`,salesManagerData)
     if (
       currentForm.industryHead.value !== objFormState.industryHead.value &&
       currentForm.industryHead.value
@@ -1528,7 +1652,70 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
           value: manager.accountManagerId.toString(),
         }));
     }
-    
+    const { industryHeadDataa, salesManagerDataa, accountManagerDataa } = dataAIS;
+
+    if (currentForm.companyName.value !== objForm.companyName.value) {
+      console.log(`huihuihsasdasdasiu`,dataAIS)
+
+      const filteredAccountManagers = accountManagerDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
+      currentForm.accountManager.options = filteredAccountManagers
+      .map((manager: { name: any; id: { toString: () => any; }; }) => ({
+        label: manager.name, 
+        value: manager.id.toString(), 
+      }));
+      if (Array.isArray(currentForm.accountManager.value)) {
+        const validSelections = currentForm.accountManager.value.filter((val: any) => 
+          currentForm.accountManager.options?.some((item: any) => item.value == val)
+        );
+        currentForm.accountManager.value = validSelections.length ? validSelections : null;
+      } 
+      else {
+        const isValid = currentForm.accountManager.options?.some((item: any) => item.value == currentForm.accountManager.value);
+        if (!isValid) {
+          currentForm.accountManager.value = null;
+        }
+      }
+
+      const filteredSaleManagers = salesManagerDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
+      console.log(`huihuihiu`,filteredSaleManagers)
+      currentForm.salesManager.options = filteredSaleManagers
+      .map((manager: { name: any; id: { toString: () => any; }; }) => ({
+        label: manager.name, 
+        value: manager.id.toString(), 
+      }));
+      if (Array.isArray(currentForm.salesManager.value)) {
+        const validSelections = currentForm.salesManager.value.filter((val: any) => 
+          currentForm.salesManager.options?.some((item: any) => item.value == val)
+        );
+        currentForm.salesManager.value = validSelections.length ? validSelections : null;
+      } 
+      else {
+        const isValid = currentForm.salesManager.options?.some((item: any) => item.value == currentForm.salesManager.value);
+        if (!isValid) {
+          currentForm.salesManager.value = null;
+        }
+      }
+
+      const filteredIndustryHeadManagers = industryHeadDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
+      console.log(`huihuihiu`,filteredIndustryHeadManagers)
+      currentForm.industryHead.options = filteredIndustryHeadManagers
+      .map((manager: { industryHeadName: any; id: { toString: () => any; }; }) => ({
+        label: manager.industryHeadName, 
+        value: manager.id.toString(), 
+      }));
+      if (Array.isArray(currentForm.industryHead.value)) {
+        const validSelections = currentForm.industryHead.value.filter((val: any) => 
+          currentForm.industryHead.options?.some((item: any) => item.value == val)
+        );
+        currentForm.industryHead.value = validSelections.length ? validSelections : null;
+      } 
+      else {
+        const isValid = currentForm.industryHead.options?.some((item: any) => item.value == currentForm.industryHead.value);
+        if (!isValid) {
+          currentForm.industryHead.value = null;
+        }
+      }
+    }
     setobjFormState(currentForm);
   };
 
@@ -1554,8 +1741,10 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       industryHead_names: getNamesFromOptions(objectFormState.industryHead),
       salesManager_names: getNamesFromOptions(objectFormState.salesManager),
       accountManager_names: getNamesFromOptions(objectFormState.accountManager),
-      clientBillTo_names: getNamesFromOptions(objectFormState.clientBillTo),
-      clientShipAddress_names: getNamesFromOptions(objectFormState.clientShipAddress),
+      clientShipAddress_names: objectFormState.clientShipAddress.options.find((item: any) => item.value === objectFormState.clientShipAddress.value)?.label || '',
+      clientBillTo_names: objectFormState.clientBillTo.options.find((item: any) => item.value === objectFormState.clientBillTo.value)?.label || '',
+      // clientBillTo_names: getNamesFromOptions(objectFormState.clientBillTo),
+      // clientShipAddress_names: getNamesFromOptions(objectFormState.clientShipAddress),
       clientContact_names: getNamesFromOptions(objectFormState.clientContact),
       companyName: objectFormState.companyName?.value || '',
       companyLocation_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || ''

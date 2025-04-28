@@ -1487,6 +1487,7 @@ const InvoiceMaster = () => {
     useEffect(() => {
         const form = _.cloneDeep(clientForm);
         console.log(`this is country`, clientNameCountry)
+        form.currency.value = countryCurrencyMap[clientNameCountry?.toLowerCase()] || "";
         if (clientNameCountry.toLowerCase() !== "india") {
             form.tax_type.value = 'Export';
             form.tax_type.disable = true;
@@ -1514,7 +1515,16 @@ const InvoiceMaster = () => {
 
         console.log('form handler checking ---->>> ', form);
 
-        // if (form.client_name?.value !== clientForm?.client_name?.value) {
+        if (form.client_name?.value !== clientForm?.client_name?.value) {
+            const clientData = clientMaster.find((client: any) => client.client_name === form.client_name?.value);
+            if (clientData) {
+                  setClientNameCountry(clientData.countryName);
+                  form.currency.value = countryCurrencyMap[clientNameCountry?.toLowerCase()] || ""
+                  console.log(`runinnnnnnnnnnnnnnnn`)
+                   } else {
+                      console.log("Country Name not found for the selected client.");
+                 }
+        }
         const selectedClient = form.client_name?.value
         if (selectedClient) {
             console.log(`this is client datata`,form)
@@ -1525,8 +1535,6 @@ const InvoiceMaster = () => {
 
             form.contract_name.options = tempData || [];
             console.log(`this is data to check`,clientMaster,selectedClient)
-            const clientData = clientMaster.find((client: any) => client.client_name === selectedClient);
-            
             const matchedClient = clientBillToMaster?.find(
                 (item: any) => item?.client_name === selectedClient
               );
@@ -1540,14 +1548,7 @@ const InvoiceMaster = () => {
                 setIecCodeSubmit(null);
               }
               console.log(`this is iec code`,iecCodeSubmit)
-             if (clientData) {
-        //   console.log("Country Name:", clientData.countryName,form);
-          setClientNameCountry(clientData.countryName);
-          const country = clientNameCountry?.toLowerCase();
-          form.currency.value = countryCurrencyMap[country] || " ";
-           } else {
-              console.log("Country Name not found for the selected client.");
-         }
+             
         }
         if ((form.contract_name?.value != clientForm?.contract_name?.value) && form.contract_name?.value) {
             const selectedContract = poContractsData?.filter((item: any) => item?.client_name === selectedClient)?.find((ele: any) => ele?.po_name == form.contract_name?.value)
