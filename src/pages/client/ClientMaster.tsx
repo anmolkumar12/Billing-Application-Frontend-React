@@ -1004,11 +1004,13 @@ const ClientMaster = () => {
             // clientFormFieldsStructure.updated_by.value = data?.updated_by;
             // clientFormFieldsStructure.isActive.value = data?.isActive;
             // clientFormFieldsStructure.updated_at.value = data?.updated_at;
-            if (data?.msa_flag) {
-                setLogoUrl(data?.msaFilePath)
+            if (data?.msaFilePath) {
+                setAttachments([{ name: data?.msaFilePath.split('/').pop(), size: 0 }]); // Mock file object
+                setLogoUrl(data?.msaFilePath);
             }
-            if (data?.nda_flag) {
-                setSignatureUrl(data?.ndaFilePath)
+            if (data?.ndaFilePath) {
+                setDigitalSign([{ name: data?.ndaFilePath.split('/').pop(), size: 0 }]); // Mock file object
+                setSignatureUrl(data?.ndaFilePath);
             }
 
             setClientForm(_.cloneDeep(clientFormFieldsStructure));
@@ -1505,7 +1507,7 @@ const ClientMaster = () => {
             } else if (attachments?.length) {
                 formData.set("msaFile", attachments[0]);
             }
-
+    
             if (clientForm?.nda_flag?.value && (!digitalSign || !digitalSign.length)) {
                 ToasterService.show("NDA file is required!", CONSTANTS.ERROR);
                 return;

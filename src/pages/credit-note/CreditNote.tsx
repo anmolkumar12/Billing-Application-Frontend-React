@@ -113,7 +113,7 @@ const CreditNoteMaster = () => {
             fieldWidth: "col-md-4",
         },
         clientBillTo: {
-            inputType: "multiSelect",
+            inputType: "singleSelect",
             label: "Client Bill Address",
             options: [],
             value: null,
@@ -121,7 +121,7 @@ const CreditNoteMaster = () => {
             fieldWidth: "col-md-4",
         },
         clientShipAddress: {
-            inputType: "multiSelect",
+            inputType: "singleSelect",
             label: "Client Ship Address",
             options: [],
             value: null,
@@ -1172,29 +1172,28 @@ const CreditNoteMaster = () => {
 
             const configData = poContractConfData.find((item: any) => item.client_name == data?.client_name)
             if (configData) {
-                clientFormFieldsStructure.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
-                    return {
-                        label: concatAddresses(item.address1, item.address2, item.address3),
-                        value: item.id.toString(),
-                        isDefault: index == 0 ? 1 : 0
-                    }
-                })
-                console.log('Updating client form fields:', clientFormFieldsStructure, data);
+                const uniqueClientBillTo = Array.from(new Set(configData.clientBill?.filter((item: any) => item.id).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                })).map((item:any) => item.value))).map(value => configData.clientBill?.find((item: any) => item.id.toString() === value)).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                }));
+    
+                clientFormFieldsStructure.clientBillTo.options = uniqueClientBillTo;
+                clientFormFieldsStructure.clientBillTo.value = data?.clientBillTo || "";
+    
+                const uniqueClientShipAddress = Array.from(new Set(configData.clientShip?.filter((item: any) => item.id).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                })).map((item:any) => item.value))).map(value => configData.clientShip?.find((item: any) => item.id.toString() === value)).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                }));
+    
+                clientFormFieldsStructure.clientShipAddress.options = uniqueClientShipAddress;
+                clientFormFieldsStructure.clientShipAddress.value = data?.clientShipAddress || "";
 
-                clientFormFieldsStructure.clientBillTo.value = typeof data?.clientBillTo === "string"
-                    ? data.clientBillTo.split(",").map((item: any) => item.trim())
-                    : [];
-
-                clientFormFieldsStructure.clientShipAddress.options = configData.clientShip?.filter((item: any) => item.id).map((item: any, index: number) => {
-                    return {
-                        label: concatAddresses(item.address1, item.address2, item.address3),
-                        value: item.id.toString(),
-                        isDefault: index == 0 ? 1 : 0
-                    }
-                })
-                clientFormFieldsStructure.clientShipAddress.value = typeof data?.clientShipAddress === "string"
-                    ? data.clientShipAddress.split(",").map((item: any) => item.trim())
-                    : [];
                 clientFormFieldsStructure.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
                     return {
                         label: item.name,
@@ -1508,39 +1507,37 @@ const CreditNoteMaster = () => {
                         value: item.id.toString(),
                     }
                 })
-                form.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
-                    return {
-                        label: concatAddresses(item.address1, item.address2, item.address3),
-                        value: item.id.toString(),
-                        isDefault: concatAddresses(item.address1, item.address2, item.address3) == selectedContract?.masterNames?.clientBillTo_names ? 1 : 0
-                    }
-                })
-                form.clientBillTo.options = configData.clientBill?.filter((item: any) => item.id).map((item: any, index: number) => {
-                    return {
-                        label: concatAddresses(item.address1, item.address2, item.address3),
-                        value: item.id.toString(),
-                        isDefault: concatAddresses(item.address1, item.address2, item.address3) == selectedContract?.masterNames?.clientBillTo_names ? 1 : 0
-                    }
-                })
-                const defaultBillItem = form.clientBillTo.options?.find((ele: any) => ele.isDefault == 1);
+                const uniqueClientBillTo = Array.from(new Set(configData.clientBill?.filter((item: any) => item.id).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                })).map((item:any) => item.value))).map(value => configData.clientBill?.find((item: any) => item.id.toString() === value)).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                }));
+    
+                form.clientBillTo.options = uniqueClientBillTo;
+    
+                const defaultBillItem = form.clientBillTo.options?.find((ele: any) => concatAddresses(ele.address1, ele.address2, ele.address3) == selectedContract?.masterNames?.clientBillTo_names);
                 if (defaultBillItem && defaultBillItem?.value) {
-                    form.clientBillTo.value = [defaultBillItem?.value.toString()];
-                }
-                else {
+                    form.clientBillTo.value = defaultBillItem?.value.toString();
+                } else {
                     form.clientBillTo.value = null;
                 }
-                form.clientShipAddress.options = configData.clientShip?.filter((item: any) => item.id).map((item: any, index: number) => {
-                    return {
-                        label: concatAddresses(item.address1, item.address2, item.address3),
-                        value: item.id.toString(),
-                        isDefault: concatAddresses(item.address1, item.address2, item.address3) == selectedContract?.masterNames?.clientShipAddress_names ? 1 : 0
-                    }
-                })
-                const defaultShipItem = form.clientShipAddress?.options?.find((ele: any) => ele.isDefault == 1);
+    
+                const uniqueClientShipAddress = Array.from(new Set(configData.clientShip?.filter((item: any) => item.id).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                })).map((item:any) => item.value))).map(value => configData.clientShip?.find((item: any) => item.id.toString() === value)).map((item: any) => ({
+                    label: concatAddresses(item.address1, item.address2, item.address3),
+                    value: item.id.toString(),
+                }));
+    
+                form.clientShipAddress.options = uniqueClientShipAddress;
+    
+                const defaultShipItem = form.clientShipAddress?.options?.find((ele: any) => concatAddresses(ele.address1, ele.address2, ele.address3) == selectedContract?.masterNames?.clientShipAddress_names);
                 if (defaultShipItem && defaultShipItem?.value) {
-                    form.clientShipAddress.value = [defaultShipItem?.value.toString()];
-                }
-                else {
+                    form.clientShipAddress.value = defaultShipItem?.value.toString();
+                } else {
                     form.clientShipAddress.value = null;
                 }
                 form.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {

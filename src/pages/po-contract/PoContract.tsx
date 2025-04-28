@@ -1235,8 +1235,8 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       objFormState.currency.options = currencyList || [];
       objFormState.currency.value = rowData?.currency || "";
       objFormState.dueAmount.value = rowData.dueAmount;
-      objFormState.end_date.value = rowData.end_date ? parseDateString(rowData.end_date) : null;
-      objFormState.start_date.value = rowData.start_date ? parseDateString(rowData.start_date) : null;
+      objFormState.end_date.value = rowData.end_date ? parseCustomDate(rowData.end_date) : null;
+      objFormState.start_date.value = rowData.start_date ? parseCustomDate(rowData.start_date) : null;
       objFormState.po_creation_date.value = rowData.po_creation_date ? parseDateString(rowData.po_creation_date) : null;
       objFormState.noOfResources.value = rowData.noOfResources;
       if (rowData.poNumber) {
@@ -1396,6 +1396,10 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     return new Date(year, month - 1, day);
   };
 
+  const parseCustomDate = (dateString: string) => {
+    const [day, month, year] = dateString.split("-");
+    return new Date(Number(year), Number(month) - 1, Number(day));
+};
 
   const closeFormPopup = () => {
     setFormPopup(false);
