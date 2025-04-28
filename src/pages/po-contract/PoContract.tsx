@@ -26,6 +26,9 @@ import { HTTP_RESPONSE } from "../../enums/http-responses.enum";
 import moment from "moment";
 import { CompanyMasterService } from "../../services/masters/company-master/company.service";
 import CurrencyMasterService from "../../services/masters/currency-master/currency.service";
+import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
+import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
+import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 
 const Contract: React.FC = () => {
 
@@ -369,7 +372,7 @@ const Contract: React.FC = () => {
   const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
   const [currencyList,setCurrencyList] = useState<any>([]);
   const [clientMaster, setClientMaster] = useState<any>([]);
-
+  const [dataAIS, setDataAIS] = useState<any>({industryHeadDataa: [], salesManagerDataa: [], accountManagerDataa: [] })
   const loggedInUserId = userInfo?.userId;
 
   let patchData: any;
@@ -378,13 +381,15 @@ const Contract: React.FC = () => {
   const clientService = new ClientMasterService();
   const currencyService = new CurrencyMasterService();
 
-  const countryCurrencyMap : any = {
+  const countryCurrencyMap: any = {
     india: "INR",
     usa: "USD",
     europe: "EUR",
     australia: "AUD",
-    dubai: "AED"
+    dubai: "AED",
+    uae: "AED"
   };
+  
 
   const [objFormState, setobjFormState] = useState<any>(
     _.cloneDeep(objForm)
@@ -422,6 +427,9 @@ const Contract: React.FC = () => {
   useEffect(() => {
 
     getContractMaster();
+    getIndustryHeadMaster();
+    getSalesMaster();
+    getAccountMaster();
     getCompanyLocationMaster();
     getPoContractConfiguration();
     getPOContractMasterConfigData();
@@ -432,6 +440,65 @@ const Contract: React.FC = () => {
 
   const poContractService = new PoContractService()
   const companyService = new CompanyMasterService();
+  const industryService = new IndustryMasterService();
+  const salesService = new SalesMasterService();
+  const accountService = new AccountMasterService();
+
+  const getAccountMaster = async () => {
+      setLoader(true);
+      try {
+        const response = await accountService.getAccountMaster();
+        console.log(`account manager data`,response?.accountManagers)
+        if (response?.accountManagers) {
+          setDataAIS((prev: any) => ({
+            ...prev,
+            accountManagerDataa: response.accountManagers,
+          }));
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+  const getSalesMaster = async () => {
+      setLoader(true);
+      try {
+        const response = await salesService.getSalesMaster();
+        if (response?.salesManagers) {
+          setDataAIS((prev: any) => ({
+            ...prev,
+            salesManagerDataa: response.salesManagers,
+          }));
+        }
+        return response?.salesManagers;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+  const getIndustryHeadMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await industryService.getIndustryHeadMaster();
+      // const temp = response?.industryHeads?.filter((item: any) => item?.isactive || item?.isActive)
+      if (response?.industryHeads) {
+        setDataAIS((prev: any) => ({
+          ...prev,
+          industryHeadDataa: response.industryHeads,
+        }));
+      }
+      // setIndustryHeadMaster(response?.);
+      // return temp;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const getCompanyLocationMaster = async () => {
       setLoader(true);
@@ -1013,7 +1080,6 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   };
 
 
-
   const updatePoContactMasterData = (rowData: any) => {
     try {
       // objFormState.client_name.value = 
@@ -1091,7 +1157,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
         if (companyNames.length > 0) {
           objFormState.companyName.options = companyNames;
-          objFormState.companyName.value = companyNames[0];
+          objFormState.companyName.value = rowData?.companyName;
           console.log('Company Names:', companyNames);
         } else {
           console.log('No matching clients found.');
@@ -1235,7 +1301,6 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         }
       }
 
-
       const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
 
       if (rowData?.industryGroups) {
@@ -1355,7 +1420,6 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
           //   console.log("Country Name:", clientData.countryName,form);
             // setClientNameCountry(clientData.countryName);
             const country = clientData.countryName?.toLowerCase();
-            console.log(`check hai bhai`,country,currentForm.client_name.value,currentForm.currency.options)
             currentForm.currency.value = countryCurrencyMap[clientData.countryName?.toLowerCase()] || " ";
              } else {
                 console.log("Country Name not found for the selected client.");
@@ -1588,7 +1652,70 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
           value: manager.accountManagerId.toString(),
         }));
     }
-    
+    const { industryHeadDataa, salesManagerDataa, accountManagerDataa } = dataAIS;
+
+    if (currentForm.companyName.value !== objForm.companyName.value) {
+      console.log(`huihuihsasdasdasiu`,dataAIS)
+
+      const filteredAccountManagers = accountManagerDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
+      currentForm.accountManager.options = filteredAccountManagers
+      .map((manager: { name: any; id: { toString: () => any; }; }) => ({
+        label: manager.name, 
+        value: manager.id.toString(), 
+      }));
+      if (Array.isArray(currentForm.accountManager.value)) {
+        const validSelections = currentForm.accountManager.value.filter((val: any) => 
+          currentForm.accountManager.options?.some((item: any) => item.value == val)
+        );
+        currentForm.accountManager.value = validSelections.length ? validSelections : null;
+      } 
+      else {
+        const isValid = currentForm.accountManager.options?.some((item: any) => item.value == currentForm.accountManager.value);
+        if (!isValid) {
+          currentForm.accountManager.value = null;
+        }
+      }
+
+      const filteredSaleManagers = salesManagerDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
+      console.log(`huihuihiu`,filteredSaleManagers)
+      currentForm.salesManager.options = filteredSaleManagers
+      .map((manager: { name: any; id: { toString: () => any; }; }) => ({
+        label: manager.name, 
+        value: manager.id.toString(), 
+      }));
+      if (Array.isArray(currentForm.salesManager.value)) {
+        const validSelections = currentForm.salesManager.value.filter((val: any) => 
+          currentForm.salesManager.options?.some((item: any) => item.value == val)
+        );
+        currentForm.salesManager.value = validSelections.length ? validSelections : null;
+      } 
+      else {
+        const isValid = currentForm.salesManager.options?.some((item: any) => item.value == currentForm.salesManager.value);
+        if (!isValid) {
+          currentForm.salesManager.value = null;
+        }
+      }
+
+      const filteredIndustryHeadManagers = industryHeadDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
+      console.log(`huihuihiu`,filteredIndustryHeadManagers)
+      currentForm.industryHead.options = filteredIndustryHeadManagers
+      .map((manager: { industryHeadName: any; id: { toString: () => any; }; }) => ({
+        label: manager.industryHeadName, 
+        value: manager.id.toString(), 
+      }));
+      if (Array.isArray(currentForm.industryHead.value)) {
+        const validSelections = currentForm.industryHead.value.filter((val: any) => 
+          currentForm.industryHead.options?.some((item: any) => item.value == val)
+        );
+        currentForm.industryHead.value = validSelections.length ? validSelections : null;
+      } 
+      else {
+        const isValid = currentForm.industryHead.options?.some((item: any) => item.value == currentForm.industryHead.value);
+        if (!isValid) {
+          currentForm.industryHead.value = null;
+        }
+      }
+    }
     setobjFormState(currentForm);
   };
 
