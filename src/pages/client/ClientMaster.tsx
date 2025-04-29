@@ -1016,9 +1016,9 @@ const ClientMaster = () => {
             clientFormFieldsStructure.isApplicableAM.value = data?.isApplicableAM == "true" ? true : false;
             clientFormFieldsStructure.sales_person.value = data?.salesMangerName ? data?.salesMangerName?.split(',') : [];
             clientFormFieldsStructure.account_manager.value = data?.accountManagerNames ? data?.accountManagerNames?.split(',') : [];
-            clientFormFieldsStructure.msa_start_date.value = parseCustomDate(data?.msa_start_date);
+            clientFormFieldsStructure.msa_start_date.value = data?.msa_start_date && parseCustomDate(data?.msa_start_date);
             //.log(`this is date`,data?.msa_start_date,data?.msa_end_date )
-            clientFormFieldsStructure.msa_end_date.value = parseCustomDate(data?.msa_end_date);
+            clientFormFieldsStructure.msa_end_date.value = data?.msa_end_date && parseCustomDate(data?.msa_end_date);
             clientFormFieldsStructure.is_msa_missing.value = data?.msa_flag==="Yes" ? true : false;
             clientFormFieldsStructure.nda_flag.value = data?.nda_flag==="Yes" ? true : false;
             clientFormFieldsStructure.non_solicitation_clause.value = data?.non_solicitation_clause_flag ? true : false;

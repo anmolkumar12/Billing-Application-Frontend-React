@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Calendar } from 'primereact/calendar'
 import Label from '../label/Label'
 import './Calender.scss'
@@ -19,71 +19,81 @@ interface PropsInterface {
   requiredLabel: boolean
 }
 
-export const CalendarComponent: React.FC<PropsInterface> = (props) => {
-  let inputElement = null
-  const mindate = props.min ? new Date(props.min) : undefined
-  const maxdate = props.max ? new Date(props.max) : undefined
+export const CalendarComponent: React.FC<PropsInterface> = React.memo((props) => {
+  const mindate = useMemo(() => props.min ? new Date(props.min) : undefined, [props.min])
+  const maxdate = useMemo(() => props.max ? new Date(props.max) : undefined, [props.max])
 
-  switch (props.inputtype) {
-    case 'singleDatePicker': {
-      inputElement = (
-        <Calendar
-          id={props.id + props.formName}
-          value={props.value || undefined}
-          onChange={(e) => props.changed(e.value, props.id)}
-          dateFormat="dd-mm-yy"
-          readOnlyInput
-          showIcon
-          minDate={mindate}
-          maxDate={maxdate}
-          onBlur={() => props.blurred(props.id)}
-          yearNavigator
-          yearRange="1900:2030"
-        ></Calendar>
-      )
+  const handleChange = useMemo(() => (e: any) => {
+    props.changed(e.value, props.id)
+  }, [props.changed, props.id])
 
-      break
+  const handleBlur = useMemo(() => () => {
+    props.blurred(props.id)
+  }, [props.blurred, props.id])
+
+  const inputElement = useMemo(() => {
+    switch (props.inputtype) {
+      case 'singleDatePicker': {
+        return (
+          <Calendar
+            id={props.id + props.formName}
+            value={props.value || undefined}
+            onChange={handleChange}
+            dateFormat="dd-mm-yy"
+            readOnlyInput
+            showIcon
+            minDate={mindate}
+            maxDate={maxdate}
+            onBlur={handleBlur}
+            yearNavigator
+            yearRange="2000:2030"
+            appendTo={document.body}
+          />
+        )
+      }
+
+      case 'monthPicker': {
+        return (
+          <Calendar
+            id={props.id + props.formName}
+            value={props.value || undefined}
+            onChange={handleChange}
+            view="month"
+            dateFormat="MM"
+            readOnlyInput
+            showIcon
+            onBlur={handleBlur}
+            appendTo={document.body}
+          />
+        )
+      }
+
+      case 'dateRange': {
+        return (
+          <Calendar
+            id={props.id + props.formName}
+            value={props.value || undefined}
+            onChange={handleChange}
+            selectionMode="range"
+            readOnlyInput
+            showIcon
+            onBlur={handleBlur}
+            style={{ width: '100%' }}
+            baseZIndex={3000}
+            dateFormat="dd-mm-yy"
+            appendTo={document.body}
+          />
+        )
+      }
+      default:
+        return null
     }
+  }, [props.inputtype, props.id, props.formName, props.value, mindate, maxdate, handleChange, handleBlur])
 
-    case 'monthPicker': {
-      inputElement = (
-        <Calendar
-          id={props.id + props.formName}
-          value={props.value || undefined}
-          onChange={(e) => props.changed(e.value, props.id)}
-          view="month"
-          dateFormat="MM"
-          readOnlyInput
-          showIcon
-          onBlur={() => props.blurred(props.id)}
-        />
-      )
-      break
-    }
-
-    case 'dateRange': {
-      inputElement = (
-        <Calendar
-          id={props.id + props.formName}
-          value={props.value || undefined}
-          onChange={(e) => props.changed(e.value, props.id)}
-          selectionMode="range"
-          readOnlyInput
-          showIcon
-          onBlur={() => props.blurred(props.id)}
-          style={{ width: '100%' }}
-          baseZIndex={3000}
-          dateFormat="dd-mm-yy"
-        />
-      )
-      break
-    }
-  }
   return (
     <div className={'custom-cnder-cls'}>
       {props.label && (
         <Label label={props.label} required={props.requiredLabel} />
-        // <label htmlFor={props.id + props.formName}>{props.label}</label>
       )}
       <span
         className={
@@ -94,4 +104,6 @@ export const CalendarComponent: React.FC<PropsInterface> = (props) => {
       </span>
     </div>
   )
-}
+})
+
+CalendarComponent.displayName = 'CalendarComponent'
