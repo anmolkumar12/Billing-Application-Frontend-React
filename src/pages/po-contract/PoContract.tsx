@@ -1734,13 +1734,14 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   };
 
   const returnNamesHandler = async (objectFormState: any) => {
+    console.log(`data obj`,objectFormState)
     const obj = {
-      projectService_names: objectFormState.projectService.options.find((item: any) => item.value === objectFormState.projectService.value)?.label || '',
-      technolgyGroup_names: objectFormState.technolgyGroup.options.find((item: any) => item.value === objectFormState.technolgyGroup.value)?.label || '',
-      technolgySubGroup_names: objectFormState.technolgySubGroup.options.find((item: any) => item.value === objectFormState.technolgySubGroup.value)?.label || '',
-      technolgy_names: objectFormState.technolgy.options.find((item: any) => item.value === objectFormState.technolgy.value)?.label || '',
-      oem_names: objectFormState.oem.options.find((item: any) => item.value === objectFormState.oem.value)?.label || '',
-      product_names: objectFormState.product.options.find((item: any) => item.value === objectFormState.product.value)?.label || '',
+      projectService_names: getNamesFromOptions(objectFormState.projectService),
+      technolgyGroup_names: getNamesFromOptions(objectFormState.technolgyGroup),
+      technolgySubGroup_names: getNamesFromOptions(objectFormState.technolgySubGroup),
+      technolgy_names: getNamesFromOptions(objectFormState.technolgy),
+      oem_names: getNamesFromOptions(objectFormState.oem),
+      product_names: getNamesFromOptions(objectFormState.product),
       industryGroups_names: getNamesFromOptions(objectFormState.industryGroups),
       subIndustries_names: getNamesFromOptions(objectFormState.subIndustries),
       industryHead_names: getNamesFromOptions(objectFormState.industryHead),
