@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react'
 import * as _ from 'lodash'
 import './Form.scss'
 // import classes from './Form.module.scss'
@@ -27,15 +27,7 @@ const FormComponent: React.FC<{
   formName?: string
   customClassName?: string
   blurHandler?: any
-}> = (props) => {
-  const {
-    form,
-    formUpdateEvent,
-    isFormValidFlag,
-    updateOptions,
-    formName,
-    customClassName,
-  } = props
+}> = memo(({ form, formUpdateEvent, isFormValidFlag, updateOptions, formName, customClassName, blurHandler }) => {
   const [state, setState] = useState({ currentForm: form })
   const [isFormValid, setisFormValid] = useState(isFormValidFlag)
   const isMountRef = useRef(false)
@@ -102,23 +94,17 @@ const FormComponent: React.FC<{
     formUpdateEvent(_.cloneDeep(updatedForm));
   }, 300), [formUpdateEvent]);
 
-  const inputChangedHandler = useCallback((newValue: any, fieldKey: string) => {
-    setState((prevState) => {
-      const updatedForm = { ...prevState.currentForm };
-      if (updatedForm[fieldKey].value !== newValue) {
-        updatedForm[fieldKey].value = newValue;
-        debounceFormUpdateEventHandler(updatedForm);
-      }
-      return { currentForm: updatedForm };
-    });
-  }, [debounceFormUpdateEventHandler]);
+  const inputChangedHandler = useCallback((value: any, id: string) => {
+    const updatedForm = _.cloneDeep(form);
+    updatedForm[id].value = value;
+    formUpdateEvent(updatedForm);
+  }, [form, formUpdateEvent]);
 
-  const handleBlur = useCallback((fieldKey: string) => {
-    const updatedForm: FormType = { ...state.currentForm }
-    updatedForm[fieldKey].touched = true
-    setState({ currentForm: updatedForm })
-    formUpdateEvent(updatedForm)
-  }, [state.currentForm, formUpdateEvent]);
+  const handleBlur = useCallback((id: string) => {
+    if (blurHandler) {
+      blurHandler(id);
+    }
+  }, [blurHandler]);
 
   const updateValidityHandler = useCallback((
     valid: boolean,
@@ -555,6 +541,8 @@ const FormComponent: React.FC<{
       </div>
     </form>
   )
-};
+});
+
+FormComponent.displayName = 'FormComponent';
 
 export default FormComponent;

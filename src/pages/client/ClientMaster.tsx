@@ -1261,37 +1261,84 @@ const ClientMaster = () => {
 
 
     const clientFormHandler = async (currentForm: FormType) => {
+        // Create a new form object without mutating the original
         const form = _.cloneDeep(currentForm);
+        
+        // Handle industry head changes
+        if (form.industryHeadNames?.value !== clientForm?.industryHeadNames?.value) {
+            const selectedIndustryHead = form.industryHeadNames?.value;
+            if (selectedIndustryHead) {
+                try {
+                    // Reset dependent fields
+                    form.account_manager.value = [];
+                    form.sales_person.value = [];
+                    form.industry_group.value = null;
 
-        // if (form?.companyName?.value != clientForm?.companyName?.value) {
-        // const selectedCompany = companyMaster?.find(
-        //     (item: any) => item?.companyName == form?.companyName?.value
-        // );
-        // const selectedCountry = countryMaster?.find(
-        //     (item: any) => item?.name == selectedCompany?.countryName
-        // );
-        if(!isEditClient){
-            form.client_status.hideField = true;
+                    // Get all required data in parallel
+                    const [accountManagers, salesManager] = await Promise.all([
+                        getAccountManagerMaster(),
+                        getSalesMaster()
+                    ]);
+
+                    if (accountManagers) {
+                        const tempData = accountManagers
+                            .filter((item: any) => item?.industryHeadNames === selectedIndustryHead)
+                            .map((ele: any) => ele?.name);
+                        form.account_manager.options = tempData;
+                    }
+
+                    if (salesManager) {
+                        const tempData = salesManager
+                            .filter((item: any) => item?.industryHeadNames === selectedIndustryHead)
+                            .map((ele: any) => ele?.name);
+                        form.sales_person.options = tempData;
+                    }
+
+                    if (industryGroupMaster && industryHeadMaster) {
+                        const selectedIndustry = industryHeadMaster
+                            .find((item: any) => item?.industryHeadName === selectedIndustryHead)
+                            ?.industryNames;
+
+                        if (selectedIndustry) {
+                            const selectedIndustryArray = selectedIndustry.split(',').map((str: string) => str.trim());
+                            const tempData = industryGroupMaster
+                                .filter((item: any) =>
+                                    selectedIndustryArray.some((industry: string) => 
+                                        item?.groupIndustryName.includes(industry)
+                                    )
+                                )
+                                .map((ele: any) => ele?.groupIndustryName);
+
+                            form.industry_group.options = tempData;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating dependent fields:', error);
+                }
+            }
         }
-        else{
+
+        // Handle other form field changes
+        if(!isEditClient) {
+            form.client_status.hideField = true;
+        } else {
             form.client_status.hideField = false;
         }
-        if (form.nda_flag.value == true) {
+
+        if (form.nda_flag?.value === true) {
             setShowNDAAttacment(true);
-        } else if (form.nda_flag.value == false) {
+        } else if (form.nda_flag?.value === false) {
             setShowNDAAttacment(false);
         }
-        console.log('hhhhh', form);
 
-        if (form?.is_same_alias?.value == true) {
+        if (form?.is_same_alias?.value === true) {
             form.vega_client_name.disable = true;
             form.vega_client_name.value = form?.client_name?.value;         
-        }
-        else{
+        } else {
             form.vega_client_name.disable = false;
         }
 
-        if (form?.is_msa_missing?.value == true) {
+        if (form?.is_msa_missing?.value === true) {
             setShowMSAAttacment(true);
             if (form.msa_start_date.validation) {
                 form.msa_start_date.validation.required = true;
@@ -1313,12 +1360,10 @@ const ClientMaster = () => {
             form.msa_end_date.disable = true;
         }
 
-        console.log('form handler checking ---->>> ', form, clientForm);
-
-        if(form?.isApplicableAM?.value){
+        if(form?.isApplicableAM?.value) {
             form.sales_person.disable = false;
             form.account_manager.disable = false;
-        } else{
+        } else {
             form.sales_person.value = null;
             form.account_manager.value = null;
             form.sales_person.disable = true;
@@ -1326,54 +1371,24 @@ const ClientMaster = () => {
         }
 
         if (form.companyName?.value !== clientForm?.companyName?.value) {
-            const selectedCompany = form.companyName?.value
+            const selectedCompany = form.companyName?.value;
             if (selectedCompany) {
                 const accountMaster = await getAccountMaster();
                 if (accountMaster) {
-                    const tempData = accountMaster?.filter((item: any) => item?.companyName == selectedCompany).map((ele: any) => ele?.bankName);
+                    const tempData = accountMaster
+                        ?.filter((item: any) => item?.companyName === selectedCompany)
+                        .map((ele: any) => ele?.bankName);
                     form.account_name.options = tempData || [];
 
-                    const defaultAccount = [accountMaster?.filter((item: any) => item?.companyName == selectedCompany)?.find((ele: any) => ele?.isDefaultAccount)?.bankName];
+                    const defaultAccount = [accountMaster
+                        ?.filter((item: any) => item?.companyName === selectedCompany)
+                        ?.find((ele: any) => ele?.isDefaultAccount)?.bankName];
                     form.account_name.value = defaultAccount.includes(undefined) ? [] : defaultAccount;
-
-                    console.log('form handler checking ---->>> ', defaultAccount);
-
-                }
-            }
-        }
-        if (form.industryHeadNames?.value !== clientForm?.industryHeadNames?.value) {
-            const selectedIndustryHead = form.industryHeadNames?.value
-            if (selectedIndustryHead) {
-                const accountManagers = await getAccountManagerMaster();
-                const salesManager = await getSalesMaster();
-
-                if (accountManagers) {
-                    const tempData = accountManagers?.filter((item: any) => item?.industryHeadNames == selectedIndustryHead).map((ele: any) => ele?.name);
-                    form.account_manager.options = tempData || [];
-                }
-                if (salesManager) {
-                    const tempData = salesManager?.filter((item: any) => item?.industryHeadNames == selectedIndustryHead).map((ele: any) => ele?.name);
-                    form.sales_person.options = tempData || [];
-                }
-                if (industryGroupMaster) {
-                    const selectedIndustry = industryHeadMaster
-                        ?.find((item: any) => item?.industryHeadName === selectedIndustryHead)
-                        ?.industryNames;
-
-                    const selectedIndustryArray = selectedIndustry?.split(',').map((str: string) => str.trim()); // Split and trim the selected industries
-
-                    const tempData = industryGroupMaster
-                        ?.filter((item: any) =>
-                            selectedIndustryArray?.some((industry: string) => item?.groupIndustryName.includes(industry))
-                        )
-                        .map((ele: any) => ele?.groupIndustryName);
-
-                    form.industry_group.options = tempData || [];
-                    console.log('Filtered tempData:', tempData, 'Selected Industries:', selectedIndustryArray);
                 }
             }
         }
 
+        // Update form state in a single operation
         setClientForm(form);
     };
 
