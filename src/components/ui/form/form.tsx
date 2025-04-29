@@ -98,45 +98,29 @@ const FormComponent: React.FC<{
     }
   }, [updateOptions])
 
- 
-    const debounceFormUpdateEventHandler = useCallback(_.debounce((updatedForm:FormType) => {
-      formUpdateEvent(_.cloneDeep(updatedForm));
-      },300),[])  
+  const debounceFormUpdateEventHandler = useCallback(_.debounce((updatedForm:FormType) => {
+    formUpdateEvent(_.cloneDeep(updatedForm));
+  }, 300), [formUpdateEvent]);
 
-  const inputChangedHandler = (newValue: any, fieldKey: string) => {
+  const inputChangedHandler = useCallback((newValue: any, fieldKey: string) => {
     setState((prevState) => {
       const updatedForm = { ...prevState.currentForm };
       if (updatedForm[fieldKey].value !== newValue) {
         updatedForm[fieldKey].value = newValue;
-        // debounceFormUpdateEventHandler(updatedForm);
-        formUpdateEvent(updatedForm);
+        debounceFormUpdateEventHandler(updatedForm);
       }
       return { currentForm: updatedForm };
     });
-  }
-  // const singleSelectChangeHandler = (newValue: any, fieldKey: string) => {
-  //   setState((prevState) => {
-  //     const updatedForm = { ...prevState.currentForm };
-  //     if (updatedForm[fieldKey].value !== newValue) {
-  //       updatedForm[fieldKey].value = newValue;
-  //       formUpdateEvent(updatedForm);
-  //     }
-  //     return { currentForm: updatedForm };
-  //   });
-  // }
+  }, [debounceFormUpdateEventHandler]);
 
-  // default handle blur
-  const handleBlur = (fieldKey: string) => {
+  const handleBlur = useCallback((fieldKey: string) => {
     const updatedForm: FormType = { ...state.currentForm }
     updatedForm[fieldKey].touched = true
     setState({ currentForm: updatedForm })
     formUpdateEvent(updatedForm)
-  }
+  }, [state.currentForm, formUpdateEvent]);
 
-  const { blurHandler = handleBlur } = props
-
-
-  const updateValidityHandler = (
+  const updateValidityHandler = useCallback((
     valid: boolean,
     fieldKey: string,
     errorMessage: string
@@ -146,7 +130,7 @@ const FormComponent: React.FC<{
     updatedForm[fieldKey].errorMessage = errorMessage
     setState({ currentForm: updatedForm })
     formUpdateEvent(updatedForm)
-  }
+  }, [state.currentForm, formUpdateEvent]);
 
   return (
     <form>
@@ -169,7 +153,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
                       feedback={value.feedback}
@@ -205,7 +189,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
                       requiredLabel={
@@ -240,7 +224,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
                       requiredLabel={
@@ -278,7 +262,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
                       requiredLabel={
@@ -315,7 +299,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       customMask={value.customMask}
                       maskPlaceholder={
                         value.maskPlaceholder || value.customMask
@@ -354,7 +338,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
                       requiredLabel={
@@ -389,7 +373,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       options={value.options || []}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
@@ -425,7 +409,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       options={value.options || []}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
@@ -462,7 +446,7 @@ const FormComponent: React.FC<{
                       value={value.value}
                       id={key}
                       changed={inputChangedHandler}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       formName={formName || 'form1'}
                       disable={value.disable || false}
                       requiredLabel={
@@ -518,7 +502,7 @@ const FormComponent: React.FC<{
                       formName={formName || 'form1'}
                       inputNumberOptions={value.inputNumberOptions || {}}
                       disable={value.disable || false}
-                      blurred={blurHandler}
+                      blurred={handleBlur}
                       requiredLabel={
                         !!(value.validation && value.validation.required)
                       }

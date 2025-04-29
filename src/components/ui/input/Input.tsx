@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -23,34 +23,36 @@ interface PropsInterface {
   formikChanged?: any;
 }
 
-export const InputComponent: React.FC<PropsInterface> = (props) => {
+export const InputComponent: React.FC<PropsInterface> = memo((props) => {
   const [localValue, setLocalValue] = useState(props.value || '');
   const hasFirstInputHappened = useRef(false);
+
   useEffect(() => {
     if (!hasFirstInputHappened.current) {
       setLocalValue(props.value || '');
     }
   }, [props.value]);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value;
-    setLocalValue(value); // Always update local value
+    setLocalValue(value);
     if (!hasFirstInputHappened.current) {
       hasFirstInputHappened.current = true;
     }
   
     if (props.formikChanged) {
-      props.formikChanged(e); // Let Formik handle touched etc.
+      props.formikChanged(e);
     }
-  };
+  }, [props.formikChanged]);
   
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     if (props.changed) {
-      props.changed(localValue, props.id); // Always fire changed on blur
+      props.changed(localValue, props.id);
     }
     if (props.blurred) {
       props.blurred(props.id);
     }
-  };
+  }, [props.changed, props.blurred, props.id, localValue]);
 
   const inputValue = hasFirstInputHappened.current ? localValue : props.value || '';
 
@@ -117,4 +119,4 @@ export const InputComponent: React.FC<PropsInterface> = (props) => {
       </span>
     </div>
   );
-};
+});
