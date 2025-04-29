@@ -284,7 +284,7 @@ const AccountTypeMaster = () => {
     _.each(AccountTypeForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
 

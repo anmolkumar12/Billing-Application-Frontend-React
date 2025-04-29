@@ -253,7 +253,7 @@ const TechGroupMaster = () => {
     _.each(TechGroupForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
 

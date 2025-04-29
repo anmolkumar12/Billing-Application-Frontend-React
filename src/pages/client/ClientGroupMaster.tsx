@@ -414,7 +414,7 @@ const ClientGroupMaster = () => {
     _.each(ClientBillForm, (item: any) => {
       if (item?.validation?.required) {
         companyFormValid.push(item.valid);
-        companyValidityFlag = companyValidityFlag && item.valid;
+        companyValidityFlag = companyValidityFlag && item.value;
       }
     });
     console.log('clientForm', ClientBillForm, companyValidityFlag);

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unexpected-multiline */
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState, useCallback, useMemo } from "react";
 import "primeicons/primeicons.css";
 import { ContractMasterService } from "../../services/masters/contract-master/contract.service";
 import ConfirmDialogue from "../../components/ui/confirm-dialogue/ConfirmDialogue";
@@ -29,6 +29,7 @@ import CurrencyMasterService from "../../services/masters/currency-master/curren
 import { IndustryMasterService } from "../../services/masters/industry-master/industry.service";
 import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
+import { debounce } from 'lodash'
 
 const Contract: React.FC = () => {
 
