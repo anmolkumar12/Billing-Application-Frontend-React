@@ -1567,24 +1567,38 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       }
     }
     if ((currentForm.technolgyGroup.value != objFormState.technolgyGroup.value) && currentForm.technolgyGroup.value) {
+      // Handle both single and multiple technology group selections
+      const selectedTechGroups = Array.isArray(currentForm.technolgyGroup.value) 
+        ? currentForm.technolgyGroup.value 
+        : [currentForm.technolgyGroup.value];
+
       currentForm.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
-        ? poMastersConfigData?.technolgySubGroup.filter((item: any) => Number(item.techGroupIds) == Number(currentForm?.technolgyGroup?.value)).map((item: any) => ({
-          label: item?.name,
-          value: item.id.toString(),
-        }))
+        ? poMastersConfigData?.technolgySubGroup
+            .filter((item: any) => selectedTechGroups.some(techGroupId => 
+              Number(item.techGroupIds) === Number(techGroupId)
+            ))
+            .map((item: any) => ({
+              label: item?.name,
+              value: item.id.toString(),
+            }))
         : [];
     }
     if ((currentForm.technolgySubGroup.value != objFormState.technolgySubGroup.value) && currentForm.technolgySubGroup.value) {
+      // Handle both single and multiple technology subgroup selections
+      const selectedTechSubGroups = Array.isArray(currentForm.technolgySubGroup.value) 
+        ? currentForm.technolgySubGroup.value 
+        : [currentForm.technolgySubGroup.value];
+
       currentForm.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
-        ? poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(currentForm?.technolgySubGroup?.value)).map((item: any) => ({
-          label: item?.techName,
-          value: item.id.toString(),
-        }))
+        ? poMastersConfigData?.technolgy
+            .filter((item: any) => selectedTechSubGroups.some(techSubGroupId => 
+              Number(item.techSubgroupIds) === Number(techSubGroupId)
+            ))
+            .map((item: any) => ({
+              label: item?.techName,
+              value: item.id.toString(),
+            }))
         : [];
-      console.log('tech array---->', poMastersConfigData?.technolgy.filter((item: any) => Number(item.techSubgroupIds) == Number(currentForm?.technolgySubGroup?.value)).map((item: any) => ({
-        label: item?.name,
-        value: item.id.toString(),
-      })));
     }
     console.log(`rohit jhosi `,currentForm.poAmount.value,objFormState.poAmount.value)
     if (currentForm.poAmount.value) {
@@ -1597,9 +1611,16 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       currentForm.industryGroups.value !== objFormState.industryGroups.value &&
       currentForm.industryGroups.value
     ) {
+      // Handle both single and multiple industry groups selections
+      const selectedIndustryGroups = Array.isArray(currentForm.industryGroups.value)
+        ? currentForm.industryGroups.value
+        : [currentForm.industryGroups.value];
+
       currentForm.subIndustries.options = groupIndustryData
         .filter((group: any) =>
-          Number(group.groupIndustryId) === Number(currentForm.industryGroups.value)
+          selectedIndustryGroups.some(groupId =>
+            Number(group.groupIndustryId) === Number(groupId)
+          )
         )
         .flatMap((group: any) =>
           industryData
