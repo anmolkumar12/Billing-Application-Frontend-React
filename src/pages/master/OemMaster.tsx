@@ -39,7 +39,10 @@ const OemMaster = () => {
     type: {
       inputType: "singleSelect",
       label: "Type",
-      options: ['License','AMC'],
+      options: [
+        { value: 'License', label: 'License' },
+        { value: 'AMC', label: 'AMC' }
+      ],
       value: null,
       validation: {
         required: true,
@@ -161,6 +164,30 @@ const OemMaster = () => {
         </div>
       ),
     },
+    {
+      label: "Type",
+      fieldName: "type",
+      textAlign: "left",
+      sort: true,
+      filter: true,
+      fieldValue: "type",
+      changeFilter: true,
+      placeholder: "Type",
+      body: (rowData: any) => (
+        <div>
+          <span
+            id={`companyNameTooltip-${rowData.id}`}
+            // data-pr-tooltip={rowData.productName}
+          >
+            {rowData.type}
+          </span>
+          <Tooltip
+            target={`#companyNameTooltip-${rowData.id}`}
+            position="top"
+          />
+        </div>
+      ),
+    },
    
     {
       label: "Status",
@@ -242,17 +269,21 @@ const OemMaster = () => {
 
 
   const oemFormHandler = async (form: FormType) => {
-    const updatedForm = {...form}
+    console.log("Form update:", form);
+    const updatedForm = {...form};
     setOemForm(updatedForm);
+    setOemFieldStructure(updatedForm);
   };
 
   const onUpdate = async (data: any) => {
-      setRowData(data);
-      oemFieldsStructure.oemName.value = data?.oemName;
-      oemFieldsStructure.productName.value = data?.productName;
-      oemFieldsStructure.type.value = data.type || "";
-      setOemForm(_.cloneDeep(oemFieldsStructure));
-      setFormPopup(true);
+    setRowData(data);
+    const updatedStructure = _.cloneDeep(oemFieldsStructure);
+    updatedStructure.oemName.value = data?.oemName;
+    updatedStructure.productName.value = data?.productName;
+    updatedStructure.type.value = data.type;
+    setOemFieldStructure(updatedStructure);
+    setOemForm(_.cloneDeep(updatedStructure));
+    setFormPopup(true);
   };
 
   const onPopUpClose = (e?: any) => {
