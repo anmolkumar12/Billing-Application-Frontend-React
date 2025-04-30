@@ -325,7 +325,7 @@ const ProjectServiceMaster = () => {
                 }}
               >
                 <i className="pi pi-angle-left"></i>
-                <h4 className="popup-heading">{rowData?'Update':`Add New`} Project/Service Master</h4>
+                <h4 className="popup-heading">{rowData?'Update':`Add New`} Service type</h4>
               </div>
               <div
                 className="popup-right-close"

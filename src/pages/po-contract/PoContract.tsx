@@ -1238,7 +1238,9 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       objFormState.dueAmount.value = rowData.dueAmount;
       objFormState.end_date.value = rowData.end_date ? parseCustomDate(rowData.end_date) : null;
       objFormState.start_date.value = rowData.start_date ? parseCustomDate(rowData.start_date) : null;
-      objFormState.po_creation_date.value = rowData.po_creation_date ? parseDateString(rowData.po_creation_date) : null;
+      objFormState.po_creation_date.value = rowData.po_creation_date && rowData.po_creation_date !== "null" 
+    ? parseDateString(rowData.po_creation_date) 
+    : null;
       objFormState.noOfResources.value = rowData.noOfResources;
       if (rowData.poNumber) {
         objFormState.poNumber.value = rowData.poNumber;
@@ -1388,14 +1390,33 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   };
 
   const parseDateString = (dateString: any) => {
-    if (!dateString) return new Date();
-    const date: any = new Date(dateString);
-    if (isNaN(date)) return new Date();
-    const year = date.getFullYear();
-    const month: any = String(date.getMonth() + 1).padStart(2, "0");
-    const day: any = String(date.getDate()).padStart(2, "0");
-    return new Date(year, month - 1, day);
-  };
+    // Return null if no date string is provided
+    if (!dateString || dateString === "null") return null;
+    
+    // If the date is already a Date object, return it
+    if (dateString instanceof Date) return dateString;
+    
+    // Handle DD-MM-YYYY format
+    if (typeof dateString === 'string' && dateString.includes('-')) {
+        const [day, month, year] = dateString.split('-').map(num => parseInt(num, 10));
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+            const date = new Date(year, month - 1, day);
+            // Validate if the date is valid
+            if (isValidDate(date)) {
+                return date;
+            }
+        }
+    }
+    
+    // Try standard date parsing as fallback
+    const date = new Date(dateString);
+    return isValidDate(date) ? date : null;
+};
+
+  // Helper function to validate dates
+  const isValidDate = (date: Date) => {
+    return date instanceof Date && !isNaN(date.getTime());
+};
 
   const parseCustomDate = (dateString: string) => {
     const [day, month, year] = dateString.split("-");
@@ -1791,56 +1812,64 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     const formData: any = new FormData();
 
     _.each(objFormState, (item: any) => {
-                if (item?.validation?.required) {
-                    companyValidityFlag = companyValidityFlag && item.value;
-                }
-            });
+        if (item?.validation?.required) {
+            companyValidityFlag = companyValidityFlag && item.value;
+        }
+    });
 
     setIsFormValid(companyValidityFlag);
 
-   if (!companyValidityFlag) {
-              ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-              return;
-          }
+    if (!companyValidityFlag) {
+        ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+        return;
+    }
 
-    console.log('finalData---->', objFormState,objFormState.start_date.value, formatDate(objFormState.start_date.value));
     const getAllMasterNames = await returnNamesHandler(objFormState);
 
-    const obj = {
-      clientId: poContractConfData.find((item: any) => item.client_name === objFormState.client_name.value)?.client_id || '',
-      client_name: objFormState.client_name.value || '',
-      clientBillTo: objFormState.clientBillTo.value || '', 
-      clientShipAddress: objFormState.clientShipAddress.value || '',
-      currency: objFormState.currency.value?.value || objFormState.currency.value || '',
-      clientContact: objFormState.clientContact.value?.toString() || '',
-      companyName: objFormState.companyName.value || '',
-      companyLocation: objFormState.companyLocation.value || '',
-      creditPeriod: objFormState.creditPeriod.value,
-      po_name: objFormState.po_name.value,
-      poAmount: +objFormState.poAmount.value || null,
-      dueAmount: +objFormState.dueAmount.value || null,
-      start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
-      end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
-      po_creation_date: objFormState.po_creation_date.value ? formatDate(objFormState.po_creation_date.value) : null,
-      projectService: objFormState.projectService.value?.toString() || '',
-      technolgyGroup: objFormState.technolgyGroup.value?.toString() || '',
-      technolgySubGroup: objFormState.technolgySubGroup.value?.toString() || '',
-      technolgy: objFormState.technolgy.value?.toString() || '',
-      oem: objFormState.oem.value?.toString() || '',
-      product: objFormState.product.value?.toString() || '',
-      docType: objFormState.docType.value || '',
-      poNumber: objFormState.poNumber.value || '',
-      srNumber: objFormState.srNumber.value || '',
-      industryGroups: objFormState.industryGroups.value?.toString() || '',
-      subIndustries: objFormState.subIndustries.value?.toString() || '',
-      industryHead: objFormState.industryHead.value?.toString() || '',
-      salesManager: objFormState.salesManager.value?.toString() || '',
-      accountManager: objFormState.accountManager.value?.toString() || '',
-      masterNames: JSON.stringify(getAllMasterNames) || '{}',
-      noOfResources: objFormState.noOfResources.value || '',
-      resourcesData: JSON.stringify(tableData) || '[]',
-    };
+    // Determine po_creation_date value
+    let poCreationDate = null;
+    if (objFormState.po_creation_date.value) {
+        // If po_creation_date is provided, use it
+        poCreationDate = formatDate(objFormState.po_creation_date.value);
+    } else if (objFormState.start_date.value) {
+        // If po_creation_date is not provided but start_date is, use start_date
+        poCreationDate = formatDate(objFormState.start_date.value);
+    }
 
+    const obj = {
+        clientId: poContractConfData.find((item: any) => item.client_name === objFormState.client_name.value)?.client_id || '',
+        client_name: objFormState.client_name.value || '',
+        clientBillTo: objFormState.clientBillTo.value || '', 
+        clientShipAddress: objFormState.clientShipAddress.value || '',
+        currency: objFormState.currency.value?.value || objFormState.currency.value || '',
+        clientContact: objFormState.clientContact.value?.toString() || '',
+        companyName: objFormState.companyName.value || '',
+        companyLocation: objFormState.companyLocation.value || '',
+        creditPeriod: objFormState.creditPeriod.value,
+        po_name: objFormState.po_name.value,
+        poAmount: +objFormState.poAmount.value || null,
+        dueAmount: +objFormState.dueAmount.value || null,
+        start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
+        end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
+        po_creation_date: poCreationDate, // Use the determined po_creation_date
+        projectService: objFormState.projectService.value?.toString() || '',
+        technolgyGroup: objFormState.technolgyGroup.value?.toString() || '',
+        technolgySubGroup: objFormState.technolgySubGroup.value?.toString() || '',
+        technolgy: objFormState.technolgy.value?.toString() || '',
+        oem: objFormState.oem.value?.toString() || '',
+        product: objFormState.product.value?.toString() || '',
+        docType: objFormState.docType.value || '',
+        poNumber: objFormState.poNumber.value || '',
+        srNumber: objFormState.srNumber.value || '',
+        industryGroups: objFormState.industryGroups.value?.toString() || '',
+        subIndustries: objFormState.subIndustries.value?.toString() || '',
+        industryHead: objFormState.industryHead.value?.toString() || '',
+        salesManager: objFormState.salesManager.value?.toString() || '',
+        accountManager: objFormState.accountManager.value?.toString() || '',
+        masterNames: JSON.stringify(getAllMasterNames) || '{}',
+        noOfResources: objFormState.noOfResources.value || '',
+        resourcesData: JSON.stringify(tableData) || '[]',
+    };
 
     console.log('Names Object ----->', getAllMasterNames);
     console.log('obj ---------------->', obj);

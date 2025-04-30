@@ -1458,14 +1458,28 @@ const InvoiceMaster = () => {
     };
 
     const parseDateString = (dateString: any) => {
-        if (!dateString) return new Date();
-        const date: any = new Date(dateString);
-        if (isNaN(date)) return new Date();
-        const year = date.getFullYear();
-        const month: any = String(date.getMonth() + 1).padStart(2, "0");
-        const day: any = String(date.getDate()).padStart(2, "0");
-        return new Date(year, month - 1, day);
-    };
+        if (!dateString) return null;
+        
+        // Handle different date formats
+        let date: Date;
+        if (typeof dateString === 'string') {
+            // Try parsing DD-MM-YYYY format
+            const [day, month, year] = dateString.split('-');
+            if (day && month && year) {
+                date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            } else {
+                // Fallback to standard date parsing
+                date = new Date(dateString);
+            }
+        } else {
+            date = new Date(dateString);
+        }
+    
+        // Return null if date is invalid
+        if (isNaN(date.getTime())) return null;
+        
+        return date;
+      };
 
     const formatDate = (dateString: any) => {
         if (!dateString) return null;

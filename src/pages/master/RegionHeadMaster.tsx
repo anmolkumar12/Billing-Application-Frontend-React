@@ -657,13 +657,23 @@ const RegionHeadMaster = () => {
   };
 
   const parseDateString = (dateString: any) => {
-    if (!dateString) return new Date();
-    const date: any = new Date(dateString);
-    if (isNaN(date)) return new Date();
-    const year = date.getFullYear();
-    const month: any = String(date.getMonth() + 1).padStart(2, "0");
-    const day: any = String(date.getDate()).padStart(2, "0");
-    return new Date(year, month - 1, day);
+    if (!dateString) return null;
+    
+    let date: Date;
+    if (typeof dateString === 'string') {
+        const [day, month, year] = dateString.split('-');
+        if (day && month && year) {
+            date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        } else {
+            date = new Date(dateString);
+        }
+    } else {
+        date = new Date(dateString);
+    }
+
+    if (isNaN(date.getTime())) return null;
+    
+    return date;
   };
 
   const updateCompanyLocationMaster = async (data: any, regionNames: any[]) => {

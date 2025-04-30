@@ -67,12 +67,8 @@ const TechMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
-  const [techFieldsStructure, setTechFieldsStructure] = useState<any>(
-    _.cloneDeep(TechFormFields)
-  );
-  const [TechForm, setTechForm] = useState<any>(
-    _.cloneDeep(techFieldsStructure)
-  );
+  const [techFieldsStructure, setTechFieldsStructure] = useState<any>(_.cloneDeep(TechFormFields));
+  const [TechForm, setTechForm] = useState<any>(_.cloneDeep(TechFormFields));
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
@@ -315,22 +311,46 @@ const TechMaster = () => {
     }
   };
 
-  const formatSubGroupDetails = async (
-    techSubGroups: any = techSubGroupMaster,
-    techGroupId: any
-  ) => {
+  const formatSubGroupDetails = async (techSubGroups: any = techSubGroupMaster, techGroupId: any) => {
     const subGrouplist = techSubGroups
-      ?.filter((item: any) => item?.techGroupIds == techGroupId)
-      ?.map((subGroup: any) => subGroup?.name);
-    techFieldsStructure.subGroup_name.options = subGrouplist;
-    setTechFieldsStructure(techFieldsStructure);
+        ?.filter((item: any) => item?.techGroupIds == techGroupId)
+        ?.map((subGroup: any) => subGroup?.name);
+    
+    setTechForm((prevForm:any) => ({
+        ...prevForm,
+        subGroup_name: {
+            ...prevForm.subGroup_name,
+            options: subGrouplist
+        }
+    }));
+    
+    setTechFieldsStructure((prevStructure:any) => ({
+        ...prevStructure,
+        subGroup_name: {
+            ...prevStructure.subGroup_name,
+            options: subGrouplist
+        }
+    }));
   };
 
   const formatGroupDetails = async (techGroups: any = techGroupMaster) => {
     const grouplist = techGroups.map((group: any) => group?.name);
-    techFieldsStructure.group_name.options = grouplist;
-    setTechFieldsStructure(techFieldsStructure);
-    await techFormHandler(techFieldsStructure);
+    
+    setTechForm((prevForm:any) => ({
+        ...prevForm,
+        group_name: {
+            ...prevForm.group_name,
+            options: grouplist
+        }
+    }));
+    
+    setTechFieldsStructure((prevStructure:any) => ({
+        ...prevStructure,
+        group_name: {
+            ...prevStructure.group_name,
+            options: grouplist
+        }
+    }));
   };
 
   const openSaveForm = async () => {
@@ -352,22 +372,23 @@ const TechMaster = () => {
   };
 
   const techFormHandler = async (form: FormType) => {
-    const updatedForm = { ...form }
-    const techGroupAreUnequal =
-      updatedForm?.group_name?.value !== TechForm?.group_name?.value;
-
-    // if (techGroupAreUnequal) {
-    const subGroupList = await modifyFormTechGroup(updatedForm?.group_name?.value);
-    if (subGroupList) {
-      updatedForm.subGroup_name.options = subGroupList;
-      // updatedForm.subGroup_name.value = null;
+    console.log('Form Update Triggered:', form);
+    const updatedForm = _.cloneDeep(form);
+    
+    if (updatedForm?.group_name?.value !== TechForm?.group_name?.value) {
+        console.log('Group changed:', updatedForm?.group_name?.value);
+        const subGroupList = await modifyFormTechGroup(updatedForm?.group_name?.value);
+        console.log('New subgroup list:', subGroupList);
+        
+        if (subGroupList) {
+            updatedForm.subGroup_name.options = subGroupList;
+            updatedForm.subGroup_name.value = null;
+        }
     }
-    // }
-    // setTechForm(updatedForm);
-    // Only update the state if the form has truly changed
-    if (!_.isEqual(form, TechForm)) {
-      setTechForm({ ...form });
-    }
+    
+    console.log('Setting updated form:', updatedForm);
+    setTechForm(updatedForm);
+    setTechFieldsStructure(updatedForm);
   };
 
   const onUpdate = async (data: any) => {
@@ -384,20 +405,20 @@ const TechMaster = () => {
 
   const updateTechMaster = (data: any, subGroupList: any) => {
     try {
-      console.log("here data", data);
-      console.log("here subGroupList", subGroupList);
-
-      techFieldsStructure.techName.value = data?.techName;
-      techFieldsStructure.group_name.value = data?.techGroupNames;
-      techFieldsStructure.subGroup_name.options = subGroupList;
-      techFieldsStructure.subGroup_name.value = data?.techSubgroupNames?.split(',');
-      techFieldsStructure.description.value =
-        data?.description != null && data?.description != "null"
-          ? data?.description
-          : "";
-      setTechForm(_.cloneDeep(techFieldsStructure));
+        const updatedForm = _.cloneDeep(techFieldsStructure);
+        
+        updatedForm.techName.value = data?.techName;
+        updatedForm.group_name.value = data?.techGroupNames;
+        updatedForm.subGroup_name.options = subGroupList;
+        updatedForm.subGroup_name.value = data?.techSubgroupNames?.split(',');
+        updatedForm.description.value = data?.description != null && data?.description != "null"
+            ? data?.description
+            : "";
+            
+        setTechForm(updatedForm);
+        setTechFieldsStructure(updatedForm);
     } catch (error) {
-      console.log("error", error);
+        console.error("Error updating tech master:", error);
     }
   };
 
@@ -512,11 +533,12 @@ const TechMaster = () => {
   };
 
   const closeFormPopup = () => {
+    const freshForm = _.cloneDeep(TechFormFields);
     setFormPopup(false);
     setIsEditTechnology(false);
     setStateData({});
-    setTechFieldsStructure(_.cloneDeep(TechFormFields));
-    setTechForm(_.cloneDeep(TechFormFields));
+    setTechFieldsStructure(freshForm);
+    setTechForm(freshForm);
   };
   return loader ? (
     <Loader />
@@ -580,7 +602,7 @@ const TechMaster = () => {
             </div>
             <div className="popup-content" style={{ padding: "1rem 2rem" }}>
               <FormComponent
-                form={techFieldsStructure}
+                form={TechForm}
                 formUpdateEvent={techFormHandler}
                 isFormValidFlag={isFormValid}
               ></FormComponent>

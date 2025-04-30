@@ -672,13 +672,27 @@ useEffect(() => {
   };
 
   const parseDateString = (dateString: any) => {
-    if (!dateString) return new Date();
-    const date: any = new Date(dateString);
-    if (isNaN(date)) return new Date();
-    const year = date.getFullYear();
-    const month: any = String(date.getMonth() + 1).padStart(2, "0");
-    const day: any = String(date.getDate()).padStart(2, "0");
-    return new Date(year, month - 1, day);
+    if (!dateString) return null;
+    
+    // Handle different date formats
+    let date: Date;
+    if (typeof dateString === 'string') {
+        // Try parsing DD-MM-YYYY format
+        const [day, month, year] = dateString.split('-');
+        if (day && month && year) {
+            date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        } else {
+            // Fallback to standard date parsing
+            date = new Date(dateString);
+        }
+    } else {
+        date = new Date(dateString);
+    }
+
+    // Return null if date is invalid
+    if (isNaN(date.getTime())) return null;
+    
+    return date;
   };
 
   const openSaveForm = async () => {
@@ -687,22 +701,36 @@ useEffect(() => {
 
   const modifyFormRegionWise = async (selectedCountries: any) => {
     let regionsList: any[] = [];
-    const regionPromises = selectedCountries?.map(async (item: any) => {
-      const country = countryMaster?.find(
-        (country: any) => country?.name === item
-      );
-      if (country) {
-        const regions = await getRegionMaster(country?.id);
-        return regions;
-      }
-      return [];
-    });
-    const allRegions = await Promise?.all(regionPromises);
-    regionsList = allRegions?.flat();
-    setRegionMaster(regionsList);
-    await formatRegionDetails(regionsList);
-    const regionCodes = regionsList?.map((item: any) => item?.regionCode);
-    return [regionCodes, regionsList];
+    
+    try {
+        const regionPromises = selectedCountries?.map(async (item: any) => {
+            const country = countryMaster?.find(
+                (country: any) => country?.name === item
+            );
+            if (country) {
+                const regions = await getRegionMaster(country?.id);
+                return regions;
+            }
+            return [];
+        });
+
+        const allRegions = await Promise?.all(regionPromises);
+        regionsList = allRegions?.flat();
+        
+        // Store the full region list
+        setRegionMaster(regionsList);
+        
+        // Get region codes for options
+        const regionCodes = regionsList?.map((item: any) => item?.regionCode).filter(Boolean);
+        
+        console.log("Modified Regions List:", regionsList);
+        console.log("Region Codes:", regionCodes);
+        
+        return [regionCodes, regionsList];
+    } catch (error) {
+        console.error("Error in modifyFormRegionWise:", error);
+        return [[], []];
+    }
   };
 
   const modifyFormStateWise = async (selectedCountries: any) => {
@@ -759,7 +787,7 @@ useEffect(() => {
 
   const onUpdate = async (data: any) => {
     setStateData(data);
-    console.log("Form Update Triggeredddddddddddd:", data, stateMaster, regionMaster);
+    console.log("Form Update Triggered:", data);
   
     let regionCodeList = [];
     let regionList: any = [];
@@ -769,18 +797,32 @@ useEffect(() => {
     const countries = data?.countryNames?.split(",");
   
     if (data?.isRegionWise == 1) {
-      if (regionMaster.length === 0) {
+        // Always fetch fresh region data to ensure we have the complete list
         [regionCodeList, regionList] = await modifyFormRegionWise(countries);
-      }
-      const regionNamesArray = data?.regionNames?.split(",") || [];
-      regionNamesList = regionNamesArray.map((regionName: any) => {
-        const region = regionList?.find((regionItem: any) => regionItem.regionName === regionName);
-        return region ? region.regionCode : null;
-      });
+        
+        const regionNamesArray = data?.regionNames?.split(",").map((name:any) => name.trim()) || [];
+        console.log("Region Names from data:", regionNamesArray);
+        console.log("Available Regions:", regionList);
+
+        // Map region names to codes
+        regionNamesList = regionNamesArray.map((regionName: string) => {
+            const matchedRegion = regionList.find((regionItem: any) => 
+                regionItem.regionName.trim() === regionName ||
+                regionItem.regionCode.trim() === regionName
+            );
+            
+            if (!matchedRegion) {
+                console.warn(`No matching region found for: ${regionName}`);
+                return null;
+            }
+            
+            console.log(`Matched region for ${regionName}:`, matchedRegion);
+            return matchedRegion.regionCode;
+        }).filter(Boolean); // Remove null values
+
+        console.log("Final Region Codes:", regionNamesList);
     } else {
-      if (stateMaster.length === 0) {
         stateList = await modifyFormStateWise(countries);
-      }
     }
   
     updateIndustryHeadMaster(data, regionCodeList, regionNamesList, stateList);
@@ -799,8 +841,6 @@ useEffect(() => {
     regionNamesList: any,
     stateList: any
   ) => {
-    console.log('llllllllllllllll', data);
-    
     try {
       industryHeadFieldsStructure.companyName.disable = true;
       industryHeadFieldsStructure.companyName.value = data?.companyName;
@@ -815,8 +855,23 @@ useEffect(() => {
       industryHeadFieldsStructure.isRegionWise.value =
         data?.isRegionWise == 1 ? true : false;
       if (data?.isRegionWise == 1) {
-        industryHeadFieldsStructure.region_code.value = regionNamesList;
+        // Set options first
         industryHeadFieldsStructure.region_code.options = regionCodeList;
+        industryHeadFieldsStructure.region_code.disable = false;
+        
+        // Then set the selected values
+        if (regionNamesList && regionNamesList.length > 0) {
+            industryHeadFieldsStructure.region_code.value = regionNamesList;
+        } else {
+            console.warn("No region codes available to set");
+        }
+        
+        console.log("Setting region values:", {
+            options: regionCodeList,
+            selectedValues: regionNamesList
+        });
+
+        // Clear state fields
         industryHeadFieldsStructure.state_name.options = [];
         industryHeadFieldsStructure.state_name.value = null;
       } else {
@@ -834,7 +889,7 @@ useEffect(() => {
       ) : null;
       setIndustryHeadForm(_.cloneDeep(industryHeadFieldsStructure));
     } catch (error) {
-      console.log("error", error);
+      console.error("Error in updateIndustryHeadMaster:", error);
     }
   };
 
