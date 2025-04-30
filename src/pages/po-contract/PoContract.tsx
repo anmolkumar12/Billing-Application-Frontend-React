@@ -30,6 +30,7 @@ import { IndustryMasterService } from "../../services/masters/industry-master/in
 import { SalesMasterService } from "../../services/masters/sales-master/sales.service";
 import { AccountMasterService } from "../../services/masters/account-manager-master/accountManager.service";
 import { debounce } from 'lodash'
+import { ClientContactMasterService } from "../../services/clients/client-contact-master/clientContactMaster.service";
 
 const Contract: React.FC = () => {
 
@@ -141,7 +142,7 @@ const Contract: React.FC = () => {
       value: null,
       validation: { required: true },
       fieldWidth: "col-md-4",
-  }, 
+    },
     poAmount: {
       inputType: "inputNumber",
       label: "Po Amount",
@@ -335,6 +336,9 @@ const Contract: React.FC = () => {
     },
 
   };
+  const [clientContactMaster, setClientContactMaster] = useState<any>([]);
+  const [clientShipToMaster, setClientShipToMaster] = useState<any>([]);
+  const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
   const [poContractsData, setPoContractData] = useState<any>([]);
   const [clientListNames, setClientListNames] = useState<any>([]);
   const [poContractConfData, setPoContractConfData] = useState<any>([]);
@@ -371,15 +375,16 @@ const Contract: React.FC = () => {
   const [attachments, setAttachments]: any = useState([]);
   const [isEditState, setIsEditState] = useState<boolean>(false);
   const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
-  const [currencyList,setCurrencyList] = useState<any>([]);
+  const [currencyList, setCurrencyList] = useState<any>([]);
   const [clientMaster, setClientMaster] = useState<any>([]);
-  const [dataAIS, setDataAIS] = useState<any>({industryHeadDataa: [], salesManagerDataa: [], accountManagerDataa: [] })
+  const [dataAIS, setDataAIS] = useState<any>({ industryHeadDataa: [], salesManagerDataa: [], accountManagerDataa: [] })
   const loggedInUserId = userInfo?.userId;
 
   let patchData: any;
 
   const contractService = new ContractMasterService();
   const clientService = new ClientMasterService();
+  const clientContactService = new ClientContactMasterService();
   const currencyService = new CurrencyMasterService();
 
   const countryCurrencyMap: any = {
@@ -389,8 +394,8 @@ const Contract: React.FC = () => {
     australia: "AUD",
     dubai: "AED",
     uae: "AED"
-  };  
-  
+  };
+
 
   const [objFormState, setobjFormState] = useState<any>(
     _.cloneDeep(objForm)
@@ -400,15 +405,15 @@ const Contract: React.FC = () => {
   useEffect(() => {
     if (objFormState?.start_date?.value) {
       const startDate = new Date(objFormState.start_date.value);
-     
+
       // Calculate min (3 months before start_date)
       const poCreationDateMin = new Date(startDate);
       poCreationDateMin.setMonth(poCreationDateMin.getMonth() - 3);
- 
+
       // Calculate max (3 months after start_date)
       const poCreationDateMax = new Date(startDate);
       poCreationDateMax.setMonth(poCreationDateMax.getMonth() + 3);
- 
+
       setobjFormState((prevForm: any) => ({
         ...prevForm,
         end_date: {
@@ -423,21 +428,38 @@ const Contract: React.FC = () => {
       }));
     }
   }, [objFormState?.start_date?.value]);
-  
+
 
   useEffect(() => {
+   getContractMaster();
+  }, [clientBillToMaster, clientContactMaster, clientShipToMaster]);
 
-    getContractMaster();
-    getIndustryHeadMaster();
-    getSalesMaster();
-    getAccountMaster();
-    getCompanyLocationMaster();
-    getPoContractConfiguration();
-    getPOContractMasterConfigData();
-    getPOContractMasterCascadingData();
-    getClientMasterData();
-    getCurrencyMaster();   
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        // Wait for both BillTo and ShipTo to finish
+        await Promise.all([getClientBillToMaster(), getClientShipToMaster(), getClientContactMaster()]);
+        
+        // Then call getContractMaster
+        // Call other independent functions (no dependency on above)
+        getIndustryHeadMaster();
+        getSalesMaster();
+        getAccountMaster();
+        getCompanyLocationMaster();
+        getPoContractConfiguration();
+        getPOContractMasterConfigData();
+        getPOContractMasterCascadingData();
+        getClientMasterData();
+        getCurrencyMaster();
+      } catch (error) {
+        console.error("Error while fetching data:", error);
+      }
+    };
+  
+    fetchInitialData();
   }, []);
+  
 
   const poContractService = new PoContractService()
   const companyService = new CompanyMasterService();
@@ -446,40 +468,40 @@ const Contract: React.FC = () => {
   const accountService = new AccountMasterService();
 
   const getAccountMaster = async () => {
-      setLoader(true);
-      try {
-        const response = await accountService.getAccountMaster();
-        console.log(`account manager data`,response?.accountManagers)
-        if (response?.accountManagers) {
-          setDataAIS((prev: any) => ({
-            ...prev,
-            accountManagerDataa: response.accountManagers,
-          }));
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoader(false);
+    setLoader(true);
+    try {
+      const response = await accountService.getAccountMaster();
+      console.log(`account manager data`, response?.accountManagers)
+      if (response?.accountManagers) {
+        setDataAIS((prev: any) => ({
+          ...prev,
+          accountManagerDataa: response.accountManagers,
+        }));
       }
-    };
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const getSalesMaster = async () => {
-      setLoader(true);
-      try {
-        const response = await salesService.getSalesMaster();
-        if (response?.salesManagers) {
-          setDataAIS((prev: any) => ({
-            ...prev,
-            salesManagerDataa: response.salesManagers,
-          }));
-        }
-        return response?.salesManagers;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoader(false);
+    setLoader(true);
+    try {
+      const response = await salesService.getSalesMaster();
+      if (response?.salesManagers) {
+        setDataAIS((prev: any) => ({
+          ...prev,
+          salesManagerDataa: response.salesManagers,
+        }));
       }
-    };
+      return response?.salesManagers;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const getIndustryHeadMaster = async () => {
     setLoader(true);
@@ -502,68 +524,121 @@ const Contract: React.FC = () => {
   };
 
   const getCompanyLocationMaster = async () => {
-      setLoader(true);
-      try {
-        const response = await companyService.getCompanyLocationMaster();
-        setCompanyLocationMaster(response?.locations);
-        return response?.locations;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoader(false);
+    setLoader(true);
+    try {
+      const response = await companyService.getCompanyLocationMaster();
+      setCompanyLocationMaster(response?.locations);
+      return response?.locations;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+  const getCurrencyMaster = async () => {
+    try {
+      const response = await currencyService.getCurrencyMasterData();
+      if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
+        const uniqueMap = new Map();
+
+        response.data.forEach((item: { currencyCode: string }) => {
+          if (!uniqueMap.has(item.currencyCode)) {
+            uniqueMap.set(item.currencyCode, {
+              label: item.currencyCode,
+              value: item.currencyCode
+            });
+          }
+        });
+        const currencyOptions = Array.from(uniqueMap.values());
+        setCurrencyList(currencyOptions);
+        console.log(`before initiaze`, currencyOptions)
+
+        // Update clientForm state with currency options
+        // const form = _.cloneDeep(objFormState);
+        // form.currency.options = currencyOptions;
+        // setobjFormState(form);
+
+        console.log("Currency options (deduplicated):", currencyOptions);
       }
-    };
-    const getCurrencyMaster = async () => {
-      try {
-        const response = await currencyService.getCurrencyMasterData();
-        if (response?.statusCode === HTTP_RESPONSE.SUCCESS) {
-          const uniqueMap = new Map();
-    
-          response.data.forEach((item: { currencyCode: string }) => {
-            if (!uniqueMap.has(item.currencyCode)) {
-              uniqueMap.set(item.currencyCode, {
-                label: item.currencyCode,
-                value: item.currencyCode
-              });
-            }
-          });
-          const currencyOptions = Array.from(uniqueMap.values());
-          setCurrencyList(currencyOptions); 
-          console.log(`before initiaze`,currencyOptions)
-    
-          // Update clientForm state with currency options
-          // const form = _.cloneDeep(objFormState);
-          // form.currency.options = currencyOptions;
-          // setobjFormState(form);
-    
-          console.log("Currency options (deduplicated):", currencyOptions);
-        }
-      } catch (error) {
-        console.error("Failed to fetch currency data", error);
-      }
-    };
-    
+    } catch (error) {
+      console.error("Failed to fetch currency data", error);
+    }
+  };
+
+   const getClientContactMaster = async () => {
+          setLoader(true);
+          try {
+              const response = await clientContactService.getClientContactMaster();
+              setClientContactMaster(response?.clientContacts);
+              return response?.clientContacts;
+          } catch (error) {
+              console.error(error);
+          } finally {
+              setLoader(false);
+          }
+      };
+
+  const getClientBillToMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientBillToMaster();
+      setClientBillToMaster(response?.data);
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const getClientShipToMaster = async () => {
+    setLoader(true);
+    try {
+      const response = await clientService.getClientShipToMaster();
+      setClientShipToMaster(response?.data);
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const getContractMaster = async () => {
     setLoader(true);
     try {
       const response = await poContractService.getPoContractsData();
-    response?.poContracts?.forEach((el: any) => {
-      el.start_date = el.start_date && el.start_date !== "null" 
-    ? moment(el.start_date).format("DD-MM-YYYY") 
-    : null;
+      console.log('response?.poContracts', response?.poContracts, clientShipToMaster, clientBillToMaster, clientContactMaster);
 
-el.end_date = el.end_date && el.end_date !== "null" 
-    ? moment(el.end_date).format("DD-MM-YYYY") 
-    : null;
+      response?.poContracts?.forEach((el: any) => {
+        el.start_date = el.start_date && el.start_date !== "null"
+          ? moment(el.start_date).format("DD-MM-YYYY")
+          : null;
 
-el.created_at = el.created_at && el.created_at !== "null" 
-    ? moment(el.created_at).format("DD-MM-YYYY HH:mm:ss") 
-    : null;
+        el.end_date = el.end_date && el.end_date !== "null"
+          ? moment(el.end_date).format("DD-MM-YYYY")
+          : null;
 
-el.updated_at = el.updated_at && el.updated_at !== "null" 
-    ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss") 
-    : null;
+        el.created_at = el.created_at && el.created_at !== "null"
+          ? moment(el.created_at).format("DD-MM-YYYY HH:mm:ss")
+          : null;
+
+        el.updated_at = el.updated_at && el.updated_at !== "null"
+          ? moment(el.updated_at).format("DD-MM-YYYY HH:mm:ss")
+          : null;
+          el.clientBillTo_names = clientBillToMaster?.find((item: any) => item.id === +el?.clientBillTo)
+          ? clientBillToMaster?.find((item: any) => item.id === +el?.clientBillTo)
+            ? `${clientBillToMaster.find((item: any) => item.id === +el?.clientBillTo)?.address1 || ''}, ${clientBillToMaster.find((item: any) => item.id === +el?.clientBillTo)?.address2 || ''}, ${clientBillToMaster.find((item: any) => item.id === +el?.clientBillTo)?.address3 || ''}`.replace(/(,\s?)+$/, '')
+            : ''
+          : '';
+        
+        el.clientShipAddress_names = clientShipToMaster?.find((item: any) => item.id === +el?.clientShipAddress)
+          ? `${clientShipToMaster.find((shipItem: any) => shipItem.id === +el?.clientShipAddress)?.address1 || ''}, ${clientShipToMaster.find((shipItem: any) => shipItem.id === +el?.clientShipAddress)?.address2 || ''}, ${clientShipToMaster.find((shipItem: any) => shipItem.id === +el?.clientShipAddress)?.address3 || ''}`.replace(/(,\s?)+$/, '')
+          : '';
+        
+          el.clientContact_names = clientContactMaster?.find((item: any) => item.id === +el?.clientContact) ? `${clientContactMaster?.find((item: any) => item.id === +el?.clientContact)?.salutation} ${clientContactMaster?.find((item: any) => item.id === +el?.clientContact)?.first_name} ${clientContactMaster?.find((item: any) => item.id === +el?.clientContact)?.last_name}` : '';
       });
+
       setPoContractData(response?.poContracts);
     } catch (error) {
       console.error(error);
@@ -632,22 +707,22 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
   const getClientMasterData = async () => {
     try {
-        const response = await clientService.getClientMaster();     
-        if (!response) {
-            console.error('No client data received from API');
-            setClientMaster([]);
-            return [];
-        }
-        console.log('Client data received:', response?.clients);
-        const activeClients = response?.clients?.filter((client: any) => client?.isactive || client?.isActive) || [];
-        setClientMaster(activeClients);
-        return activeClients;
-    } catch (error) {
-        console.error('Error fetching client master data:', error);
+      const response = await clientService.getClientMaster();
+      if (!response) {
+        console.error('No client data received from API');
         setClientMaster([]);
         return [];
+      }
+      console.log('Client data received:', response?.clients);
+      const activeClients = response?.clients?.filter((client: any) => client?.isactive || client?.isActive) || [];
+      setClientMaster(activeClients);
+      return activeClients;
+    } catch (error) {
+      console.error('Error fetching client master data:', error);
+      setClientMaster([]);
+      return [];
     }
-};
+  };
 
   const getPOContractMasterConfigData = async () => {
     setLoader(true);
@@ -779,7 +854,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             onClick={() => onUpdate(rowData)}
           ></span>
           <span
-            className={`pi pi-${rowData.isActive ?"ban" : "check-circle"}`}
+            className={`pi pi-${rowData.isActive ? "ban" : "check-circle"}`}
             style={{ cursor: "pointer" }}
             title={rowData.isActive ? "Deactivate" : "Activate"}
             onClick={() => onDelete(rowData)}
@@ -805,7 +880,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{rowData?.masterNames?.clientBillTo_names}</span>,
+      body: (rowData: any) => <span>{rowData?.clientBillTo_names}</span>,
     },
     {
       label: "Shipping Address",
@@ -814,7 +889,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{rowData?.masterNames?.clientShipAddress_names}</span>,
+      body: (rowData: any) => <span>{rowData?.clientShipAddress_names}</span>,
     },
     {
       label: "Contact",
@@ -823,7 +898,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       frozen: false,
       sort: true,
       filter: true,
-      body: (rowData: any) => <span>{rowData?.masterNames?.clientContact_names}</span>,
+      body: (rowData: any) => <span>{rowData?.clientContact_names}</span>,
     },
     // {
     //   label: "Bill From",
@@ -1045,7 +1120,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       filter: true,
       body: (rowData: any) => (
         <span>
-        {rowData?.created_at && rowData.created_at !== "null" ? rowData.created_at : "NA"}
+          {rowData?.created_at && rowData.created_at !== "null" ? rowData.created_at : "NA"}
         </span>
       ),
     },
@@ -1098,7 +1173,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       // if(currentForm.client_name.value !== objFormState.client_name.value){
       const configData = poContractConfData.find((item: any) => item.client_name == rowData?.client_name)
       if (configData) {
-        console.log(`asasdasdas`,rowData)
+        console.log(`asasdasdas`, rowData)
         const uniqueClientBillTo = Array.from(new Set(
           configData.clientBill?.filter((item: any) => item.id)
             .map((item: any) => ({
@@ -1108,18 +1183,18 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             }))
             .map((item: { value: any }) => item.value)
         )).map(value => configData.clientBill.find((item: any) => item.id.toString() === value));
-        
+
         let billOptions = uniqueClientBillTo.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        
+
         billOptions = billOptions.sort((a, b) => b.isDefault - a.isDefault); // default at top
-        
+
         objFormState.clientBillTo.options = billOptions;
         objFormState.clientBillTo.value = rowData?.clientBillTo || billOptions.find(opt => opt.isDefault === 1)?.value || null;
-        
+
         // --- Ship Address ---
         const uniqueClientShipAddress = Array.from(new Set(
           configData.clientShip?.filter((item: any) => item.id)
@@ -1130,18 +1205,18 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             }))
             .map((item: { value: any }) => item.value)
         )).map(value => configData.clientShip.find((item: any) => item.id.toString() === value));
-        
+
         let shipOptions = uniqueClientShipAddress.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        
+
         shipOptions = shipOptions.sort((a, b) => b.isDefault - a.isDefault); // default at top
-        
+
         objFormState.clientShipAddress.options = shipOptions;
         objFormState.clientShipAddress.value = rowData?.clientShipAddress || shipOptions.find(opt => opt.isDefault === 1)?.value || null;
-        
+
 
         objFormState.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
           return {
@@ -1177,15 +1252,15 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         objFormState.companyName.disable = false;
 
         objFormState.companyLocation.options = Array.isArray(companyLocationMaster) ? companyLocationMaster.filter((item) => item.companyName === configData?.companyInfo?.companyName)
-        .map((item, index) => {
-          return {
-            label: `${item.address1} ${item.address2} ${item.address3}`,
-            value: `${item.address1} ${item.address2} ${item.address3}`,
-            isDefaultAddress: item.isDefaultAddress,
-          };
-        }) : [];
+          .map((item, index) => {
+            return {
+              label: `${item.address1} ${item.address2} ${item.address3}`,
+              value: `${item.address1} ${item.address2} ${item.address3}`,
+              isDefaultAddress: item.isDefaultAddress,
+            };
+          }) : [];
         objFormState.companyLocation.value = rowData?.companyLocation.toString();
-        console.log(`this is ssssssss`,rowData?.companyLocation.toString());
+        console.log(`this is ssssssss`, rowData?.companyLocation.toString());
         // objFormState.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
         // objFormState.companyLocation.value = configData?.companyLocation?.id.toString()
 
@@ -1365,7 +1440,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
 
       console.log('----------------1111111111111111', rowData.resourcesData);
-      let arr = [...rowData.resourcesData];
+      let arr = rowData.resourcesData && [...rowData.resourcesData];
 
       setTableData(arr);
       console.log('`${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`', `${process.env.REACT_APP_API_BASEURL}/${rowData?.filePath}`)
@@ -1400,7 +1475,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   const parseCustomDate = (dateString: string) => {
     const [day, month, year] = dateString.split("-");
     return new Date(Number(year), Number(month) - 1, Number(day));
-};
+  };
 
   const closeFormPopup = () => {
     setFormPopup(false);
@@ -1421,17 +1496,17 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     currentForm.currency.options = currencyList;
     if (currentForm.client_name.value !== objFormState.client_name.value) {
 
-        const clientData = clientMaster.find((client: any) => client.client_name === currentForm.client_name.value);
-        if (clientData) {
-          //   console.log("Country Name:", clientData.countryName,form);
-            // setClientNameCountry(clientData.countryName);
-            const country = clientData.countryName?.toLowerCase();
-            currentForm.currency.value = countryCurrencyMap[clientData.countryName?.toLowerCase()] || " ";
-             } else {
-                console.log("Country Name not found for the selected client.");
-             }
+      const clientData = clientMaster.find((client: any) => client.client_name === currentForm.client_name.value);
+      if (clientData) {
+        //   console.log("Country Name:", clientData.countryName,form);
+        // setClientNameCountry(clientData.countryName);
+        const country = clientData.countryName?.toLowerCase();
+        currentForm.currency.value = countryCurrencyMap[clientData.countryName?.toLowerCase()] || " ";
+      } else {
+        console.log("Country Name not found for the selected client.");
+      }
       // currentForm.start_date.value = parseDateString(data?.fromDate);
-      console.log(`this issssssssssssssssss`,poContractConfData,companyLocationMaster)
+      console.log(`this issssssssssssssssss`, poContractConfData, companyLocationMaster)
       const configData = poContractConfData.find((item: any) => item.client_name == currentForm.client_name.value)
       if (configData) {
         const uniqueClientBillTo = Array.from(new Set(
@@ -1445,18 +1520,18 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         )).map(value =>
           configData.clientBill.find((item: any) => item.id.toString() === value)
         );
-        
+
         currentForm.clientBillTo.options = uniqueClientBillTo.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        
+
         const defaultBillItem = currentForm.clientBillTo.options.find((ele: any) => ele.isDefault == 1);
         currentForm.clientBillTo.value = defaultBillItem?.value?.toString()
           || currentForm.clientBillTo.options[0]?.value
           || null;
-        
+
         // --- Ship Address ---
         const uniqueClientShipAddress = Array.from(new Set(
           configData.clientShip?.filter((item: any) => item.id)
@@ -1469,19 +1544,19 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         )).map(value =>
           configData.clientShip.find((item: any) => item.id.toString() === value)
         );
-        
+
         currentForm.clientShipAddress.options = uniqueClientShipAddress.map((item: any) => ({
           label: concatAddresses(item.address1, item.address2, item.address3),
           value: item.id.toString(),
           isDefault: item.isDefault || 0
         }));
-        
+
         const defaultShipItem = currentForm.clientShipAddress.options.find((ele: any) => ele.isDefault == 1);
         currentForm.clientShipAddress.value = defaultShipItem?.value?.toString()
           || currentForm.clientShipAddress.options[0]?.value
           || null;
-        
-      
+
+
         console.log('configData?.contacts', configData);
 
         currentForm.clientContact.options = Array.isArray(configData?.contacts) ? configData.contacts?.filter((item: any) => item.id).map((item: any, index: number) => {
@@ -1504,7 +1579,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         //     value:item.id.toString()
         //   }
         // }):[]
-        console.log(`dasdqwdasdasa`,configData,clientMaster,currentForm.client_name.value)
+        console.log(`dasdqwdasdasa`, configData, clientMaster, currentForm.client_name.value)
         const matchingClients = clientMaster.filter((client: { client_name: any; }) => client.client_name === currentForm.client_name.value);
 
         const companyNames = matchingClients.map((client: { companyName: any; }) => client.companyName);
@@ -1534,21 +1609,21 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
         currentForm.companyName.disable = false;
 
-       // Filter and map the company location options
+        // Filter and map the company location options
         currentForm.companyLocation.options = Array.isArray(companyLocationMaster) ? companyLocationMaster.filter((item) => item.companyName === configData?.companyInfo?.companyName)
-        .map((item, index) => {
-          return {
-            label: `${item.address1} ${item.address2} ${item.address3}`,
-            value:  `${item.address1} ${item.address2} ${item.address3}`, 
-            isDefaultAddress: item.isDefaultAddress,
-          };
-        }) : [];
-        const defaultContactLocation = currentForm.companyLocation.options.find((ele :any) => (ele.isDefaultAddress === 1));
+          .map((item, index) => {
+            return {
+              label: `${item.address1} ${item.address2} ${item.address3}`,
+              value: `${item.address1} ${item.address2} ${item.address3}`,
+              isDefaultAddress: item.isDefaultAddress,
+            };
+          }) : [];
+        const defaultContactLocation = currentForm.companyLocation.options.find((ele: any) => (ele.isDefaultAddress === 1));
         if (defaultContactLocation && defaultContactLocation?.value) {
           currentForm.companyLocation.value = defaultContactLocation?.value;
-          console.log(`this is check`,defaultContactLocation?.value)
+          console.log(`this is check`, defaultContactLocation?.value)
         } else {
-        currentForm.companyLocation.value = null; 
+          currentForm.companyLocation.value = null;
         }
         // currentForm.companyLocation.options = [{ label: concatAddresses(configData?.companyLocation?.address1, configData?.companyLocation?.address2, configData?.companyLocation?.address3) || "", value: configData?.companyLocation?.id.toString() }];
         // currentForm.companyLocation.value = configData?.companyLocation?.id.toString()
@@ -1568,39 +1643,39 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     }
     if ((currentForm.technolgyGroup.value != objFormState.technolgyGroup.value) && currentForm.technolgyGroup.value) {
       // Handle both single and multiple technology group selections
-      const selectedTechGroups = Array.isArray(currentForm.technolgyGroup.value) 
-        ? currentForm.technolgyGroup.value 
+      const selectedTechGroups = Array.isArray(currentForm.technolgyGroup.value)
+        ? currentForm.technolgyGroup.value
         : [currentForm.technolgyGroup.value];
 
       currentForm.technolgySubGroup.options = Array.isArray(poMastersConfigData?.technolgySubGroup)
         ? poMastersConfigData?.technolgySubGroup
-            .filter((item: any) => selectedTechGroups.some(techGroupId => 
-              Number(item.techGroupIds) === Number(techGroupId)
-            ))
-            .map((item: any) => ({
-              label: item?.name,
-              value: item.id.toString(),
-            }))
+          .filter((item: any) => selectedTechGroups.some(techGroupId =>
+            Number(item.techGroupIds) === Number(techGroupId)
+          ))
+          .map((item: any) => ({
+            label: item?.name,
+            value: item.id.toString(),
+          }))
         : [];
     }
     if ((currentForm.technolgySubGroup.value != objFormState.technolgySubGroup.value) && currentForm.technolgySubGroup.value) {
       // Handle both single and multiple technology subgroup selections
-      const selectedTechSubGroups = Array.isArray(currentForm.technolgySubGroup.value) 
-        ? currentForm.technolgySubGroup.value 
+      const selectedTechSubGroups = Array.isArray(currentForm.technolgySubGroup.value)
+        ? currentForm.technolgySubGroup.value
         : [currentForm.technolgySubGroup.value];
 
       currentForm.technolgy.options = Array.isArray(poMastersConfigData?.technolgy)
         ? poMastersConfigData?.technolgy
-            .filter((item: any) => selectedTechSubGroups.some(techSubGroupId => 
-              Number(item.techSubgroupIds) === Number(techSubGroupId)
-            ))
-            .map((item: any) => ({
-              label: item?.techName,
-              value: item.id.toString(),
-            }))
+          .filter((item: any) => selectedTechSubGroups.some(techSubGroupId =>
+            Number(item.techSubgroupIds) === Number(techSubGroupId)
+          ))
+          .map((item: any) => ({
+            label: item?.techName,
+            value: item.id.toString(),
+          }))
         : [];
     }
-    console.log(`rohit jhosi `,currentForm.poAmount.value,objFormState.poAmount.value)
+    console.log(`rohit jhosi `, currentForm.poAmount.value, objFormState.poAmount.value)
     if (currentForm.poAmount.value) {
       currentForm.dueAmount.value = currentForm.poAmount.value;
     }
@@ -1633,13 +1708,13 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             }))
         );
     }
-    console.log(`abcdefghijk1111`,industryHeadData)
+    console.log(`abcdefghijk1111`, industryHeadData)
     // 2. Filter Industry Heads Based on Selected Sub-Industries
     if (
       currentForm.subIndustries.value !== objFormState.subIndustries.value &&
       currentForm.subIndustries.value
     ) {
-      console.log(`abcdefghijk222`,industryHeadData)
+      console.log(`abcdefghijk222`, industryHeadData)
       currentForm.industryHead.options = industryHeadData
         .filter((head: any) =>
           head.industryIds.split(',').includes(currentForm.subIndustries.value ? currentForm.subIndustries.value.toString() : '')
@@ -1650,7 +1725,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         }));
     }
 
-    console.log(`asdawdasdas`,salesManagerData)
+    console.log(`asdawdasdas`, salesManagerData)
     if (
       currentForm.industryHead.value !== objFormState.industryHead.value &&
       currentForm.industryHead.value
@@ -1682,20 +1757,20 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     const { industryHeadDataa, salesManagerDataa, accountManagerDataa } = dataAIS;
 
     if (currentForm.companyName.value !== objForm.companyName.value) {
-      console.log(`huihuihsasdasdasiu`,dataAIS)
+      console.log(`huihuihsasdasdasiu`, dataAIS)
 
       const filteredAccountManagers = accountManagerDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
       currentForm.accountManager.options = filteredAccountManagers
-      .map((manager: { name: any; id: { toString: () => any; }; }) => ({
-        label: manager.name, 
-        value: manager.id.toString(), 
-      }));
+        .map((manager: { name: any; id: { toString: () => any; }; }) => ({
+          label: manager.name,
+          value: manager.id.toString(),
+        }));
       if (Array.isArray(currentForm.accountManager.value)) {
-        const validSelections = currentForm.accountManager.value.filter((val: any) => 
+        const validSelections = currentForm.accountManager.value.filter((val: any) =>
           currentForm.accountManager.options?.some((item: any) => item.value == val)
         );
         currentForm.accountManager.value = validSelections.length ? validSelections : null;
-      } 
+      }
       else {
         const isValid = currentForm.accountManager.options?.some((item: any) => item.value == currentForm.accountManager.value);
         if (!isValid) {
@@ -1704,18 +1779,18 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       }
 
       const filteredSaleManagers = salesManagerDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
-      console.log(`huihuihiu`,filteredSaleManagers)
+      console.log(`huihuihiu`, filteredSaleManagers)
       currentForm.salesManager.options = filteredSaleManagers
-      .map((manager: { name: any; id: { toString: () => any; }; }) => ({
-        label: manager.name, 
-        value: manager.id.toString(), 
-      }));
+        .map((manager: { name: any; id: { toString: () => any; }; }) => ({
+          label: manager.name,
+          value: manager.id.toString(),
+        }));
       if (Array.isArray(currentForm.salesManager.value)) {
-        const validSelections = currentForm.salesManager.value.filter((val: any) => 
+        const validSelections = currentForm.salesManager.value.filter((val: any) =>
           currentForm.salesManager.options?.some((item: any) => item.value == val)
         );
         currentForm.salesManager.value = validSelections.length ? validSelections : null;
-      } 
+      }
       else {
         const isValid = currentForm.salesManager.options?.some((item: any) => item.value == currentForm.salesManager.value);
         if (!isValid) {
@@ -1724,18 +1799,18 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       }
 
       const filteredIndustryHeadManagers = industryHeadDataa.filter((manager: { companyName: string | number | boolean | Date | string[] | null; }) => manager.companyName === currentForm.companyName.value);
-      console.log(`huihuihiu`,filteredIndustryHeadManagers)
+      console.log(`huihuihiu`, filteredIndustryHeadManagers)
       currentForm.industryHead.options = filteredIndustryHeadManagers
-      .map((manager: { industryHeadName: any; id: { toString: () => any; }; }) => ({
-        label: manager.industryHeadName, 
-        value: manager.id.toString(), 
-      }));
+        .map((manager: { industryHeadName: any; id: { toString: () => any; }; }) => ({
+          label: manager.industryHeadName,
+          value: manager.id.toString(),
+        }));
       if (Array.isArray(currentForm.industryHead.value)) {
-        const validSelections = currentForm.industryHead.value.filter((val: any) => 
+        const validSelections = currentForm.industryHead.value.filter((val: any) =>
           currentForm.industryHead.options?.some((item: any) => item.value == val)
         );
         currentForm.industryHead.value = validSelections.length ? validSelections : null;
-      } 
+      }
       else {
         const isValid = currentForm.industryHead.options?.some((item: any) => item.value == currentForm.industryHead.value);
         if (!isValid) {
@@ -1756,7 +1831,7 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
   };
 
   const returnNamesHandler = async (objectFormState: any) => {
-    console.log(`data obj`,objectFormState)
+    console.log(`data obj`, objectFormState)
     const obj = {
       projectService_names: getNamesFromOptions(objectFormState.projectService),
       technolgyGroup_names: getNamesFromOptions(objectFormState.technolgyGroup),
@@ -1791,25 +1866,25 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     const formData: any = new FormData();
 
     _.each(objFormState, (item: any) => {
-                if (item?.validation?.required) {
-                    companyValidityFlag = companyValidityFlag && item.value;
-                }
-            });
+      if (item?.validation?.required) {
+        companyValidityFlag = companyValidityFlag && item.value;
+      }
+    });
 
     setIsFormValid(companyValidityFlag);
 
-   if (!companyValidityFlag) {
-              ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
-              return;
-          }
+    if (!companyValidityFlag) {
+      ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+      return;
+    }
 
-    console.log('finalData---->', objFormState,objFormState.start_date.value, formatDate(objFormState.start_date.value));
+    console.log('finalData---->', objFormState, objFormState.start_date.value, formatDate(objFormState.start_date.value));
     const getAllMasterNames = await returnNamesHandler(objFormState);
 
     const obj = {
       clientId: poContractConfData.find((item: any) => item.client_name === objFormState.client_name.value)?.client_id || '',
       client_name: objFormState.client_name.value || '',
-      clientBillTo: objFormState.clientBillTo.value || '', 
+      clientBillTo: objFormState.clientBillTo.value || '',
       clientShipAddress: objFormState.clientShipAddress.value || '',
       currency: objFormState.currency.value?.value || objFormState.currency.value || '',
       clientContact: objFormState.clientContact.value?.toString() || '',
