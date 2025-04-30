@@ -43,7 +43,7 @@ export class RegionMasterService {
   deactivateRegionMaster = async (data: any) => {
     try {
       const body = {
-        stateId: data.id,
+        regionId: data.id,
         isActive: !data.isactive,
         updatedBy: data?.loggedInUserId,
       };

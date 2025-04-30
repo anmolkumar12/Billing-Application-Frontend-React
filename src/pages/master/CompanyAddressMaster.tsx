@@ -653,24 +653,24 @@ const CompanyAddressMaster = () => {
           state.stateName === CompanyLocationForm.state_name.value
       )?.id ?? null;
 
-    if (CompanyLocationForm?.isDefaultAddress?.value == true) {
-      let defaultAccountFlag = false;
-      companyLocationMaster
-        ?.filter(
-          (acc: any) => acc?.companyName
-            == CompanyLocationForm.companyName.value
-        )
-        ?.forEach((item: any) => {
-          defaultAccountFlag = defaultAccountFlag || item?.isDefaultAddress;
-        });
-      if (defaultAccountFlag) {
-        ToasterService.show(
-          "A default address for this company is already present",
-          CONSTANTS.ERROR
-        );
-        return;
-      }
-    }
+    // if (CompanyLocationForm?.isDefaultAddress?.value == true) {
+    //   let defaultAccountFlag = false;
+    //   companyLocationMaster
+    //     ?.filter(
+    //       (acc: any) => acc?.companyName
+    //         == CompanyLocationForm.companyName.value
+    //     )
+    //     ?.forEach((item: any) => {
+    //       defaultAccountFlag = defaultAccountFlag || item?.isDefaultAddress;
+    //     });
+    //   if (defaultAccountFlag) {
+    //     ToasterService.show(
+    //       "A default address for this company is already present",
+    //       CONSTANTS.ERROR
+    //     );
+    //     return;
+    //   }
+    // }
 
     if (companyValidityFlag) {
       const addressData = Object.keys(AdditionalDetailsForm)?.reduce(

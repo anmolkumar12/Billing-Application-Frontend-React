@@ -882,23 +882,23 @@ const ClientShipToMaster = () => {
           (country: any) => country.name === ClientBillForm.country_name.value
         )?.id ?? null;
 
-      if (ClientBillForm?.isDefaultAddress?.value == true) {
-        let defaultAccountFlag = false;
-        clientShipToMaster
-          ?.filter(
-            (acc: any) => acc?.client_name == ClientBillForm.client_name.value
-          )
-          ?.forEach((item: any) => {
-            defaultAccountFlag = defaultAccountFlag || item?.isDefaultAddress;
-          });
-        if (defaultAccountFlag) {
-          ToasterService.show(
-            "A default address for this company is already present",
-            CONSTANTS.ERROR
-          );
-          return;
-        }
-      }
+      // if (ClientBillForm?.isDefaultAddress?.value == true) {
+      //   let defaultAccountFlag = false;
+      //   clientShipToMaster
+      //     ?.filter(
+      //       (acc: any) => acc?.client_name == ClientBillForm.client_name.value
+      //     )
+      //     ?.forEach((item: any) => {
+      //       defaultAccountFlag = defaultAccountFlag || item?.isDefaultAddress;
+      //     });
+      //   if (defaultAccountFlag) {
+      //     ToasterService.show(
+      //       "A default address for this company is already present",
+      //       CONSTANTS.ERROR
+      //     );
+      //     return;
+      //   }
+      // }
 
       // const stateId =
       //   stateMaster.find(

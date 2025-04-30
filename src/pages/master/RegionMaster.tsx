@@ -784,8 +784,8 @@ const RegionMaster = () => {
 
   const confirmDelete = () => {
     setLoader(true);
-    stateService
-      .deactivateStateMaster({ ...patchData, loggedInUserId })
+    regionService
+      .deactivateRegionMaster({ ...patchData, loggedInUserId })
       .then(() => {
         setLoader(false);
         setShowConfirmDialogue(false);
