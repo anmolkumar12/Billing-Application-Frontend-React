@@ -142,24 +142,41 @@ const Contract: React.FC = () => {
       validation: { required: true },
       fieldWidth: "col-md-4",
   }, 
-    poAmount: {
-      inputType: "inputNumber",
-      label: "Po Amount",
-      // options: [],
-      value: null,
-      validation: {
-        required: true
-      },
-      fieldWidth: "col-md-4",
+  poAmount: {
+    inputType: "inputtext",  
+    label: "Po Amount",
+    mode: "decimal",
+    minFractionDigits: 2,
+    maxFractionDigits: 2,
+    value: null,
+    validation: {
+      required: true,
+      pattern: /^\d*\.?\d{0,2}$/  
     },
+    fieldWidth: "col-md-4",
+  },
+    // dueAmount: {
+    //   inputType: "inputNumber",
+    //   label: "Pending Amount",
+    //   // options: [],
+    //   disable: true,
+    //   value: null,
+    //   validation: {
+    //     required: true
+    //   },
+    //   fieldWidth: "col-md-4",
+    // },
     dueAmount: {
-      inputType: "inputNumber",
+      inputType: "inputtext",  // Change to inputtext to allow decimal input
       label: "Pending Amount",
-      // options: [],
+      mode: "decimal",
       disable: true,
+      minFractionDigits: 2,
+      maxFractionDigits: 2,
       value: null,
       validation: {
-        required: true
+        required: true,
+        pattern: /^\d*\.?\d{0,2}$/  // Allow up to 2 decimal places
       },
       fieldWidth: "col-md-4",
     },
@@ -1232,10 +1249,10 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
       objFormState.creditPeriod.value = rowData.creditPeriod;
       objFormState.po_name.value = rowData.po_name;
       objFormState.docType.value = rowData.docType;
-      objFormState.poAmount.value = rowData.poAmount;
+      objFormState.poAmount.value = rowData.poAmount ? rowData.poAmount.toString() : null;
       objFormState.currency.options = currencyList || [];
       objFormState.currency.value = rowData?.currency || "";
-      objFormState.dueAmount.value = rowData.dueAmount;
+      objFormState.dueAmount.value = rowData.dueAmount ? rowData.dueAmount.toString() : null;
       objFormState.end_date.value = rowData.end_date ? parseCustomDate(rowData.end_date) : null;
       objFormState.start_date.value = rowData.start_date ? parseCustomDate(rowData.start_date) : null;
       objFormState.po_creation_date.value = rowData.po_creation_date && rowData.po_creation_date !== "null" 
@@ -1623,7 +1640,8 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     }
     console.log(`rohit jhosi `,currentForm.poAmount.value,objFormState.poAmount.value)
     if (currentForm.poAmount.value) {
-      currentForm.dueAmount.value = currentForm.poAmount.value;
+      const formattedAmount = parseFloat(String(currentForm.poAmount.value)).toFixed(2);
+      currentForm.dueAmount.value = formattedAmount.toString();
     }
     const { groupIndustryData, industryData, industryHeadData, salesManagerData, accountManagerData } = cascadingData;
 
@@ -1847,8 +1865,8 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         companyLocation: objFormState.companyLocation.value || '',
         creditPeriod: objFormState.creditPeriod.value,
         po_name: objFormState.po_name.value,
-        poAmount: +objFormState.poAmount.value || null,
-        dueAmount: +objFormState.dueAmount.value || null,
+        poAmount: objFormState.poAmount.value ? Number(parseFloat(objFormState.poAmount.value).toFixed(2)) : null,
+        dueAmount: objFormState.dueAmount.value ? Number(parseFloat(objFormState.dueAmount.value).toFixed(2)) : null,
         start_date: objFormState.start_date.value ? formatDate(objFormState.start_date.value) : null,
         end_date: objFormState.end_date.value ? formatDate(objFormState.end_date.value) : null,
         po_creation_date: poCreationDate, // Use the determined po_creation_date

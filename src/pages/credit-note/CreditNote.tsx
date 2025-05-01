@@ -81,7 +81,7 @@ const CreditNoteMaster = () => {
             fieldWidth: "col-md-4",
         },
         po_amount: {
-            inputType: "inputNumber",
+            inputType: "inputtext",
             label: "PO Amount",
             value: null,
             disable: true,
@@ -89,7 +89,7 @@ const CreditNoteMaster = () => {
             fieldWidth: "col-md-4",
         },
         remain_po_amount: {
-            inputType: "inputNumber",
+            inputType: "inputtext",
             label: "Remain PO Amount",
             value: null,
             disable: true,
@@ -1989,6 +1989,8 @@ const CreditNoteMaster = () => {
                                             value={rowData.amount}
                                             onValueChange={(e) => handleAmountChange(e, rowIndex)}
                                             mode="decimal"
+                                            minFractionDigits={2}
+                                            maxFractionDigits={2}
                                             style={{
                                                 width: "100%",
                                                 height: "35px",
@@ -2008,7 +2010,7 @@ const CreditNoteMaster = () => {
                                                 width: "100%",
                                                 height: "28px",
                                                 padding: "0px",
-                                                border: "none", // Ensures only one border is applied
+                                                border: "none",
                                                 outline: "none",
                                                 backgroundColor: "transparent"
                                             }}

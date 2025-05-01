@@ -74,7 +74,7 @@ const InvoiceMaster = () => {
             fieldWidth: "col-md-4",
         },
         po_amount: {
-            inputType: "inputNumber",
+            inputType: "inputtext",
             label: "PO Amount",
             value: null,
             disable: true,
@@ -82,7 +82,7 @@ const InvoiceMaster = () => {
             fieldWidth: "col-md-4",
         },
         remain_po_amount: {
-            inputType: "inputNumber",
+            inputType: "inputtext",
             label: "Remain PO Amount",
             value: null,
             disable: true,
@@ -1792,6 +1792,7 @@ const InvoiceMaster = () => {
         const clientAbbr = getClientAbbreviation(clientForm.client_name.value);
         const financialYear = getFinancialYear(clientForm.invoice_date.value);
         const invoiceName = `${clientAbbr}/${financialYear}`;
+        console.log(`sadwdasd`,clientAbbr,financialYear,invoiceName)
 
         // Calculate due date
         const invoiceDate = clientForm.invoice_date.value;
@@ -2050,6 +2051,8 @@ const InvoiceMaster = () => {
                                                     value={rowData.amount}
                                                     onValueChange={(e) => handleAmountChange(e, rowIndex)}
                                                     mode="decimal"
+                                                    minFractionDigits={2}
+                                                    maxFractionDigits={2}
                                                     style={{
                                                         width: "100%",
                                                         height: "35px",
@@ -2069,7 +2072,7 @@ const InvoiceMaster = () => {
                                                         width: "100%",
                                                         height: "28px",
                                                         padding: "0px",
-                                                        border: "none", // Ensures only one border is applied
+                                                        border: "none",
                                                         outline: "none",
                                                         backgroundColor: "transparent"
                                                     }}
