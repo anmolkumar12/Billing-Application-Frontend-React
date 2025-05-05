@@ -1671,6 +1671,17 @@ const CreditNoteMaster = () => {
         event.preventDefault();
         let companyValidityFlag = true;
 
+        // Validation for Credit Amount (invoice_amount)
+        const creditAmountValue = clientForm.invoice_amount.value;
+        if (creditAmountValue) {
+            // Allow only numbers or decimals (up to 2 decimal places)
+            const isValidNumber = /^\d*\.?\d{0,2}$/.test(creditAmountValue);
+            if (!isValidNumber) {
+                ToasterService.show("Credit Amount should be a number or decimal value (e.g., 100 or 100.50)", CONSTANTS.ERROR);
+                return;
+            }
+        }
+
         _.each(clientForm, (item: any) => {
             if (item?.validation?.required) {
                 companyValidityFlag = companyValidityFlag && item.value;

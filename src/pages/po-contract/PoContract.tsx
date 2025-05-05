@@ -1829,6 +1829,17 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
     let companyValidityFlag = true;
     const formData: any = new FormData();
 
+    // Validate poAmount before proceeding
+    const poAmountValue = objFormState.poAmount.value;
+    if (poAmountValue) {
+        // Check if the value is a valid number using regex
+        const isValidNumber = /^\d*\.?\d{0,2}$/.test(poAmountValue);
+        if (!isValidNumber) {
+            ToasterService.show("PO Amount should be a number or decimal value (e.g., 100 or 100.50)", CONSTANTS.ERROR);
+            return;
+        }
+    }
+
     _.each(objFormState, (item: any) => {
         if (item?.validation?.required) {
             companyValidityFlag = companyValidityFlag && item.value;

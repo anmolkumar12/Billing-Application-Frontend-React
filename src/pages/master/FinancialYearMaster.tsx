@@ -331,15 +331,43 @@ const FinancialYearMaster = () => {
     return `${year}/${month}/${day}`;
   };
 
+  // const parseDateString = (dateString: any) => {
+  //   if (!dateString) return new Date();
+  //   const date: any = new Date(dateString);
+  //   if (isNaN(date)) return new Date();
+  //   const year = date.getFullYear();
+  //   const month: any = String(date.getMonth() + 1).padStart(2, "0");
+  //   const day: any = String(date.getDate()).padStart(2, "0");
+  //   return new Date(year, month - 1, day);
+  // };
   const parseDateString = (dateString: any) => {
-    if (!dateString) return new Date();
-    const date: any = new Date(dateString);
-    if (isNaN(date)) return new Date();
-    const year = date.getFullYear();
-    const month: any = String(date.getMonth() + 1).padStart(2, "0");
-    const day: any = String(date.getDate()).padStart(2, "0");
-    return new Date(year, month - 1, day);
-  };
+    // Return null if no date string is provided
+    if (!dateString || dateString === "null") return null;
+    
+    // If the date is already a Date object, return it
+    if (dateString instanceof Date) return dateString;
+    
+    // Handle DD-MM-YYYY format
+    if (typeof dateString === 'string' && dateString.includes('-')) {
+        const [day, month, year] = dateString.split('-').map(num => parseInt(num, 10));
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+            const date = new Date(year, month - 1, day);
+            // Validate if the date is valid
+            if (isValidDate(date)) {
+                return date;
+            }
+        }
+    }
+    
+    // Try standard date parsing as fallback
+    const date = new Date(dateString);
+    return isValidDate(date) ? date : null;
+};
+
+  // Helper function to validate dates
+  const isValidDate = (date: Date) => {
+    return date instanceof Date && !isNaN(date.getTime());
+};
 
   const updateFinancialYearMaster = (data: any) => {
     console.log('data there --->', data)

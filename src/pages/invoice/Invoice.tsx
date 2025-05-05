@@ -1726,6 +1726,17 @@ const InvoiceMaster = () => {
         event.preventDefault();
         let companyValidityFlag = true;
 
+        // Validation for invoice_amount
+        const invoiceAmountValue = clientForm.invoice_amount.value;
+        if (invoiceAmountValue) {
+            // Check if the value is a valid number using regex
+            const isValidNumber = /^\d*\.?\d{0,2}$/.test(invoiceAmountValue);
+            if (!isValidNumber) {
+                ToasterService.show("Invoice Amount should be a number or decimal value (e.g., 100 or 100.50)", CONSTANTS.ERROR);
+                return;
+            }
+        }
+
         _.each(clientForm, (item: any) => {
             if (item?.validation?.required) {
                 companyValidityFlag = companyValidityFlag && item.value;
