@@ -1,18 +1,22 @@
 .btn-main {
   position: relative;
-  color: #fff;
+  color: white;
+  background: #000 !important;
+  border: 2px solid #000 !important;
   border: none;
   outline: none;
-  padding: 6px 20px !important;
+  padding: 0px 10px !important;
   text-transform: uppercase;
-  font-size: 13px;
   transition: 0.5s;
-  border-radius: 5px;
   margin: 5px 0px;
   cursor: pointer;
   transition: 0.5s;
   z-index: 1;
   text-transform: capitalize;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  border-radius: 4px !important;
+  // height: 26px !important;
 }
 
 .btn-main:hover {

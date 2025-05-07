@@ -51,7 +51,7 @@
 }
 
 .left-menubar ul li a.activeMenu {
-  background: #374baa;
+  background: black;
   font-weight: 500;
   font-size: 13px;
   color: #fff;
@@ -83,7 +83,7 @@
   width: 11px;
   height: 11px;
   content: '';
-  background: #374baa;
+  background: black;
   border-radius: 50%;
   position: absolute;
   right: 1px;
@@ -161,7 +161,7 @@
   height: 25px;
   width: 25px;
   border: 1px solid white;
-  background-color: white;
+  background-color: black;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -176,6 +176,7 @@
 .collapse-icon i {
   font-size: 12px;
   transform: rotate(90deg);
+  color: #ffc900;
 }
 .collapse-icon:hover {
   i {

@@ -70,7 +70,7 @@ const ConfirmDialogue: React.FC<ConfirmDialogueInterface> = (props: any) => {
           margin: '1rem  0 0.75rem 0',
           fontSize: '14px',
           padding: 0,
-          color: '#374baa',
+          color: '#000',
           textAlign: 'center',
           fontWeight: 400,
         }}

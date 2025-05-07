@@ -172,9 +172,9 @@ th.p-filter-column {
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  color: #fff !important;
+  color: black !important;
   font-size: 12px !important;
-  background: #374baa !important;
+  background: #FFC900 !important;
   border-radius: 50% !important;
   height: 25px !important;
   width: 25px !important;
@@ -254,7 +254,8 @@ span.p-paginator-current {
   // max-width: 110px;
 }
 .global-tablestyle table .p-resizable-column span.p-column-title {
-  color: white;
+  color: black;
+  font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -274,24 +275,14 @@ span.p-paginator-current {
 }
 
 .tabel-setting-btn {
-  background: rgb(0, 176, 228);
-  background: linear-gradient(
-    to bottom,
-    rgb(96 116 228) 1%,
-    rgb(55 75 170) 86%
-  );
+  background: black !important;
   border: none;
   font-size: 10px !important;
   padding: 5px 10px !important;
 }
 
 .tabel-setting-btn:hover {
-  background: rgb(0, 176, 228);
-  background: linear-gradient(
-    to bottom,
-    rgb(96 116 228) 1%,
-    rgb(55 75 170) 86%
-  ) !important;
+  background: rgb(49, 47, 47) !important;
   border: none;
   font-size: 10px !important;
 }

@@ -123,8 +123,8 @@
   text-align: center;
   font-size: 0.75rem;
   font-weight: 500;
-  background-color: rgba(55, 74, 170, 0.7450980392);
-  color: white;
+  background-color: #FFC900;
+  color: black;
   border-radius: 1.5rem !important;
   padding: 0.65rem 0.75rem !important;
   outline: none;
@@ -132,7 +132,7 @@
 }
 
 .submitFormItem .btn:hover {
-  background-color: #374baa;
+  background-color: #eccb54;
 }
 .sign-up-section {
   margin: 0.45rem 0;
@@ -203,7 +203,7 @@
   max-width: 533px;
   width: 45%;
   background-image: url(../../assets/img/login/LoginBackground.svg),
-    linear-gradient(to bottom, #3247ad, #0f1c5e);
+    linear-gradient(to bottom, #ffc900, #000);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;

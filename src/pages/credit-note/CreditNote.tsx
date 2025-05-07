@@ -1950,8 +1950,8 @@ const CreditNoteMaster = () => {
                                         onClick={addRow}
                                         label="Add Row"
                                         style={{
-                                            background: "linear-gradient(rgb(70, 97, 255) 1%, rgb(46, 68, 173) 86%)",
-                                            color: "white",
+                                            background: "#FCC900",
+                                            color: "black",
                                             padding: "4px 12px",
                                             borderRadius: "5px",
                                             fontSize: "14px",

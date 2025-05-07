@@ -17,6 +17,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+body{
+  font-family: 'Montserrat', sans-serif !important;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -634,4 +637,46 @@ th:first-child, td:first-child {
 
 InputSwitch{
   display: flex;
+}
+
+/*  table */
+
+.p-datatable-resizable .p-resizable-column {
+  background-color: #ffc900 !important;
+  color: black !important;
+}
+
+  /*  tabs */
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link{
+  color: #ffc900 !important;
+}
+
+.p-tabview .p-tabview-nav .p-tabview-ink-bar{
+  background-color: #ffc900 !important;
+}
+
+.p-tabview .p-tabview-nav li:not(.p-highlight):not(.p-disabled):hover .p-tabview-nav-link{
+  background-color: black;
+}
+.p-tabview .p-tabview-nav li .p-tabview-nav-link:not(.p-disabled):focus{
+  box-shadow: none !important;
+}
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link{
+  border-color: #e3e3e3  !important;
+}
+
+ /*  switch */
+ .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background: #ffc900 !important;
+}
+
+.p-button{
+  border: none !important;
+}
+.p-tabview .p-tabview-nav{
+  font-size: 14px !important;
+}
+
+.p-toast .p-toast-message .p-toast-message-content{
+  padding: 10px !important;
 }

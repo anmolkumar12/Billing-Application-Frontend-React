@@ -77,7 +77,7 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
         <div className={classes["logo"]}>
           <img 
             className={isCollapseSideMenu ? classes["collapsed-img"] : classes["expanded-img"]} 
-            src={isCollapseSideMenu ? "./Star.svg" : "./Polestar Logo.svg"} 
+            src={isCollapseSideMenu ? "./Star.svg" : "./Polestar Logo Original V1 1.svg"} 
             alt="Logo"
           />
         </div>
@@ -123,9 +123,25 @@ const Sidenav: React.FC<{ userMenu: any }> = ({ userMenu }) => {
                         }}
                       >
                         <b style={{ display: 'flex', alignItems: 'center' }}>
+                          {selectedMenu === menuItem.moduleName && 
+                          <div
+                          style={{
+                            width: '5px',
+                            left: '4%',
+                            height: '5px',
+                            backgroundColor: '#FFC900',
+                            borderRadius: '50%',
+                            position: 'absolute',
+                          }}                          
+                        ></div>
+                         }
                           <span
                             className={menuItem.icon}
-                            style={{ marginRight: '8px' }}
+                            style={{
+                              marginRight: '8px',
+                              color: selectedMenu === menuItem.moduleName ? '#FFC900' : 'white'
+                            }}
+                            
                           ></span>
                           {!isCollapseSideMenu ? (
                             <>

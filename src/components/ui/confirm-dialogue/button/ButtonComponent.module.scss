@@ -1,5 +1,6 @@
 .default {
-  background: #374baa;
+  background: #FCC900;
+  color: black;
   padding: 5px 10px !important;
   margin-right: 5px;
   font-size: 12px !important;
@@ -22,11 +23,12 @@
   background: #8f0202 !important;
 }
 .default:hover {
-  background: #89a3cc !important;
+  background: #ffdb59 !important;
+  color: black !important;
 }
 
 .pp-button-secondaryv1 {
-  background: #808080;
+  background: black;
   padding: 5px 10px !important;
   margin-right: 5px;
   font-size: 12px !important;
