@@ -101,6 +101,7 @@ const AccountManagerMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [accountFieldsStructure, setAccountFieldsStructure] = useState<any>(
     _.cloneDeep(AccountFormFields)
   );
@@ -712,6 +713,8 @@ const handleDeactivate = (data: any) => {
 
   const createNewAccount = (event: FormEvent) => {
     event.preventDefault();
+    setIsSubmitting(true); 
+    try{
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
@@ -787,6 +790,10 @@ const handleDeactivate = (data: any) => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -936,9 +943,10 @@ const handleDeactivate = (data: any) => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewAccount}
+                disabled={isSubmitting}
               />
             </div>
           </div>

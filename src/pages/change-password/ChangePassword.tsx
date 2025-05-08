@@ -19,6 +19,7 @@ const ChangePassword: React.FC = () => {
   const [readOnly, setReadOnly] = useState(true)
   const [isResetFormValid, setIsResetFormValid] = useState(true)
   const [showLoader, setShowLoader] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [resetFormState, setResetFormState] = useState({
     resetForm: {
       oldPassword: {
@@ -112,6 +113,7 @@ const ChangePassword: React.FC = () => {
 
   const resetPasswordFormHandler = (event?: FormEvent) => {
     console.log(`hdsjadsddas`)
+    setIsSubmitting(true); 
     event?.preventDefault()
     if (checkFormValidity()) {
       const formData: { [key: string]: any } = {}      
@@ -133,10 +135,11 @@ const ChangePassword: React.FC = () => {
         })
         .catch((error: any) => {
           ToasterService.show(error, CONSTANTS.ERROR)
-        })
+        })     
     } else {
       ToasterService.show('Please check the fields !', CONSTANTS.ERROR)
     }
+    setIsSubmitting(false); 
   }
 
   return (
@@ -228,7 +231,7 @@ const ChangePassword: React.FC = () => {
           ) : null}
         </div>
         <div className="submitFormItem">
-          <button className="btn" onClick={resetPasswordFormHandler}>
+          <button className="btn" onClick={resetPasswordFormHandler} disabled={isSubmitting}>
             Change Password
           </button>
         </div>

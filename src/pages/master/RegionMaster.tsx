@@ -109,6 +109,7 @@ const RegionMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [regionFieldsStructure, setRegionFieldsStructure]: any =
     useState(RegionFormFields);
   const [stateSelectionFieldsStructure, setStateSelectionFieldsStructure]: any =
@@ -657,7 +658,9 @@ const RegionMaster = () => {
 
   const createNewRegion = (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
 
     _.each(RegionForm, (item: any) => {
       if (item?.validation?.required) {
@@ -763,6 +766,10 @@ const RegionMaster = () => {
       });
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -923,9 +930,10 @@ const RegionMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewRegion}
+                disabled={isSubmitting}
               />
             </div>
           </div>

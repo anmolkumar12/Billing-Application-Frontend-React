@@ -128,6 +128,7 @@ const CompanyMaster = () => {
   const [digitalSign, setDigitalSign]: any = useState([]);
   const [logoUrl,setLogoUrl] = useState('');
   const [signatureUrl,setSignatureUrl] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
  
   const [companyFieldStructure, setCompanyFieldStructure] = useState<any>(
     _.cloneDeep(CompanyFormFields)
@@ -722,6 +723,8 @@ const CompanyMaster = () => {
 
   const createNewCompany = (event: FormEvent) => {
     event.preventDefault();
+    setIsSubmitting(true);
+    try{   
     let companyValidityFlag = true;
 
     _.each(CompanyForm, (item: any) => {
@@ -832,6 +835,10 @@ const CompanyMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -1092,9 +1099,10 @@ const CompanyMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewCompany}
+                disabled={isSubmitting}
               />
             </div>
           </div>

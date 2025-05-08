@@ -105,6 +105,7 @@ const AccountMaster = () => {
     _.cloneDeep(accountFieldsStructure)
   );
   const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
@@ -586,7 +587,9 @@ const AccountMaster = () => {
 
   const createNewAccount = (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
     _.each(AccountForm, (item: any) => {
@@ -689,6 +692,10 @@ const AccountMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -812,9 +819,10 @@ const AccountMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewAccount}
+                disabled={isSubmitting}
               />
             </div>
           </div>

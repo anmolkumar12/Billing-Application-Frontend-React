@@ -43,6 +43,7 @@ const ProjectServiceMaster = () => {
   const [storeFormPopup, setFormPopup] = useState(false);
   const [rowData, setRowData] = useState<any>({});
   const [isFormValid, setIsFormValid] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [formObjState, setFormObjState] = useState<any>(
@@ -215,6 +216,7 @@ const ProjectServiceMaster = () => {
 
   const createNewRecord = async (event: FormEvent) => {
     event.preventDefault();
+    setIsSubmitting(true)
     const obj: any = {
       name: formObjState?.name?.value,
       description: formObjState?.description.value,
@@ -233,6 +235,9 @@ const ProjectServiceMaster = () => {
       }
     } catch (error: any) {
       ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
+    }
+    finally{
+      setIsSubmitting(false)
     }
   };
 
@@ -347,9 +352,10 @@ const ProjectServiceMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewRecord}
+                disabled={isSubmitting}
               />
             </div>
           </div>

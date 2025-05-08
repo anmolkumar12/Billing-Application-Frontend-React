@@ -277,6 +277,7 @@ const InvoiceMaster = () => {
     const [idForBillTOiecCode, setIdForBillTOiecCode] = useState<any>()
     const [iecCodeSubmit, setIecCodeSubmit] = useState<any>(null)
     const [placeOfSupply, setPlaceOfSupply] = useState<any>(null)
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -1724,8 +1725,9 @@ const InvoiceMaster = () => {
 
     const createNewClient = async (event: FormEvent) => {
         event.preventDefault();
-        let companyValidityFlag = true;
-
+        setIsSubmitting(true); 
+        try{    
+          let companyValidityFlag = true;
         // Validation for invoice_amount
         const invoiceAmountValue = clientForm.invoice_amount.value;
         if (invoiceAmountValue) {
@@ -1875,6 +1877,9 @@ const InvoiceMaster = () => {
                 .catch((error: any) => {
                     setCliendData({});
                     ToasterService.show(error, CONSTANTS.ERROR);
+                })
+                .finally(() => {
+                    setIsSubmitting(false);
                 });
         } else {
             const updatePayload = { ...obj, id: cliendData?.id, invoice_name: cliendData?.invoice_name };
@@ -1895,7 +1900,14 @@ const InvoiceMaster = () => {
                 .catch((error: any) => {
                     setCliendData({});
                     ToasterService.show(error, CONSTANTS.ERROR);
+                })
+                .finally(() => {
+                    setIsSubmitting(false);
                 });
+        }
+        }
+        finally{
+        setIsSubmitting(false);
         }
     };
 
@@ -2117,9 +2129,10 @@ const InvoiceMaster = () => {
                                 <div className="popup-lower-btn">
                                     <ButtonComponent
                                         label="Submit"
-                                        icon="pi pi-check"
+                                        icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                                         iconPos="right"
                                         submitEvent={createNewClient}
+                                        disabled={isSubmitting}
                                     />
                                 </div>
                             </div>

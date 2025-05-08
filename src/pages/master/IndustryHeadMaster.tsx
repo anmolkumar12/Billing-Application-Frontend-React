@@ -145,6 +145,7 @@ const IndustryHeadMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [industryHeadFieldsStructure, setIndustryHeadFieldsStructure] =
     useState<any>(_.cloneDeep(IndustryHeadFormFields));
   const [IndustryHeadForm, setIndustryHeadForm] = useState<any>(
@@ -897,7 +898,9 @@ useEffect(() => {
     console.log('IndustryHeadForm', IndustryHeadForm);
     
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
     _.each(IndustryHeadForm, (item: any) => {
@@ -1033,6 +1036,10 @@ useEffect(() => {
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
     }
+    }
+    finally{
+      setIsSubmitting(false); 
+    }
   };
 
   const onDelete = (data: any) => {
@@ -1155,9 +1162,10 @@ useEffect(() => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewIndustryHead}
+                disabled={isSubmitting}
               />
             </div>
           </div>

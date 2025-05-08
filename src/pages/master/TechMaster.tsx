@@ -67,6 +67,7 @@ const TechMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [techFieldsStructure, setTechFieldsStructure] = useState<any>(_.cloneDeep(TechFormFields));
   const [TechForm, setTechForm] = useState<any>(_.cloneDeep(TechFormFields));
 
@@ -424,7 +425,9 @@ const TechMaster = () => {
 
   const createNewTech = (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
     _.each(TechForm, (item: any) => {
@@ -495,6 +498,10 @@ const TechMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -611,9 +618,10 @@ const TechMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewTech}
+                disabled={isSubmitting}
               />
             </div>
           </div>

@@ -69,6 +69,7 @@ const FinancialYearMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [formObjState, setFormObjState] = useState<any>(_.cloneDeep(formObj));
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const cookies = new Cookies();
   const userInfo = cookies.get("userInfo");
@@ -381,10 +382,17 @@ const FinancialYearMaster = () => {
 
   const createNewRecord = async (event: FormEvent) => {
     event.preventDefault();
-    console.log('data there --->', formObjState)
+    setIsSubmitting(true); // Set loading state to true
 
     // Extract startYear from the form state
     const startYear = formObjState?.startYear?.value;
+
+    // Check if startYear is null
+    if (!startYear) {
+        ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+        setIsSubmitting(false); // Reset loading state
+        return; // Exit the function early
+    }
 
     // Calculate financialYearName and format endYear if startYear is provided
     let financialYearName = "";
@@ -428,6 +436,8 @@ const FinancialYearMaster = () => {
       }
     } catch (error: any) {
       ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
+    } finally {
+      setIsSubmitting(false); // Set loading state back to false
     }
   };
 
@@ -509,9 +519,10 @@ const FinancialYearMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewRecord}
+                disabled={isSubmitting} // Disable the button while submitting
               />
             </div>
           </div>

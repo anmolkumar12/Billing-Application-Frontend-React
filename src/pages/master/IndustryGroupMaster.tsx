@@ -46,6 +46,7 @@ const IndustryGroupMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [industryGroupFieldsStructure, setIndustryGroupFieldsStructure] =
     useState<any>(_.cloneDeep(IndustryGroupFormFields));
   const [IndustryGroupForm, setIndustryGroupForm] = useState<any>(
@@ -267,7 +268,9 @@ const IndustryGroupMaster = () => {
 
   const createNewIndustryGroup = (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
     _.each(IndustryGroupForm, (item: any) => {
@@ -329,6 +332,10 @@ const IndustryGroupMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -446,9 +453,10 @@ const IndustryGroupMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewIndustryGroup}
+                disabled={isSubmitting}
               />
             </div>
           </div>

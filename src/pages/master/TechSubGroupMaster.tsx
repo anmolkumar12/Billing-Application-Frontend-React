@@ -56,6 +56,7 @@ const TechSubGroupMaster = () => {
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [stateData, setStateData] = useState<any>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [techSubGroupFieldsStructure, setTechSubGroupFieldsStructure] =
     useState<any>(_.cloneDeep(TechSubGroupFormFields));
   const [TechSubGroupForm, setTechSubGroupForm] = useState<any>(
@@ -305,6 +306,8 @@ const TechSubGroupMaster = () => {
 
   const createNewTechSubGroup = (event: FormEvent) => {
     event.preventDefault();
+    setIsSubmitting(true); 
+    try{
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
@@ -359,6 +362,10 @@ const TechSubGroupMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -476,9 +483,10 @@ const TechSubGroupMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewTechSubGroup}
+                disabled={isSubmitting}
               />
             </div>
           </div>

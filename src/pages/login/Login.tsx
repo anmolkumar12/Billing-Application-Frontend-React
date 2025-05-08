@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   const dateNow = new Date()
 
   const [isFormValid, setIsFormValid] = useState(true)
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showLoader, setShowLoader] = useState(false)
 
   const [loginFormState, setLoginFormState] = useState({
@@ -90,8 +90,10 @@ const Login: React.FC = () => {
   }
 
   const signInSubmitHandler = (event?: FormEvent) => {
+    setIsSubmitting(true)
     if (event) event.preventDefault()
-    if (checkFormValidity()) {
+    try{
+      if (checkFormValidity()) {
       const formData: { [key: string]: any } = {}
       formData.identifier = loginFormState.loginForm.email.value
       formData.password = loginFormState.loginForm.password.value
@@ -129,6 +131,10 @@ const Login: React.FC = () => {
         })
     } else {
       ToasterService.show('Please Check the Fields!', CONSTANTS.ERROR)
+    }
+    }
+    finally{
+      setIsSubmitting(false)
     }
   }
 
@@ -262,7 +268,7 @@ const Login: React.FC = () => {
               </div>
             </div>
             <div className="submitFormItem">
-              <button className="btn" onClick={signInSubmitHandler}>
+              <button className="btn" onClick={signInSubmitHandler}  disabled={isSubmitting}>
                 LOGIN
               </button>
             </div>

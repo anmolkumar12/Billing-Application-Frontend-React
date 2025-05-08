@@ -174,6 +174,7 @@ const ClientBillToMaster = () => {
   const [AdditionalDetailsForm, setAdditionalDetailsForm] = useState<any>({});
   const [defaultBillingAddress,setDefaultBillingAddress] = useState<any>();
   const [stateDataWithCode,setStateDataWithCode] = useState<any>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
 
@@ -887,7 +888,9 @@ const ClientBillToMaster = () => {
 
   const createClientBillInfo = async (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
     _.each(ClientBillForm, (item: any) => {
@@ -977,7 +980,10 @@ const ClientBillToMaster = () => {
           .catch((error: any) => {
             setStateData({});
             ToasterService.show(error, CONSTANTS.ERROR);
-          });
+          })
+          .finally(() => {
+            setIsSubmitting(false);
+        });
       } else {
         const updatePayload = { ...obj, id: stateData?.id };
 
@@ -993,10 +999,17 @@ const ClientBillToMaster = () => {
           .catch((error: any) => {
             setStateData({});
             ToasterService.show(error, CONSTANTS.ERROR);
-          });
+          })
+          .finally(() => {
+            setIsSubmitting(false);
+        });
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false);
     }
   };
 
@@ -1076,9 +1089,10 @@ const ClientBillToMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createClientBillInfo}
+                disabled={isSubmitting}
               />
             </div>
           </div>

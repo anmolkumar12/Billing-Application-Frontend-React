@@ -112,6 +112,7 @@ const ClientContactMaster = () => {
     const [accountsMaster, setAccountsMaster] = useState<any>([]);
     const [clientMaster, setClientMaster] = useState<any>([]);
     const [clientContactMaster, setClientContactMaster] = useState<any>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -472,7 +473,9 @@ const ClientContactMaster = () => {
 
     const createNewClient = async (event: FormEvent) => {
         event.preventDefault();
-        let companyValidityFlag = true;
+        setIsSubmitting(true); 
+        try{
+            let companyValidityFlag = true;
         const companyFormValid: boolean[] = [];
 
         _.each(clientForm, (item: any) => {
@@ -518,6 +521,9 @@ const ClientContactMaster = () => {
                     .catch((error: any) => {
                         setStateData({});
                         ToasterService.show(error, CONSTANTS.ERROR);
+                    })
+                    .finally(() => {
+                        setIsSubmitting(false);
                     });
             } else {
                 const updatePayload = { ...obj, clientContactId: stateData?.id, isActive: stateData?.isActive };
@@ -533,10 +539,17 @@ const ClientContactMaster = () => {
                     .catch((error: any) => {
                         setStateData({});
                         ToasterService.show(error, CONSTANTS.ERROR);
+                    })
+                    .finally(() => {
+                        setIsSubmitting(false);
                     });
             }
         } else {
             ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+        }
+        }
+        finally{
+        setIsSubmitting(false);
         }
     };
 
@@ -611,9 +624,10 @@ const ClientContactMaster = () => {
                         <div className="popup-lower-btn">
                             <ButtonComponent
                                 label="Submit"
-                                icon="pi pi-check"
+                                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                                 iconPos="right"
                                 submitEvent={createNewClient}
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>

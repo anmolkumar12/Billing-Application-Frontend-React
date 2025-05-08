@@ -117,6 +117,7 @@ const CompanyAddressMaster = () => {
   const [isFormValid, setIsFormValid] = useState(true);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [companyLocationFieldStructure, setCompanyLocationFieldStructure] =
     useState<any>(_.cloneDeep(CompanyLocationFormFields));
@@ -624,7 +625,9 @@ const CompanyAddressMaster = () => {
 
   const createNewCompanyLocation = (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+       let companyValidityFlag = true;
     console.log('CompanyLocationForm', CompanyLocationForm);
 
     _.each(CompanyLocationForm, (item: any) => {
@@ -731,6 +734,10 @@ const CompanyAddressMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -873,9 +880,10 @@ const CompanyAddressMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewCompanyLocation}
+                disabled={isSubmitting}
               />
             </div>
           </div>

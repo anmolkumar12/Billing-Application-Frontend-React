@@ -75,6 +75,7 @@ const OemMaster = () => {
   const [storeFormPopup, setFormPopup] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [rowData,setRowData] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmDialogue, setShowConfirmDialogue] = useState(false);
   const [actionPopupToggle, setActionPopupToggle] = useState<any>([]);
   const [oemFieldsStructure, setOemFieldStructure] = useState<any>(
@@ -294,6 +295,7 @@ const OemMaster = () => {
 
   const createNewOem = async (event: FormEvent) => {
     event.preventDefault();
+    setIsSubmitting(true); 
     const obj:any = {
       oemName: oemForm?.oemName?.value,
       productName: oemForm?.productName?.value,
@@ -315,6 +317,9 @@ const OemMaster = () => {
     } catch (error:any) {
       ToasterService.show(error || "Something Went Wrong", CONSTANTS.ERROR);
     } 
+    finally{
+      setIsSubmitting(false)
+    }
   };
 
   const onDelete = (data: any) => {
@@ -430,9 +435,10 @@ const OemMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewOem}
+                disabled={isSubmitting}
               />
             </div>
           </div>

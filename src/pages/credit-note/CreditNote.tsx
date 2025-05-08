@@ -281,6 +281,7 @@ const CreditNoteMaster = () => {
     const [selectedApplicableTaxes, setSelectedApplicableTaxes] = useState<any>([])
     const [selectedContractData,setSelectedContractData] = useState<any>([])
     const [invoiceNumberList,setInvoiceNumberList] = useState<any>([])
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
     const [clientFormFieldsStructure, setClientFormFieldsStructure]: any =
@@ -1669,6 +1670,8 @@ const CreditNoteMaster = () => {
 
     const createNewClient = async (event: FormEvent) => {
         event.preventDefault();
+        setIsSubmitting(true); 
+       try{
         let companyValidityFlag = true;
 
         // Validation for Credit Amount (invoice_amount)
@@ -1822,6 +1825,9 @@ const CreditNoteMaster = () => {
                 .catch((error: any) => {
                     setCliendData({});
                     ToasterService.show(error, CONSTANTS.ERROR);
+                })
+                .finally(() => {
+                    setIsSubmitting(false);
                 });
         } else {
             const updatePayload = { ...obj, id: cliendData?.id, invoice_name: cliendData?.invoice_name };
@@ -1842,8 +1848,15 @@ const CreditNoteMaster = () => {
                 .catch((error: any) => {
                     setCliendData({});
                     ToasterService.show(error, CONSTANTS.ERROR);
+                })
+                .finally(() => {
+                    setIsSubmitting(false);
                 });
         }
+       }
+       finally{
+        setIsSubmitting(false);
+       }
     };
 
     const addRow = () => {
@@ -2055,9 +2068,10 @@ const CreditNoteMaster = () => {
                         <div className="popup-lower-btn">
                             <ButtonComponent
                                 label="Submit"
-                                icon="pi pi-check"
+                                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                                 iconPos="right"
                                 submitEvent={createNewClient}
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>

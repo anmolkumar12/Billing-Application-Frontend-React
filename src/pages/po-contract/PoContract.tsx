@@ -390,6 +390,7 @@ const Contract: React.FC = () => {
   const [companyLocationMaster, setCompanyLocationMaster] = useState<any>([]);
   const [currencyList,setCurrencyList] = useState<any>([]);
   const [clientMaster, setClientMaster] = useState<any>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [dataAIS, setDataAIS] = useState<any>({industryHeadDataa: [], salesManagerDataa: [], accountManagerDataa: [] })
   const loggedInUserId = userInfo?.userId;
 
@@ -1826,7 +1827,9 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
 
   const createNewContract = async (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+       let companyValidityFlag = true;
     const formData: any = new FormData();
 
     // Validate poAmount before proceeding
@@ -1926,7 +1929,10 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         })
         .catch((error: any) => {
           ToasterService.show(error, CONSTANTS.ERROR);
-        });
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+      });
     }
     else {
       poContractService
@@ -1941,7 +1947,13 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
         })
         .catch((error: any) => {
           ToasterService.show(error, CONSTANTS.ERROR);
-        });
+        }).finally(() => {
+          setIsSubmitting(false);
+      });
+    }
+    }
+    finally{
+      setIsSubmitting(false)
     }
   };
 
@@ -2119,9 +2131,10 @@ el.updated_at = el.updated_at && el.updated_at !== "null"
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewContract}
+                disabled={isSubmitting}
               />
             </div>
 

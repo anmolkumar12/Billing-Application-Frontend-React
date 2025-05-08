@@ -75,6 +75,7 @@ const CountryMaster = () => {
   const [CountryAddressForm, setCountryAddressForm] = useState<any>({});
   const [CountryBankForm, setCountryBankForm] = useState<any>({});
   const [CountryCompanyForm, setCountryCompanyForm] = useState<any>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   const cookies = new Cookies();
@@ -503,6 +504,8 @@ const CountryMaster = () => {
 
   const createNewCountry = (event: FormEvent) => {
     event.preventDefault();
+    setIsSubmitting(true); 
+    try{
     let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
@@ -588,6 +591,10 @@ const CountryMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -785,9 +792,10 @@ const CountryMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewCountry}
+                disabled={isSubmitting}
               />
             </div>
           </div>

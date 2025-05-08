@@ -151,6 +151,7 @@ const ClientShipToMaster = () => {
   const [accountsMaster, setAccountsMaster] = useState<any>([]);
   const [clientMaster, setClientMaster] = useState<any>([]);
   const [clientContactMaster, setClientContactMaster] = useState<any>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [clientShipToMaster, setClientShipToMaster] = useState<any>([]);
   const [clientBillToMaster, setClientBillToMaster] = useState<any>([]);
@@ -859,7 +860,9 @@ const ClientShipToMaster = () => {
 
   const createClientShipInfo = async (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
 
     _.each(ClientBillForm, (item: any) => {
@@ -944,7 +947,10 @@ const ClientShipToMaster = () => {
           .catch((error: any) => {
             setStateData({});
             ToasterService.show(error, CONSTANTS.ERROR);
-          });
+          })
+          .finally(() => {
+            setIsSubmitting(false);
+        });
       } else {
         const updatePayload = { ...obj, id: stateData?.id };
 
@@ -960,10 +966,17 @@ const ClientShipToMaster = () => {
           .catch((error: any) => {
             setStateData({});
             ToasterService.show(error, CONSTANTS.ERROR);
-          });
+          })
+          .finally(() => {
+            setIsSubmitting(false);
+        });
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false);
     }
   };
 
@@ -1043,9 +1056,10 @@ const ClientShipToMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createClientShipInfo}
+                disabled={isSubmitting}
               />
             </div>
           </div>

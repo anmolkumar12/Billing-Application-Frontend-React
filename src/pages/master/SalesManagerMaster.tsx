@@ -107,6 +107,7 @@ const SalesMaster = () => {
   const [deactivateIndustryHead, setDeactivateIndustryHead] = useState<any>([]);
   const [industriesData, setIndustriesData] = useState<any>([]);
   const [currRowData, setCurrRowData] = useState<any>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [salesFieldsStructure, setSalesFieldsStructure] = useState<any>(
     _.cloneDeep(SalesFormFields)
   );
@@ -716,7 +717,9 @@ const SalesMaster = () => {
 
   const createNewSales = (event: FormEvent) => {
     event.preventDefault();
-    let companyValidityFlag = true;
+    setIsSubmitting(true); 
+    try{
+      let companyValidityFlag = true;
     const companyFormValid: boolean[] = [];
     console.log('jjjjjjjjjjjj', SalesForm);
 
@@ -793,6 +796,10 @@ const SalesMaster = () => {
       }
     } else {
       ToasterService.show("Please Check all the Fields!", CONSTANTS.ERROR);
+    }
+    }
+    finally{
+      setIsSubmitting(false); 
     }
   };
 
@@ -929,9 +936,10 @@ const SalesMaster = () => {
             <div className="popup-lower-btn">
               <ButtonComponent
                 label="Submit"
-                icon="pi pi-check"
+                icon={isSubmitting ? "pi pi-spin pi-spinner" : "pi pi-check"}
                 iconPos="right"
                 submitEvent={createNewSales}
+                disabled={isSubmitting}
               />
             </div>
           </div>
